@@ -1,6 +1,7 @@
 package com.tpay.domains.franchisee.domain;
 
 import com.tpay.domains.BaseTimeEntity;
+import com.tpay.domains.point.domain.SignType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -48,6 +49,8 @@ public class FranchiseeEntity extends BaseTimeEntity {
   @Column(name = "prdNm", length = 100)
   private String productCategory;
 
+  private long balance;
+
   @Builder
   public FranchiseeEntity(
       String memberName,
@@ -66,5 +69,14 @@ public class FranchiseeEntity extends BaseTimeEntity {
     this.sellerName = sellerName;
     this.storeTel = storeTel;
     this.productCategory = productCategory;
+    this.balance = 0;
+  }
+
+  public FranchiseeEntity changeBalance(SignType signType, long change) {
+    this.balance += signType == SignType.POSITIVE ? change : -change;
+    if(balance < 0) {
+      throw new IllegalArgumentException("Balance should not be negative.");
+    }
+    return this;
   }
 }
