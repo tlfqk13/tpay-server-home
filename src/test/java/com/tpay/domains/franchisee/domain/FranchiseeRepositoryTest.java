@@ -30,9 +30,9 @@ class FranchiseeRepositoryTest {
             .build();
 
     // when
-    franchiseeRepository.save(franchiseeEntity);
+    franchiseeEntity = franchiseeRepository.save(franchiseeEntity);
 
     // then
-    assertThat(franchiseeEntity, is(equalTo(franchiseeRepository.findById(1L).get())));
+    assertThat(franchiseeEntity, is(equalTo(franchiseeRepository.findById(franchiseeEntity.getId()).get())));
   }
 }
