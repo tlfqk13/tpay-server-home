@@ -33,7 +33,8 @@ class PointRepositoryTest {
             .storeTel("010-1234-1234")
             .productCategory("잡화")
             .build();
-    franchiseeEntity = franchiseeRepository.save(franchiseeEntity);
+
+    franchiseeRepository.save(franchiseeEntity);
   }
 
   @Test
@@ -43,7 +44,7 @@ class PointRepositoryTest {
     long change = 20000L;
 
     FranchiseeEntity savedFranchiseeEntity =
-        franchiseeRepository.findById(franchiseeEntity.getId()).get();
+        franchiseeRepository.findAll().stream().findFirst().get();
     savedFranchiseeEntity.changeBalance(signType, change);
 
     PointEntity pointEntity =
@@ -59,7 +60,7 @@ class PointRepositoryTest {
     pointRepository.save(pointEntity);
 
     // then
-    PointEntity savedPointEntity = pointRepository.findById(1L).get();
+    PointEntity savedPointEntity = pointRepository.findAll().stream().findFirst().get();
 
     assertThat(pointEntity, is(equalTo(savedPointEntity)));
     assertThat(savedPointEntity.getBalance(), is(equalTo(20000L)));
