@@ -55,11 +55,11 @@ class RefundRepositoryTest {
 
     saleRepository.save(saleEntity);
   }
-
+  // TODO: 2021/04/02 조회 JOIN QUERY 부재
   @Test
   public void 환급_생성_테스트() {
     // given
-    SaleEntity saleEntity = saleRepository.findAll().get(0);
+    SaleEntity saleEntity = saleRepository.findAll().stream().findFirst().get();
 
     RefundEntity refundEntity =
         refundRepository.save(
@@ -73,7 +73,7 @@ class RefundRepositoryTest {
     List<RefundEntity> refundEntityList = refundRepository.findAll();
 
     // then
-    assertThat(refundEntityList.get(0), is(equalTo(refundEntity)));
+    assertThat(refundEntityList.stream().findFirst().get(), is(equalTo(refundEntity)));
   }
 
   @Test

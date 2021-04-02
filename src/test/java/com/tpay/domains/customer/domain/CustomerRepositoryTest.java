@@ -33,7 +33,7 @@ class CustomerRepositoryTest {
     List<CustomerEntity> customerEntityList = customerRepository.findAll();
 
     // then
-    assertThat(customerEntityList.get(0), is(equalTo(customerEntity)));
+    assertThat(customerEntityList.stream().findFirst().get(), is(equalTo(customerEntity)));
   }
 
   @Test

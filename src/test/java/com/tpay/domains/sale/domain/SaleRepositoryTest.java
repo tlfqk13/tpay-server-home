@@ -91,6 +91,6 @@ class SaleRepositoryTest {
     List<SaleEntity> saleEntityList = saleRepository.findAll();
 
     // then
-    assertThat(saleEntityList.get(0), is(equalTo(saleEntity)));
+    assertThat(saleEntityList.stream().findFirst().get(), is(equalTo(saleEntity)));
   }
 }
