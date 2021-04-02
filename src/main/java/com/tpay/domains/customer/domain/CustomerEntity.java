@@ -15,13 +15,13 @@ public class CustomerEntity extends BaseTimeEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(name = "cusPassNo", length = 100)
+  @Column(name = "cusPassNo", length = 63, nullable = false)
   private String passportNumber;
 
-  @Column(name = "cusNm", length = 50)
+  @Column(name = "cusNm", length = 40, nullable = false)
   private String customerName;
 
-  @Column(name = "cusNatn", length = 20)
+  @Column(name = "cusNatn", length = 3, nullable = false)
   private String nation;
 
   @Builder
