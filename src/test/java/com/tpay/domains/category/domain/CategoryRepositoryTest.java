@@ -15,13 +15,6 @@ import org.springframework.test.context.ActiveProfiles;
 class CategoryRepositoryTest {
 
   @Autowired private CategoryRepository categoryRepository;
-  private CategoryEntity categoryEntity;
-
-  @BeforeEach
-  public void setup() {
-    categoryEntity = CategoryEntity.builder().name("잡화").build();
-    categoryRepository.save(categoryEntity);
-  }
 
   @Test
   public void 카테고리_단일_조회_테스트() {
@@ -32,6 +25,6 @@ class CategoryRepositoryTest {
         categoryRepository.findAll().stream().findFirst().get();
 
     // then
-    assertThat(categoryEntity, is(equalTo(savedCategoryEntity)));
+    assertThat(savedCategoryEntity.getName(), is(equalTo("잡화")));
   }
 }
