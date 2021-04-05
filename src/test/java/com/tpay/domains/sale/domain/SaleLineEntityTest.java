@@ -37,9 +37,9 @@ class SaleLineEntityTest {
         SaleLineEntity.builder().productEntity(productEntity).quantity("4").build();
 
     // when
-    double calculatedVAT = Double.parseDouble(saleLineEntity.getVat());
+    Long calculatedVAT = Long.parseLong(saleLineEntity.getVat());
 
     // then
-    assertThat(calculatedVAT, is(closeTo(7272.7272, 0.0001)));
+    assertThat(calculatedVAT, is(7272L));
   }
 }
