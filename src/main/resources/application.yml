@@ -2,10 +2,17 @@
 spring:
   profiles:
     active: local
+jasypt:
+  encryptor:
+    iv-generator-classname: org.jasypt.iv.NoIvGenerator
+    property:
+      prefix: ENC(
+      suffix: )
+    algorithm: PBEWithMD5AndDES
 custom:
   iamport:
-    api-key: ENC(alEKNq1AuWCVee3wUU6liCPRE1XvdS2RQ0YnC0TKFdY=)
-    secret: ENC(TUN5QR86RpQeD5BDmsGT1I+DQRvrj08mgo/MdQvSxTn7MCwRctzsp1CSPNtowPgnk65p/J8aZRpVHuY2vND2cPyfcdTOfbqcxfQiJV8p+Tt0TS7iQQLu5izRkGy9sKO/)
+    api-key: ENC(3kgXokKn0qTHPo1G2BjET160prUBcKuaqPgY6Qq8PTw==)
+    secret: ENC(Ee+LkQqPvpJyYyppl12TgAAd1on8a0VWyz2nEIDhq/2vaN+hlT8NFPaUhy8UTs+w7daRAcj19dSJCxqVyEdwqB+MjRqadMeglzQJK0aDRPZISsO1smXSr6zmSxoaLHGu)
 
 ---
 
