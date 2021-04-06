@@ -26,6 +26,16 @@ dependencies {
 	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	// Java Simplified Encryption(Jasypt)
+	implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.3'
+
+	// Webflux
+	implementation('org.springframework.boot:spring-boot-starter-webflux');
+
+	// okhttp, mockwebserver
+	implementation 'com.squareup.okhttp3:okhttp:4.9.1'
+	implementation 'com.squareup.okhttp3:mockwebserver:4.9.1'
 }
 
 test {
