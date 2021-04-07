@@ -16,10 +16,9 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles(profiles = {"local", "test"})
 class PointRepositoryTest {
 
+  FranchiseeEntity franchiseeEntity;
   @Autowired private PointRepository pointRepository;
   @Autowired private FranchiseeRepository franchiseeRepository;
-
-  FranchiseeEntity franchiseeEntity;
 
   @BeforeEach
   public void setup() {
@@ -30,8 +29,10 @@ class PointRepositoryTest {
             .businessNumber("012-34-567")
             .storeName("SuccessMode")
             .storeAddress("Seoul")
+            .sellerName("Kim")
             .storeTel("010-1234-1234")
             .productCategory("잡화")
+            .password("TestPassowrd")
             .build();
 
     franchiseeRepository.save(franchiseeEntity);
