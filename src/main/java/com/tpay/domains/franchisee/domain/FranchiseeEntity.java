@@ -93,4 +93,9 @@ public class FranchiseeEntity extends BaseTimeEntity {
     }
     return this;
   }
+
+  public FranchiseeEntity resetPassword(String password) {
+    this.password = password;
+    return this;
+  }
 }
