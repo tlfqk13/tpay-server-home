@@ -30,8 +30,10 @@ class PointRepositoryTest {
             .businessNumber("012-34-567")
             .storeName("SuccessMode")
             .storeAddress("Seoul")
+            .sellerName("Kim")
             .storeTel("010-1234-1234")
             .productCategory("잡화")
+            .password("TestPassowrd")
             .build();
 
     franchiseeRepository.save(franchiseeEntity);
