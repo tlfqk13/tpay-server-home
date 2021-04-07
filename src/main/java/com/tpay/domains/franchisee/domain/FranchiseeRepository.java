@@ -7,4 +7,6 @@ public interface FranchiseeRepository extends JpaRepository<FranchiseeEntity, Lo
   boolean existsByBusinessNumber(String businessNumber);
 
   Optional<FranchiseeEntity> findByBusinessNumber(String businessNumber);
+
+  Optional<FranchiseeEntity> findBySellerNameAndStoreTel(String sellerName, String storeTel);
 }
