@@ -1,4 +1,4 @@
-package com.tpay.domains.certifications.application.dto;
+package com.tpay.domains.franchisee.application.dto;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -10,8 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class CertificateResponse {
-  private Long code;
-  private String name;
-  private String phone;
+public class FranchiseeSignUpResponse {
+  private Long id;
 }
