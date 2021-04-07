@@ -1,7 +1,8 @@
 package com.tpay.domains.point.domain;
 
 public enum SignType {
-  POSITIVE("+"), NEGATIVE("-");
+  POSITIVE("+"),
+  NEGATIVE("-");
 
   private final String type;
 

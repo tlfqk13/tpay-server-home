@@ -42,6 +42,7 @@ public class FranchiseeSignUpService {
             .build();
 
     franchiseeRepository.save(franchiseeEntity);
-    return ResponseEntity.ok(FranchiseeSignUpResponse.builder().id(franchiseeEntity.getId()).build());
+    return ResponseEntity.ok(
+        FranchiseeSignUpResponse.builder().id(franchiseeEntity.getId()).build());
   }
 }

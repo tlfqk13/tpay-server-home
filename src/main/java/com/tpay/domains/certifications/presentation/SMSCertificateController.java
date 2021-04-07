@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -16,8 +15,7 @@ public class SMSCertificateController {
   private final SMSCertificateService smsCertificateService;
 
   @GetMapping("/certifications/{imp_uid}")
-  public ResponseEntity<CertificateResponse> certificate(
-      @PathVariable String imp_uid) {
+  public ResponseEntity<CertificateResponse> certificate(@PathVariable String imp_uid) {
     return smsCertificateService.certificate(imp_uid);
   }
 }

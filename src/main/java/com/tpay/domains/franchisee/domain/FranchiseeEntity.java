@@ -58,8 +58,7 @@ public class FranchiseeEntity extends BaseTimeEntity {
   @Column(name = "prdNm", length = 100)
   private String productCategory;
 
-  @NotNull
-  private String password;
+  @NotNull private String password;
 
   private long balance;
 
@@ -88,7 +87,7 @@ public class FranchiseeEntity extends BaseTimeEntity {
 
   public FranchiseeEntity changeBalance(SignType signType, long change) {
     this.balance += signType == SignType.POSITIVE ? change : -change;
-    if(balance < 0) {
+    if (balance < 0) {
       throw new IllegalArgumentException("Balance should not be negative.");
     }
     return this;

@@ -27,7 +27,6 @@ class FranchiseeEntityTest {
 
     // then
     assertThat(franchiseeEntity.getBalance(), is(30000L));
-
   }
 
   @Test
@@ -41,13 +40,14 @@ class FranchiseeEntityTest {
     assertThat(franchiseeEntity.getBalance(), is(15000L));
   }
 
-
   @Test
   public void 프렌차이즈_포인트_출금금액_잔액보다큰_실패_예외_테스트() {
     // given
 
     // when
     // then
-    assertThrows(IllegalArgumentException.class, () -> franchiseeEntity.changeBalance(SignType.NEGATIVE, 30000L));
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> franchiseeEntity.changeBalance(SignType.NEGATIVE, 30000L));
   }
 }

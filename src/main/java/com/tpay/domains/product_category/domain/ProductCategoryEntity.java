@@ -3,7 +3,6 @@ package com.tpay.domains.product_category.domain;
 import com.tpay.domains.category.domain.CategoryEntity;
 import com.tpay.domains.product.domain.ProductEntity;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;

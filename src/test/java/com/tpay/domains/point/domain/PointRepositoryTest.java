@@ -16,10 +16,9 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles(profiles = {"local", "test"})
 class PointRepositoryTest {
 
+  FranchiseeEntity franchiseeEntity;
   @Autowired private PointRepository pointRepository;
   @Autowired private FranchiseeRepository franchiseeRepository;
-
-  FranchiseeEntity franchiseeEntity;
 
   @BeforeEach
   public void setup() {

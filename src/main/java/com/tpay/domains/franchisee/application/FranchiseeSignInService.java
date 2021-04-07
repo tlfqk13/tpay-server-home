@@ -4,6 +4,7 @@ import com.tpay.domains.franchisee.application.dto.FranchiseeSignInRequest;
 import com.tpay.domains.franchisee.application.dto.FranchiseeSignInResponse;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeRepository;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,6 +17,7 @@ public class FranchiseeSignInService {
   private final FranchiseeRepository franchiseeRepository;
   private final PasswordEncoder passwordEncoder;
 
+  @Transactional
   public ResponseEntity<FranchiseeSignInResponse> signIn(
       FranchiseeSignInRequest franchiseeSignInRequest) {
     FranchiseeEntity franchiseeEntity =

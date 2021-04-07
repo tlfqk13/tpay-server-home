@@ -16,7 +16,8 @@ public class FranchiseeSignUpController {
   private final FranchiseeSignUpService franchiseeSignUpService;
 
   @PostMapping("/franchisee")
-  public ResponseEntity<FranchiseeSignUpResponse> signUp(@RequestBody FranchiseeSignUpRequest franchiseeSignUpRequest) {
+  public ResponseEntity<FranchiseeSignUpResponse> signUp(
+      @RequestBody FranchiseeSignUpRequest franchiseeSignUpRequest) {
     return franchiseeSignUpService.signUp(franchiseeSignUpRequest);
   }
 }

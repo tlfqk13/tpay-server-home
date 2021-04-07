@@ -1,23 +1,22 @@
 package com.tpay.domains.sale.domain;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.customer.domain.CustomerRepository;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeRepository;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Random;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Random;
-
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 @DataJpaTest
 @ActiveProfiles(profiles = {"local", "test"})
@@ -29,8 +28,8 @@ class SaleRepositoryTest {
 
   CustomerEntity customerEntity;
   FranchiseeEntity franchiseeEntity;
-    String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-  String businessNumber = ("123-45-67890").replace("-","");
+  String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+  String businessNumber = ("123-45-67890").replace("-", "");
 
   @BeforeEach
   public void setup() {
@@ -76,16 +75,16 @@ class SaleRepositoryTest {
 
     // given
     SaleEntity saleEntity =
-            saleRepository.save(
-        SaleEntity.builder()
-            .saleDate(now)
-            .orderNumber("1932487633")
-            .totalAmount("129000")
-            .totalQuantity("1")
-            .totalVat("14190")
-            .customerEntity(customerEntity)
-            .franchiseeEntity(franchiseeEntity)
-            .build());
+        saleRepository.save(
+            SaleEntity.builder()
+                .saleDate(now)
+                .orderNumber("1932487633")
+                .totalAmount("129000")
+                .totalQuantity("1")
+                .totalVat("14190")
+                .customerEntity(customerEntity)
+                .franchiseeEntity(franchiseeEntity)
+                .build());
 
     // when
     List<SaleEntity> saleEntityList = saleRepository.findAll();

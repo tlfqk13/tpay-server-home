@@ -40,7 +40,7 @@ class FranchiseeRepositoryTest {
     assertThat(
         franchiseeEntity, is(equalTo(franchiseeRepository.findAll().stream().findFirst().get())));
   }
-  
+
   @Test
   public void 프렌차이즈_사업자등록번호로_가입여부_테스트() {
     // when
