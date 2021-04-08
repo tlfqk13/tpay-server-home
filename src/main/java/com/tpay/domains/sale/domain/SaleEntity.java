@@ -99,7 +99,7 @@ public class SaleEntity {
   public void setOrderNumber() {
     String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
     Random random = new Random();
-    int iValue = (random.nextInt(99));
+    int iValue = (random.nextInt(9));
     this.orderNumber = iValue + now;
   }
 
