@@ -48,8 +48,6 @@ class RefundRepositoryTest {
                 .storeAddress("안양")
                 .sellerName("주병천")
                 .productCategory("모자")
-                .memberNumber("0000")
-                .memberName("주병천")
                 .password("0000")
                 .businessNumber("0000000")
                 .build());

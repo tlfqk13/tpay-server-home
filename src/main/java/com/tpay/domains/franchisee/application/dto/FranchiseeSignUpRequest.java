@@ -4,8 +4,6 @@ import lombok.Getter;
 
 @Getter
 public class FranchiseeSignUpRequest {
-  private String memberName; // 가맹점명
-  private String memberNumber; // 가맹점 관리번호
   private String businessNumber; // 사업자등록번호
   private String storeName; // 판매자상호
   private String storeAddress; // 판매자주소
