@@ -36,7 +36,7 @@ public class SaleEntity {
   @Column(name = "purchsSn", length = 20, nullable = false)
   private String orderNumber;
 
-  @OneToOne
+  @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "customer_id", nullable = false)
   private CustomerEntity customerEntity;
 
