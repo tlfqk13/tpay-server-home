@@ -8,8 +8,13 @@ import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.customer.domain.CustomerRepository;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeRepository;
+import com.tpay.domains.product.domain.ProductEntity;
+import com.tpay.domains.product.domain.ProductRepository;
 import com.tpay.domains.sale.domain.SaleEntity;
+import com.tpay.domains.sale.domain.SaleLineEntity;
 import com.tpay.domains.sale.domain.SaleRepository;
+
+import java.util.LinkedList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,12 +30,29 @@ class RefundRepositoryTest {
   @Autowired private CustomerRepository customerRepository;
   @Autowired private FranchiseeRepository franchiseeRepository;
   @Autowired private SaleRepository saleRepository;
+  @Autowired private ProductRepository productRepository;
+
+
+  List<SaleLineEntity> saleLineEntityList = new LinkedList<>();
+
+  SaleEntity saleEntity;
 
   @BeforeEach
   public void setUp() {
 
     FranchiseeEntity franchiseeEntity =
-        franchiseeRepository.save(FranchiseeEntity.builder().build());
+        franchiseeRepository.save(
+            FranchiseeEntity.builder()
+                .storeTel("00000")
+                .storeName("SUCCESSMODE")
+                .storeAddress("안양")
+                .sellerName("주병천")
+                .productCategory("모자")
+                .memberNumber("0000")
+                .memberName("주병천")
+                .password("0000")
+                .businessNumber("0000000")
+                .build());
 
     CustomerEntity customerEntity =
         customerRepository.save(
@@ -39,17 +61,24 @@ class RefundRepositoryTest {
                 .nation("EN")
                 .passportNumber("SW1237674")
                 .build());
+    ProductEntity productEntity =
+        productRepository.save(
+            ProductEntity.builder()
+                .code("E112")
+                .lineNumber("1")
+                .name("BAG")
+                .price("20000")
+                .build());
 
-    SaleEntity saleEntity =
+    saleLineEntityList.add(
+        SaleLineEntity.builder().productEntity(productEntity).quantity("4").build());
+
+    saleEntity =
         saleRepository.save(
             SaleEntity.builder()
-                .orderNumber("TEST")
-                .totalAmount("340000")
-                .totalQuantity("1")
-                .totalVat("34000")
-                .saleDate("TEST")
                 .customerEntity(customerEntity)
                 .franchiseeEntity(franchiseeEntity)
+                .saleLineEntity(saleLineEntityList)
                 .build());
 
     saleRepository.save(saleEntity);
@@ -78,7 +107,8 @@ class RefundRepositoryTest {
   @Test
   public void 환급_상태_테스트() {
     // given
-    RefundEntity refundEntity = RefundEntity.builder().refundStatus(RefundStatus.APPROVAL).build();
+    RefundEntity refundEntity =
+        RefundEntity.builder().saleEntity(saleEntity).refundStatus(RefundStatus.APPROVAL).build();
 
     // then
     assertThat(refundEntity.getRefundStatus().toString(), is(equalTo("APPROVAL")));

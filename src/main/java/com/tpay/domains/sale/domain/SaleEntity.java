@@ -2,20 +2,14 @@ package com.tpay.domains.sale.domain;
 
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+
+import lombok.*;
+
+import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Random;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -50,21 +44,67 @@ public class SaleEntity {
   @JoinColumn(name = "franchisee_id", nullable = false)
   private FranchiseeEntity franchiseeEntity;
 
+  @OneToMany(mappedBy = "saleEntity")
+  private List<SaleLineEntity> saleLineEntity;
+
   @Builder
   public SaleEntity(
-      String saleDate,
       String totalVat,
       String totalAmount,
       String totalQuantity,
-      String orderNumber,
       CustomerEntity customerEntity,
-      FranchiseeEntity franchiseeEntity) {
-    this.saleDate = saleDate;
+      FranchiseeEntity franchiseeEntity,
+      List<SaleLineEntity> saleLineEntity) {
+
     this.totalVat = totalVat;
     this.totalAmount = totalAmount;
     this.totalQuantity = totalQuantity;
-    this.orderNumber = orderNumber;
     this.customerEntity = customerEntity;
     this.franchiseeEntity = franchiseeEntity;
+    this.saleLineEntity = saleLineEntity;
+    totalLineQuantity();
+    totalLineAmount();
+    totalLineVat();
+    setOrderNumber();
+    setSaleDate();
+  }
+
+  public void totalLineQuantity() {
+    Long sumQuantity =
+        this.saleLineEntity.stream()
+            .map(sale -> Long.parseLong(sale.getQuantity()))
+            .reduce(Long::sum)
+            .get();
+    this.totalQuantity = String.valueOf(sumQuantity);
+  }
+
+  public void totalLineAmount() {
+    Long sumAmount =
+        this.saleLineEntity.stream()
+            .map(sale -> Long.parseLong(sale.getTotalPrice()))
+            .reduce(Long::sum)
+            .get();
+    this.totalAmount = String.valueOf(sumAmount);
+  }
+
+  public void totalLineVat() {
+    Long sumVat =
+        this.saleLineEntity.stream()
+            .map(sale -> Long.parseLong(sale.getVat()))
+            .reduce(Long::sum)
+            .get();
+    this.totalVat = String.valueOf(sumVat);
+  }
+
+  public void setOrderNumber() {
+    String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+    Random random = new Random();
+    int iValue = (random.nextInt(99));
+    this.orderNumber = iValue + now;
+  }
+
+  public void setSaleDate() {
+    String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+    this.saleDate = now;
   }
 }

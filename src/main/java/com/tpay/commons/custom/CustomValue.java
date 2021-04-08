@@ -8,6 +8,7 @@ public class CustomValue {
 
   public static String IAMPORT_API_KEY;
   public static String IAMPORT_SECRET;
+  public static String REFUND_SERVER;
 
   @Value("${custom.iamport.api-key}")
   public void setIamportApiKey(String iamportApiKey) {
@@ -18,4 +19,10 @@ public class CustomValue {
   public void setIamportSecret(String iamportSecret) {
     IAMPORT_SECRET = iamportSecret;
   }
+
+  @Value("${custom.refund.server}")
+  public void setRefundServer(String refundServer) {
+    REFUND_SERVER = refundServer;
+  }
+
 }
