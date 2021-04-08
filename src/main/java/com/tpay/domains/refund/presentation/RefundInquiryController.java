@@ -2,10 +2,11 @@ package com.tpay.domains.refund.presentation;
 
 import com.tpay.domains.refund.application.RefundInquiryService;
 import com.tpay.domains.refund.application.dto.RefundInquiryRequest;
-import com.tpay.domains.refund.application.dto.RefundResponse;
+import com.tpay.domains.refund.application.dto.RefundInquiryResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -14,8 +15,9 @@ public class RefundInquiryController {
 
   private final RefundInquiryService refundInquiryService;
 
-  @GetMapping("/refund/inquiry")
-  private ResponseEntity<RefundResponse> refundInquiry(RefundInquiryRequest refundInquiryRequest) {
+  @PostMapping("/refund/inquiry")
+  private ResponseEntity<RefundInquiryResponse> refundInquiry(
+      @RequestBody RefundInquiryRequest refundInquiryRequest) {
     return ResponseEntity.ok(refundInquiryService.refundInquiry(refundInquiryRequest));
   }
 }
