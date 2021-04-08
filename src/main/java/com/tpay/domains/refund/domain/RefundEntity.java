@@ -42,4 +42,10 @@ public class RefundEntity {
     this.refundStatus = refundStatus;
     this.saleEntity = saleEntity;
   }
+
+  public void updateCancel(String responseCode) {
+    if (responseCode.equals("0000")) {
+      this.refundStatus = RefundStatus.CANCEL;
+    }
+  }
 }
