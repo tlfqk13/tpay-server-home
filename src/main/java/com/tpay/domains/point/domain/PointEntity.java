@@ -1,6 +1,7 @@
 package com.tpay.domains.point.domain;
 
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
+import java.time.LocalDateTime;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -26,6 +27,8 @@ public class PointEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
+
+  private LocalDateTime createdDate;
 
   @Enumerated(EnumType.STRING)
   private SignType signType;

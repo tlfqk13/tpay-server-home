@@ -2,6 +2,8 @@ package com.tpay.domains.franchisee.domain;
 
 import com.tpay.domains.BaseTimeEntity;
 import com.tpay.domains.point.domain.SignType;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,6 +16,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import okhttp3.Address;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -25,10 +28,6 @@ public class FranchiseeEntity extends BaseTimeEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
-
-  @NotNull
-  @Column(name = "memNm", length = 50)
-  private String memberName;
 
   @NotNull
   @Column(name = "memNo", length = 20)
@@ -64,8 +63,6 @@ public class FranchiseeEntity extends BaseTimeEntity {
 
   @Builder
   public FranchiseeEntity(
-      String memberName,
-      String memberNumber,
       String businessNumber,
       String storeName,
       String storeAddress,
@@ -73,8 +70,7 @@ public class FranchiseeEntity extends BaseTimeEntity {
       String storeTel,
       String productCategory,
       String password) {
-    this.memberName = memberName;
-    this.memberNumber = memberNumber;
+    this.memberNumber = createMemberNumber();
     this.businessNumber = businessNumber;
     this.storeName = storeName;
     this.storeAddress = storeAddress;
@@ -83,6 +79,11 @@ public class FranchiseeEntity extends BaseTimeEntity {
     this.productCategory = productCategory;
     this.password = password;
     this.balance = 0;
+  }
+
+  private String createMemberNumber() {
+    return "PAY"
+        + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS"));
   }
 
   public FranchiseeEntity changeBalance(SignType signType, long change) {
@@ -96,5 +97,12 @@ public class FranchiseeEntity extends BaseTimeEntity {
   public FranchiseeEntity resetPassword(String password) {
     this.password = password;
     return this;
+  }
+
+  public void modifyInfo(String storeName, String businessNumber, String storeAddress, String productCategory) {
+    this.storeName = storeName;
+    this.businessNumber = businessNumber;
+    this.storeAddress = storeAddress;
+    this.productCategory = productCategory;
   }
 }
