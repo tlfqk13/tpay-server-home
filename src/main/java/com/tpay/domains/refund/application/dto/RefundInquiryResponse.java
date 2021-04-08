@@ -7,9 +7,6 @@ import lombok.*;
 @Getter
 @Builder
 public class RefundInquiryResponse {
-  private String responseCode;
-  private String beforeDeduction;
-  private String afterDeduction;
-  private String errorCode;
-  private String message;
+  private Long userIndex;
+  private RefundResponse refundResponse;
 }
