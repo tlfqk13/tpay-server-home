@@ -20,8 +20,6 @@ class BaseTimeEntityTest {
   public void setup() {
     franchiseeEntity =
         FranchiseeEntity.builder()
-            .memberName("Success")
-            .memberNumber("0123-4567")
             .businessNumber("012-34-567")
             .storeName("SuccessMode")
             .storeAddress("Seoul")

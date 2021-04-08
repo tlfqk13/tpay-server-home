@@ -88,8 +88,6 @@ public class RefundAPITest {
     FranchiseeEntity franchiseeEntity =
         FranchiseeEntity.builder()
             .businessNumber("2390401226")
-            .memberName("SuccessMode")
-            .memberNumber("LEAD0001")
             .productCategory("기타")
             .sellerName("주병천")
             .storeAddress("경기 안양시 동안구 시민대로 327번길 11-41, 3층 302")
@@ -100,7 +98,6 @@ public class RefundAPITest {
     RefundApprovalRequest refundApprovalRequest =
         RefundApprovalRequest.builder()
             .businessNumber(franchiseeEntity.getBusinessNumber())
-            .franchiseeName(franchiseeEntity.getMemberName())
             .franchiseeNumber(franchiseeEntity.getMemberNumber())
             .sellerName(franchiseeEntity.getSellerName())
             .storeName(franchiseeEntity.getStoreName())
