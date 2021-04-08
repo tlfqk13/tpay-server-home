@@ -30,8 +30,6 @@ public class FranchiseeSignUpService {
     String password = passwordEncoder.encode(franchiseeSignUpRequest.getPassword());
     FranchiseeEntity franchiseeEntity =
         FranchiseeEntity.builder()
-            .memberName(franchiseeSignUpRequest.getMemberName())
-            .memberNumber(franchiseeSignUpRequest.getMemberNumber())
             .businessNumber(franchiseeSignUpRequest.getBusinessNumber())
             .storeName(franchiseeSignUpRequest.getStoreName())
             .storeAddress(franchiseeSignUpRequest.getStoreAddress())

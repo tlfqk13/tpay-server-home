@@ -2,6 +2,8 @@ package com.tpay.domains.franchisee.domain;
 
 import com.tpay.domains.BaseTimeEntity;
 import com.tpay.domains.point.domain.SignType;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -25,10 +27,6 @@ public class FranchiseeEntity extends BaseTimeEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
-
-  @NotNull
-  @Column(name = "memNm", length = 50)
-  private String memberName;
 
   @NotNull
   @Column(name = "memNo", length = 20)
@@ -64,7 +62,6 @@ public class FranchiseeEntity extends BaseTimeEntity {
 
   @Builder
   public FranchiseeEntity(
-      String memberName,
       String memberNumber,
       String businessNumber,
       String storeName,
@@ -73,8 +70,7 @@ public class FranchiseeEntity extends BaseTimeEntity {
       String storeTel,
       String productCategory,
       String password) {
-    this.memberName = memberName;
-    this.memberNumber = memberNumber;
+    this.memberNumber = createMemberNumber();
     this.businessNumber = businessNumber;
     this.storeName = storeName;
     this.storeAddress = storeAddress;
@@ -83,6 +79,11 @@ public class FranchiseeEntity extends BaseTimeEntity {
     this.productCategory = productCategory;
     this.password = password;
     this.balance = 0;
+  }
+
+  private String createMemberNumber() {
+    return "PAY"
+        + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS"));
   }
 
   public FranchiseeEntity changeBalance(SignType signType, long change) {
