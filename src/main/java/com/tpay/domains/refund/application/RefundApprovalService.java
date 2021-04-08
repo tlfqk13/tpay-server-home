@@ -5,6 +5,8 @@ import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.customer.domain.CustomerRepository;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeRepository;
+import com.tpay.domains.product.domain.ProductEntity;
+import com.tpay.domains.product.domain.ProductRepository;
 import com.tpay.domains.refund.application.dto.RefundApprovalRequest;
 import com.tpay.domains.refund.application.dto.RefundRequestProductInfoList;
 import com.tpay.domains.refund.application.dto.RefundResponse;
@@ -25,18 +27,17 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class RefundApprovalService {
+
   WebClient webClient = WebClient.builder().baseUrl(CustomValue.REFUND_SERVER).build();
 
   private final RefundRepository refundRepository;
   private final FranchiseeRepository franchiseeRepository;
   private final SaleLineRepository saleLineRepository;
+  private final ProductRepository productRepository;
   private final SaleRepository saleRepository;
   private final CustomerRepository customerRepository;
 
-  public RefundResponse refundApproval(
-      Long saleLineIndex, Long franchiseeIndex, Long customerIndex) {
-
-    List<SaleLineEntity> saleLineEntity = saleLineRepository.findAllById(saleLineIndex);
+  public RefundResponse refundApproval(Long franchiseeIndex, Long customerIndex, String price) {
 
     FranchiseeEntity franchiseeEntity =
         franchiseeRepository
@@ -47,33 +48,56 @@ public class RefundApprovalService {
             .findById(customerIndex)
             .orElseThrow(() -> new IllegalArgumentException("Invalid CustomerIndex"));
 
+    ProductEntity productEntity =
+        productRepository.save(
+            ProductEntity.builder()
+                .name(franchiseeEntity.getProductCategory())
+                .code("001")
+                .lineNumber("100")
+                .price(price)
+                .build());
+
+    List<SaleLineEntity> saleLineEntityList = new LinkedList<>();
+    saleLineEntityList.add(
+        SaleLineEntity.builder().productEntity(productEntity).quantity("1").build());
+
     SaleEntity saleEntity =
         saleRepository.save(
             SaleEntity.builder()
-                .saleLineEntity(saleLineEntity)
+                .saleLineEntity(saleLineEntityList)
                 .franchiseeEntity(franchiseeEntity)
                 .customerEntity(customerEntity)
                 .build());
 
+    saleLineRepository.save(
+        SaleLineEntity.builder()
+            .quantity("1")
+            .saleEntity(saleEntity)
+            .productEntity(productEntity)
+            .build());
+
     List<RefundRequestProductInfoList> refundRequestProductInfoList =
-        initRefundProductInfoList(saleLineEntity);
+        initRefundProductInfoList(saleLineEntityList);
 
     RefundApprovalRequest refundApprovalRequest =
         initRefundApproval(
             customerEntity, saleEntity, franchiseeEntity, refundRequestProductInfoList);
 
+    System.out.println("==========" + refundApprovalRequest);
     RefundResponse refundResponse =
         webClient
             .post()
             .uri("/refund/approval")
             .bodyValue(refundApprovalRequest)
-            .retrieve()
-            .bodyToMono(RefundResponse.class)
+            .exchangeToMono(clientResponse -> clientResponse.bodyToMono(RefundResponse.class))
             .block();
 
+    System.out.println("RefundCode ????????? " + refundResponse.getResponseCode());
     RefundStatus refundStatus =
-        refundResponse.getResponseCode() == "0000" ? RefundStatus.APPROVAL : RefundStatus.REJECT;
-
+        refundResponse.getResponseCode().equals("0000")
+            ? RefundStatus.APPROVAL
+            : RefundStatus.REJECT;
+    System.out.println(refundStatus);
     refundRepository.save(
         RefundEntity.builder()
             .refundStatus(refundStatus)
@@ -123,7 +147,7 @@ public class RefundApprovalService {
   }
 
   public List<RefundRequestProductInfoList> initRefundProductInfoList(
-       List<SaleLineEntity> saleLineEntity) {
+      List<SaleLineEntity> saleLineEntity) {
     List<RefundRequestProductInfoList> refundRequestProductInfoList = new LinkedList<>();
 
     for (SaleLineEntity sale : saleLineEntity) {
