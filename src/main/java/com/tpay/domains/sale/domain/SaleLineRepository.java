@@ -2,4 +2,9 @@ package com.tpay.domains.sale.domain;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface SaleLineRepository extends JpaRepository<SaleLineEntity, Long> {}
+import java.util.List;
+
+public interface SaleLineRepository extends JpaRepository<SaleLineEntity, Long> {
+
+  List<SaleLineEntity> findAllById(Long saleLineIndex);
+}

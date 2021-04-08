@@ -60,6 +60,7 @@ public class SaleLineEntity {
   }
 
   private void calculateVAT() {
-    this.vat = String.valueOf(Double.parseDouble(this.totalPrice) / 11);
+    Long calculatedVAT = Math.floorDiv(Long.parseLong(this.totalPrice), 11);
+    this.vat = String.valueOf(calculatedVAT);
   }
 }
