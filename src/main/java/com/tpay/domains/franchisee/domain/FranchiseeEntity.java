@@ -16,6 +16,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import okhttp3.Address;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -62,7 +63,6 @@ public class FranchiseeEntity extends BaseTimeEntity {
 
   @Builder
   public FranchiseeEntity(
-      String memberNumber,
       String businessNumber,
       String storeName,
       String storeAddress,
@@ -97,5 +97,12 @@ public class FranchiseeEntity extends BaseTimeEntity {
   public FranchiseeEntity resetPassword(String password) {
     this.password = password;
     return this;
+  }
+
+  public void modifyInfo(String storeName, String businessNumber, String storeAddress, String productCategory) {
+    this.storeName = storeName;
+    this.businessNumber = businessNumber;
+    this.storeAddress = storeAddress;
+    this.productCategory = productCategory;
   }
 }
