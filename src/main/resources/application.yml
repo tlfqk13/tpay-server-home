@@ -16,6 +16,9 @@ custom:
   refund:
     server: ENC(hNvkpC7V3AQi20pmvUks93nOwRpfzzEez91YLdN1tG9cuS9zCmHlUQ==)
 
+logging:
+  config: classpath:log4j2.yml
+
 ---
 
 ### Local Environment ###
