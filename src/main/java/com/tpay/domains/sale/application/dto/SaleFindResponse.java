@@ -7,6 +7,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 public class SaleFindResponse {
+    private Long saleId;
     private String totalRefund;
     private String orderNumber;
     private String saleDate;
