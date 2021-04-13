@@ -6,6 +6,7 @@ import com.tpay.domains.franchisee.application.dto.FranchiseeSignInResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,7 +16,7 @@ public class FranchiseeSignInController {
 
   private final FranchiseeSignInService franchiseeSignInService;
 
-  @GetMapping("/franchisee")
+  @PostMapping("/sign-in")
   public ResponseEntity<FranchiseeSignInResponse> signIn(
       @RequestBody FranchiseeSignInRequest franchiseeSignInRequest) {
     return franchiseeSignInService.signIn(franchiseeSignInRequest);
