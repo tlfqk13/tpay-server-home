@@ -8,6 +8,7 @@ import com.tpay.domains.franchisee.domain.FranchiseeRepository;
 import com.tpay.domains.product.domain.ProductEntity;
 import com.tpay.domains.product.domain.ProductRepository;
 import com.tpay.domains.refund.application.dto.RefundApprovalRequest;
+import com.tpay.domains.refund.application.dto.RefundRegisterRequest;
 import com.tpay.domains.refund.application.dto.RefundRequestProductInfoList;
 import com.tpay.domains.refund.application.dto.RefundResponse;
 import com.tpay.domains.refund.domain.RefundEntity;
@@ -37,15 +38,16 @@ public class RefundApprovalService {
   private final SaleRepository saleRepository;
   private final CustomerRepository customerRepository;
 
-  public RefundResponse refundApproval(Long franchiseeIndex, Long customerIndex, String price) {
+  public RefundResponse refundApproval(RefundRegisterRequest refundRegisterRequest) {
+    System.out.println(refundRegisterRequest.getFranchiseeIndex());
 
     FranchiseeEntity franchiseeEntity =
         franchiseeRepository
-            .findById(franchiseeIndex)
+            .findById(refundRegisterRequest.getFranchiseeIndex())
             .orElseThrow(() -> new IllegalArgumentException("Invalid FranchiseeIndex"));
     CustomerEntity customerEntity =
         customerRepository
-            .findById(customerIndex)
+            .findById(refundRegisterRequest.getCustomerIndex())
             .orElseThrow(() -> new IllegalArgumentException("Invalid CustomerIndex"));
 
     ProductEntity productEntity =
@@ -54,7 +56,7 @@ public class RefundApprovalService {
                 .name(franchiseeEntity.getProductCategory())
                 .code("001")
                 .lineNumber("100")
-                .price(price)
+                .price(refundRegisterRequest.getPrice())
                 .build());
 
     List<SaleLineEntity> saleLineEntityList = new LinkedList<>();
@@ -102,7 +104,7 @@ public class RefundApprovalService {
         RefundEntity.builder()
             .refundStatus(refundStatus)
             .saleEntity(saleEntity)
-            .totalRefund(saleEntity.getTotalVat())
+            .totalRefund(calTotalRefund(saleEntity.getTotalAmount()))
             .approvalNumber(refundResponse.getTakeoutNumber())
             .build());
 
@@ -112,8 +114,7 @@ public class RefundApprovalService {
   public String calTotalRefund(String amount) {
     double amt = Double.parseDouble(amount);
     int calRefund = (int) Math.floor(amt * 7) / 100;
-    String totalVAT = Integer.toString(calRefund);
-    return totalVAT;
+    return Integer.toString(calRefund);
   }
 
   public RefundApprovalRequest initRefundApproval(

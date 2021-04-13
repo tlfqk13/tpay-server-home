@@ -1,0 +1,44 @@
+Configuration:
+  name: Default
+  status: warn
+
+  Properties:
+    Property:
+      name: log-path
+      value: "log"
+
+  Appenders:
+    Console:
+      name: Console_Appender
+      target: SYSTEM_OUT
+      PatternLayout:
+        pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
+    #    File:
+    #      name: File_Appender
+    #      fileName: ${log-path}/logfile.log
+    #      PatternLayout:
+    #        pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
+    RollingFile:
+      name: RollingFile_Appender
+      fileName: ${log-path}/rollingfile.log
+      filePattern: "logs/archive/rollingfile.log.%d{yyyy-MM-dd-hh-mm}.gz"
+      PatternLayout:
+        pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
+      Policies:
+        SizeBasedTriggerIngPolicy:
+          size: 10 MB
+      DefaultRollOverStrategy:
+        max: 500
+  Loggers:
+    Root:
+      level: error
+      AppenderRef:
+        ref: Console_Appender
+    Logger:
+      -
+        name: com.dealink
+        #        additivity: false
+        level: debug
+        AppenderRef:
+          - ref: RollingFile_Appender
+          - ref: Console_Appender
