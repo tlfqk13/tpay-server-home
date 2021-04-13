@@ -1,5 +1,6 @@
 package com.tpay.domains.sale.domain;
 
+import com.tpay.domains.BaseTimeEntity;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 
@@ -16,7 +17,7 @@ import java.util.Random;
 @Table(name = "sale")
 @Entity
 @ToString
-public class SaleEntity {
+public class SaleEntity extends BaseTimeEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -36,7 +37,7 @@ public class SaleEntity {
   @Column(name = "purchsSn", length = 20, nullable = false)
   private String orderNumber;
 
-  @OneToOne(fetch = FetchType.LAZY)
+  @OneToOne
   @JoinColumn(name = "customer_id", nullable = false)
   private CustomerEntity customerEntity;
 

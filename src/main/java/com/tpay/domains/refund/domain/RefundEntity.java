@@ -1,5 +1,6 @@
 package com.tpay.domains.refund.domain;
 
+import com.tpay.domains.BaseTimeEntity;
 import com.tpay.domains.sale.domain.SaleEntity;
 
 import javax.persistence.*;
@@ -15,7 +16,7 @@ import lombok.ToString;
 @Table(name = "refund")
 @Entity
 @ToString
-public class RefundEntity {
+public class RefundEntity extends BaseTimeEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
