@@ -5,6 +5,7 @@ import com.tpay.domains.customer.domain.CustomerRepository;
 import com.tpay.domains.refund.application.dto.RefundInquiryRequest;
 import com.tpay.domains.refund.domain.RefundEntity;
 import com.tpay.domains.refund.domain.RefundRepository;
+import com.tpay.domains.refund.domain.RefundStatus;
 import com.tpay.domains.sale.application.dto.SaleFindResponse;
 import com.tpay.domains.sale.domain.SaleEntity;
 import com.tpay.domains.sale.domain.SaleRepository;
@@ -33,7 +34,9 @@ public class SaleFindService {
     saleEntityList.stream()
         .forEach(
             saleEntity -> {
-              RefundEntity refundEntity = refundRepository.findBySaleEntityId(saleEntity.getId());
+              RefundEntity refundEntity =
+                  refundRepository.findBySaleEntityIdAndRefundStatus(
+                      saleEntity.getId(), RefundStatus.APPROVAL);
               saleFindResponseList.add(
                   SaleFindResponse.builder()
                       .saleId(saleEntity.getId())
