@@ -104,7 +104,7 @@ public class RefundApprovalService {
         RefundEntity.builder()
             .refundStatus(refundStatus)
             .saleEntity(saleEntity)
-            .totalRefund(saleEntity.getTotalVat())
+            .totalRefund(calTotalRefund(saleEntity.getTotalAmount()))
             .approvalNumber(refundResponse.getTakeoutNumber())
             .build());
 
@@ -114,8 +114,7 @@ public class RefundApprovalService {
   public String calTotalRefund(String amount) {
     double amt = Double.parseDouble(amount);
     int calRefund = (int) Math.floor(amt * 7) / 100;
-    String totalVAT = Integer.toString(calRefund);
-    return totalVAT;
+    return Integer.toString(calRefund);
   }
 
   public RefundApprovalRequest initRefundApproval(
