@@ -10,18 +10,18 @@ import com.tpay.domains.sale.application.dto.SaleGroupingResponse;
 import com.tpay.domains.sale.application.dto.SalesAnalysisResponse;
 import com.tpay.domains.sale.domain.SaleEntity;
 import com.tpay.domains.sale.domain.SaleRepository;
-import lombok.RequiredArgsConstructor;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
@@ -54,56 +54,58 @@ public class SalesAnalysisService {
         saleRepository.findAllByFranchiseeEntityIdAndCreatedDateBetween(
             franchiseeIndex, startDate, endDate);
 
-    List<SaleGroupingResponse> saleGroupingResponseList =
-        saleEntityList.stream()
-            .map(
-                saleEntity -> {
-                  RefundEntity refundEntity =
-                      refundRepository.findBySaleEntityIdAndRefundStatus(
-                          saleEntity.getId(), RefundStatus.APPROVAL);
-                  return SaleGroupingResponse.builder()
-                      .saleDate(saleEntity.getSaleDate().substring(0, 8))
-                      .totalAmount(saleEntity.getTotalAmount())
-                      .totalRefund(refundEntity.getTotalRefund())
-                      .totalVAT(saleEntity.getTotalVat())
-                      .build();
-                })
-            .collect(Collectors.toList());
+    List<SaleGroupingResponse> saleGroupingResponseList = new ArrayList<>();
+    for (SaleEntity saleEntity : saleEntityList) {
+      RefundEntity refundEntity =
+          refundRepository.findBySaleEntityIdAndRefundStatus(
+              saleEntity.getId(), RefundStatus.APPROVAL);
+      if (refundEntity != null) {
+        saleGroupingResponseList.add(
+            SaleGroupingResponse.builder()
+                .saleDate(saleEntity.getSaleDate().substring(0, 8))
+                .totalAmount(saleEntity.getTotalAmount())
+                .totalRefund(refundEntity.getTotalRefund())
+                .totalVAT(saleEntity.getTotalVat())
+                .build());
+      }
+    }
 
     List<SalesAnalysisResponse> salesAnalysisResponse = new LinkedList<>();
 
-    saleGroupingResponseList.stream()
-        .collect(Collectors.groupingBy(SaleGroupingResponse::getSaleDate))
-        .forEach(
-            (saleDate, saleGroupingResponses) -> {
-              String totalAmount =
-                  saleGroupingResponses.stream()
-                      .map(sale -> Long.parseLong(sale.getTotalAmount()))
-                      .reduce(Long::sum)
-                      .get()
-                      .toString();
-              String totalRefund =
-                  saleGroupingResponses.stream()
-                      .map(sale -> Long.parseLong(sale.getTotalRefund()))
-                      .reduce(Long::sum)
-                      .get()
-                      .toString();
-              String totalVAT =
-                  saleGroupingResponses.stream()
-                      .map(sale -> Long.parseLong(sale.getTotalVAT()))
-                      .reduce(Long::sum)
-                      .get()
-                      .toString();
+    if (saleGroupingResponseList != null && saleGroupingResponseList.size() > 0) {
+      saleGroupingResponseList.stream()
+          .collect(Collectors.groupingBy(SaleGroupingResponse::getSaleDate))
+          .forEach(
+              (saleDate, saleGroupingResponses) -> {
+                String totalAmount =
+                    saleGroupingResponses.stream()
+                        .map(sale -> Long.parseLong(sale.getTotalAmount()))
+                        .reduce(Long::sum)
+                        .get()
+                        .toString();
+                String totalRefund =
+                    saleGroupingResponses.stream()
+                        .map(sale -> Long.parseLong(sale.getTotalRefund()))
+                        .reduce(Long::sum)
+                        .get()
+                        .toString();
+                String totalVAT =
+                    saleGroupingResponses.stream()
+                        .map(sale -> Long.parseLong(sale.getTotalVAT()))
+                        .reduce(Long::sum)
+                        .get()
+                        .toString();
 
-              salesAnalysisResponse.add(
-                  SalesAnalysisResponse.builder()
-                      .saleDate(saleDate)
-                      .totalAmount(totalAmount)
-                      .totalRefund(totalRefund)
-                      .totalVAT(totalVAT)
-                      .saleCount(saleGroupingResponses.size())
-                      .build());
-            });
+                salesAnalysisResponse.add(
+                    SalesAnalysisResponse.builder()
+                        .saleDate(saleDate)
+                        .totalAmount(totalAmount)
+                        .totalRefund(totalRefund)
+                        .totalVAT(totalVAT)
+                        .saleCount(saleGroupingResponses.size())
+                        .build());
+              });
+    }
 
     return salesAnalysisResponse;
   }
