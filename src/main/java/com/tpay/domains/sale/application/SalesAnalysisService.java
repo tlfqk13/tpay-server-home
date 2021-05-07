@@ -197,21 +197,20 @@ public class SalesAnalysisService {
     System.out.println(saleDate + "saleDate????????");
     System.out.println(saleEntityList.isEmpty() + "isEmpty??????");
 
-    List<SaleFindResponse> saleFindResponseList =
-        saleEntityList.stream()
-            .map(
-                saleEntity -> {
-                  RefundEntity refundEntity =
-                      refundRepository.findBySaleEntityIdAndRefundStatus(
-                          saleEntity.getId(), RefundStatus.APPROVAL);
-                  return SaleFindResponse.builder()
-                      .saleId(saleEntity.getId())
-                      .totalRefund(refundEntity.getTotalRefund())
-                      .saleDate(saleEntity.getSaleDate())
-                      .orderNumber(saleEntity.getOrderNumber())
-                      .build();
-                })
-            .collect(Collectors.toList());
+    List<SaleFindResponse> saleFindResponseList = new ArrayList<>();
+    for(SaleEntity saleEntity : saleEntityList) {
+      RefundEntity refundEntity =
+          refundRepository.findBySaleEntityIdAndRefundStatus(
+              saleEntity.getId(), RefundStatus.APPROVAL);
+      if(refundEntity != null) {
+        saleFindResponseList.add(SaleFindResponse.builder()
+            .saleId(saleEntity.getId())
+            .totalRefund(refundEntity.getTotalRefund())
+            .saleDate(saleEntity.getSaleDate())
+            .orderNumber(saleEntity.getOrderNumber())
+            .build());
+      }
+    }
     return saleFindResponseList;
   }
 }
