@@ -31,13 +31,12 @@ Configuration:
         max: 500
   Loggers:
     Root:
-      level: error
+      level: info
       AppenderRef:
         ref: Console_Appender
     Logger:
-      -
-        name: com.dealink
-        #        additivity: false
+      - name: com.tpay
+        additivity: false
         level: debug
         AppenderRef:
           - ref: RollingFile_Appender

@@ -9,11 +9,11 @@ import com.tpay.domains.refund.domain.RefundStatus;
 import com.tpay.domains.sale.application.dto.SaleFindResponse;
 import com.tpay.domains.sale.domain.SaleEntity;
 import com.tpay.domains.sale.domain.SaleRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
 import java.util.LinkedList;
 import java.util.List;
+import javax.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
@@ -22,29 +22,33 @@ public class SaleFindService {
   private final CustomerRepository customerRepository;
   private final RefundRepository refundRepository;
 
+  @Transactional
   public List<SaleFindResponse> findAllSale(RefundInquiryRequest refundInquiryRequest) {
     CustomerEntity customerEntity =
         customerRepository
             .findByCustomerNameAndPassportNumber(
                 refundInquiryRequest.getName(), refundInquiryRequest.getPassportNumber())
             .orElseThrow(() -> new IllegalArgumentException("Invalid Customer"));
+
     List<SaleEntity> saleEntityList =
         saleRepository.findAllByCustomerEntityId(customerEntity.getId());
+
     List<SaleFindResponse> saleFindResponseList = new LinkedList<>();
-    saleEntityList.stream()
-        .forEach(
-            saleEntity -> {
-              RefundEntity refundEntity =
-                  refundRepository.findBySaleEntityIdAndRefundStatus(
-                      saleEntity.getId(), RefundStatus.APPROVAL);
-              saleFindResponseList.add(
-                  SaleFindResponse.builder()
-                      .saleId(saleEntity.getId())
-                      .orderNumber(saleEntity.getOrderNumber())
-                      .saleDate(saleEntity.getSaleDate())
-                      .totalRefund(refundEntity.getTotalRefund())
-                      .build());
-            });
+    for (SaleEntity saleEntity : saleEntityList) {
+      RefundEntity refundEntity =
+          refundRepository.findBySaleEntityIdAndRefundStatus(
+              saleEntity.getId(), RefundStatus.APPROVAL);
+
+      if (refundEntity != null) {
+        saleFindResponseList.add(
+            SaleFindResponse.builder()
+                .saleId(saleEntity.getId())
+                .orderNumber(saleEntity.getOrderNumber())
+                .saleDate(saleEntity.getSaleDate())
+                .totalRefund(refundEntity.getTotalRefund())
+                .build());
+      }
+    }
 
     return saleFindResponseList;
   }
