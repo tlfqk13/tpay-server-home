@@ -18,6 +18,7 @@ import com.tpay.domains.sale.domain.SaleEntity;
 import com.tpay.domains.sale.domain.SaleLineEntity;
 import com.tpay.domains.sale.domain.SaleLineRepository;
 import com.tpay.domains.sale.domain.SaleRepository;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -38,9 +39,8 @@ public class RefundApprovalService {
   private final SaleRepository saleRepository;
   private final CustomerRepository customerRepository;
 
+  @Transactional
   public RefundResponse refundApproval(RefundRegisterRequest refundRegisterRequest) {
-    System.out.println(refundRegisterRequest.getFranchiseeIndex());
-
     FranchiseeEntity franchiseeEntity =
         franchiseeRepository
             .findById(refundRegisterRequest.getFranchiseeIndex())

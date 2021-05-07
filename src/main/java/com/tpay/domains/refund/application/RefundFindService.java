@@ -3,6 +3,7 @@ package com.tpay.domains.refund.application;
 import com.tpay.domains.refund.application.dto.RefundFindResponse;
 import com.tpay.domains.sale.domain.SaleEntity;
 import com.tpay.domains.sale.domain.SaleRepository;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 public class RefundFindService {
   private final SaleRepository saleRepository;
 
+  @Transactional
   public RefundFindResponse findRefundOne(String orderNumber) {
     SaleEntity saleEntity = saleRepository.findByOrderNumber(orderNumber);
     String totalAmount = saleEntity.getSaleLineEntity().stream().map(saleLineEntity -> Long.parseLong(saleLineEntity.getTotalPrice())).reduce(Long::sum).get().toString();
