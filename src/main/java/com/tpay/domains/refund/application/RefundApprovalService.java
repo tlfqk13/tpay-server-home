@@ -30,7 +30,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RefundApprovalService {
 
-  WebClient webClient = WebClient.builder().baseUrl(CustomValue.REFUND_SERVER).build();
+  //WebClient webClient = WebClient.builder().baseUrl(CustomValue.REFUND_SERVER).build();
+  WebClient webClient = WebClient.create("http://localhost:20001");
 
   private final RefundRepository refundRepository;
   private final FranchiseeRepository franchiseeRepository;

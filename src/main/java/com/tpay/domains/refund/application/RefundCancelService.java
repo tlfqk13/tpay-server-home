@@ -18,7 +18,8 @@ import javax.transaction.Transactional;
 @Service
 public class RefundCancelService {
 
-  WebClient webClient = WebClient.builder().baseUrl(CustomValue.REFUND_SERVER).build();
+  //WebClient webClient = WebClient.builder().baseUrl(CustomValue.REFUND_SERVER).build();
+  WebClient webClient = WebClient.create("http://localhost:20001");
 
   private final CustomerRepository customerRepository;
   private final RefundRepository refundCancelRequest;
