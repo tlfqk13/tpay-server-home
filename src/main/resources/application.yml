@@ -15,7 +15,6 @@ custom:
     secret: ENC(Ee+LkQqPvpJyYyppl12TgAAd1on8a0VWyz2nEIDhq/2vaN+hlT8NFPaUhy8UTs+w7daRAcj19dSJCxqVyEdwqB+MjRqadMeglzQJK0aDRPZISsO1smXSr6zmSxoaLHGu)
   refund:
     server: ENC(hNvkpC7V3AQi20pmvUks93nOwRpfzzEez91YLdN1tG9cuS9zCmHlUQ==)
-
 logging:
   config: classpath:log4j2.yml
 
@@ -46,4 +45,4 @@ spring:
     hibernate:
       ddl-auto: create
 server:
-  port: 80
+  port: 30001

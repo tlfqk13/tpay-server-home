@@ -1,10 +1,13 @@
 package com.tpay.domains.refund.application;
 
-import com.tpay.commons.custom.CustomValue;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.customer.domain.CustomerRepository;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeRepository;
+import com.tpay.domains.point.domain.PointEntity;
+import com.tpay.domains.point.domain.PointRepository;
+import com.tpay.domains.point.domain.PointStatus;
+import com.tpay.domains.point.domain.SignType;
 import com.tpay.domains.product.domain.ProductEntity;
 import com.tpay.domains.product.domain.ProductRepository;
 import com.tpay.domains.refund.application.dto.RefundApprovalRequest;
@@ -18,19 +21,20 @@ import com.tpay.domains.sale.domain.SaleEntity;
 import com.tpay.domains.sale.domain.SaleLineEntity;
 import com.tpay.domains.sale.domain.SaleLineRepository;
 import com.tpay.domains.sale.domain.SaleRepository;
+import java.time.LocalDateTime;
+import java.util.LinkedList;
+import java.util.List;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.LinkedList;
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class RefundApprovalService {
 
-  WebClient webClient = WebClient.builder().baseUrl(CustomValue.REFUND_SERVER).build();
+  // WebClient webClient = WebClient.builder().baseUrl(CustomValue.REFUND_SERVER).build();
+  WebClient webClient = WebClient.create("http://localhost:20001");
 
   private final RefundRepository refundRepository;
   private final FranchiseeRepository franchiseeRepository;
@@ -38,6 +42,7 @@ public class RefundApprovalService {
   private final ProductRepository productRepository;
   private final SaleRepository saleRepository;
   private final CustomerRepository customerRepository;
+  private final PointRepository pointRepository;
 
   @Transactional
   public RefundResponse refundApproval(RefundRegisterRequest refundRegisterRequest) {
@@ -107,6 +112,19 @@ public class RefundApprovalService {
             .totalRefund(calTotalRefund(saleEntity.getTotalAmount()))
             .approvalNumber(refundResponse.getTakeoutNumber())
             .build());
+
+    long point = (long) Math.floor(Double.parseDouble(saleEntity.getTotalAmount()) * 7) / 100;
+    franchiseeEntity.changeBalance(SignType.POSITIVE, point);
+    PointEntity pointEntity =
+        PointEntity.builder()
+            .createdDate(LocalDateTime.now())
+            .signType(SignType.POSITIVE)
+            .change(point)
+            .pointStatus(PointStatus.SAVE)
+            .balance(franchiseeEntity.getBalance())
+            .franchiseeEntity(franchiseeEntity)
+            .build();
+    pointRepository.save(pointEntity);
 
     return refundResponse;
   }
