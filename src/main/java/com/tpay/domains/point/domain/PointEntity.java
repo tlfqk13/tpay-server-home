@@ -2,6 +2,7 @@ package com.tpay.domains.point.domain;
 
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import java.time.LocalDateTime;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -33,6 +34,7 @@ public class PointEntity {
   @Enumerated(EnumType.STRING)
   private SignType signType;
 
+  @Column(name = "change_value")
   private long change;
 
   @Enumerated(EnumType.STRING)
