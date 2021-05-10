@@ -48,11 +48,13 @@ public class PointEntity {
 
   @Builder
   public PointEntity(
+      LocalDateTime createdDate,
       SignType signType,
       long change,
       PointStatus pointStatus,
       long balance,
       FranchiseeEntity franchiseeEntity) {
+    this.createdDate = createdDate;
     this.signType = signType;
     this.change = change;
     this.pointStatus = pointStatus;
