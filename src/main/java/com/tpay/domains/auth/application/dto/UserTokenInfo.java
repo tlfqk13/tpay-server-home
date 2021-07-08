@@ -1,4 +1,4 @@
-package com.tpay.domains.franchisee.application.dto;
+package com.tpay.domains.auth.application.dto;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -7,9 +7,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Builder
-public class FranchiseeSignUpResponse {
-  private Long id;
+public class UserTokenInfo {
+  private Long userIndex;
+  private String accessToken;
+  private String refreshToken;
 }

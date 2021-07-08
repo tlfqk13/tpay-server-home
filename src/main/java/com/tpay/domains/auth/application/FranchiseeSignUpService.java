@@ -1,4 +1,4 @@
-package com.tpay.domains.franchisee.application;
+package com.tpay.domains.auth.application;
 
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.AlreadyExistsException;
@@ -6,8 +6,7 @@ import com.tpay.commons.exception.detail.InvalidBusinessNumberException;
 import com.tpay.commons.exception.detail.InvalidPasswordException;
 import com.tpay.commons.regex.RegExType;
 import com.tpay.commons.regex.RegExUtils;
-import com.tpay.domains.franchisee.application.dto.FranchiseeSignUpRequest;
-import com.tpay.domains.franchisee.application.dto.FranchiseeSignUpResponse;
+import com.tpay.domains.auth.application.dto.FranchiseeSignUpRequest;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeRepository;
 import javax.transaction.Transactional;
@@ -24,7 +23,7 @@ public class FranchiseeSignUpService {
   private final RegExUtils regExUtils;
 
   @Transactional
-  public FranchiseeSignUpResponse signUp(FranchiseeSignUpRequest request) {
+  public void signUp(FranchiseeSignUpRequest request) {
 
     String businessNumber = request.getBusinessNumber();
     if (!regExUtils.validate(RegExType.BUSINESS_NUMBER, businessNumber)) {
@@ -56,6 +55,5 @@ public class FranchiseeSignUpService {
             .build();
 
     franchiseeRepository.save(franchiseeEntity);
-    return FranchiseeSignUpResponse.builder().id(franchiseeEntity.getId()).build();
   }
 }

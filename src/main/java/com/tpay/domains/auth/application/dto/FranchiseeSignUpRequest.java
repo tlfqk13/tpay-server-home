@@ -1,4 +1,4 @@
-package com.tpay.domains.franchisee.application.dto;
+package com.tpay.domains.auth.application.dto;
 
 import lombok.Getter;
 
