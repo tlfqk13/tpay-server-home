@@ -1,4 +1,4 @@
-package com.tpay.domains.franchisee.application.dto;
+package com.tpay.domains.auth.application.dto;
 
 import lombok.Getter;
 
@@ -10,5 +10,5 @@ public class FranchiseeSignUpRequest {
   private String sellerName; // 판매자이름
   private String storeTel; // 판매자 연락처
   private String productCategory; // 판매품목
-  private String password;
+  private String password; // 비밀번호
 }

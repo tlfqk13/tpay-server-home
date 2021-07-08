@@ -16,7 +16,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import okhttp3.Address;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -71,7 +70,7 @@ public class FranchiseeEntity extends BaseTimeEntity {
       String productCategory,
       String password) {
     this.memberNumber = createMemberNumber();
-    this.businessNumber = businessNumber;
+    this.businessNumber = businessNumber.replaceAll("-", "");
     this.storeName = storeName;
     this.storeAddress = storeAddress;
     this.sellerName = sellerName;
@@ -82,8 +81,7 @@ public class FranchiseeEntity extends BaseTimeEntity {
   }
 
   private String createMemberNumber() {
-    return "PAY"
-        + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS"));
+    return "PAY" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS"));
   }
 
   public FranchiseeEntity changeBalance(SignType signType, long change) {
@@ -99,7 +97,8 @@ public class FranchiseeEntity extends BaseTimeEntity {
     return this;
   }
 
-  public void modifyInfo(String storeName, String businessNumber, String storeAddress, String productCategory) {
+  public void modifyInfo(
+      String storeName, String businessNumber, String storeAddress, String productCategory) {
     this.storeName = storeName;
     this.businessNumber = businessNumber;
     this.storeAddress = storeAddress;
