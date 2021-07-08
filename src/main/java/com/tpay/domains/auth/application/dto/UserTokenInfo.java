@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class UserTokenInfo {
-  private Long userIndex;
+  private Long franchiseeIndex;
   private String accessToken;
   private String refreshToken;
 }
