@@ -39,7 +39,7 @@ public class FranchiseeSignUpService {
           ExceptionState.INVALID_PASSWORD, "Invalid Password Format");
     }
 
-    if (franchiseeRepository.existsByBusinessNumber(businessNumber)) {
+    if (franchiseeRepository.existsByBusinessNumber(businessNumber.replaceAll("-", ""))) {
       throw new AlreadyExistsException(ExceptionState.ALREADY_EXISTS, "Franchisee Already Exists");
     }
 
