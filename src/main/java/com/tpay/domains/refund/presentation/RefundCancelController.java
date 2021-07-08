@@ -14,9 +14,9 @@ public class RefundCancelController {
 
   private final RefundCancelService refundCancelService;
 
-  @PutMapping("/refund/{userIndex}/cancel/{saleIndex}")
+  @PutMapping("/refund/{userIndex}/cancel/{refundIndex}")
   public ResponseEntity<RefundCancelResponse> refundCancel(
-      @PathVariable Long userIndex, @PathVariable Long saleIndex) {
-    return ResponseEntity.ok(refundCancelService.refundCancel(userIndex,saleIndex));
+      @PathVariable Long userIndex, @PathVariable Long refundIndex) {
+    return ResponseEntity.ok(refundCancelService.refundCancel(userIndex, refundIndex));
   }
 }
