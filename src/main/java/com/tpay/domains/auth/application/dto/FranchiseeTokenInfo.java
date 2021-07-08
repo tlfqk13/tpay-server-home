@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class UserTokenInfo {
+public class FranchiseeTokenInfo {
   private Long franchiseeIndex;
   private String accessToken;
   private String refreshToken;
