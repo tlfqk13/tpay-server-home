@@ -8,6 +8,7 @@ import lombok.*;
 @Builder
 @ToString
 public class SaleFindResponse {
+    private Long refundId;
     private Long saleId;
     private String totalRefund;
     private String orderNumber;

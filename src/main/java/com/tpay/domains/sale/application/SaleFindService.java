@@ -42,6 +42,7 @@ public class SaleFindService {
       if (refundEntity != null) {
         saleFindResponseList.add(
             SaleFindResponse.builder()
+                .refundId(refundEntity.getId())
                 .saleId(saleEntity.getId())
                 .orderNumber(saleEntity.getOrderNumber())
                 .saleDate(saleEntity.getSaleDate())
