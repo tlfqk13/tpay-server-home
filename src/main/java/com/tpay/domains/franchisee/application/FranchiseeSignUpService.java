@@ -2,6 +2,8 @@ package com.tpay.domains.franchisee.application;
 
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.AlreadyExistsException;
+import com.tpay.commons.regex.RegExType;
+import com.tpay.commons.regex.RegExUtils;
 import com.tpay.domains.franchisee.application.dto.FranchiseeSignUpRequest;
 import com.tpay.domains.franchisee.application.dto.FranchiseeSignUpResponse;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
@@ -17,15 +19,26 @@ public class FranchiseeSignUpService {
 
   private final FranchiseeRepository franchiseeRepository;
   private final PasswordEncoder passwordEncoder;
+  private final RegExUtils regExUtils;
 
   @Transactional
   public FranchiseeSignUpResponse signUp(FranchiseeSignUpRequest request) {
 
-    if (franchiseeRepository.existsByBusinessNumber(request.getBusinessNumber())) {
+    String businessNumber = request.getBusinessNumber();
+    if (regExUtils.validate(RegExType.BUSINESS_NUMBER, businessNumber)) {
+      throw new IllegalArgumentException("Required Business Number Format : (XXX-XX-XXXXX)");
+    }
+
+    String password = request.getPassword();
+    if(regExUtils.validate(RegExType.PASSWORD, password)) {
+      throw new IllegalArgumentException("Invalid Password Format");
+    }
+
+    if (franchiseeRepository.existsByBusinessNumber(businessNumber)) {
       throw new AlreadyExistsException(ExceptionState.ALREADY_EXISTS, "Franchisee Already Exists");
     }
 
-    String password = passwordEncoder.encode(request.getPassword());
+    String encodedPassword = passwordEncoder.encode(password);
     FranchiseeEntity franchiseeEntity =
         FranchiseeEntity.builder()
             .businessNumber(request.getBusinessNumber())
@@ -34,7 +47,7 @@ public class FranchiseeSignUpService {
             .sellerName(request.getSellerName())
             .storeTel(request.getStoreTel())
             .productCategory(request.getProductCategory())
-            .password(password)
+            .password(encodedPassword)
             .build();
 
     franchiseeRepository.save(franchiseeEntity);
