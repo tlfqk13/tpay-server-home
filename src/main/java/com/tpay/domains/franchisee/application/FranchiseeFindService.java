@@ -23,4 +23,13 @@ public class FranchiseeFindService {
 
     return franchiseeEntity;
   }
+
+  public FranchiseeEntity findByIndex(Long franchiseeIndex) {
+    FranchiseeEntity franchiseeEntity =
+        franchiseeRepository
+            .findById(franchiseeIndex)
+            .orElseThrow(() -> new IllegalArgumentException("Invalid Franchisee ID"));
+
+    return franchiseeEntity;
+  }
 }

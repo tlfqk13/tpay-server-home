@@ -9,6 +9,7 @@ import com.tpay.domains.refund.domain.RefundStatus;
 import com.tpay.domains.sale.application.dto.SaleFindResponse;
 import com.tpay.domains.sale.domain.SaleEntity;
 import com.tpay.domains.sale.domain.SaleRepository;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import javax.transaction.Transactional;
@@ -21,6 +22,13 @@ public class SaleFindService {
   private final SaleRepository saleRepository;
   private final CustomerRepository customerRepository;
   private final RefundRepository refundRepository;
+
+  @Transactional
+  public List<SaleEntity> findAllByFranchiseeEntityIndex(Long franchiseeIndex) {
+    return saleRepository
+        .findAllByFranchiseeEntityId(franchiseeIndex)
+        .orElse(Collections.emptyList());
+  }
 
   @Transactional
   public List<SaleFindResponse> findAllSale(RefundInquiryRequest refundInquiryRequest) {

@@ -1,41 +1,37 @@
 package com.tpay.domains.mypage.application;
 
+import com.tpay.domains.franchisee.application.FranchiseeFindService;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
-import com.tpay.domains.franchisee.domain.FranchiseeRepository;
 import com.tpay.domains.mypage.application.dto.MyPageResponse;
+import com.tpay.domains.sale.application.SaleFindService;
 import com.tpay.domains.sale.domain.SaleEntity;
-import com.tpay.domains.sale.domain.SaleRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class MyPageService {
 
-  private final FranchiseeRepository franchiseeRepository;
-  private final SaleRepository saleRepository;
+  private final FranchiseeFindService franchiseeFindService;
+  private final SaleFindService saleFindService;
 
-  public ResponseEntity<MyPageResponse> mypage(Long franchiseeId) {
+  public MyPageResponse mypage(Long franchiseeIndex) {
 
-    FranchiseeEntity franchiseeEntity =
-        franchiseeRepository
-            .findById(franchiseeId)
-            .orElseThrow(() -> new IllegalArgumentException("Invalid Franchisee ID"));
-    List<SaleEntity> saleEntityList = saleRepository.findAllByFranchiseeEntityId(franchiseeId);
+    FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
+    List<SaleEntity> saleEntityList =
+        saleFindService.findAllByFranchiseeEntityIndex(franchiseeIndex);
 
     Long totalSaleAmount =
         saleEntityList.stream()
             .mapToLong(saleEntity -> Long.parseLong(saleEntity.getTotalAmount()))
             .sum();
 
-    return ResponseEntity.ok(
-        MyPageResponse.builder()
-            .storeName(franchiseeEntity.getStoreName())
-            .createdDate(franchiseeEntity.getCreatedDate())
-            .totalPoint(franchiseeEntity.getBalance())
-            .totalSalesAmount(totalSaleAmount)
-            .build());
+    return MyPageResponse.builder()
+        .storeName(franchiseeEntity.getStoreName())
+        .createdDate(franchiseeEntity.getCreatedDate())
+        .totalPoint(franchiseeEntity.getBalance())
+        .totalSalesAmount(totalSaleAmount)
+        .build();
   }
 }
