@@ -29,31 +29,35 @@ public class FranchiseeEntity extends BaseTimeEntity {
   private Long id;
 
   @NotNull
-  @Column(name = "memNo", length = 20)
+  @Column(name = "memNm", length = 50, nullable = false)
+  private String memberName;
+
+  @NotNull
+  @Column(name = "memNo", length = 20, nullable = false)
   private String memberNumber;
 
   @NotNull
-  @Column(name = "bizNo", length = 10)
+  @Column(name = "bizNo", length = 10, nullable = false)
   private String businessNumber;
 
   @NotNull
-  @Column(name = "storeNm", length = 50)
+  @Column(name = "storeNm", length = 50, nullable = false)
   private String storeName;
 
   @NotNull
-  @Column(name = "storeAddr", length = 140)
+  @Column(name = "storeAddr", length = 140, nullable = false)
   private String storeAddress;
 
   @NotNull
-  @Column(name = "selNm", length = 40)
+  @Column(name = "selNm", length = 40, nullable = false)
   private String sellerName;
 
   @NotNull
-  @Column(name = "storeTel", length = 26)
+  @Column(name = "storeTel", length = 26, nullable = false)
   private String storeTel;
 
   @NotNull
-  @Column(name = "prdNm", length = 100)
+  @Column(name = "prdNm", length = 100, nullable = false)
   private String productCategory;
 
   @NotNull private String password;

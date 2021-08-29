@@ -1,4 +1,4 @@
-package com.tpay.domains.auth.application;
+package com.tpay.domains.franchisee.application;
 
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.AlreadyExistsException;
@@ -6,7 +6,7 @@ import com.tpay.commons.exception.detail.InvalidBusinessNumberException;
 import com.tpay.commons.exception.detail.InvalidPasswordException;
 import com.tpay.commons.regex.RegExType;
 import com.tpay.commons.regex.RegExUtils;
-import com.tpay.domains.auth.application.dto.FranchiseeSignUpRequest;
+import com.tpay.domains.franchisee.application.dto.FranchiseeSignUpRequest;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeRepository;
 import javax.transaction.Transactional;
