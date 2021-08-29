@@ -1,7 +1,7 @@
-package com.tpay.domains.auth.presentation;
+package com.tpay.domains.franchisee.presentation;
 
-import com.tpay.domains.auth.application.FranchiseeSignUpService;
-import com.tpay.domains.auth.application.dto.FranchiseeSignUpRequest;
+import com.tpay.domains.franchisee.application.FranchiseeSignUpService;
+import com.tpay.domains.franchisee.application.dto.FranchiseeSignUpRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

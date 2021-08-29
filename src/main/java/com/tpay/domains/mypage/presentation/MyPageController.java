@@ -14,8 +14,9 @@ public class MyPageController {
 
   private final MyPageService myPageService;
 
-  @GetMapping("/mypage/{franchiseeId}")
-  public ResponseEntity<MyPageResponse> mypage(@PathVariable Long franchiseeId) {
-    return myPageService.mypage(franchiseeId);
+  @GetMapping("/mypage/{franchiseeIndex}")
+  public ResponseEntity<MyPageResponse> mypage(@PathVariable Long franchiseeIndex) {
+    MyPageResponse response = myPageService.mypage(franchiseeIndex);
+    return ResponseEntity.ok(response);
   }
 }

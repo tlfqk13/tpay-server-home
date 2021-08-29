@@ -1,13 +1,14 @@
 package com.tpay.domains.sale.domain;
 
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 public interface SaleRepository extends JpaRepository<SaleEntity, Long> {
-  List<SaleEntity> findAllByFranchiseeEntityId(Long franchiseeId);
+  Optional<List<SaleEntity>> findAllByFranchiseeEntityId(Long franchiseeId);
 
   List<SaleEntity> findAllByCustomerEntityId(Long customerIndex);
 
