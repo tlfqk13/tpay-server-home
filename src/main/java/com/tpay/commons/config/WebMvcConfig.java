@@ -1,6 +1,7 @@
 package com.tpay.commons.config;
 
 import com.tpay.commons.interceptor.AuthInterceptor;
+import com.tpay.commons.interceptor.PrintRequestInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -11,13 +12,22 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @RequiredArgsConstructor
 public class WebMvcConfig implements WebMvcConfigurer {
   private final AuthInterceptor authInterceptor;
+  private final PrintRequestInterceptor printRequestInterceptor;
 
   @Override
   public void addInterceptors(InterceptorRegistry registry) {
     registry
         .addInterceptor(authInterceptor)
         .addPathPatterns("/**")
-        .excludePathPatterns("/sign-in", "/sign-up", "/sign-out", "/refresh");
+        .excludePathPatterns(
+            "/sign-in",
+            "/sign-up",
+            "/sign-out",
+            "/refresh",
+            "/h2-console/**",
+            "/favicon.ico",
+            "/error");
+    registry.addInterceptor(printRequestInterceptor).addPathPatterns("/**");
   }
 
   @Override
