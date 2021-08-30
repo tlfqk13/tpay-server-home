@@ -15,6 +15,15 @@ public class FranchiseeApplicantFindService {
 
   private final FranchiseeApplicantRepository franchiseeApplicantRepository;
 
+  public FranchiseeApplicantEntity findByIndex(Long franchiseeApplicantIndex) {
+    FranchiseeApplicantEntity franchiseeApplicantEntity =
+        franchiseeApplicantRepository
+            .findById(franchiseeApplicantIndex)
+            .orElseThrow(() -> new IllegalArgumentException("Invalid Franchisee Applicant Index"));
+
+    return franchiseeApplicantEntity;
+  }
+
   public List<FranchiseeApplicantFindResponse> findAll() {
     List<FranchiseeApplicantFindResponse> franchiseeApplicantFindResponseList =
         franchiseeApplicantRepository.findAll().stream()
@@ -25,9 +34,7 @@ public class FranchiseeApplicantFindService {
 
   public FranchiseeApplicantFindResponse find(Long franchiseeApplicantIndex) {
     FranchiseeApplicantEntity franchiseeApplicantEntity =
-        franchiseeApplicantRepository
-            .findById(franchiseeApplicantIndex)
-            .orElseThrow(() -> new IllegalArgumentException("Invalid Franchisee Applicant Index"));
+        this.findByIndex(franchiseeApplicantIndex);
 
     return toResponse(franchiseeApplicantEntity);
   }
