@@ -23,7 +23,7 @@ public class FranchiseeApplicantFindService {
     return franchiseeApplicantFindResponseList;
   }
 
-  public FranchiseeApplicantFindResponse findByIndex(Long franchiseeApplicantIndex) {
+  public FranchiseeApplicantFindResponse find(Long franchiseeApplicantIndex) {
     FranchiseeApplicantEntity franchiseeApplicantEntity =
         franchiseeApplicantRepository
             .findById(franchiseeApplicantIndex)

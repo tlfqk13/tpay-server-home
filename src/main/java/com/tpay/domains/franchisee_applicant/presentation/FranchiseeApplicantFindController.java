@@ -25,7 +25,7 @@ public class FranchiseeApplicantFindController {
   public ResponseEntity<FranchiseeApplicantFindResponse> findByIndex(
       @PathVariable Long franchiseeApplicantIndex) {
     FranchiseeApplicantFindResponse response =
-        franchiseeApplicantFindService.findByIndex(franchiseeApplicantIndex);
+        franchiseeApplicantFindService.find(franchiseeApplicantIndex);
     return ResponseEntity.ok(response);
   }
 }
