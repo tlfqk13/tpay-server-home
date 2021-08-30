@@ -54,8 +54,8 @@ public class FranchiseeSignUpService {
             .storeTel(request.getStoreTel())
             .productCategory(request.getProductCategory())
             .password(encodedPassword)
-            .franchiseeApplicantEntity(franchiseeApplicantSaveService.getNewOne())
             .build();
     franchiseeRepository.save(franchiseeEntity);
+    franchiseeApplicantSaveService.save(franchiseeEntity);
   }
 }
