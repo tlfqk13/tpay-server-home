@@ -9,6 +9,7 @@ import com.tpay.commons.regex.RegExUtils;
 import com.tpay.domains.franchisee.application.dto.FranchiseeSignUpRequest;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeRepository;
+import com.tpay.domains.franchisee_applicant.application.FranchiseeApplicantSaveService;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,6 +22,7 @@ public class FranchiseeSignUpService {
   private final FranchiseeRepository franchiseeRepository;
   private final PasswordEncoder passwordEncoder;
   private final RegExUtils regExUtils;
+  private final FranchiseeApplicantSaveService franchiseeApplicantSaveService;
 
   @Transactional
   public void signUp(FranchiseeSignUpRequest request) {
@@ -52,8 +54,8 @@ public class FranchiseeSignUpService {
             .storeTel(request.getStoreTel())
             .productCategory(request.getProductCategory())
             .password(encodedPassword)
+            .franchiseeApplicantEntity(franchiseeApplicantSaveService.getNewOne())
             .build();
-
     franchiseeRepository.save(franchiseeEntity);
   }
 }
