@@ -1,7 +1,6 @@
 package com.tpay.domains.franchisee.domain;
 
 import com.tpay.domains.BaseTimeEntity;
-import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
 import com.tpay.domains.point.domain.SignType;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -10,8 +9,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -67,10 +64,6 @@ public class FranchiseeEntity extends BaseTimeEntity {
 
   private long balance;
 
-  @OneToOne
-  @JoinColumn(name = "franchisee_applicant_id")
-  private FranchiseeApplicantEntity franchiseeApplicantEntity;
-
   @Builder
   public FranchiseeEntity(
       String businessNumber,
@@ -79,8 +72,7 @@ public class FranchiseeEntity extends BaseTimeEntity {
       String sellerName,
       String storeTel,
       String productCategory,
-      String password,
-      FranchiseeApplicantEntity franchiseeApplicantEntity) {
+      String password) {
     this.memberName = "";
     this.memberNumber = createMemberNumber();
     this.businessNumber = businessNumber.replaceAll("-", "");
@@ -91,7 +83,6 @@ public class FranchiseeEntity extends BaseTimeEntity {
     this.productCategory = productCategory;
     this.password = password;
     this.balance = 0;
-    this.franchiseeApplicantEntity = franchiseeApplicantEntity;
   }
 
   private String createMemberNumber() {
