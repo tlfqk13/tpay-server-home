@@ -15,13 +15,13 @@ public class FranchiseeApplicantFindController {
 
   private final FranchiseeApplicantFindService franchiseeApplicantFindService;
 
-  @GetMapping("/franchisee-applicants")
+  @GetMapping("/admin/franchisee-applicants")
   public ResponseEntity<List<FranchiseeApplicantFindResponse>> findAll() {
     List<FranchiseeApplicantFindResponse> responseList = franchiseeApplicantFindService.findAll();
     return ResponseEntity.ok(responseList);
   }
 
-  @GetMapping("/franchisee-applicants/{franchiseeApplicantIndex}")
+  @GetMapping("/admin/franchisee-applicants/{franchiseeApplicantIndex}")
   public ResponseEntity<FranchiseeApplicantFindResponse> findByIndex(
       @PathVariable Long franchiseeApplicantIndex) {
     FranchiseeApplicantFindResponse response =
