@@ -1,4 +1,4 @@
-package com.tpay.admin.franchisee.application.dto;
+package com.tpay.domains.franchisee_applicant.application.dto;
 
 import lombok.Getter;
 import lombok.ToString;

@@ -13,8 +13,6 @@ custom:
   iamport:
     api-key: ENC(3kgXokKn0qTHPo1G2BjET160prUBcKuaqPgY6Qq8PTw==)
     secret: ENC(Ee+LkQqPvpJyYyppl12TgAAd1on8a0VWyz2nEIDhq/2vaN+hlT8NFPaUhy8UTs+w7daRAcj19dSJCxqVyEdwqB+MjRqadMeglzQJK0aDRPZISsO1smXSr6zmSxoaLHGu)
-  refund:
-    server: ENC(hNvkpC7V3AQi20pmvUks93nOwRpfzzEez91YLdN1tG9cuS9zCmHlUQ==)
   jwt:
     secret: ENC(JvO/H7QvecwZnzmStZ9mSMwA82V3PxSSbwrw6FQdsl6Z9zTN9/DovZ2P3eE5azmhJDPlgZcRYWnIhBeZwBOa1sf7E2xX7ZG8lSSIg1EzEcxFjOR/4zMbtA==)
 logging:
@@ -46,6 +44,9 @@ spring:
         format_sql: true
     hibernate:
       ddl-auto: create
+custom:
+  refund:
+    server: ENC(6tXPwPp+C1ZsZs57wnNnBdtDnlOucYN/5FZvSEju0HM=)
 server:
   port: 80
 
@@ -69,5 +70,8 @@ spring:
         format_sql: true
     hibernate:
       ddl-auto: none
+custom:
+  refund:
+    server: ENC(hNvkpC7V3AQi20pmvUks93nOwRpfzzEez91YLdN1tG9cuS9zCmHlUQ==)
 server:
   port: 30001
