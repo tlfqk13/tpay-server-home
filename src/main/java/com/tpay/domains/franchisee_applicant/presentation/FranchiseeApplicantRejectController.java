@@ -1,7 +1,7 @@
-package com.tpay.admin.franchisee.presentation;
+package com.tpay.domains.franchisee_applicant.presentation;
 
-import com.tpay.admin.franchisee.application.dto.FranchiseeApplicantRejectRequest;
-import com.tpay.domains.franchisee_applicant.application.FranchiseeApplicantUpdateService;
+import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeApplicantRejectRequest;
+import com.tpay.domains.franchisee_applicant.application.FranchiseeApplicantRejectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -11,15 +11,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-public class FranchiseeApplicantAcceptController {
+public class FranchiseeApplicantRejectController {
 
-  private final FranchiseeApplicantUpdateService franchiseeApplicantUpdateService;
+  private final FranchiseeApplicantRejectService franchiseeApplicantRejectService;
 
   @PatchMapping("/admin/franchisee-applicant/{franchiseeApplicantIndex}")
   public ResponseEntity reject(
       @PathVariable Long franchiseeApplicantIndex,
       @RequestBody FranchiseeApplicantRejectRequest rejectRequest) {
-    franchiseeApplicantUpdateService.reject(
+    franchiseeApplicantRejectService.reject(
         franchiseeApplicantIndex, rejectRequest.getRejectReason());
     return ResponseEntity.ok().build();
   }
