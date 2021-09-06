@@ -25,7 +25,7 @@ public class FranchiseeApplicantEntity extends BaseTimeEntity {
   private Long id;
 
   private String storeNumber;
-  private StoreStatus storeStatus;
+  private FranchiseeStatus franchiseeStatus;
   private String rejectReason;
 
   @OneToOne
@@ -35,21 +35,21 @@ public class FranchiseeApplicantEntity extends BaseTimeEntity {
   @Builder
   public FranchiseeApplicantEntity(FranchiseeEntity franchiseeEntity) {
     this.storeNumber = "";
-    this.storeStatus = StoreStatus.WAIT;
+    this.franchiseeStatus = FranchiseeStatus.WAIT;
     this.rejectReason = "";
     this.franchiseeEntity = franchiseeEntity;
   }
 
   public FranchiseeApplicantEntity accept(String storeNumber) {
     this.storeNumber = storeNumber;
-    this.storeStatus = StoreStatus.ACCEPTED;
+    this.franchiseeStatus = FranchiseeStatus.ACCEPTED;
     this.rejectReason = "";
     return this;
   }
 
   public FranchiseeApplicantEntity reject(String rejectReason) {
     this.rejectReason = rejectReason;
-    this.storeStatus = StoreStatus.REJECTED;
+    this.franchiseeStatus = FranchiseeStatus.REJECTED;
     return this;
   }
 }

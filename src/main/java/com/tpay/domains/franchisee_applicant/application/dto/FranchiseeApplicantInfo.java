@@ -1,6 +1,6 @@
 package com.tpay.domains.franchisee_applicant.application.dto;
 
-import com.tpay.domains.franchisee_applicant.domain.StoreStatus;
+import com.tpay.domains.franchisee_applicant.domain.FranchiseeStatus;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class FranchiseeApplicantFindResponse {
+public class FranchiseeApplicantInfo {
   private Long franchiseeApplicantIndex;
-  private StoreStatus storeStatus;
+  private FranchiseeStatus franchiseeStatus;
   private String rejectReason;
 
   private String memberName;
