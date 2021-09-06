@@ -1,5 +1,6 @@
 package com.tpay.domains.auth.application.dto;
 
+import com.tpay.domains.franchisee_applicant.domain.FranchiseeStatus;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,6 +13,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class FranchiseeTokenInfo {
   private Long franchiseeIndex;
+  private FranchiseeStatus franchiseeStatus;
+  private String rejectReason;
   private String accessToken;
   private String refreshToken;
 }

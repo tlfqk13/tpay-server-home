@@ -1,5 +1,7 @@
 package com.tpay.domains.franchisee_applicant.application;
 
+import com.tpay.commons.exception.ExceptionState;
+import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeApplicantInfo;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
@@ -39,8 +41,7 @@ public class FranchiseeApplicantFindService {
     return toResponse(franchiseeApplicantEntity);
   }
 
-  private FranchiseeApplicantInfo toResponse(
-      FranchiseeApplicantEntity franchiseeApplicantEntity) {
+  private FranchiseeApplicantInfo toResponse(FranchiseeApplicantEntity franchiseeApplicantEntity) {
     FranchiseeEntity franchiseeEntity = franchiseeApplicantEntity.getFranchiseeEntity();
 
     return FranchiseeApplicantInfo.builder()
@@ -55,5 +56,17 @@ public class FranchiseeApplicantFindService {
         .storeTel(franchiseeEntity.getStoreTel())
         .productCategory(franchiseeEntity.getProductCategory())
         .build();
+  }
+
+  public FranchiseeApplicantEntity findByBusinessNumber(String businessNumber) {
+    FranchiseeApplicantEntity franchiseeApplicantEntity =
+        franchiseeApplicantRepository
+            .findByFranchiseeEntityBusinessNumber(businessNumber)
+            .orElseThrow(
+                () ->
+                    new InvalidParameterException(
+                        ExceptionState.INVALID_PARAMETER, "가입 내역이 존재하지 않습니다."));
+
+    return franchiseeApplicantEntity;
   }
 }
