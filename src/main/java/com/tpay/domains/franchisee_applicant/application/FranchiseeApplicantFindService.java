@@ -1,7 +1,9 @@
 package com.tpay.domains.franchisee_applicant.application;
 
+import com.tpay.commons.exception.ExceptionState;
+import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
-import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeApplicantFindResponse;
+import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeApplicantInfo;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantRepository;
 import java.util.List;
@@ -24,36 +26,34 @@ public class FranchiseeApplicantFindService {
     return franchiseeApplicantEntity;
   }
 
-  public List<FranchiseeApplicantFindResponse> findAll() {
-    List<FranchiseeApplicantFindResponse> franchiseeApplicantFindResponseList =
+  public List<FranchiseeApplicantInfo> findAll() {
+    List<FranchiseeApplicantInfo> franchiseeApplicantInfoList =
         franchiseeApplicantRepository.findAll().stream()
-            .map(franchiseeApplicantEntity -> toResponse(franchiseeApplicantEntity))
+            .map(franchiseeApplicantEntity -> FranchiseeApplicantInfo.toResponse(franchiseeApplicantEntity))
             .collect(Collectors.toList());
-    return franchiseeApplicantFindResponseList;
+    return franchiseeApplicantInfoList;
   }
 
-  public FranchiseeApplicantFindResponse find(Long franchiseeApplicantIndex) {
+  public FranchiseeApplicantInfo find(Long franchiseeApplicantIndex) {
     FranchiseeApplicantEntity franchiseeApplicantEntity =
         this.findByIndex(franchiseeApplicantIndex);
 
-    return toResponse(franchiseeApplicantEntity);
+    return FranchiseeApplicantInfo.toResponse(franchiseeApplicantEntity);
   }
 
-  private FranchiseeApplicantFindResponse toResponse(
-      FranchiseeApplicantEntity franchiseeApplicantEntity) {
-    FranchiseeEntity franchiseeEntity = franchiseeApplicantEntity.getFranchiseeEntity();
 
-    return FranchiseeApplicantFindResponse.builder()
-        .franchiseeApplicantIndex(franchiseeApplicantEntity.getId())
-        .storeStatus(franchiseeApplicantEntity.getStoreStatus())
-        .rejectReason(franchiseeApplicantEntity.getRejectReason())
-        .memberName(franchiseeEntity.getMemberName())
-        .businessNumber(franchiseeEntity.getBusinessNumber())
-        .storeName(franchiseeEntity.getStoreName())
-        .storeAddress(franchiseeEntity.getStoreAddress())
-        .sellerName(franchiseeEntity.getSellerName())
-        .storeTel(franchiseeEntity.getStoreTel())
-        .productCategory(franchiseeEntity.getProductCategory())
-        .build();
+
+  public FranchiseeApplicantEntity findByBusinessNumber(String businessNumber) {
+    businessNumber = businessNumber.replaceAll("-", "");
+
+    FranchiseeApplicantEntity franchiseeApplicantEntity =
+        franchiseeApplicantRepository
+            .findByFranchiseeEntityBusinessNumber(businessNumber)
+            .orElseThrow(
+                () ->
+                    new InvalidParameterException(
+                        ExceptionState.INVALID_PARAMETER, "가입 내역이 존재하지 않습니다."));
+
+    return franchiseeApplicantEntity;
   }
 }
