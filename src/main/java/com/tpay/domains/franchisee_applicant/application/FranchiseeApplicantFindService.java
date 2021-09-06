@@ -29,7 +29,7 @@ public class FranchiseeApplicantFindService {
   public List<FranchiseeApplicantInfo> findAll() {
     List<FranchiseeApplicantInfo> franchiseeApplicantInfoList =
         franchiseeApplicantRepository.findAll().stream()
-            .map(franchiseeApplicantEntity -> toResponse(franchiseeApplicantEntity))
+            .map(franchiseeApplicantEntity -> FranchiseeApplicantInfo.toResponse(franchiseeApplicantEntity))
             .collect(Collectors.toList());
     return franchiseeApplicantInfoList;
   }
@@ -38,25 +38,10 @@ public class FranchiseeApplicantFindService {
     FranchiseeApplicantEntity franchiseeApplicantEntity =
         this.findByIndex(franchiseeApplicantIndex);
 
-    return toResponse(franchiseeApplicantEntity);
+    return FranchiseeApplicantInfo.toResponse(franchiseeApplicantEntity);
   }
 
-  private FranchiseeApplicantInfo toResponse(FranchiseeApplicantEntity franchiseeApplicantEntity) {
-    FranchiseeEntity franchiseeEntity = franchiseeApplicantEntity.getFranchiseeEntity();
 
-    return FranchiseeApplicantInfo.builder()
-        .franchiseeApplicantIndex(franchiseeApplicantEntity.getId())
-        .franchiseeStatus(franchiseeApplicantEntity.getFranchiseeStatus())
-        .rejectReason(franchiseeApplicantEntity.getRejectReason())
-        .memberName(franchiseeEntity.getMemberName())
-        .businessNumber(franchiseeEntity.getBusinessNumber())
-        .storeName(franchiseeEntity.getStoreName())
-        .storeAddress(franchiseeEntity.getStoreAddress())
-        .sellerName(franchiseeEntity.getSellerName())
-        .storeTel(franchiseeEntity.getStoreTel())
-        .productCategory(franchiseeEntity.getProductCategory())
-        .build();
-  }
 
   public FranchiseeApplicantEntity findByBusinessNumber(String businessNumber) {
     FranchiseeApplicantEntity franchiseeApplicantEntity =
