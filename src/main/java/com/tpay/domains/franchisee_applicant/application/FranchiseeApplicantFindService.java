@@ -44,6 +44,8 @@ public class FranchiseeApplicantFindService {
 
 
   public FranchiseeApplicantEntity findByBusinessNumber(String businessNumber) {
+    businessNumber = businessNumber.replaceAll("-", "");
+
     FranchiseeApplicantEntity franchiseeApplicantEntity =
         franchiseeApplicantRepository
             .findByFranchiseeEntityBusinessNumber(businessNumber)
