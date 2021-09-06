@@ -105,4 +105,9 @@ public class FranchiseeEntity extends BaseTimeEntity {
     this.storeAddress = storeAddress;
     this.productCategory = productCategory;
   }
+
+  public void memberInfo(String memberName, String memberNumber) {
+    this.memberName = memberName;
+    this.memberNumber = memberNumber;
+  }
 }

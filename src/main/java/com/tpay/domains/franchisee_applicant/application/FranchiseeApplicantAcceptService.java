@@ -1,6 +1,7 @@
 package com.tpay.domains.franchisee_applicant.application;
 
 import com.tpay.commons.custom.CustomValue;
+import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeInfo;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
 import javax.transaction.Transactional;
@@ -21,9 +22,12 @@ public class FranchiseeApplicantAcceptService {
     FranchiseeApplicantEntity franchiseeApplicantEntity =
         franchiseeApplicantFindService.findByIndex(franchiseeApplicantIndex);
 
+    FranchiseeEntity franchiseeEntity = franchiseeApplicantEntity.getFranchiseeEntity();
+
     FranchiseeInfo response = sendTo(franchiseeInfo);
 
-    franchiseeApplicantEntity.accept(response.getFranchiseeNumber());
+    franchiseeApplicantEntity.accept();
+    franchiseeEntity.memberInfo(response.getFranchiseeName(), response.getFranchiseeNumber());
     return response;
   }
 
