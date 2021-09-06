@@ -15,7 +15,7 @@ public class FranchiseeApplicantRejectController {
 
   private final FranchiseeApplicantRejectService franchiseeApplicantRejectService;
 
-  @PatchMapping("/admin/franchisee-applicant/{franchiseeApplicantIndex}")
+  @PatchMapping("/admin/franchisee-applicants/{franchiseeApplicantIndex}")
   public ResponseEntity reject(
       @PathVariable Long franchiseeApplicantIndex,
       @RequestBody FranchiseeApplicantRejectRequest rejectRequest) {

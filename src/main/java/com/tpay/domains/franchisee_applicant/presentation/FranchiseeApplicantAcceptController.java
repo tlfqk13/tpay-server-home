@@ -15,7 +15,7 @@ public class FranchiseeApplicantAcceptController {
 
   private final FranchiseeApplicantAcceptService franchiseeApplicantAcceptService;
 
-  @PutMapping("/admin/franchisee-applicant/{franchiseeApplicantIndex}")
+  @PutMapping("/admin/franchisee-applicants/{franchiseeApplicantIndex}")
   public ResponseEntity<FranchiseeInfo> accept(
       @PathVariable Long franchiseeApplicantIndex, @RequestBody FranchiseeInfo franchiseeInfo) {
     FranchiseeInfo response =
