@@ -1,7 +1,7 @@
 package com.tpay.domains.franchisee_applicant.application;
 
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
-import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeApplicantFindResponse;
+import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeApplicantInfo;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantRepository;
 import java.util.List;
@@ -24,28 +24,28 @@ public class FranchiseeApplicantFindService {
     return franchiseeApplicantEntity;
   }
 
-  public List<FranchiseeApplicantFindResponse> findAll() {
-    List<FranchiseeApplicantFindResponse> franchiseeApplicantFindResponseList =
+  public List<FranchiseeApplicantInfo> findAll() {
+    List<FranchiseeApplicantInfo> franchiseeApplicantInfoList =
         franchiseeApplicantRepository.findAll().stream()
             .map(franchiseeApplicantEntity -> toResponse(franchiseeApplicantEntity))
             .collect(Collectors.toList());
-    return franchiseeApplicantFindResponseList;
+    return franchiseeApplicantInfoList;
   }
 
-  public FranchiseeApplicantFindResponse find(Long franchiseeApplicantIndex) {
+  public FranchiseeApplicantInfo find(Long franchiseeApplicantIndex) {
     FranchiseeApplicantEntity franchiseeApplicantEntity =
         this.findByIndex(franchiseeApplicantIndex);
 
     return toResponse(franchiseeApplicantEntity);
   }
 
-  private FranchiseeApplicantFindResponse toResponse(
+  private FranchiseeApplicantInfo toResponse(
       FranchiseeApplicantEntity franchiseeApplicantEntity) {
     FranchiseeEntity franchiseeEntity = franchiseeApplicantEntity.getFranchiseeEntity();
 
-    return FranchiseeApplicantFindResponse.builder()
+    return FranchiseeApplicantInfo.builder()
         .franchiseeApplicantIndex(franchiseeApplicantEntity.getId())
-        .storeStatus(franchiseeApplicantEntity.getStoreStatus())
+        .franchiseeStatus(franchiseeApplicantEntity.getFranchiseeStatus())
         .rejectReason(franchiseeApplicantEntity.getRejectReason())
         .memberName(franchiseeEntity.getMemberName())
         .businessNumber(franchiseeEntity.getBusinessNumber())
