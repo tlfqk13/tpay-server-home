@@ -74,7 +74,7 @@ public class FranchiseeEntity extends BaseTimeEntity {
       String productCategory,
       String password) {
     this.memberName = "";
-    this.memberNumber = createMemberNumber();
+    this.memberNumber = "";
     this.businessNumber = businessNumber.replaceAll("-", "");
     this.storeName = storeName;
     this.storeAddress = storeAddress;
@@ -83,10 +83,6 @@ public class FranchiseeEntity extends BaseTimeEntity {
     this.productCategory = productCategory;
     this.password = password;
     this.balance = 0;
-  }
-
-  private String createMemberNumber() {
-    return "PAY" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS"));
   }
 
   public FranchiseeEntity changeBalance(SignType signType, long change) {

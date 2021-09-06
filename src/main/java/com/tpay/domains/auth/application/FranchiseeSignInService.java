@@ -3,8 +3,9 @@ package com.tpay.domains.auth.application;
 import com.tpay.commons.jwt.AuthToken;
 import com.tpay.domains.auth.application.dto.FranchiseeSignInRequest;
 import com.tpay.domains.auth.application.dto.FranchiseeTokenInfo;
-import com.tpay.domains.franchisee.application.FranchiseeFindService;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
+import com.tpay.domains.franchisee_applicant.application.FranchiseeApplicantFindService;
+import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,14 +15,17 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class FranchiseeSignInService {
 
-  private final FranchiseeFindService franchiseeFindService;
+  private final FranchiseeApplicantFindService franchiseeApplicantFindService;
   private final AuthService authService;
   private final PasswordEncoder passwordEncoder;
 
   @Transactional
   public FranchiseeTokenInfo signIn(FranchiseeSignInRequest franchiseeSignInRequest) {
-    FranchiseeEntity franchiseeEntity =
-        franchiseeFindService.findByBusinessNumber(franchiseeSignInRequest.getBusinessNumber());
+    FranchiseeApplicantEntity franchiseeApplicantEntity =
+        franchiseeApplicantFindService.findByBusinessNumber(
+            franchiseeSignInRequest.getBusinessNumber());
+
+    FranchiseeEntity franchiseeEntity = franchiseeApplicantEntity.getFranchiseeEntity();
 
     if (!passwordEncoder.matches(
         franchiseeSignInRequest.getPassword(), franchiseeEntity.getPassword())) {
@@ -34,6 +38,8 @@ public class FranchiseeSignInService {
 
     return FranchiseeTokenInfo.builder()
         .franchiseeIndex(franchiseeEntity.getId())
+        .franchiseeStatus(franchiseeApplicantEntity.getFranchiseeStatus())
+        .rejectReason(franchiseeApplicantEntity.getRejectReason())
         .accessToken(accessToken.getValue())
         .refreshToken(refreshToken.getValue())
         .build();
