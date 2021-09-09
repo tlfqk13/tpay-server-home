@@ -2,10 +2,10 @@ package com.tpay.domains.franchisee_applicant.application;
 
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
-import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeApplicantInfo;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantRepository;
+import com.tpay.domains.franchisee_applicant.domain.FranchiseeStatus;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +29,12 @@ public class FranchiseeApplicantFindService {
   public List<FranchiseeApplicantInfo> findAll() {
     List<FranchiseeApplicantInfo> franchiseeApplicantInfoList =
         franchiseeApplicantRepository.findAll().stream()
-            .map(franchiseeApplicantEntity -> FranchiseeApplicantInfo.toResponse(franchiseeApplicantEntity))
+            .filter(
+                franchiseeApplicantEntity ->
+                    franchiseeApplicantEntity.getFranchiseeStatus() != FranchiseeStatus.ACCEPTED)
+            .map(
+                franchiseeApplicantEntity ->
+                    FranchiseeApplicantInfo.toResponse(franchiseeApplicantEntity))
             .collect(Collectors.toList());
     return franchiseeApplicantInfoList;
   }
@@ -40,8 +45,6 @@ public class FranchiseeApplicantFindService {
 
     return FranchiseeApplicantInfo.toResponse(franchiseeApplicantEntity);
   }
-
-
 
   public FranchiseeApplicantEntity findByBusinessNumber(String businessNumber) {
     businessNumber = businessNumber.replaceAll("-", "");
