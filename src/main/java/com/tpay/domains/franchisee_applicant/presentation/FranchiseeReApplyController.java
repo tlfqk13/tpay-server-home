@@ -14,7 +14,7 @@ public class FranchiseeReApplyController {
 
   private final FranchiseeReApplyService franchiseeReApplyService;
 
-  @PostMapping("/admin/franchisee-applicants/{businessNumber}")
+  @PostMapping("/franchisee-applicants/{businessNumber}")
   public ResponseEntity<FranchiseeApplicantInfo> reapply(@PathVariable String businessNumber) {
     FranchiseeApplicantInfo response = franchiseeReApplyService.reapply(businessNumber);
     return ResponseEntity.ok(response);

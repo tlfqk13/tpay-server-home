@@ -2,8 +2,6 @@ package com.tpay.domains.franchisee.domain;
 
 import com.tpay.domains.BaseTimeEntity;
 import com.tpay.domains.point.domain.SignType;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -99,10 +97,15 @@ public class FranchiseeEntity extends BaseTimeEntity {
   }
 
   public void modifyInfo(
-      String storeName, String businessNumber, String storeAddress, String productCategory) {
+      String storeName, String storeAddress, String businessNumber, String productCategory) {
     this.storeName = storeName;
-    this.businessNumber = businessNumber;
     this.storeAddress = storeAddress;
+    this.businessNumber = businessNumber.replaceAll("-", "");
     this.productCategory = productCategory;
+  }
+
+  public void memberInfo(String memberName, String memberNumber) {
+    this.memberName = memberName;
+    this.memberNumber = memberNumber;
   }
 }

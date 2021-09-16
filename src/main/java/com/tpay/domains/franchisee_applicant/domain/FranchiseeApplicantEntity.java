@@ -24,7 +24,6 @@ public class FranchiseeApplicantEntity extends BaseTimeEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  private String storeNumber;
   private FranchiseeStatus franchiseeStatus;
   private String rejectReason;
 
@@ -34,14 +33,12 @@ public class FranchiseeApplicantEntity extends BaseTimeEntity {
 
   @Builder
   public FranchiseeApplicantEntity(FranchiseeEntity franchiseeEntity) {
-    this.storeNumber = "";
     this.franchiseeStatus = FranchiseeStatus.WAIT;
     this.rejectReason = "";
     this.franchiseeEntity = franchiseeEntity;
   }
 
-  public FranchiseeApplicantEntity accept(String storeNumber) {
-    this.storeNumber = storeNumber;
+  public FranchiseeApplicantEntity accept() {
     this.franchiseeStatus = FranchiseeStatus.ACCEPTED;
     this.rejectReason = "";
     return this;

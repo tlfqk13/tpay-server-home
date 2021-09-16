@@ -10,8 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class FranchiseeUpdateResponse {
-  private Long id;
+public class FranchiseeUpdateInfo {
   private String storeName;
   private String storeAddress;
   private String businessNumber;
