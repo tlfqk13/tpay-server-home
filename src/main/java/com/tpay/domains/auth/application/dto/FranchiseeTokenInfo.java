@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class FranchiseeTokenInfo {
   private Long franchiseeIndex;
+  private String businessNumber;
   private FranchiseeStatus franchiseeStatus;
   private String rejectReason;
   private String accessToken;
