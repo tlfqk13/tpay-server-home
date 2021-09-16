@@ -38,6 +38,7 @@ public class FranchiseeSignInService {
 
     return FranchiseeTokenInfo.builder()
         .franchiseeIndex(franchiseeEntity.getId())
+        .businessNumber(franchiseeEntity.getBusinessNumber())
         .franchiseeStatus(franchiseeApplicantEntity.getFranchiseeStatus())
         .rejectReason(franchiseeApplicantEntity.getRejectReason())
         .accessToken(accessToken.getValue())

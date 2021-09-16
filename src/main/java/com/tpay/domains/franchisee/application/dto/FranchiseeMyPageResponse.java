@@ -1,4 +1,4 @@
-package com.tpay.domains.mypage.application.dto;
+package com.tpay.domains.franchisee.application.dto;
 
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class MyPageResponse {
+public class FranchiseeMyPageResponse {
   private String storeName;
   private LocalDateTime createdDate;
   private Long totalSalesAmount;

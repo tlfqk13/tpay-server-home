@@ -25,6 +25,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
             "/sign-out",
             "/refresh",
             "/categories",
+            "/admin/**",
             "/h2-console/**",
             "/favicon.ico",
             "/error");
