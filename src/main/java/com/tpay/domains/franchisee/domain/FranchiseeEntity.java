@@ -100,7 +100,7 @@ public class FranchiseeEntity extends BaseTimeEntity {
       String storeName, String storeAddress, String businessNumber, String productCategory) {
     this.storeName = storeName;
     this.storeAddress = storeAddress;
-    this.businessNumber = businessNumber;
+    this.businessNumber = businessNumber.replaceAll("-", "");
     this.productCategory = productCategory;
   }
 
