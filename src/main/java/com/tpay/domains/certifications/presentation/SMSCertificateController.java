@@ -16,6 +16,7 @@ public class SMSCertificateController {
 
   @GetMapping("/certifications/{imp_uid}")
   public ResponseEntity<CertificateResponse> certificate(@PathVariable String imp_uid) {
-    return smsCertificateService.certificate(imp_uid);
+    CertificateResponse response = smsCertificateService.certificate(imp_uid);
+    return ResponseEntity.ok(response);
   }
 }
