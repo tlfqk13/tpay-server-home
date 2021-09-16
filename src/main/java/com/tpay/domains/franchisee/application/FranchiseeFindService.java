@@ -28,7 +28,7 @@ public class FranchiseeFindService {
     FranchiseeEntity franchiseeEntity =
         franchiseeRepository
             .findById(franchiseeIndex)
-            .orElseThrow(() -> new IllegalArgumentException("Invalid Franchisee ID"));
+            .orElseThrow(() -> new IllegalArgumentException("Invalid Franchisee Index"));
 
     return franchiseeEntity;
   }
