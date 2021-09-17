@@ -15,7 +15,7 @@ public class BusinessNumberFindService {
   private final FranchiseeRepository franchiseeRepository;
 
   @Transactional
-  public ResponseEntity<String> findBusinessNumber(
+  public String findBusinessNumber(
       BusinessNumberFindRequest businessNumberFindRequest) {
     FranchiseeEntity franchiseeEntity =
         franchiseeRepository
@@ -23,6 +23,6 @@ public class BusinessNumberFindService {
                 businessNumberFindRequest.getSellerName(), businessNumberFindRequest.getStoreTel())
             .orElseThrow(() -> new IllegalArgumentException("Invalid Seller Name or Store Tel"));
 
-    return ResponseEntity.ok(franchiseeEntity.getBusinessNumber());
+    return franchiseeEntity.getBusinessNumber();
   }
 }

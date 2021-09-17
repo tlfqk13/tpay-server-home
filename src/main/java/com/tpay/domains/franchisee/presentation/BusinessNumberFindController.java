@@ -14,9 +14,9 @@ public class BusinessNumberFindController {
 
   private final BusinessNumberFindService businessNumberFindService;
 
-  @PostMapping("/franchisee/find")
-  public ResponseEntity<String> findBusinessNumber(
-      @RequestBody BusinessNumberFindRequest businessNumberFindRequest) {
-    return businessNumberFindService.findBusinessNumber(businessNumberFindRequest);
+  @PostMapping("/franchisee/business-number")
+  public ResponseEntity<String> findBusinessNumber(@RequestBody BusinessNumberFindRequest request) {
+    String businessNumber = businessNumberFindService.findBusinessNumber(request);
+    return ResponseEntity.ok(businessNumber);
   }
 }
