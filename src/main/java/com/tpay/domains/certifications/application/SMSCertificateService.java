@@ -25,7 +25,7 @@ public class SMSCertificateService {
     return CertificateResponse.builder()
         .code(certificationInfo.getCode())
         .name(certificationInfo.getResponse().getName())
-        .phone(certificationInfo.getResponse().getPhone())
+        .phoneNumber(certificationInfo.getResponse().getPhone())
         .build();
   }
 
