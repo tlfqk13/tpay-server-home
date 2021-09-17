@@ -5,7 +5,6 @@ import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeRepository;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,12 +14,11 @@ public class BusinessNumberFindService {
   private final FranchiseeRepository franchiseeRepository;
 
   @Transactional
-  public String findBusinessNumber(
-      BusinessNumberFindRequest businessNumberFindRequest) {
+  public String findBusinessNumber(BusinessNumberFindRequest businessNumberFindRequest) {
     FranchiseeEntity franchiseeEntity =
         franchiseeRepository
             .findBySellerNameAndStoreTel(
-                businessNumberFindRequest.getSellerName(), businessNumberFindRequest.getStoreTel())
+                businessNumberFindRequest.getName(), businessNumberFindRequest.getPhoneNumber())
             .orElseThrow(() -> new IllegalArgumentException("Invalid Seller Name or Store Tel"));
 
     return franchiseeEntity.getBusinessNumber();
