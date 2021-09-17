@@ -16,7 +16,7 @@ public class PasswordResetService {
   private final PasswordEncoder passwordEncoder;
 
   @Transactional
-  public ResponseEntity resetPassword(PasswordResetRequest passwordResetRequest) {
+  public ResponseEntity reset(PasswordResetRequest passwordResetRequest) {
     FranchiseeEntity franchiseeEntity =
         franchiseeFindService.findByBusinessNumber(passwordResetRequest.getBusinessNumber());
 
