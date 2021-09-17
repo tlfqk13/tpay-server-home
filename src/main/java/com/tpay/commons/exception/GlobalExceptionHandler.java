@@ -81,7 +81,7 @@ public class GlobalExceptionHandler {
 
     exception.printStackTrace();
     ExceptionResponse response =
-        ExceptionResponse.of(request, new UnknownException(ExceptionState.UNKNOWN));
+        ExceptionResponse.of(request, new UnknownException(ExceptionState.UNKNOWN, exception.getMessage()));
 
     return ResponseEntity.badRequest().body(response);
   }
