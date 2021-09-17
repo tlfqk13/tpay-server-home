@@ -108,4 +108,12 @@ public class FranchiseeEntity extends BaseTimeEntity {
     this.memberName = memberName;
     this.memberNumber = memberNumber;
   }
+
+  public boolean isValidUser(String name, String phoneNumber) {
+    boolean isValid = false;
+    if(name.equals(this.sellerName) && phoneNumber.equals(this.storeTel)) {
+      isValid = true;
+    }
+    return isValid;
+  }
 }

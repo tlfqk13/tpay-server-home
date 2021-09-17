@@ -5,5 +5,7 @@ import lombok.Getter;
 @Getter
 public class PasswordResetRequest {
   private String businessNumber;
-  private String password;
+  private String name;
+  private String phoneNumber;
+  private String newPassword;
 }

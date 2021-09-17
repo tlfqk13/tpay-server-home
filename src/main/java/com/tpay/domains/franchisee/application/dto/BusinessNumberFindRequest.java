@@ -4,6 +4,6 @@ import lombok.Getter;
 
 @Getter
 public class BusinessNumberFindRequest {
-  private String sellerName;
-  private String storeTel;
+  private String name;
+  private String phoneNumber;
 }
