@@ -1,5 +1,7 @@
 package com.tpay.domains.franchisee.application;
 
+import com.tpay.commons.exception.ExceptionState;
+import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.domains.franchisee.application.dto.PasswordResetRequest;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import javax.transaction.Transactional;
@@ -16,11 +18,17 @@ public class PasswordResetService {
   private final PasswordEncoder passwordEncoder;
 
   @Transactional
-  public ResponseEntity reset(PasswordResetRequest passwordResetRequest) {
+  public ResponseEntity reset(PasswordResetRequest request) {
     FranchiseeEntity franchiseeEntity =
-        franchiseeFindService.findByBusinessNumber(passwordResetRequest.getBusinessNumber());
+        franchiseeFindService.findByBusinessNumber(request.getBusinessNumber());
 
-    franchiseeEntity.resetPassword(passwordEncoder.encode(passwordResetRequest.getPassword()));
+    if (!franchiseeEntity.isValidUser(request.getName(), request.getPhoneNumber())) {
+      throw new InvalidParameterException(
+          ExceptionState.INVALID_PARAMETER,
+          "Mismatch between BusinessNumber and Certification Info");
+    }
+
+    franchiseeEntity.resetPassword(passwordEncoder.encode(request.getNewPassword()));
     return ResponseEntity.ok().build();
   }
 }
