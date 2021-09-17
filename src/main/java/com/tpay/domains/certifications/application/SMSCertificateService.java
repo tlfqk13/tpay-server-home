@@ -8,7 +8,6 @@ import com.tpay.domains.certifications.application.dto.TokenResponse;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -19,16 +18,15 @@ public class SMSCertificateService {
   private final WebClient.Builder builder;
 
   @Transactional
-  public ResponseEntity<CertificateResponse> certificate(String imp_uid) {
+  public CertificateResponse certificate(String imp_uid) {
     String accessToken = getAccessToken();
     CertificationInfo certificationInfo = getCertifications(accessToken, imp_uid);
 
-    return ResponseEntity.ok(
-        CertificateResponse.builder()
-            .code(certificationInfo.getCode())
-            .name(certificationInfo.getResponse().getName())
-            .phone(certificationInfo.getResponse().getPhone())
-            .build());
+    return CertificateResponse.builder()
+        .code(certificationInfo.getCode())
+        .name(certificationInfo.getResponse().getName())
+        .phoneNumber(certificationInfo.getResponse().getPhone())
+        .build();
   }
 
   private CertificationInfo getCertifications(String accessToken, String imp_uid) {

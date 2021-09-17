@@ -16,6 +16,7 @@ public class PasswordResetController {
 
   @PatchMapping("/franchisee/password")
   public ResponseEntity resetPassword(@RequestBody PasswordResetRequest passwordResetRequest) {
-    return passwordResetService.resetPassword(passwordResetRequest);
+    passwordResetService.reset(passwordResetRequest);
+    return ResponseEntity.ok().build();
   }
 }

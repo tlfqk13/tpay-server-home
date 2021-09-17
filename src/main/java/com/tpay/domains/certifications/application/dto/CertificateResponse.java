@@ -13,5 +13,5 @@ import lombok.NoArgsConstructor;
 public class CertificateResponse {
   private Long code;
   private String name;
-  private String phone;
+  private String phoneNumber;
 }

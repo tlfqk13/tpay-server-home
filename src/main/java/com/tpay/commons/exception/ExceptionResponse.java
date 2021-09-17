@@ -20,6 +20,7 @@ public class ExceptionResponse {
   private String code;
   private String message;
   private String requestURI;
+  private String queryString;
   private String requestMethod;
 
   public static ExceptionResponse of(CustomException exception) {
@@ -32,6 +33,7 @@ public class ExceptionResponse {
         .code(state.getCode())
         .message(exception.getMessage())
         .requestURI("")
+        .queryString("")
         .requestMethod("")
         .build();
   }
@@ -46,6 +48,7 @@ public class ExceptionResponse {
         .code(state.getCode())
         .message(exception.getMessage())
         .requestURI(request.getRequestURI())
+        .queryString(request.getQueryString())
         .requestMethod(request.getMethod())
         .build();
   }
