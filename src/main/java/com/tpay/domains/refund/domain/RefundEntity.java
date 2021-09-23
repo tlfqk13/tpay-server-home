@@ -32,7 +32,7 @@ public class RefundEntity extends BaseTimeEntity {
   private RefundStatus refundStatus;
 
   @OneToOne
-  @JoinColumn(name = "sale_id")
+  @JoinColumn(name = "order_id")
   private OrderEntity orderEntity;
 
   @Builder
