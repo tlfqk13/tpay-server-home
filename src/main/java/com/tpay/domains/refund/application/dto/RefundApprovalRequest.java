@@ -8,7 +8,6 @@ import java.util.List;
 @Getter
 @Builder
 public class RefundApprovalRequest {
-
   private String businessNumber;
   private String franchiseeName;
   private String franchiseeNumber;
@@ -26,7 +25,6 @@ public class RefundApprovalRequest {
   private String amount;
   private String passportNumber;
 
-
   private String totalRefund;
   private String totalVAT;
   private String totalIct;
@@ -34,5 +32,5 @@ public class RefundApprovalRequest {
   private String totalEdut;
   private String totalQuantity;
 
-  List<RefundRequestProductInfoList> refundRequestProductInfoList;
+  List<RefundProductInfo> refundProductInfo;
 }
