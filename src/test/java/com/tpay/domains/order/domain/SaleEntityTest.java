@@ -23,10 +23,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DataJpaTest
 class SaleEntityTest {
 
-  @Autowired SaleRepository saleRepository;
+  @Autowired
+  OrderRepository orderRepository;
   @Autowired FranchiseeRepository franchiseeRepository;
   @Autowired CustomerRepository customerRepository;
-  @Autowired SaleLineRepository saleLineRepository;
+  @Autowired
+  OrderLineRepository orderLineRepository;
   @Autowired ProductRepository productRepository;
   ProductEntity productEntity;
   CustomerEntity customerEntity;
@@ -89,7 +91,7 @@ class SaleEntityTest {
         OrderLineEntity.builder().productEntity(productEntity).quantity("1").build());
     // when
     OrderEntity orderEntity =
-        saleRepository.save(
+        orderRepository.save(
             OrderEntity.builder()
                 .saleLineEntity(orderLineEntityList)
                 .customerEntity(customerEntity)
@@ -117,7 +119,7 @@ class SaleEntityTest {
 
     // when
     OrderEntity orderEntity =
-        saleRepository.save(
+        orderRepository.save(
             OrderEntity.builder()
                 .saleLineEntity(orderLineEntityList)
                 .customerEntity(customerEntity)
@@ -144,7 +146,7 @@ class SaleEntityTest {
 
     // when
     OrderEntity orderEntity =
-        saleRepository.save(
+        orderRepository.save(
             OrderEntity.builder()
                 .franchiseeEntity(franchiseeEntity)
                 .customerEntity(customerEntity)
@@ -158,10 +160,10 @@ class SaleEntityTest {
   @Test
   public void 주문번호_생성_테스트() {
 
-    saleLineRepository.save(orderLineEntityList.stream().findFirst().get());
+    orderLineRepository.save(orderLineEntityList.stream().findFirst().get());
     // when
     OrderEntity orderEntity =
-        saleRepository.save(
+        orderRepository.save(
             OrderEntity.builder()
                 .saleLineEntity(orderLineEntityList)
                 .customerEntity(customerEntity)
@@ -177,7 +179,7 @@ class SaleEntityTest {
   public void 구매_날짜_생성_테스트() {
 
     OrderEntity orderEntity = OrderEntity.builder().saleLineEntity(orderLineEntityList).build();
-    saleLineRepository.save(
+    orderLineRepository.save(
         OrderLineEntity.builder()
             .productEntity(productEntity)
             .quantity("4")

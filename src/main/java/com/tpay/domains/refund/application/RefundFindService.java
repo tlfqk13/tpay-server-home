@@ -1,7 +1,7 @@
 package com.tpay.domains.refund.application;
 
 import com.tpay.domains.order.domain.OrderEntity;
-import com.tpay.domains.order.domain.SaleRepository;
+import com.tpay.domains.order.domain.OrderRepository;
 import com.tpay.domains.refund.application.dto.RefundFindResponse;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -10,11 +10,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Service
 public class RefundFindService {
-  private final SaleRepository saleRepository;
+  private final OrderRepository orderRepository;
 
   @Transactional
   public RefundFindResponse findRefundOne(String orderNumber) {
-    OrderEntity orderEntity = saleRepository.findByOrderNumber(orderNumber);
+    OrderEntity orderEntity = orderRepository.findByOrderNumber(orderNumber);
     String totalAmount =
         orderEntity.getOrderLineEntity().stream()
             .map(saleLineEntity -> Long.parseLong(saleLineEntity.getTotalPrice()))

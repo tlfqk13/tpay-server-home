@@ -12,7 +12,7 @@ import lombok.ToString;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @ToString
-public class SaleFindResponse {
+public class OrderFindResponse {
   private Long refundId;
   private Long saleId;
   private String totalRefund;

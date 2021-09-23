@@ -5,7 +5,7 @@ import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.domains.franchisee.application.dto.FranchiseeMyPageResponse;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeRepository;
-import com.tpay.domains.order.application.SaleFindService;
+import com.tpay.domains.order.application.OrderFindService;
 import com.tpay.domains.order.domain.OrderEntity;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class FranchiseeFindService {
   private final FranchiseeRepository franchiseeRepository;
-  private final SaleFindService saleFindService;
+  private final OrderFindService orderFindService;
 
   public FranchiseeEntity findByBusinessNumber(String businessNumber) {
     FranchiseeEntity franchiseeEntity =
@@ -42,7 +42,7 @@ public class FranchiseeFindService {
     FranchiseeEntity franchiseeEntity = this.findByIndex(franchiseeIndex);
 
     List<OrderEntity> orderEntityList =
-        saleFindService.findAllByFranchiseeEntityIndex(franchiseeIndex);
+        orderFindService.findAllByFranchiseeEntityIndex(franchiseeIndex);
 
     Long totalSaleAmount =
         orderEntityList.stream()

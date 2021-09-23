@@ -6,9 +6,9 @@ import com.tpay.domains.refund.application.dto.RefundInquiryRequest;
 import com.tpay.domains.refund.domain.RefundEntity;
 import com.tpay.domains.refund.domain.RefundRepository;
 import com.tpay.domains.refund.domain.RefundStatus;
-import com.tpay.domains.order.application.dto.SaleFindResponse;
+import com.tpay.domains.order.application.dto.OrderFindResponse;
 import com.tpay.domains.order.domain.OrderEntity;
-import com.tpay.domains.order.domain.SaleRepository;
+import com.tpay.domains.order.domain.OrderRepository;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,20 +18,20 @@ import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
-public class SaleFindService {
-  private final SaleRepository saleRepository;
+public class OrderFindService {
+  private final OrderRepository orderRepository;
   private final CustomerRepository customerRepository;
   private final RefundRepository refundRepository;
 
   @Transactional
   public List<OrderEntity> findAllByFranchiseeEntityIndex(Long franchiseeIndex) {
-    return saleRepository
+    return orderRepository
         .findAllByFranchiseeEntityId(franchiseeIndex)
         .orElse(Collections.emptyList());
   }
 
   @Transactional
-  public List<SaleFindResponse> findAllSale(RefundInquiryRequest refundInquiryRequest) {
+  public List<OrderFindResponse> findAllSale(RefundInquiryRequest refundInquiryRequest) {
     CustomerEntity customerEntity =
         customerRepository
             .findByCustomerNameAndPassportNumber(
@@ -39,17 +39,17 @@ public class SaleFindService {
             .orElseThrow(() -> new IllegalArgumentException("Invalid Customer"));
 
     List<OrderEntity> orderEntityList =
-        saleRepository.findAllByCustomerEntityId(customerEntity.getId());
+        orderRepository.findAllByCustomerEntityId(customerEntity.getId());
 
-    List<SaleFindResponse> saleFindResponseList = new LinkedList<>();
+    List<OrderFindResponse> orderFindResponseList = new LinkedList<>();
     for (OrderEntity orderEntity : orderEntityList) {
       RefundEntity refundEntity =
           refundRepository.findBySaleEntityIdAndRefundStatus(
               orderEntity.getId(), RefundStatus.APPROVAL);
 
       if (refundEntity != null) {
-        saleFindResponseList.add(
-            SaleFindResponse.builder()
+        orderFindResponseList.add(
+            OrderFindResponse.builder()
                 .refundId(refundEntity.getId())
                 .saleId(orderEntity.getId())
                 .orderNumber(orderEntity.getOrderNumber())
@@ -59,6 +59,6 @@ public class SaleFindService {
       }
     }
 
-    return saleFindResponseList;
+    return orderFindResponseList;
   }
 }

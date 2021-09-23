@@ -12,7 +12,7 @@ import com.tpay.domains.product.domain.ProductEntity;
 import com.tpay.domains.product.domain.ProductRepository;
 import com.tpay.domains.order.domain.OrderEntity;
 import com.tpay.domains.order.domain.OrderLineEntity;
-import com.tpay.domains.order.domain.SaleRepository;
+import com.tpay.domains.order.domain.OrderRepository;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -29,7 +29,7 @@ class RefundRepositoryTest {
   @Autowired private RefundRepository refundRepository;
   @Autowired private CustomerRepository customerRepository;
   @Autowired private FranchiseeRepository franchiseeRepository;
-  @Autowired private SaleRepository saleRepository;
+  @Autowired private OrderRepository orderRepository;
   @Autowired private ProductRepository productRepository;
 
 
@@ -72,20 +72,20 @@ class RefundRepositoryTest {
         OrderLineEntity.builder().productEntity(productEntity).quantity("4").build());
 
     orderEntity =
-        saleRepository.save(
+        orderRepository.save(
             OrderEntity.builder()
                 .customerEntity(customerEntity)
                 .franchiseeEntity(franchiseeEntity)
                 .saleLineEntity(orderLineEntityList)
                 .build());
 
-    saleRepository.save(orderEntity);
+    orderRepository.save(orderEntity);
   }
   // TODO: 2021/04/02 조회 JOIN QUERY 부재
   @Test
   public void 환급_생성_테스트() {
     // given
-    OrderEntity orderEntity = saleRepository.findAll().stream().findFirst().get();
+    OrderEntity orderEntity = orderRepository.findAll().stream().findFirst().get();
 
     RefundEntity refundEntity =
         refundRepository.save(

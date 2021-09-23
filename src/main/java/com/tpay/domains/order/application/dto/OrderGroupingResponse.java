@@ -6,7 +6,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
-public class SaleGroupingResponse {
+public class OrderGroupingResponse {
     private String totalAmount;
     private String totalRefund;
     private String totalVAT;

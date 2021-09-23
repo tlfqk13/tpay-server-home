@@ -23,10 +23,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @ActiveProfiles(profiles = {"local", "test"})
 class SaleRepositoryTest {
 
-  @Autowired SaleRepository saleRepository;
+  @Autowired
+  OrderRepository orderRepository;
   @Autowired FranchiseeRepository franchiseeRepository;
   @Autowired CustomerRepository customerRepository;
-  @Autowired SaleLineRepository saleLineRepository;
+  @Autowired
+  OrderLineRepository orderLineRepository;
   @Autowired ProductRepository productRepository;
 
   CustomerEntity customerEntity;
@@ -78,21 +80,21 @@ class SaleRepositoryTest {
     // when
 
     OrderEntity orderEntity =
-        saleRepository.save(
+        orderRepository.save(
             OrderEntity.builder()
                 .customerEntity(customerEntity)
                 .franchiseeEntity(franchiseeEntity)
                 .saleLineEntity(orderLineEntityList)
                 .build());
 
-    saleLineRepository.save(
+    orderLineRepository.save(
         OrderLineEntity.builder()
             .productEntity(productEntity)
             .quantity("4")
             .saleEntity(orderEntity)
             .build());
 
-    List<OrderEntity> orderEntityList = saleRepository.findAll();
+    List<OrderEntity> orderEntityList = orderRepository.findAll();
 
     // then
     assertThat(orderEntityList.stream().findFirst().get(), is(equalTo(orderEntity)));

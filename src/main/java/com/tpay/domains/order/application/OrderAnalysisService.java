@@ -5,11 +5,11 @@ import com.tpay.domains.franchisee.domain.FranchiseeRepository;
 import com.tpay.domains.refund.domain.RefundEntity;
 import com.tpay.domains.refund.domain.RefundRepository;
 import com.tpay.domains.refund.domain.RefundStatus;
-import com.tpay.domains.order.application.dto.SaleFindResponse;
-import com.tpay.domains.order.application.dto.SaleGroupingResponse;
-import com.tpay.domains.order.application.dto.SalesAnalysisResponse;
+import com.tpay.domains.order.application.dto.OrderFindResponse;
+import com.tpay.domains.order.application.dto.OrderGroupingResponse;
+import com.tpay.domains.order.application.dto.OrderAnalysisResponse;
 import com.tpay.domains.order.domain.OrderEntity;
-import com.tpay.domains.order.domain.SaleRepository;
+import com.tpay.domains.order.domain.OrderRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -25,15 +25,15 @@ import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
-public class SalesAnalysisService {
+public class OrderAnalysisService {
 
-  private static final Logger logger = LogManager.getLogger(SalesAnalysisService.class);
+  private static final Logger logger = LogManager.getLogger(OrderAnalysisService.class);
 
-  private final SaleRepository saleRepository;
+  private final OrderRepository orderRepository;
   private final RefundRepository refundRepository;
   private final FranchiseeRepository franchiseeRepository;
 
-  public List<SalesAnalysisResponse> findUnit(Long franchiseeIndex, String period) {
+  public List<OrderAnalysisResponse> findUnit(Long franchiseeIndex, String period) {
 
     LocalDateTime startDate = LocalDateTime.now().with(LocalTime.MIN);
     LocalDateTime endDate = LocalDateTime.now().with(LocalTime.MAX);
@@ -51,17 +51,17 @@ public class SalesAnalysisService {
     //        saleRepository.findAllByFranchiseeEntityIdAndCreatedDateBetween(
     //            franchiseeIndex, startDate, endDate, pageable);
     List<OrderEntity> orderEntityList =
-        saleRepository.findAllByFranchiseeEntityIdAndCreatedDateBetween(
+        orderRepository.findAllByFranchiseeEntityIdAndCreatedDateBetween(
             franchiseeIndex, startDate, endDate);
 
-    List<SaleGroupingResponse> saleGroupingResponseList = new ArrayList<>();
+    List<OrderGroupingResponse> orderGroupingResponseList = new ArrayList<>();
     for (OrderEntity orderEntity : orderEntityList) {
       RefundEntity refundEntity =
           refundRepository.findBySaleEntityIdAndRefundStatus(
               orderEntity.getId(), RefundStatus.APPROVAL);
       if (refundEntity != null) {
-        saleGroupingResponseList.add(
-            SaleGroupingResponse.builder()
+        orderGroupingResponseList.add(
+            OrderGroupingResponse.builder()
                 .saleDate(orderEntity.getSaleDate().substring(0, 8))
                 .totalAmount(orderEntity.getTotalAmount())
                 .totalRefund(refundEntity.getTotalRefund())
@@ -70,11 +70,11 @@ public class SalesAnalysisService {
       }
     }
 
-    List<SalesAnalysisResponse> salesAnalysisResponse = new LinkedList<>();
+    List<OrderAnalysisResponse> orderAnalysisResponse = new LinkedList<>();
 
-    if (saleGroupingResponseList != null && saleGroupingResponseList.size() > 0) {
-      saleGroupingResponseList.stream()
-          .collect(Collectors.groupingBy(SaleGroupingResponse::getSaleDate))
+    if (orderGroupingResponseList != null && orderGroupingResponseList.size() > 0) {
+      orderGroupingResponseList.stream()
+          .collect(Collectors.groupingBy(OrderGroupingResponse::getSaleDate))
           .forEach(
               (saleDate, saleGroupingResponses) -> {
                 String totalAmount =
@@ -96,8 +96,8 @@ public class SalesAnalysisService {
                         .get()
                         .toString();
 
-                salesAnalysisResponse.add(
-                    SalesAnalysisResponse.builder()
+                orderAnalysisResponse.add(
+                    OrderAnalysisResponse.builder()
                         .saleDate(saleDate)
                         .totalAmount(totalAmount)
                         .totalRefund(totalRefund)
@@ -107,10 +107,10 @@ public class SalesAnalysisService {
               });
     }
 
-    return salesAnalysisResponse;
+    return orderAnalysisResponse;
   }
 
-  public List<SalesAnalysisResponse> findPeriod(
+  public List<OrderAnalysisResponse> findPeriod(
       Long franchiseeIndex, String startDate, String endDate) {
 
     LocalDate localDateStart = LocalDate.parse(startDate, DateTimeFormatter.ISO_DATE);
@@ -128,17 +128,17 @@ public class SalesAnalysisService {
         localDateTimeEnd);
 
     List<OrderEntity> orderEntityList =
-        saleRepository.findAllByFranchiseeEntityIdAndCreatedDateBetween(
+        orderRepository.findAllByFranchiseeEntityIdAndCreatedDateBetween(
             franchiseeIndex, localDateTimeStart, localDateTimeEnd);
 
-    List<SaleGroupingResponse> saleGroupingResponseList =
+    List<OrderGroupingResponse> orderGroupingResponseList =
         orderEntityList.stream()
             .map(
                 saleEntity -> {
                   RefundEntity refundEntity =
                       refundRepository.findBySaleEntityIdAndRefundStatus(
                           saleEntity.getId(), RefundStatus.APPROVAL);
-                  return SaleGroupingResponse.builder()
+                  return OrderGroupingResponse.builder()
                       .saleDate(saleEntity.getSaleDate().substring(0, 8))
                       .totalAmount(saleEntity.getTotalAmount())
                       .totalRefund(refundEntity.getTotalRefund())
@@ -147,10 +147,10 @@ public class SalesAnalysisService {
                 })
             .collect(Collectors.toList());
 
-    List<SalesAnalysisResponse> salesAnalysisResponse = new LinkedList<>();
+    List<OrderAnalysisResponse> orderAnalysisResponse = new LinkedList<>();
 
-    saleGroupingResponseList.stream()
-        .collect(Collectors.groupingBy(SaleGroupingResponse::getSaleDate))
+    orderGroupingResponseList.stream()
+        .collect(Collectors.groupingBy(OrderGroupingResponse::getSaleDate))
         .forEach(
             (saleDate, saleGroupingResponses) -> {
               String totalAmount =
@@ -172,8 +172,8 @@ public class SalesAnalysisService {
                       .get()
                       .toString();
 
-              salesAnalysisResponse.add(
-                  SalesAnalysisResponse.builder()
+              orderAnalysisResponse.add(
+                  OrderAnalysisResponse.builder()
                       .saleDate(saleDate)
                       .totalAmount(totalAmount)
                       .totalRefund(totalRefund)
@@ -182,28 +182,28 @@ public class SalesAnalysisService {
                       .build());
             });
 
-    return salesAnalysisResponse;
+    return orderAnalysisResponse;
   }
 
-  public List<SaleFindResponse> findOneSale(Long franchiseeIndex, String saleDate) {
+  public List<OrderFindResponse> findOneSale(Long franchiseeIndex, String saleDate) {
     FranchiseeEntity franchiseeEntity =
         franchiseeRepository
             .findById(franchiseeIndex)
             .orElseThrow(() -> new IllegalArgumentException("Invalid Franchisee Index"));
 
     List<OrderEntity> orderEntityList =
-        saleRepository.findByFranchiseeEntityAndSaleDateContaining(franchiseeEntity, saleDate);
+        orderRepository.findByFranchiseeEntityAndSaleDateContaining(franchiseeEntity, saleDate);
 
     System.out.println(saleDate + "saleDate????????");
     System.out.println(orderEntityList.isEmpty() + "isEmpty??????");
 
-    List<SaleFindResponse> saleFindResponseList = new ArrayList<>();
+    List<OrderFindResponse> orderFindResponseList = new ArrayList<>();
     for(OrderEntity orderEntity : orderEntityList) {
       RefundEntity refundEntity =
           refundRepository.findBySaleEntityIdAndRefundStatus(
               orderEntity.getId(), RefundStatus.APPROVAL);
       if(refundEntity != null) {
-        saleFindResponseList.add(SaleFindResponse.builder()
+        orderFindResponseList.add(OrderFindResponse.builder()
             .saleId(orderEntity.getId())
             .totalRefund(refundEntity.getTotalRefund())
             .saleDate(orderEntity.getSaleDate())
@@ -211,6 +211,6 @@ public class SalesAnalysisService {
             .build());
       }
     }
-    return saleFindResponseList;
+    return orderFindResponseList;
   }
 }

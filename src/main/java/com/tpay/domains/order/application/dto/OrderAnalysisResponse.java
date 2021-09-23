@@ -6,7 +6,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
-public class SalesAnalysisResponse {
+public class OrderAnalysisResponse {
   private String saleDate;
   private String totalAmount;
   private String totalRefund;
