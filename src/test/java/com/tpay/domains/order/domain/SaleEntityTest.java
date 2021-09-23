@@ -1,4 +1,4 @@
-package com.tpay.domains.sale.domain;
+package com.tpay.domains.order.domain;
 
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.customer.domain.CustomerRepository;
@@ -35,7 +35,7 @@ class SaleEntityTest {
   String businessNumber = ("123-45-67890").replace("-", "");
   String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
 
-  List<SaleLineEntity> saleLineEntityList = new LinkedList<>();
+  List<OrderLineEntity> orderLineEntityList = new LinkedList<>();
 
   @BeforeEach
   public void setUp() {
@@ -68,8 +68,8 @@ class SaleEntityTest {
                 .price("20000")
                 .build());
 
-    saleLineEntityList.add(
-        SaleLineEntity.builder().productEntity(productEntity).quantity("4").build());
+    orderLineEntityList.add(
+        OrderLineEntity.builder().productEntity(productEntity).quantity("4").build());
   }
 
   @Test
@@ -85,18 +85,18 @@ class SaleEntityTest {
                 .price("19000")
                 .build());
 
-    saleLineEntityList.add(
-        SaleLineEntity.builder().productEntity(productEntity).quantity("1").build());
+    orderLineEntityList.add(
+        OrderLineEntity.builder().productEntity(productEntity).quantity("1").build());
     // when
-    SaleEntity saleEntity =
+    OrderEntity orderEntity =
         saleRepository.save(
-            SaleEntity.builder()
-                .saleLineEntity(saleLineEntityList)
+            OrderEntity.builder()
+                .saleLineEntity(orderLineEntityList)
                 .customerEntity(customerEntity)
                 .franchiseeEntity(franchiseeEntity)
                 .build());
     // then
-    assertThat(saleEntity.getTotalQuantity(), is("5"));
+    assertThat(orderEntity.getTotalQuantity(), is("5"));
   }
 
   @Test
@@ -112,19 +112,19 @@ class SaleEntityTest {
                 .price("215000")
                 .build());
 
-    saleLineEntityList.add(
-        SaleLineEntity.builder().productEntity(productEntity).quantity("1").build());
+    orderLineEntityList.add(
+        OrderLineEntity.builder().productEntity(productEntity).quantity("1").build());
 
     // when
-    SaleEntity saleEntity =
+    OrderEntity orderEntity =
         saleRepository.save(
-            SaleEntity.builder()
-                .saleLineEntity(saleLineEntityList)
+            OrderEntity.builder()
+                .saleLineEntity(orderLineEntityList)
                 .customerEntity(customerEntity)
                 .franchiseeEntity(franchiseeEntity)
                 .build());
     // then
-    assertThat(saleEntity.getTotalAmount(), is("295000"));
+    assertThat(orderEntity.getTotalAmount(), is("295000"));
   }
 
   @Test
@@ -139,51 +139,51 @@ class SaleEntityTest {
                 .price("20000")
                 .build());
 
-    saleLineEntityList.add(
-        SaleLineEntity.builder().productEntity(productEntity).quantity("5").build());
+    orderLineEntityList.add(
+        OrderLineEntity.builder().productEntity(productEntity).quantity("5").build());
 
     // when
-    SaleEntity saleEntity =
+    OrderEntity orderEntity =
         saleRepository.save(
-            SaleEntity.builder()
+            OrderEntity.builder()
                 .franchiseeEntity(franchiseeEntity)
                 .customerEntity(customerEntity)
-                .saleLineEntity(saleLineEntityList)
+                .saleLineEntity(orderLineEntityList)
                 .build());
 
     // then
-    assertThat(saleEntity.getTotalVat(), is("16362"));
+    assertThat(orderEntity.getTotalVat(), is("16362"));
   }
 
   @Test
   public void 주문번호_생성_테스트() {
 
-    saleLineRepository.save(saleLineEntityList.stream().findFirst().get());
+    saleLineRepository.save(orderLineEntityList.stream().findFirst().get());
     // when
-    SaleEntity saleEntity =
+    OrderEntity orderEntity =
         saleRepository.save(
-            SaleEntity.builder()
-                .saleLineEntity(saleLineEntityList)
+            OrderEntity.builder()
+                .saleLineEntity(orderLineEntityList)
                 .customerEntity(customerEntity)
                 .franchiseeEntity(franchiseeEntity)
                 .build());
 
     // then
-    System.out.println("TEST orderNumber : " + saleEntity.getOrderNumber());
-    assertTrue(saleEntity.getOrderNumber().length() <= 16);
+    System.out.println("TEST orderNumber : " + orderEntity.getOrderNumber());
+    assertTrue(orderEntity.getOrderNumber().length() <= 16);
   }
 
   @Test
   public void 구매_날짜_생성_테스트() {
 
-    SaleEntity saleEntity = SaleEntity.builder().saleLineEntity(saleLineEntityList).build();
+    OrderEntity orderEntity = OrderEntity.builder().saleLineEntity(orderLineEntityList).build();
     saleLineRepository.save(
-        SaleLineEntity.builder()
+        OrderLineEntity.builder()
             .productEntity(productEntity)
             .quantity("4")
-            .saleEntity(saleEntity)
+            .saleEntity(orderEntity)
             .build());
-    System.out.println(saleEntity.getSaleDate());
-    assertThat(saleEntity.getSaleDate(), startsWith(now.substring(0, 11)));
+    System.out.println(orderEntity.getSaleDate());
+    assertThat(orderEntity.getSaleDate(), startsWith(now.substring(0, 11)));
   }
 }

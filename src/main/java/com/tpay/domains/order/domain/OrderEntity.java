@@ -1,4 +1,4 @@
-package com.tpay.domains.sale.domain;
+package com.tpay.domains.order.domain;
 
 import com.tpay.domains.BaseTimeEntity;
 import com.tpay.domains.customer.domain.CustomerEntity;
@@ -15,7 +15,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -26,7 +25,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "sale")
 @Entity
-public class SaleEntity extends BaseTimeEntity {
+public class OrderEntity extends BaseTimeEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -46,7 +45,7 @@ public class SaleEntity extends BaseTimeEntity {
   @Column(name = "purchsSn", length = 20, nullable = false)
   private String orderNumber;
 
-  @OneToOne
+  @ManyToOne
   @JoinColumn(name = "customer_id", nullable = false)
   private CustomerEntity customerEntity;
 
@@ -55,23 +54,22 @@ public class SaleEntity extends BaseTimeEntity {
   private FranchiseeEntity franchiseeEntity;
 
   @OneToMany(mappedBy = "saleEntity")
-  private List<SaleLineEntity> saleLineEntity;
+  private List<OrderLineEntity> orderLineEntity;
 
   @Builder
-  public SaleEntity(
+  public OrderEntity(
       String totalVat,
       String totalAmount,
       String totalQuantity,
       CustomerEntity customerEntity,
       FranchiseeEntity franchiseeEntity,
-      List<SaleLineEntity> saleLineEntity) {
-
+      List<OrderLineEntity> orderLineEntity) {
     this.totalVat = totalVat;
     this.totalAmount = totalAmount;
     this.totalQuantity = totalQuantity;
     this.customerEntity = customerEntity;
     this.franchiseeEntity = franchiseeEntity;
-    this.saleLineEntity = saleLineEntity;
+    this.orderLineEntity = orderLineEntity;
     totalLineQuantity();
     totalLineAmount();
     totalLineVat();
@@ -81,7 +79,7 @@ public class SaleEntity extends BaseTimeEntity {
 
   public void totalLineQuantity() {
     Long sumQuantity =
-        this.saleLineEntity.stream()
+        this.orderLineEntity.stream()
             .map(sale -> Long.parseLong(sale.getQuantity()))
             .reduce(Long::sum)
             .get();
@@ -90,7 +88,7 @@ public class SaleEntity extends BaseTimeEntity {
 
   public void totalLineAmount() {
     Long sumAmount =
-        this.saleLineEntity.stream()
+        this.orderLineEntity.stream()
             .map(sale -> Long.parseLong(sale.getTotalPrice()))
             .reduce(Long::sum)
             .get();
@@ -99,7 +97,7 @@ public class SaleEntity extends BaseTimeEntity {
 
   public void totalLineVat() {
     Long sumVat =
-        this.saleLineEntity.stream()
+        this.orderLineEntity.stream()
             .map(sale -> Long.parseLong(sale.getVat()))
             .reduce(Long::sum)
             .get();

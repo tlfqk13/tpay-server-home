@@ -1,8 +1,8 @@
-package com.tpay.domains.sale.presentation;
+package com.tpay.domains.order.presentation;
 
 import com.tpay.domains.refund.application.dto.RefundInquiryRequest;
-import com.tpay.domains.sale.application.SaleFindService;
-import com.tpay.domains.sale.application.dto.SaleFindResponse;
+import com.tpay.domains.order.application.SaleFindService;
+import com.tpay.domains.order.application.dto.SaleFindResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

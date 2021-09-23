@@ -1,15 +1,15 @@
-package com.tpay.domains.sale.application;
+package com.tpay.domains.order.application;
 
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeRepository;
 import com.tpay.domains.refund.domain.RefundEntity;
 import com.tpay.domains.refund.domain.RefundRepository;
 import com.tpay.domains.refund.domain.RefundStatus;
-import com.tpay.domains.sale.application.dto.SaleFindResponse;
-import com.tpay.domains.sale.application.dto.SaleGroupingResponse;
-import com.tpay.domains.sale.application.dto.SalesAnalysisResponse;
-import com.tpay.domains.sale.domain.SaleEntity;
-import com.tpay.domains.sale.domain.SaleRepository;
+import com.tpay.domains.order.application.dto.SaleFindResponse;
+import com.tpay.domains.order.application.dto.SaleGroupingResponse;
+import com.tpay.domains.order.application.dto.SalesAnalysisResponse;
+import com.tpay.domains.order.domain.OrderEntity;
+import com.tpay.domains.order.domain.SaleRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -50,22 +50,22 @@ public class SalesAnalysisService {
     //    List<SaleEntity> pageSaleEntityList =
     //        saleRepository.findAllByFranchiseeEntityIdAndCreatedDateBetween(
     //            franchiseeIndex, startDate, endDate, pageable);
-    List<SaleEntity> saleEntityList =
+    List<OrderEntity> orderEntityList =
         saleRepository.findAllByFranchiseeEntityIdAndCreatedDateBetween(
             franchiseeIndex, startDate, endDate);
 
     List<SaleGroupingResponse> saleGroupingResponseList = new ArrayList<>();
-    for (SaleEntity saleEntity : saleEntityList) {
+    for (OrderEntity orderEntity : orderEntityList) {
       RefundEntity refundEntity =
           refundRepository.findBySaleEntityIdAndRefundStatus(
-              saleEntity.getId(), RefundStatus.APPROVAL);
+              orderEntity.getId(), RefundStatus.APPROVAL);
       if (refundEntity != null) {
         saleGroupingResponseList.add(
             SaleGroupingResponse.builder()
-                .saleDate(saleEntity.getSaleDate().substring(0, 8))
-                .totalAmount(saleEntity.getTotalAmount())
+                .saleDate(orderEntity.getSaleDate().substring(0, 8))
+                .totalAmount(orderEntity.getTotalAmount())
                 .totalRefund(refundEntity.getTotalRefund())
-                .totalVAT(saleEntity.getTotalVat())
+                .totalVAT(orderEntity.getTotalVat())
                 .build());
       }
     }
@@ -127,12 +127,12 @@ public class SalesAnalysisService {
         localDateTimeStart,
         localDateTimeEnd);
 
-    List<SaleEntity> saleEntityList =
+    List<OrderEntity> orderEntityList =
         saleRepository.findAllByFranchiseeEntityIdAndCreatedDateBetween(
             franchiseeIndex, localDateTimeStart, localDateTimeEnd);
 
     List<SaleGroupingResponse> saleGroupingResponseList =
-        saleEntityList.stream()
+        orderEntityList.stream()
             .map(
                 saleEntity -> {
                   RefundEntity refundEntity =
@@ -191,23 +191,23 @@ public class SalesAnalysisService {
             .findById(franchiseeIndex)
             .orElseThrow(() -> new IllegalArgumentException("Invalid Franchisee Index"));
 
-    List<SaleEntity> saleEntityList =
+    List<OrderEntity> orderEntityList =
         saleRepository.findByFranchiseeEntityAndSaleDateContaining(franchiseeEntity, saleDate);
 
     System.out.println(saleDate + "saleDate????????");
-    System.out.println(saleEntityList.isEmpty() + "isEmpty??????");
+    System.out.println(orderEntityList.isEmpty() + "isEmpty??????");
 
     List<SaleFindResponse> saleFindResponseList = new ArrayList<>();
-    for(SaleEntity saleEntity : saleEntityList) {
+    for(OrderEntity orderEntity : orderEntityList) {
       RefundEntity refundEntity =
           refundRepository.findBySaleEntityIdAndRefundStatus(
-              saleEntity.getId(), RefundStatus.APPROVAL);
+              orderEntity.getId(), RefundStatus.APPROVAL);
       if(refundEntity != null) {
         saleFindResponseList.add(SaleFindResponse.builder()
-            .saleId(saleEntity.getId())
+            .saleId(orderEntity.getId())
             .totalRefund(refundEntity.getTotalRefund())
-            .saleDate(saleEntity.getSaleDate())
-            .orderNumber(saleEntity.getOrderNumber())
+            .saleDate(orderEntity.getSaleDate())
+            .orderNumber(orderEntity.getOrderNumber())
             .build());
       }
     }

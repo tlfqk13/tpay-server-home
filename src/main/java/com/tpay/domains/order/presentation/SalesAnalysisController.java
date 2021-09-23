@@ -1,8 +1,8 @@
-package com.tpay.domains.sale.presentation;
+package com.tpay.domains.order.presentation;
 
-import com.tpay.domains.sale.application.SalesAnalysisService;
-import com.tpay.domains.sale.application.dto.SaleFindResponse;
-import com.tpay.domains.sale.application.dto.SalesAnalysisResponse;
+import com.tpay.domains.order.application.SalesAnalysisService;
+import com.tpay.domains.order.application.dto.SaleFindResponse;
+import com.tpay.domains.order.application.dto.SalesAnalysisResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

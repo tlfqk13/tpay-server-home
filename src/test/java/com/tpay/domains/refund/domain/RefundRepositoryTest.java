@@ -10,9 +10,9 @@ import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeRepository;
 import com.tpay.domains.product.domain.ProductEntity;
 import com.tpay.domains.product.domain.ProductRepository;
-import com.tpay.domains.sale.domain.SaleEntity;
-import com.tpay.domains.sale.domain.SaleLineEntity;
-import com.tpay.domains.sale.domain.SaleRepository;
+import com.tpay.domains.order.domain.OrderEntity;
+import com.tpay.domains.order.domain.OrderLineEntity;
+import com.tpay.domains.order.domain.SaleRepository;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -33,9 +33,9 @@ class RefundRepositoryTest {
   @Autowired private ProductRepository productRepository;
 
 
-  List<SaleLineEntity> saleLineEntityList = new LinkedList<>();
+  List<OrderLineEntity> orderLineEntityList = new LinkedList<>();
 
-  SaleEntity saleEntity;
+  OrderEntity orderEntity;
 
   @BeforeEach
   public void setUp() {
@@ -68,31 +68,31 @@ class RefundRepositoryTest {
                 .price("20000")
                 .build());
 
-    saleLineEntityList.add(
-        SaleLineEntity.builder().productEntity(productEntity).quantity("4").build());
+    orderLineEntityList.add(
+        OrderLineEntity.builder().productEntity(productEntity).quantity("4").build());
 
-    saleEntity =
+    orderEntity =
         saleRepository.save(
-            SaleEntity.builder()
+            OrderEntity.builder()
                 .customerEntity(customerEntity)
                 .franchiseeEntity(franchiseeEntity)
-                .saleLineEntity(saleLineEntityList)
+                .saleLineEntity(orderLineEntityList)
                 .build());
 
-    saleRepository.save(saleEntity);
+    saleRepository.save(orderEntity);
   }
   // TODO: 2021/04/02 조회 JOIN QUERY 부재
   @Test
   public void 환급_생성_테스트() {
     // given
-    SaleEntity saleEntity = saleRepository.findAll().stream().findFirst().get();
+    OrderEntity orderEntity = saleRepository.findAll().stream().findFirst().get();
 
     RefundEntity refundEntity =
         refundRepository.save(
             RefundEntity.builder()
                 .approvalNumber("FDFE2354")
                 .refundStatus(RefundStatus.APPROVAL)
-                .saleEntity(saleEntity)
+                .saleEntity(orderEntity)
                 .totalRefund("35000")
                 .build());
     // when
@@ -106,7 +106,7 @@ class RefundRepositoryTest {
   public void 환급_상태_테스트() {
     // given
     RefundEntity refundEntity =
-        RefundEntity.builder().saleEntity(saleEntity).refundStatus(RefundStatus.APPROVAL).build();
+        RefundEntity.builder().saleEntity(orderEntity).refundStatus(RefundStatus.APPROVAL).build();
 
     // then
     assertThat(refundEntity.getRefundStatus().toString(), is(equalTo("APPROVAL")));

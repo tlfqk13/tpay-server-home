@@ -1,4 +1,4 @@
-package com.tpay.domains.sale.domain;
+package com.tpay.domains.order.domain;
 
 import com.tpay.domains.product.domain.ProductEntity;
 import javax.persistence.Column;
@@ -8,7 +8,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -19,7 +18,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "saleline")
 @Entity
-public class SaleLineEntity {
+public class OrderLineEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,16 +35,16 @@ public class SaleLineEntity {
 
   @ManyToOne
   @JoinColumn(name = "sale_id")
-  private SaleEntity saleEntity;
+  private OrderEntity orderEntity;
 
-  @OneToOne
+  @ManyToOne
   @JoinColumn(name = "product_id")
   private ProductEntity productEntity;
 
   @Builder
-  public SaleLineEntity(String quantity, SaleEntity saleEntity, ProductEntity productEntity) {
+  public OrderLineEntity(String quantity, OrderEntity orderEntity, ProductEntity productEntity) {
     this.quantity = quantity;
-    this.saleEntity = saleEntity;
+    this.orderEntity = orderEntity;
     this.productEntity = productEntity;
     calculateTotalPrice();
     calculateVAT();

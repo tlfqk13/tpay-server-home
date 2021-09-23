@@ -1,6 +1,5 @@
 package com.tpay.domains.refund.application;
 
-import com.tpay.commons.custom.CustomValue;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.customer.domain.CustomerRepository;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
@@ -13,7 +12,7 @@ import com.tpay.domains.refund.application.dto.RefundCancelResponse;
 import com.tpay.domains.refund.application.dto.RefundResponse;
 import com.tpay.domains.refund.domain.RefundEntity;
 import com.tpay.domains.refund.domain.RefundRepository;
-import com.tpay.domains.sale.domain.SaleEntity;
+import com.tpay.domains.order.domain.OrderEntity;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -45,13 +44,13 @@ public class RefundCancelService {
 
     RefundCancelRequest refundCancelRequest =
         RefundCancelRequest.builder()
-            .amount(refundEntity.getSaleEntity().getTotalAmount())
+            .amount(refundEntity.getOrderEntity().getTotalAmount())
             .name(customerEntity.getCustomerName())
             .nationality(customerEntity.getNation())
-            .orderNumber(refundEntity.getSaleEntity().getOrderNumber())
+            .orderNumber(refundEntity.getOrderEntity().getOrderNumber())
             .passportNumber(customerEntity.getPassportNumber())
             .purchaseSequenceNumber(
-                "990" + refundEntity.getSaleEntity().getOrderNumber().substring(1))
+                "990" + refundEntity.getOrderEntity().getOrderNumber().substring(1))
             .takeOutNumber(refundEntity.getApprovalNumber())
             .build();
 
@@ -65,9 +64,9 @@ public class RefundCancelService {
 
     refundEntity.updateCancel(refundResponse.getResponseCode());
 
-    SaleEntity saleEntity = refundEntity.getSaleEntity();
-    FranchiseeEntity franchiseeEntity = saleEntity.getFranchiseeEntity();
-    long point = (long) Math.floor(Double.parseDouble(saleEntity.getTotalAmount()) * 7) / 100;
+    OrderEntity orderEntity = refundEntity.getOrderEntity();
+    FranchiseeEntity franchiseeEntity = orderEntity.getFranchiseeEntity();
+    long point = (long) Math.floor(Double.parseDouble(orderEntity.getTotalAmount()) * 7) / 100;
     franchiseeEntity.changeBalance(SignType.NEGATIVE, point);
     PointEntity pointEntity =
         PointEntity.builder()

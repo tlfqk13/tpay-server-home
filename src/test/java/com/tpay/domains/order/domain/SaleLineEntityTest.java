@@ -1,8 +1,7 @@
-package com.tpay.domains.sale.domain;
+package com.tpay.domains.order.domain;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.number.IsCloseTo.closeTo;
 
 import com.tpay.domains.product.domain.ProductEntity;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,11 +19,11 @@ class SaleLineEntityTest {
   @Test
   public void 판매건_총판매금액_계산_테스트() {
     // given
-    SaleLineEntity saleLineEntity =
-        SaleLineEntity.builder().productEntity(productEntity).quantity("4").build();
+    OrderLineEntity orderLineEntity =
+        OrderLineEntity.builder().productEntity(productEntity).quantity("4").build();
 
     // when
-    String calculatedTotalPrice = saleLineEntity.getTotalPrice();
+    String calculatedTotalPrice = orderLineEntity.getTotalPrice();
 
     // then
     assertThat(calculatedTotalPrice, is("80000"));
@@ -33,11 +32,11 @@ class SaleLineEntityTest {
   @Test
   public void 판매건_판매금액_부가가치세_계산_테스트() {
     // given
-    SaleLineEntity saleLineEntity =
-        SaleLineEntity.builder().productEntity(productEntity).quantity("4").build();
+    OrderLineEntity orderLineEntity =
+        OrderLineEntity.builder().productEntity(productEntity).quantity("4").build();
 
     // when
-    Long calculatedVAT = Long.parseLong(saleLineEntity.getVat());
+    Long calculatedVAT = Long.parseLong(orderLineEntity.getVat());
 
     // then
     assertThat(calculatedVAT, is(7272L));

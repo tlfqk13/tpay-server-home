@@ -1,7 +1,7 @@
 package com.tpay.domains.refund.domain;
 
 import com.tpay.domains.BaseTimeEntity;
-import com.tpay.domains.sale.domain.SaleEntity;
+import com.tpay.domains.order.domain.OrderEntity;
 
 import javax.persistence.*;
 
@@ -33,15 +33,15 @@ public class RefundEntity extends BaseTimeEntity {
 
   @OneToOne
   @JoinColumn(name = "sale_id")
-  private SaleEntity saleEntity;
+  private OrderEntity orderEntity;
 
   @Builder
   public RefundEntity(
-      String approvalNumber, String totalRefund, RefundStatus refundStatus, SaleEntity saleEntity) {
+      String approvalNumber, String totalRefund, RefundStatus refundStatus, OrderEntity orderEntity) {
     this.approvalNumber = approvalNumber;
     this.totalRefund = totalRefund;
     this.refundStatus = refundStatus;
-    this.saleEntity = saleEntity;
+    this.orderEntity = orderEntity;
   }
 
   public void updateCancel(String responseCode) {

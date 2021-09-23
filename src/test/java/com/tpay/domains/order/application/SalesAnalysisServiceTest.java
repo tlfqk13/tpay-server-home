@@ -1,4 +1,4 @@
-package com.tpay.domains.sale.application;
+package com.tpay.domains.order.application;
 
 import org.junit.jupiter.api.Test;
 

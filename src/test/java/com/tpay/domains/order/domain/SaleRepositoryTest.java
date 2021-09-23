@@ -1,4 +1,4 @@
-package com.tpay.domains.sale.domain;
+package com.tpay.domains.order.domain;
 
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.customer.domain.CustomerRepository;
@@ -71,30 +71,30 @@ class SaleRepositoryTest {
                 .price("20000")
                 .build());
 
-    List<SaleLineEntity> saleLineEntityList = new LinkedList<>();
-    saleLineEntityList.add(
-        SaleLineEntity.builder().productEntity(productEntity).quantity("4").build());
+    List<OrderLineEntity> orderLineEntityList = new LinkedList<>();
+    orderLineEntityList.add(
+        OrderLineEntity.builder().productEntity(productEntity).quantity("4").build());
 
     // when
 
-    SaleEntity saleEntity =
+    OrderEntity orderEntity =
         saleRepository.save(
-            SaleEntity.builder()
+            OrderEntity.builder()
                 .customerEntity(customerEntity)
                 .franchiseeEntity(franchiseeEntity)
-                .saleLineEntity(saleLineEntityList)
+                .saleLineEntity(orderLineEntityList)
                 .build());
 
     saleLineRepository.save(
-        SaleLineEntity.builder()
+        OrderLineEntity.builder()
             .productEntity(productEntity)
             .quantity("4")
-            .saleEntity(saleEntity)
+            .saleEntity(orderEntity)
             .build());
 
-    List<SaleEntity> saleEntityList = saleRepository.findAll();
+    List<OrderEntity> orderEntityList = saleRepository.findAll();
 
     // then
-    assertThat(saleEntityList.stream().findFirst().get(), is(equalTo(saleEntity)));
+    assertThat(orderEntityList.stream().findFirst().get(), is(equalTo(orderEntity)));
   }
 }

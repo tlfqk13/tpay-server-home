@@ -1,8 +1,8 @@
 package com.tpay.domains.refund.application;
 
+import com.tpay.domains.order.domain.OrderEntity;
+import com.tpay.domains.order.domain.SaleRepository;
 import com.tpay.domains.refund.application.dto.RefundFindResponse;
-import com.tpay.domains.sale.domain.SaleEntity;
-import com.tpay.domains.sale.domain.SaleRepository;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,20 +14,25 @@ public class RefundFindService {
 
   @Transactional
   public RefundFindResponse findRefundOne(String orderNumber) {
-    SaleEntity saleEntity = saleRepository.findByOrderNumber(orderNumber);
-    String totalAmount = saleEntity.getSaleLineEntity().stream().map(saleLineEntity -> Long.parseLong(saleLineEntity.getTotalPrice())).reduce(Long::sum).get().toString();
-    Long saleAmount = Long.parseLong(totalAmount) - Long.parseLong(saleEntity.getTotalVat());
+    OrderEntity orderEntity = saleRepository.findByOrderNumber(orderNumber);
+    String totalAmount =
+        orderEntity.getOrderLineEntity().stream()
+            .map(saleLineEntity -> Long.parseLong(saleLineEntity.getTotalPrice()))
+            .reduce(Long::sum)
+            .get()
+            .toString();
+    Long saleAmount = Long.parseLong(totalAmount) - Long.parseLong(orderEntity.getTotalVat());
 
     return RefundFindResponse.builder()
-        .name(saleEntity.getCustomerEntity().getCustomerName())
-        .nation(saleEntity.getCustomerEntity().getNation())
-        .passportNumber(saleEntity.getCustomerEntity().getPassportNumber())
-        .orderNumber(saleEntity.getOrderNumber())
-        .saleDate(saleEntity.getCreatedDate().toString())
-            .totalAmount(totalAmount)
-            .totalVat(saleEntity.getTotalVat())
-            .saleAmount(saleAmount.toString())
-            .point("미정")
+        .name(orderEntity.getCustomerEntity().getCustomerName())
+        .nation(orderEntity.getCustomerEntity().getNation())
+        .passportNumber(orderEntity.getCustomerEntity().getPassportNumber())
+        .orderNumber(orderEntity.getOrderNumber())
+        .saleDate(orderEntity.getCreatedDate().toString())
+        .totalAmount(totalAmount)
+        .totalVat(orderEntity.getTotalVat())
+        .saleAmount(saleAmount.toString())
+        .point("미정")
         .build();
   }
 }
