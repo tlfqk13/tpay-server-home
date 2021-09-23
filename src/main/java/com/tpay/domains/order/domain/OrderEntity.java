@@ -3,10 +3,13 @@ package com.tpay.domains.order.domain;
 import com.tpay.domains.BaseTimeEntity;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
+import com.tpay.domains.refund.application.dto.RefundProductInfo;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
+import java.util.stream.Collectors;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -53,8 +56,8 @@ public class OrderEntity extends BaseTimeEntity {
   @JoinColumn(name = "franchisee_id", nullable = false)
   private FranchiseeEntity franchiseeEntity;
 
-  @OneToMany(mappedBy = "saleEntity")
-  private List<OrderLineEntity> orderLineEntity;
+  @OneToMany(mappedBy = "orderEntity", cascade = CascadeType.PERSIST)
+  private List<OrderLineEntity> orderLineEntityList;
 
   @Builder
   public OrderEntity(
@@ -62,24 +65,22 @@ public class OrderEntity extends BaseTimeEntity {
       String totalAmount,
       String totalQuantity,
       CustomerEntity customerEntity,
-      FranchiseeEntity franchiseeEntity,
-      List<OrderLineEntity> orderLineEntity) {
+      FranchiseeEntity franchiseeEntity) {
     this.totalVat = totalVat;
     this.totalAmount = totalAmount;
     this.totalQuantity = totalQuantity;
     this.customerEntity = customerEntity;
     this.franchiseeEntity = franchiseeEntity;
-    this.orderLineEntity = orderLineEntity;
+    this.orderLineEntityList = new LinkedList<>();
     totalLineQuantity();
     totalLineAmount();
     totalLineVat();
-    setOrderNumber();
     setSaleDate();
   }
 
   public void totalLineQuantity() {
     Long sumQuantity =
-        this.orderLineEntity.stream()
+        this.orderLineEntityList.stream()
             .map(sale -> Long.parseLong(sale.getQuantity()))
             .reduce(Long::sum)
             .get();
@@ -88,7 +89,7 @@ public class OrderEntity extends BaseTimeEntity {
 
   public void totalLineAmount() {
     Long sumAmount =
-        this.orderLineEntity.stream()
+        this.orderLineEntityList.stream()
             .map(sale -> Long.parseLong(sale.getTotalPrice()))
             .reduce(Long::sum)
             .get();
@@ -97,22 +98,26 @@ public class OrderEntity extends BaseTimeEntity {
 
   public void totalLineVat() {
     Long sumVat =
-        this.orderLineEntity.stream()
+        this.orderLineEntityList.stream()
             .map(sale -> Long.parseLong(sale.getVat()))
             .reduce(Long::sum)
             .get();
     this.totalVat = String.valueOf(sumVat);
   }
 
-  public void setOrderNumber() {
-    String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-    Random random = new Random();
-    int iValue = (random.nextInt(9));
-    this.orderNumber = iValue + now;
-  }
-
   public void setSaleDate() {
     String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
     this.saleDate = now;
+  }
+
+  public OrderEntity addOrderLine(OrderLineEntity orderLineEntity) {
+    this.orderLineEntityList.add(orderLineEntity);
+    return this;
+  }
+
+  public List<RefundProductInfo> getRefundProductInfoList() {
+    return this.orderLineEntityList.stream()
+        .map(orderLineEntity -> RefundProductInfo.of(orderLineEntity))
+        .collect(Collectors.toList());
   }
 }

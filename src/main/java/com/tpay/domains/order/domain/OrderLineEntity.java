@@ -34,7 +34,7 @@ public class OrderLineEntity {
   private String vat;
 
   @ManyToOne
-  @JoinColumn(name = "sale_id")
+  @JoinColumn(name = "order_id")
   private OrderEntity orderEntity;
 
   @ManyToOne
@@ -46,6 +46,8 @@ public class OrderLineEntity {
     this.quantity = quantity;
     this.orderEntity = orderEntity;
     this.productEntity = productEntity;
+
+    orderEntity.addOrderLine(this);
     calculateTotalPrice();
     calculateVAT();
   }
