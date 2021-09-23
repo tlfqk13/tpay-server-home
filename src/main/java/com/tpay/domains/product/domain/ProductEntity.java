@@ -32,7 +32,7 @@ public class ProductEntity {
   @Column(name = "prdCode", length = 5)
   private String code;
 
-  @Column(name = "indPrice", length = 10)
+  @Column(name = "indPrice", length = 10, unique = true)
   private String price;
 
   @Builder
