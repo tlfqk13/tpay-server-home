@@ -15,6 +15,9 @@ custom:
     secret: ENC(Ee+LkQqPvpJyYyppl12TgAAd1on8a0VWyz2nEIDhq/2vaN+hlT8NFPaUhy8UTs+w7daRAcj19dSJCxqVyEdwqB+MjRqadMeglzQJK0aDRPZISsO1smXSr6zmSxoaLHGu)
   jwt:
     secret: ENC(JvO/H7QvecwZnzmStZ9mSMwA82V3PxSSbwrw6FQdsl6Z9zTN9/DovZ2P3eE5azmhJDPlgZcRYWnIhBeZwBOa1sf7E2xX7ZG8lSSIg1EzEcxFjOR/4zMbtA==)
+  refund:
+    application:
+      code: 990
 logging:
   config: classpath:log4j2.yml
 
