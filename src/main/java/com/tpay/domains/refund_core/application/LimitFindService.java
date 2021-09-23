@@ -1,10 +1,10 @@
-package com.tpay.domains.refund.application;
+package com.tpay.domains.refund_core.application;
 
 import com.tpay.commons.custom.CustomValue;
 import com.tpay.domains.customer.application.CustomerFindService;
 import com.tpay.domains.customer.domain.CustomerEntity;
-import com.tpay.domains.refund.application.dto.RefundLimitRequest;
-import com.tpay.domains.refund.application.dto.RefundResponse;
+import com.tpay.domains.refund_core.application.dto.RefundLimitRequest;
+import com.tpay.domains.refund_core.application.dto.RefundResponse;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

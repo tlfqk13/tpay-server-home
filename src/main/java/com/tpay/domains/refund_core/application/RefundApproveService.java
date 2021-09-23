@@ -1,4 +1,4 @@
-package com.tpay.domains.refund.application;
+package com.tpay.domains.refund_core.application;
 
 import com.tpay.commons.custom.CustomValue;
 import com.tpay.domains.customer.application.CustomerFindService;
@@ -13,10 +13,10 @@ import com.tpay.domains.point.domain.PointStatus;
 import com.tpay.domains.point.domain.SignType;
 import com.tpay.domains.product.application.ProductFindService;
 import com.tpay.domains.product.domain.ProductEntity;
-import com.tpay.domains.refund.application.dto.RefundApprovalRequest;
+import com.tpay.domains.refund_core.application.dto.RefundApprovalRequest;
 import com.tpay.domains.refund.application.dto.RefundSaveRequest;
-import com.tpay.domains.refund.application.dto.RefundProductInfo;
-import com.tpay.domains.refund.application.dto.RefundResponse;
+import com.tpay.domains.refund_core.application.dto.RefundProductInfo;
+import com.tpay.domains.refund_core.application.dto.RefundResponse;
 import com.tpay.domains.refund.domain.RefundEntity;
 import com.tpay.domains.refund.domain.RefundRepository;
 import com.tpay.domains.refund.domain.RefundStatus;

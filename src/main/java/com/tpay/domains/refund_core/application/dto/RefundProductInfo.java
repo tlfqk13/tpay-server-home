@@ -1,4 +1,4 @@
-package com.tpay.domains.refund.application.dto;
+package com.tpay.domains.refund_core.application.dto;
 
 import com.tpay.domains.order.domain.OrderLineEntity;
 import lombok.Builder;

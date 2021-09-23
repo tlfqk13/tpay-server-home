@@ -1,4 +1,4 @@
-package com.tpay.domains.refund.application;
+package com.tpay.domains.refund_core.application;
 
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.customer.domain.CustomerRepository;
@@ -7,9 +7,8 @@ import com.tpay.domains.point.domain.PointEntity;
 import com.tpay.domains.point.domain.PointRepository;
 import com.tpay.domains.point.domain.PointStatus;
 import com.tpay.domains.point.domain.SignType;
-import com.tpay.domains.refund.application.dto.RefundCancelRequest;
-import com.tpay.domains.refund.application.dto.RefundCancelResponse;
-import com.tpay.domains.refund.application.dto.RefundResponse;
+import com.tpay.domains.refund_core.application.dto.RefundCancelRequest;
+import com.tpay.domains.refund_core.application.dto.RefundResponse;
 import com.tpay.domains.refund.domain.RefundEntity;
 import com.tpay.domains.refund.domain.RefundRepository;
 import com.tpay.domains.order.domain.OrderEntity;
@@ -32,7 +31,7 @@ public class RefundCancelService {
   private final PointRepository pointRepository;
 
   @Transactional
-  public RefundCancelResponse refundCancel(Long userIndex, Long refundIndex) {
+  public RefundResponse refundCancel(Long userIndex, Long refundIndex) {
     CustomerEntity customerEntity =
         customerRepository
             .findById(userIndex)
@@ -79,12 +78,6 @@ public class RefundCancelService {
             .build();
     pointRepository.save(pointEntity);
 
-    RefundCancelResponse refundCancelResponse =
-        RefundCancelResponse.builder()
-            .userIndex(customerEntity.getId())
-            .refundResponse(refundResponse)
-            .build();
-
-    return refundCancelResponse;
+    return refundResponse;
   }
 }

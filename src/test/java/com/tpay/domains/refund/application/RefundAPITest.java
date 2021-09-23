@@ -6,9 +6,9 @@
 //import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 //import com.tpay.domains.franchisee.domain.FranchiseeRepository;
 //import com.tpay.domains.product.domain.ProductEntity;
-//import com.tpay.domains.refund.application.dto.RefundApprovalRequest;
+//import com.tpay.domains.refund_core.application.dto.RefundApprovalRequest;
 //import com.tpay.domains.refund.application.dto.RefundInquiryRequest;
-//import com.tpay.domains.refund.application.dto.RefundProductInfo;
+//import com.tpay.domains.refund_core.application.dto.RefundProductInfo;
 //import org.junit.jupiter.api.Test;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.beans.factory.annotation.Value;

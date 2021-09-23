@@ -1,8 +1,8 @@
-package com.tpay.domains.refund.presentation;
+package com.tpay.domains.refund_core.presentation;
 
-import com.tpay.domains.refund.application.LimitFindService;
-import com.tpay.domains.refund.application.dto.RefundLimitRequest;
-import com.tpay.domains.refund.application.dto.RefundResponse;
+import com.tpay.domains.refund_core.application.LimitFindService;
+import com.tpay.domains.refund_core.application.dto.RefundLimitRequest;
+import com.tpay.domains.refund_core.application.dto.RefundResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

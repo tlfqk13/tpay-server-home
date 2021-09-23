@@ -1,4 +1,4 @@
-package com.tpay.domains.refund.application.dto;
+package com.tpay.domains.refund_core.application.dto;
 
 import lombok.*;
 

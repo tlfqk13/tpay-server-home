@@ -3,7 +3,7 @@ package com.tpay.domains.order.domain;
 import com.tpay.domains.BaseTimeEntity;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
-import com.tpay.domains.refund.application.dto.RefundProductInfo;
+import com.tpay.domains.refund_core.application.dto.RefundProductInfo;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
