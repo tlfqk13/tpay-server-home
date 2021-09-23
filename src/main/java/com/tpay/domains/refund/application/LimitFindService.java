@@ -18,7 +18,7 @@ public class LimitFindService {
   private final WebClient.Builder builder;
 
   @Transactional
-  public RefundResponse refundInquiry(RefundLimitRequest request) {
+  public RefundResponse find(RefundLimitRequest request) {
     WebClient webClient = builder.build();
     String uri = CustomValue.REFUND_SERVER + "/refund/limit";
     RefundResponse refundResponse =

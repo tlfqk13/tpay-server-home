@@ -16,9 +16,9 @@ public class LimitFindController {
   private final LimitFindService limitFindService;
 
   @PostMapping("/refund/limit")
-  private ResponseEntity<RefundResponse> refundInquiry(
+  private ResponseEntity<RefundResponse> find(
       @RequestBody RefundLimitRequest request) {
-    RefundResponse response = limitFindService.refundInquiry(request);
+    RefundResponse response = limitFindService.find(request);
     return ResponseEntity.ok(response);
   }
 }
