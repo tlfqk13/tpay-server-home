@@ -16,7 +16,7 @@ public class RefundFindService {
   public RefundFindResponse findRefundOne(String orderNumber) {
     OrderEntity orderEntity = orderRepository.findByOrderNumber(orderNumber);
     String totalAmount =
-        orderEntity.getOrderLineEntity().stream()
+        orderEntity.getOrderLineEntityList().stream()
             .map(saleLineEntity -> Long.parseLong(saleLineEntity.getTotalPrice()))
             .reduce(Long::sum)
             .get()

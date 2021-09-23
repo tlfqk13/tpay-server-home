@@ -44,7 +44,7 @@ public class OrderFindService {
     List<OrderFindResponse> orderFindResponseList = new LinkedList<>();
     for (OrderEntity orderEntity : orderEntityList) {
       RefundEntity refundEntity =
-          refundRepository.findBySaleEntityIdAndRefundStatus(
+          refundRepository.findByOrderEntityIdAndRefundStatus(
               orderEntity.getId(), RefundStatus.APPROVAL);
 
       if (refundEntity != null) {

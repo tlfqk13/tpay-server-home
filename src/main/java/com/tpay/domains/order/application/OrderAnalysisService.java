@@ -57,7 +57,7 @@ public class OrderAnalysisService {
     List<OrderGroupingResponse> orderGroupingResponseList = new ArrayList<>();
     for (OrderEntity orderEntity : orderEntityList) {
       RefundEntity refundEntity =
-          refundRepository.findBySaleEntityIdAndRefundStatus(
+          refundRepository.findByOrderEntityIdAndRefundStatus(
               orderEntity.getId(), RefundStatus.APPROVAL);
       if (refundEntity != null) {
         orderGroupingResponseList.add(
@@ -136,7 +136,7 @@ public class OrderAnalysisService {
             .map(
                 saleEntity -> {
                   RefundEntity refundEntity =
-                      refundRepository.findBySaleEntityIdAndRefundStatus(
+                      refundRepository.findByOrderEntityIdAndRefundStatus(
                           saleEntity.getId(), RefundStatus.APPROVAL);
                   return OrderGroupingResponse.builder()
                       .saleDate(saleEntity.getSaleDate().substring(0, 8))
@@ -200,7 +200,7 @@ public class OrderAnalysisService {
     List<OrderFindResponse> orderFindResponseList = new ArrayList<>();
     for(OrderEntity orderEntity : orderEntityList) {
       RefundEntity refundEntity =
-          refundRepository.findBySaleEntityIdAndRefundStatus(
+          refundRepository.findByOrderEntityIdAndRefundStatus(
               orderEntity.getId(), RefundStatus.APPROVAL);
       if(refundEntity != null) {
         orderFindResponseList.add(OrderFindResponse.builder()
