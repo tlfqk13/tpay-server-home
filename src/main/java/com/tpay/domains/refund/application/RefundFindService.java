@@ -1,33 +1,47 @@
 package com.tpay.domains.refund.application;
 
+import com.tpay.commons.exception.ExceptionState;
+import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.domains.refund.application.dto.RefundFindResponse;
-import com.tpay.domains.sale.domain.SaleEntity;
-import com.tpay.domains.sale.domain.SaleRepository;
-import javax.transaction.Transactional;
+import com.tpay.domains.refund.domain.RefundEntity;
+import com.tpay.domains.refund.domain.RefundRepository;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
 public class RefundFindService {
-  private final SaleRepository saleRepository;
 
-  @Transactional
-  public RefundFindResponse findRefundOne(String orderNumber) {
-    SaleEntity saleEntity = saleRepository.findByOrderNumber(orderNumber);
-    String totalAmount = saleEntity.getSaleLineEntity().stream().map(saleLineEntity -> Long.parseLong(saleLineEntity.getTotalPrice())).reduce(Long::sum).get().toString();
-    Long saleAmount = Long.parseLong(totalAmount) - Long.parseLong(saleEntity.getTotalVat());
+  private final RefundRepository refundRepository;
 
-    return RefundFindResponse.builder()
-        .name(saleEntity.getCustomerEntity().getCustomerName())
-        .nation(saleEntity.getCustomerEntity().getNation())
-        .passportNumber(saleEntity.getCustomerEntity().getPassportNumber())
-        .orderNumber(saleEntity.getOrderNumber())
-        .saleDate(saleEntity.getCreatedDate().toString())
-            .totalAmount(totalAmount)
-            .totalVat(saleEntity.getTotalVat())
-            .saleAmount(saleAmount.toString())
-            .point("미정")
-        .build();
+  public RefundEntity findByIndex(Long refundIndex) {
+    RefundEntity refundEntity =
+        refundRepository
+            .findById(refundIndex)
+            .orElseThrow(
+                () ->
+                    new InvalidParameterException(
+                        ExceptionState.INVALID_PARAMETER, "Invalid Refund Index"));
+
+    return refundEntity;
+  }
+
+  public List<RefundFindResponse> findList(Long franchiseeIndex) {
+    List<RefundEntity> refundEntityList =
+        refundRepository.findAllByFranchiseeIndex(franchiseeIndex);
+
+    return refundEntityList.stream()
+        .map(
+            refundEntity ->
+                RefundFindResponse.builder()
+                    .refundIndex(refundEntity.getId())
+                    .createdDate(refundEntity.getCreatedDate())
+                    .orderNumber(refundEntity.getOrderEntity().getOrderNumber())
+                    .totalAmount(refundEntity.getOrderEntity().getTotalAmount())
+                    .totalRefund(refundEntity.getTotalRefund())
+                    .build())
+        .collect(Collectors.toList());
   }
 }
