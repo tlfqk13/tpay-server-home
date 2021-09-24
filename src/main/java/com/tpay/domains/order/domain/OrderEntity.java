@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "sale")
+@Table(name = "orders")
 @Entity
 public class OrderEntity extends BaseTimeEntity {
   @Id
@@ -60,54 +60,46 @@ public class OrderEntity extends BaseTimeEntity {
   private List<OrderLineEntity> orderLineEntityList;
 
   @Builder
-  public OrderEntity(
-      String totalVat,
-      String totalAmount,
-      String totalQuantity,
-      CustomerEntity customerEntity,
-      FranchiseeEntity franchiseeEntity) {
-    this.totalVat = totalVat;
-    this.totalAmount = totalAmount;
-    this.totalQuantity = totalQuantity;
+  public OrderEntity(CustomerEntity customerEntity, FranchiseeEntity franchiseeEntity) {
     this.customerEntity = customerEntity;
     this.franchiseeEntity = franchiseeEntity;
     this.orderLineEntityList = new LinkedList<>();
-    totalLineQuantity();
-    totalLineAmount();
-    totalLineVat();
-    setSaleDate();
+    this.initialize();
   }
 
-  public void totalLineQuantity() {
-    Long sumQuantity =
+  public void initialize() {
+    String saleDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+    this.saleDate = saleDate;
+    this.totalAmount = initOrderLineAmount();
+    this.totalQuantity = initOrderLineQuantity();
+    this.totalVat = initOrderLineVAT();
+  }
+
+  public String initOrderLineAmount() {
+    Long amount =
         this.orderLineEntityList.stream()
-            .map(sale -> Long.parseLong(sale.getQuantity()))
+            .map(orderLine -> Long.parseLong(orderLine.getTotalPrice()))
             .reduce(Long::sum)
-            .get();
-    this.totalQuantity = String.valueOf(sumQuantity);
+            .orElseGet(() -> 0L);
+    return String.valueOf(amount);
   }
 
-  public void totalLineAmount() {
-    Long sumAmount =
+  public String initOrderLineQuantity() {
+    Long quantity =
         this.orderLineEntityList.stream()
-            .map(sale -> Long.parseLong(sale.getTotalPrice()))
+            .map(orderLine -> Long.parseLong(orderLine.getQuantity()))
             .reduce(Long::sum)
-            .get();
-    this.totalAmount = String.valueOf(sumAmount);
+            .orElseGet(() -> 0L);
+    return String.valueOf(quantity);
   }
 
-  public void totalLineVat() {
-    Long sumVat =
+  public String initOrderLineVAT() {
+    Long VAT =
         this.orderLineEntityList.stream()
-            .map(sale -> Long.parseLong(sale.getVat()))
+            .map(orderLine -> Long.parseLong(orderLine.getVat()))
             .reduce(Long::sum)
-            .get();
-    this.totalVat = String.valueOf(sumVat);
-  }
-
-  public void setSaleDate() {
-    String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-    this.saleDate = now;
+            .orElseGet(() -> 0L);
+    return String.valueOf(VAT);
   }
 
   public OrderEntity addOrderLine(OrderLineEntity orderLineEntity) {
@@ -119,5 +111,22 @@ public class OrderEntity extends BaseTimeEntity {
     return this.orderLineEntityList.stream()
         .map(orderLineEntity -> RefundProductInfo.of(orderLineEntity))
         .collect(Collectors.toList());
+  }
+
+  public String getTotalRefund() {
+    double amount = Double.parseDouble(this.totalAmount);
+    int totalRefund = (int) Math.floor(amount * 70) / 100;
+    return Integer.toString(totalRefund);
+  }
+
+  public long getPoints() {
+    double amount = Double.parseDouble(this.totalAmount);
+    long points = (long) Math.floor(amount * 30) / 100;
+    return points;
+  }
+
+  public OrderEntity setOrderNumber(String orderNumber) {
+    this.orderNumber = orderNumber;
+    return this;
   }
 }

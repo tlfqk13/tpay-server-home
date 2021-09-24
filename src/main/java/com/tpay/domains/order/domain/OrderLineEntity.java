@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "saleline")
+@Table(name = "orderline")
 @Entity
 public class OrderLineEntity {
 
@@ -46,20 +46,21 @@ public class OrderLineEntity {
     this.quantity = quantity;
     this.orderEntity = orderEntity;
     this.productEntity = productEntity;
-
     orderEntity.addOrderLine(this);
-    calculateTotalPrice();
-    calculateVAT();
+    initialize();
   }
 
-  private void calculateTotalPrice() {
-    this.totalPrice =
-        String.valueOf(
-            Long.parseLong(this.quantity) * Long.parseLong(this.productEntity.getPrice()));
+  public void initialize() {
+    this.totalPrice = initTotalPrice();
+    this.vat = initVAT();
   }
 
-  private void calculateVAT() {
-    Long calculatedVAT = Math.floorDiv(Long.parseLong(this.totalPrice), 11);
-    this.vat = String.valueOf(calculatedVAT);
+  private String initTotalPrice() {
+    return String.valueOf(
+        Long.parseLong(this.quantity) * Long.parseLong(this.productEntity.getPrice()));
+  }
+
+  private String initVAT() {
+    return String.valueOf(Math.floorDiv(Long.parseLong(this.totalPrice), 11));
   }
 }
