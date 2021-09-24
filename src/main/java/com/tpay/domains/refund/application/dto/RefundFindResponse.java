@@ -1,6 +1,7 @@
 package com.tpay.domains.refund.application.dto;
 
 
+import java.time.LocalDateTime;
 import lombok.*;
 
 @Builder
@@ -8,17 +9,9 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class RefundFindResponse {
-
+    private Long refundIndex;
     private String orderNumber;
-    private String saleDate;
-    private String nation;
-    private String passportNumber;
-    private String name;
-
+    private LocalDateTime createdDate;
     private String totalAmount;
-    private String totalVat;
-    private String saleAmount;
-    private String point;
-
-
+    private String totalRefund;
 }
