@@ -2,9 +2,16 @@ package com.tpay.domains.refund.domain;
 
 import com.tpay.domains.BaseTimeEntity;
 import com.tpay.domains.order.domain.OrderEntity;
-
-import javax.persistence.*;
-
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,7 +30,7 @@ public class RefundEntity extends BaseTimeEntity {
   private Long id;
 
   @Column(name = "tkOutConfNo", length = 20)
-  private String approvalNumber;
+  private String takeOutNumber;
 
   @Column(name = "totRefund", length = 10)
   private String totalRefund;
@@ -36,12 +43,13 @@ public class RefundEntity extends BaseTimeEntity {
   private OrderEntity orderEntity;
 
   @Builder
-  public RefundEntity(
-      String approvalNumber, String totalRefund, RefundStatus refundStatus, OrderEntity orderEntity) {
-    this.approvalNumber = approvalNumber;
-    this.totalRefund = totalRefund;
-    this.refundStatus = refundStatus;
+  public RefundEntity(String responseCode, String orderNumber, String takeOutNumber, OrderEntity orderEntity) {
     this.orderEntity = orderEntity;
+    this.totalRefund = orderEntity.getTotalRefund();
+    this.refundStatus = responseCode.equals("0000") ? RefundStatus.APPROVAL : RefundStatus.REJECT;
+    this.takeOutNumber = takeOutNumber;
+
+    orderEntity.setOrderNumber(orderNumber);
   }
 
   public void updateCancel(String responseCode) {
