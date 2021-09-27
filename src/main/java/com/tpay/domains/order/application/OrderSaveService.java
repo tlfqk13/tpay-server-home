@@ -5,6 +5,7 @@ import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.franchisee.application.FranchiseeFindService;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.order.domain.OrderEntity;
+import com.tpay.domains.order.domain.OrderLineEntity;
 import com.tpay.domains.order.domain.OrderRepository;
 import com.tpay.domains.product.application.ProductFindService;
 import com.tpay.domains.product.domain.ProductEntity;
@@ -50,7 +51,8 @@ public class OrderSaveService {
             .build();
 
     orderRepository.save(orderEntity);
-    orderLineSaveService.save(orderEntity, productEntity);
+    OrderLineEntity orderLineEntity = orderLineSaveService.save(orderEntity, productEntity);
+    orderEntity.addOrderLine(orderLineEntity);
 
     return orderEntity;
   }
