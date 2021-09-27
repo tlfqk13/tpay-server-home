@@ -13,7 +13,7 @@ public class ProductSaveService {
 
   public ProductEntity save(String category, String price) {
     ProductEntity productEntity =
-        ProductEntity.builder().name(category).code("000").lineNumber("000").price(price).build();
+        ProductEntity.builder().name(category).code("001").lineNumber("001").price(price).build();
     return productRepository.save(productEntity);
   }
 }
