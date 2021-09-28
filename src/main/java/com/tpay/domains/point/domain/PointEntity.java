@@ -20,7 +20,7 @@ import lombok.ToString;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "point")
+@Table(name = "points")
 @Entity
 @ToString
 public class PointEntity {
