@@ -41,6 +41,7 @@ public class RefundFindService {
                     .orderNumber(refundEntity.getOrderEntity().getOrderNumber())
                     .totalAmount(refundEntity.getOrderEntity().getTotalAmount())
                     .totalRefund(refundEntity.getTotalRefund())
+                    .refundStatus(refundEntity.getRefundStatus())
                     .build())
         .collect(Collectors.toList());
   }
