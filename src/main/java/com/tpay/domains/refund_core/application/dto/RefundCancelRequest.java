@@ -10,22 +10,24 @@ import lombok.Getter;
 @Builder
 public class RefundCancelRequest {
   private String purchaseSequenceNumber;
-  private String takeOutNumber;
+  private String takeoutNumber;
   private String name;
   private String nationality;
-  private String amount;
+  private String totalAmount;
   private String passportNumber;
+  private String saleDate;
 
   public static RefundCancelRequest of(CustomerEntity customerEntity, RefundEntity refundEntity) {
     OrderEntity orderEntity = refundEntity.getOrderEntity();
 
     return RefundCancelRequest.builder()
-        .amount(orderEntity.getTotalAmount())
+        .totalAmount(orderEntity.getTotalAmount())
         .name(customerEntity.getCustomerName())
         .nationality(customerEntity.getNation())
         .passportNumber(customerEntity.getPassportNumber())
         .purchaseSequenceNumber(orderEntity.getOrderNumber())
-        .takeOutNumber(refundEntity.getTakeOutNumber())
+        .takeoutNumber(refundEntity.getTakeOutNumber())
+        .saleDate(orderEntity.getSaleDate())
         .build();
   }
 }
