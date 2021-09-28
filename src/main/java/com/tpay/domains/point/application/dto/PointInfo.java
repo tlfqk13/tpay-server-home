@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PointInfo {
   private String datetime;
+  private String totalAmount;
   private Long value;
   private PointStatus pointStatus;
 }

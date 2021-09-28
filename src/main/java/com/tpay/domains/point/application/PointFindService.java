@@ -42,6 +42,7 @@ public class PointFindService {
                   return PointInfo.builder()
                       .datetime(createdDateAsString)
                       .pointStatus(pointEntity.getPointStatus())
+                      .totalAmount(pointEntity.getOrderEntity().getTotalAmount())
                       .value(pointEntity.getChange())
                       .build();
                 })
