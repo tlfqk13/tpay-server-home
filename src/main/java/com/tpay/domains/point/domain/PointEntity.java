@@ -1,6 +1,7 @@
 package com.tpay.domains.point.domain;
 
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
+import com.tpay.domains.order.domain.OrderEntity;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,7 +21,7 @@ import lombok.ToString;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "point")
+@Table(name = "points")
 @Entity
 @ToString
 public class PointEntity {
@@ -43,6 +44,10 @@ public class PointEntity {
   private long balance;
 
   @ManyToOne
+  @JoinColumn(name = "order_id")
+  private OrderEntity orderEntity;
+
+  @ManyToOne
   @JoinColumn(name = "franchisee_id")
   private FranchiseeEntity franchiseeEntity;
 
@@ -53,12 +58,14 @@ public class PointEntity {
       long change,
       PointStatus pointStatus,
       long balance,
+      OrderEntity orderEntity,
       FranchiseeEntity franchiseeEntity) {
     this.createdDate = createdDate;
     this.signType = signType;
     this.change = change;
     this.pointStatus = pointStatus;
     this.balance = balance;
+    this.orderEntity = orderEntity;
     this.franchiseeEntity = franchiseeEntity;
   }
 }

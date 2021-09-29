@@ -1,5 +1,6 @@
 package com.tpay.domains.refund_core.application.dto;
 
+import com.tpay.commons.custom.CustomValue;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.order.domain.OrderEntity;
@@ -10,6 +11,7 @@ import lombok.Getter;
 @Getter
 @Builder
 public class RefundApproveRequest {
+  private String serviceCode;
   private String businessNumber;
   private String franchiseeName;
   private String franchiseeNumber;
@@ -18,22 +20,22 @@ public class RefundApproveRequest {
   private String storeAddress;
   private String storeTel;
 
-  private String productList;
-  private String productListNow;
-
   private String name;
   private String nationality;
-  private String amount;
+  private String totalAmount;
   private String passportNumber;
 
   private String totalRefund;
-  private String totalVAT;
+  private String totalVat;
   private String totalIct;
   private String totalStr;
   private String totalEdut;
   private String totalQuantity;
+  private String saleDate;
 
-  List<RefundProductInfo> refundProductInfo;
+  private String indList;
+  private String indListNow;
+  List<RefundProductInfo> productInfoList;
 
   public static RefundApproveRequest of(OrderEntity orderEntity) {
     List<RefundProductInfo> refundProductInfo = orderEntity.getRefundProductInfoList();
@@ -41,16 +43,17 @@ public class RefundApproveRequest {
     FranchiseeEntity franchiseeEntity = orderEntity.getFranchiseeEntity();
 
     return RefundApproveRequest.builder()
+        .serviceCode(CustomValue.APPLICATION_CODE)
         .nationality(customerEntity.getNation())
-        .amount(orderEntity.getTotalAmount())
+        .totalAmount(orderEntity.getTotalAmount())
         .businessNumber(franchiseeEntity.getBusinessNumber())
         .franchiseeName(franchiseeEntity.getStoreName())
         .franchiseeNumber(franchiseeEntity.getMemberNumber())
         .name(customerEntity.getCustomerName())
         .passportNumber(customerEntity.getPassportNumber())
-        .productList("1")
-        .productListNow("1")
-        .refundProductInfo(refundProductInfo)
+        .indList("1")
+        .indListNow("1")
+        .productInfoList(refundProductInfo)
         .sellerName(franchiseeEntity.getSellerName())
         .storeAddress(franchiseeEntity.getStoreAddress())
         .storeName(franchiseeEntity.getStoreName())
@@ -58,9 +61,10 @@ public class RefundApproveRequest {
         .totalEdut("0")
         .totalIct("0")
         .totalQuantity(orderEntity.getTotalQuantity())
+        .saleDate(orderEntity.getSaleDate())
         .totalRefund(orderEntity.getTotalRefund())
         .totalStr("0")
-        .totalVAT(orderEntity.getTotalVat())
+        .totalVat(orderEntity.getTotalVat())
         .build();
   }
 }
