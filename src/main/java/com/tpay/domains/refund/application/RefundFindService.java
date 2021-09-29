@@ -2,9 +2,11 @@ package com.tpay.domains.refund.application;
 
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
+import com.tpay.commons.util.DateFilter;
 import com.tpay.domains.refund.application.dto.RefundFindResponse;
 import com.tpay.domains.refund.domain.RefundEntity;
 import com.tpay.domains.refund.domain.RefundRepository;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -28,9 +30,21 @@ public class RefundFindService {
     return refundEntity;
   }
 
-  public List<RefundFindResponse> findList(Long franchiseeIndex) {
+  public List<RefundFindResponse> findList(
+      Long franchiseeIndex, DateFilter dateFilter, LocalDate startDate, LocalDate endDate) {
+
+    if (endDate != null) {
+      endDate = endDate.plusDays(1);
+    }
+
+    if (dateFilter != DateFilter.CUSTOM) {
+      startDate = dateFilter.getStartDate();
+      endDate = dateFilter.getEndDate();
+    }
+
     List<RefundEntity> refundEntityList =
-        refundRepository.findAllByFranchiseeIndex(franchiseeIndex);
+        refundRepository.findAllByFranchiseeIndex(
+            franchiseeIndex, startDate.atTime(0, 0), endDate.atTime(0, 0));
 
     return refundEntityList.stream()
         .map(
