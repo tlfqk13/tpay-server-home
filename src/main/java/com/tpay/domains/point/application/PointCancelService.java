@@ -32,6 +32,7 @@ public class PointCancelService {
             .change(points)
             .pointStatus(PointStatus.CANCEL)
             .balance(franchiseeEntity.getBalance())
+            .orderEntity(orderEntity)
             .franchiseeEntity(franchiseeEntity)
             .build();
 

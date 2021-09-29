@@ -49,7 +49,7 @@ spring:
       ddl-auto: create
 custom:
   refund:
-    server: ENC(6tXPwPp+C1ZsZs57wnNnBdtDnlOucYN/5FZvSEju0HM=)
+    server: ENC(6ben91jzG4q4i/cAQ7R+/chDJ/pxHXBsvTdk+j+B29UuFhUKTYmOXw==)
 server:
   port: 80
 

@@ -45,7 +45,7 @@ public class OrderEntity extends BaseTimeEntity {
   @Column(name = "totQty", length = 7)
   private String totalQuantity;
 
-  @Column(name = "purchsSn", length = 20, nullable = false)
+  @Column(name = "purchsSn", length = 20)
   private String orderNumber;
 
   @ManyToOne
@@ -70,9 +70,14 @@ public class OrderEntity extends BaseTimeEntity {
   public void initialize() {
     String saleDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
     this.saleDate = saleDate;
-    this.totalAmount = initOrderLineAmount();
-    this.totalQuantity = initOrderLineQuantity();
-    this.totalVat = initOrderLineVAT();
+  }
+
+  public OrderEntity addOrderLine(OrderLineEntity orderLineEntity) {
+    this.orderLineEntityList.add(orderLineEntity);
+    this.totalAmount = this.initOrderLineAmount();
+    this.totalQuantity = this.initOrderLineQuantity();
+    this.totalVat = this.initOrderLineVAT();
+    return this;
   }
 
   public String initOrderLineAmount() {
@@ -102,11 +107,6 @@ public class OrderEntity extends BaseTimeEntity {
     return String.valueOf(VAT);
   }
 
-  public OrderEntity addOrderLine(OrderLineEntity orderLineEntity) {
-    this.orderLineEntityList.add(orderLineEntity);
-    return this;
-  }
-
   public List<RefundProductInfo> getRefundProductInfoList() {
     return this.orderLineEntityList.stream()
         .map(orderLineEntity -> RefundProductInfo.of(orderLineEntity))
@@ -114,14 +114,14 @@ public class OrderEntity extends BaseTimeEntity {
   }
 
   public String getTotalRefund() {
-    double amount = Double.parseDouble(this.totalAmount);
-    int totalRefund = (int) Math.floor(amount * 70) / 100;
+    double vat = Double.parseDouble(this.totalVat);
+    int totalRefund = (int) Math.floor(vat * 70) / 100;
     return Integer.toString(totalRefund);
   }
 
   public long getPoints() {
-    double amount = Double.parseDouble(this.totalAmount);
-    long points = (long) Math.floor(amount * 30) / 100;
+    double vat = Double.parseDouble(this.totalVat);
+    long points = (long) Math.floor(vat * 30) / 100;
     return points;
   }
 

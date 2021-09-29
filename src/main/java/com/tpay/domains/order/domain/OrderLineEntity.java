@@ -46,7 +46,6 @@ public class OrderLineEntity {
     this.quantity = quantity;
     this.orderEntity = orderEntity;
     this.productEntity = productEntity;
-    orderEntity.addOrderLine(this);
     initialize();
   }
 

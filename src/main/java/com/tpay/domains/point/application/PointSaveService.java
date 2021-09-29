@@ -34,6 +34,7 @@ public class PointSaveService {
             .pointStatus(PointStatus.SAVE)
             .balance(franchiseeEntity.getBalance())
             .franchiseeEntity(franchiseeEntity)
+            .orderEntity(orderEntity)
             .build();
 
     return pointRepository.save(pointEntity);

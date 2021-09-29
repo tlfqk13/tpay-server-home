@@ -1,7 +1,7 @@
 package com.tpay.domains.point.application;
 
-import com.tpay.domains.point.application.dto.PointRequest;
-import com.tpay.domains.point.application.dto.PointResponse;
+import com.tpay.domains.point.application.dto.PointFindResponse;
+import com.tpay.domains.point.application.dto.PointInfo;
 import com.tpay.domains.point.domain.PointEntity;
 import com.tpay.domains.point.domain.PointRepository;
 import java.time.LocalDate;
@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,23 +19,19 @@ public class PointFindService {
 
   private final PointRepository pointRepository;
 
-  public ResponseEntity<List<PointResponse>> findPoints(
-      Integer page, Integer size, PointRequest pointRequest) {
-    LocalDate endDate = LocalDate.now();
-    LocalDate startDate =
-        pointRequest.getWeek() > 0
-            ? endDate.minusWeeks(pointRequest.getWeek())
-            : endDate.minusMonths(pointRequest.getMonth());
+  public PointFindResponse findPoints(
+      Long franchiseeIndex, Integer week, Integer month, Integer page, Integer size) {
+
+    LocalDate endDate = LocalDate.now().plusDays(1);
+    LocalDate startDate = week > 0 ? endDate.minusWeeks(week) : endDate.minusMonths(month);
 
     PageRequest pageRequest = PageRequest.of(page, size, Sort.by("createdDate").descending());
+
     List<PointEntity> pointEntityList =
         pointRepository.findAllByFranchiseeEntityIdAndCreatedDateBetween(
-            pointRequest.getFranchiseeId(),
-            startDate.atStartOfDay(),
-            endDate.atStartOfDay(),
-            pageRequest);
+            franchiseeIndex, startDate.atStartOfDay(), endDate.atStartOfDay(), pageRequest);
 
-    List<PointResponse> pointResponseList =
+    List<PointInfo> pointInfoList =
         pointEntityList.stream()
             .map(
                 pointEntity -> {
@@ -44,14 +39,19 @@ public class PointFindService {
                       pointEntity
                           .getCreatedDate()
                           .format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH.mm.ss"));
-                  return PointResponse.builder()
+                  return PointInfo.builder()
                       .datetime(createdDateAsString)
                       .pointStatus(pointEntity.getPointStatus())
+                      .totalAmount(pointEntity.getOrderEntity().getTotalAmount())
                       .value(pointEntity.getChange())
                       .build();
                 })
             .collect(Collectors.toList());
 
-    return ResponseEntity.ok(pointResponseList);
+    return PointFindResponse.builder()
+        .startDate(startDate)
+        .endDate(endDate)
+        .pointInfoList(pointInfoList)
+        .build();
   }
 }

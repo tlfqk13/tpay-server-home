@@ -11,8 +11,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class PointResponse {
+public class PointInfo {
   private String datetime;
+  private String totalAmount;
   private Long value;
   private PointStatus pointStatus;
 }
