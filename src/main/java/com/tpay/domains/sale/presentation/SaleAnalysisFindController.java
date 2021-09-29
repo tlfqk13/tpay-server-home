@@ -2,7 +2,7 @@ package com.tpay.domains.sale.presentation;
 
 import com.tpay.domains.sale.application.SaleAnalysisFindService;
 import com.tpay.domains.sale.application.dto.SaleAnalysisFindResponse;
-import com.tpay.domains.sale.domain.DateFilter;
+import com.tpay.commons.util.DateFilter;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

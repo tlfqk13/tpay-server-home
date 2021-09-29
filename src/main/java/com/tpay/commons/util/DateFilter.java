@@ -1,4 +1,4 @@
-package com.tpay.domains.sale.domain;
+package com.tpay.commons.util;
 
 import java.time.LocalDate;
 import lombok.Getter;
