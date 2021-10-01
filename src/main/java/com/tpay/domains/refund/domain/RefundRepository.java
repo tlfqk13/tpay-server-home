@@ -10,9 +10,13 @@ import org.springframework.data.repository.query.Param;
 
 public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
   @Query(
-      "select refund from RefundEntity refund where refund.orderEntity.franchiseeEntity.id = :franchiseeIndex and refund.createdDate >= :startDate and refund.createdDate < :endDate")
+      value =
+          "select * from refund r left join orders o on r.order_id = o.id where o.franchisee_id = :franchiseeIndex and r.created_date between :startDate and :endDate",
+      nativeQuery = true)
   List<RefundEntity> findAllByFranchiseeIndex(
-      Long franchiseeIndex, LocalDateTime startDate, LocalDateTime endDate);
+      @Param("franchiseeIndex") Long franchiseeIndex,
+      @Param("startDate") LocalDateTime startDate,
+      @Param("endDate") LocalDateTime endDate);
 
   @Query(
       value =
@@ -28,11 +32,10 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
               + "                         on o.id = r.order_id\n"
               + "               left join points p on o.id = p.order_id\n"
               + "      where o.franchisee_id = :franchiseeIndex\n"
-              + "        and o.created_date >= :startDate\n"
-              + "        and o.created_date\n"
-              + "          < :endDate\n"
               + "        and p.point_status = 'SAVE'\n"
               + "        and r.refund_status = 'APPROVAL'\n"
+              + "        and o.created_date between :startDate\n"
+              + "        and :endDate\n"
               + "      group by date(o.sale_datm)) as results;\n",
       nativeQuery = true)
   List<SaleAnalysisFindResponse> findSaleAnalysis(
