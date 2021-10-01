@@ -12,8 +12,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class FranchiseeMyPageResponse {
-  private String storeName;
   private LocalDateTime createdDate;
+  private String businessNumber;
+  private String storeName;
+  private String storeAddress;
   private Long totalSalesAmount;
   private Long totalPoint;
+  private String productCategory;
 }
