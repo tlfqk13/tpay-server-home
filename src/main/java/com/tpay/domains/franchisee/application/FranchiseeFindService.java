@@ -50,10 +50,13 @@ public class FranchiseeFindService {
             .sum();
 
     return FranchiseeMyPageResponse.builder()
-        .storeName(franchiseeEntity.getStoreName())
         .createdDate(franchiseeEntity.getCreatedDate())
-        .totalPoint(franchiseeEntity.getBalance())
+        .businessNumber(franchiseeEntity.getBusinessNumber())
+        .storeName(franchiseeEntity.getStoreName())
+        .storeAddress(franchiseeEntity.getStoreAddress())
         .totalSalesAmount(totalSaleAmount)
+        .totalPoint(franchiseeEntity.getBalance())
+        .productCategory(franchiseeEntity.getProductCategory())
         .build();
   }
 }
