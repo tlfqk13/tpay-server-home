@@ -1,7 +1,9 @@
 package com.tpay.domains.franchisee.presentation;
 
 import com.tpay.domains.franchisee.application.FranchiseeFindService;
+import com.tpay.domains.franchisee.application.dto.FranchiseeInfo;
 import com.tpay.domains.franchisee.application.dto.FranchiseeMyPageResponse;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,8 +17,15 @@ public class FranchiseeFindController {
   private final FranchiseeFindService franchiseeFindService;
 
   @GetMapping("/franchisee/{franchiseeIndex}")
-  public ResponseEntity<FranchiseeMyPageResponse> findMyPageInfo(@PathVariable Long franchiseeIndex) {
+  public ResponseEntity<FranchiseeMyPageResponse> findMyPageInfo(
+      @PathVariable Long franchiseeIndex) {
     FranchiseeMyPageResponse response = franchiseeFindService.findMyPageInfo(franchiseeIndex);
+    return ResponseEntity.ok(response);
+  }
+
+  @GetMapping("/franchisee")
+  public ResponseEntity<List<FranchiseeInfo>> findAll() {
+    List<FranchiseeInfo> response = franchiseeFindService.findAll();
     return ResponseEntity.ok(response);
   }
 }
