@@ -2,7 +2,7 @@ package com.tpay.domains.franchisee_applicant.application;
 
 import com.tpay.commons.custom.CustomValue;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
-import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeInfo;
+import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeFindRequest;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -18,31 +18,31 @@ public class FranchiseeApplicantAcceptService {
   private final WebClient.Builder builder;
 
   @Transactional
-  public FranchiseeInfo accept(Long franchiseeApplicantIndex, FranchiseeInfo franchiseeInfo) {
+  public FranchiseeFindRequest accept(Long franchiseeApplicantIndex, FranchiseeFindRequest franchiseeFindRequest) {
     FranchiseeApplicantEntity franchiseeApplicantEntity =
         franchiseeApplicantFindService.findByIndex(franchiseeApplicantIndex);
 
     FranchiseeEntity franchiseeEntity = franchiseeApplicantEntity.getFranchiseeEntity();
 
-    FranchiseeInfo response = sendTo(franchiseeInfo);
+    FranchiseeFindRequest response = sendTo(franchiseeFindRequest);
 
     franchiseeApplicantEntity.accept();
     franchiseeEntity.memberInfo(response.getFranchiseeName(), response.getFranchiseeNumber());
     return response;
   }
 
-  private FranchiseeInfo sendTo(FranchiseeInfo franchiseeInfo) {
+  private FranchiseeFindRequest sendTo(FranchiseeFindRequest franchiseeFindRequest) {
     WebClient webClient = builder.build();
     String uri = CustomValue.REFUND_SERVER + "/franchisee";
 
-    FranchiseeInfo response =
+    FranchiseeFindRequest response =
         webClient
             .post()
             .uri(uri)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(franchiseeInfo)
+            .bodyValue(franchiseeFindRequest)
             .retrieve()
-            .bodyToMono(FranchiseeInfo.class)
+            .bodyToMono(FranchiseeFindRequest.class)
             .block();
 
     return response;
