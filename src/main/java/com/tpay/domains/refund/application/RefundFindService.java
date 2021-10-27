@@ -59,4 +59,20 @@ public class RefundFindService {
                     .build())
         .collect(Collectors.toList());
   }
+
+  public List<RefundFindResponse> findAll() {
+    List<RefundEntity> refundEntities = refundRepository.findAll();
+    return refundEntities.stream()
+        .map(
+            refundEntity ->
+                RefundFindResponse.builder()
+                    .refundIndex(refundEntity.getId())
+                    .createdDate(refundEntity.getCreatedDate())
+                    .orderNumber(refundEntity.getOrderEntity().getOrderNumber())
+                    .totalAmount(refundEntity.getOrderEntity().getTotalAmount())
+                    .totalRefund(refundEntity.getTotalRefund())
+                    .refundStatus(refundEntity.getRefundStatus())
+                    .build())
+        .collect(Collectors.toList());
+  }
 }
