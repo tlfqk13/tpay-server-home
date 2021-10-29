@@ -2,12 +2,14 @@ package com.tpay.domains.franchisee.application;
 
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
+import com.tpay.domains.franchisee.application.dto.FranchiseeInfo;
 import com.tpay.domains.franchisee.application.dto.FranchiseeMyPageResponse;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeRepository;
 import com.tpay.domains.order.application.OrderFindService;
 import com.tpay.domains.order.domain.OrderEntity;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -58,5 +60,13 @@ public class FranchiseeFindService {
         .totalPoint(franchiseeEntity.getBalance())
         .productCategory(franchiseeEntity.getProductCategory())
         .build();
+  }
+
+  public List<FranchiseeInfo> findAll() {
+    List<FranchiseeEntity> franchiseeEntityList = franchiseeRepository.findAll();
+
+    return franchiseeEntityList.stream()
+        .map(franchiseeEntity -> FranchiseeInfo.of(franchiseeEntity))
+        .collect(Collectors.toList());
   }
 }

@@ -1,7 +1,7 @@
 package com.tpay.domains.franchisee_applicant.presentation;
 
 import com.tpay.domains.franchisee_applicant.application.FranchiseeApplicantAcceptService;
-import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeInfo;
+import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeFindRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,10 +16,10 @@ public class FranchiseeApplicantAcceptController {
   private final FranchiseeApplicantAcceptService franchiseeApplicantAcceptService;
 
   @PutMapping("/admin/franchisee-applicants/{franchiseeApplicantIndex}")
-  public ResponseEntity<FranchiseeInfo> accept(
-      @PathVariable Long franchiseeApplicantIndex, @RequestBody FranchiseeInfo franchiseeInfo) {
-    FranchiseeInfo response =
-        franchiseeApplicantAcceptService.accept(franchiseeApplicantIndex, franchiseeInfo);
+  public ResponseEntity<FranchiseeFindRequest> accept(
+      @PathVariable Long franchiseeApplicantIndex, @RequestBody FranchiseeFindRequest franchiseeFindRequest) {
+    FranchiseeFindRequest response =
+        franchiseeApplicantAcceptService.accept(franchiseeApplicantIndex, franchiseeFindRequest);
     return ResponseEntity.ok(response);
   }
 }

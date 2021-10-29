@@ -29,4 +29,10 @@ public class RefundFindController {
         refundFindService.findList(franchiseeIndex, dateFilter, startDate, endDate);
     return ResponseEntity.ok(responseList);
   }
+
+  @GetMapping("/refunds")
+  public ResponseEntity<List<RefundFindResponse>> findAll() {
+    List<RefundFindResponse> response = refundFindService.findAll();
+    return ResponseEntity.ok(response);
+  }
 }
