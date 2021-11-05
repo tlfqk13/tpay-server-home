@@ -35,6 +35,6 @@ public class LimitFindService {
         customerFindService.findByCustomerNameAndPassportNumber(
             request.getName(), request.getPassportNumber(), request.getNationality());
 
-    return refundResponse;
+    return refundResponse.addCustomerInfo(customerEntity.getId());
   }
 }

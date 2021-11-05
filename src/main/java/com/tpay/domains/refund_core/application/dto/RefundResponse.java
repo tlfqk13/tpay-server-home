@@ -17,4 +17,11 @@ public class RefundResponse {
   // 환급 한도 조회 반환 필드
   private String beforeDeduction;
   private String afterDeduction;
+
+  private Long customerIndex;
+
+  public RefundResponse addCustomerInfo(Long customerIndex) {
+    this.customerIndex = customerIndex;
+    return this;
+  }
 }
