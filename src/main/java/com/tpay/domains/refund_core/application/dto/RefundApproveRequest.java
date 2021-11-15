@@ -11,7 +11,7 @@ import lombok.Getter;
 @Getter
 @Builder
 public class RefundApproveRequest {
-  private String serviceCode;
+  private String serviceName;
   private String businessNumber;
   private String franchiseeName;
   private String franchiseeNumber;
@@ -43,7 +43,7 @@ public class RefundApproveRequest {
     FranchiseeEntity franchiseeEntity = orderEntity.getFranchiseeEntity();
 
     return RefundApproveRequest.builder()
-        .serviceCode(CustomValue.APPLICATION_CODE)
+        .serviceName(CustomValue.APPLICATION_CODE)
         .nationality(customerEntity.getNation())
         .totalAmount(orderEntity.getTotalAmount())
         .businessNumber(franchiseeEntity.getBusinessNumber())

@@ -14,7 +14,8 @@ public enum ExceptionState {
   ALREADY_EXISTS(409, HttpStatus.CONFLICT, "R0001", "Already Exists"),
   AUTHENTICATION_FAILED(401, HttpStatus.UNAUTHORIZED, "A0001", "Invalid Authentication"),
   INVALID_TOKEN(401, HttpStatus.UNAUTHORIZED, "A0002", "Invalid Auth Token"),
-  FORCE_REFRESH(401, HttpStatus.UNAUTHORIZED, "A0003", "Sign-in Again");
+  FORCE_REFRESH(401, HttpStatus.UNAUTHORIZED, "A0003", "Sign-in Again"),
+  REFUND(400, HttpStatus.BAD_REQUEST, "R0001", "Refund Exception");
 
   private final int value;
   private final HttpStatus httpStatus;
