@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 public class CustomerSaveService {
 
   private final PassportNumberEncryptService passportNumberEncryptService;
+  private final CustomerFindService customerFindService;
   private final CustomerRepository customerRepository;
 
   public CustomerEntity saveByCustomerInfo(
@@ -18,13 +19,19 @@ public class CustomerSaveService {
 
     String encryptedPassportNumber = passportNumberEncryptService.encrypt(passportNumber);
 
-    CustomerEntity customerEntity =
-        CustomerEntity.builder()
-            .customerName(customerName)
-            .passportNumber(encryptedPassportNumber)
-            .nation(nationality)
-            .build();
+    CustomerEntity customerEntity;
+    if (customerRepository.existsByPassportNumber(encryptedPassportNumber)) {
+      customerEntity = customerFindService.findByPassportNumber(encryptedPassportNumber);
+    } else {
+      customerEntity =
+          customerRepository.save(
+              CustomerEntity.builder()
+                  .customerName(customerName)
+                  .passportNumber(encryptedPassportNumber)
+                  .nation(nationality)
+                  .build());
+    }
 
-    return customerRepository.save(customerEntity);
+    return customerEntity;
   }
 }

@@ -6,6 +6,10 @@ import java.util.Optional;
 
 public interface CustomerRepository extends JpaRepository<CustomerEntity, Long> {
 
+  Optional<CustomerEntity> findByPassportNumber(String passportNumber);
+
   Optional<CustomerEntity> findByCustomerNameAndPassportNumber(
       String customerName, String passportNumber);
+
+  boolean existsByPassportNumber(String passportNumber);
 }
