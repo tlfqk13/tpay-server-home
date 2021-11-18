@@ -16,25 +16,16 @@ public class CustomerFindService {
   private final CustomerRepository customerRepository;
   private final CustomerSaveService customerSaveService;
 
-  public CustomerEntity findByPassportNumber(String passportNumber) {
-    String encryptedPassportNumber = passportNumberEncryptService.encrypt(passportNumber);
-    return customerRepository
-        .findByPassportNumber(encryptedPassportNumber)
-        .orElseThrow(
-            () ->
-                new InvalidParameterException(
-                    ExceptionState.INVALID_PARAMETER, "Invalid Passport Number"));
-  }
-
   public CustomerEntity findByCustomerNameAndPassportNumber(
       String customerName, String passportNumber, String nationality) {
+    String encryptedPassportNumber = passportNumberEncryptService.encrypt(passportNumber);
     CustomerEntity customerEntity =
         customerRepository
-            .findByCustomerNameAndPassportNumber(customerName, passportNumber)
+            .findByCustomerNameAndPassportNumber(customerName, encryptedPassportNumber)
             .orElseGet(
                 () ->
                     customerSaveService.saveByCustomerInfo(
-                        customerName, passportNumber, nationality));
+                        customerName, encryptedPassportNumber, nationality));
 
     return customerEntity;
   }
