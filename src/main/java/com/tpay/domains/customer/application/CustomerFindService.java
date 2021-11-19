@@ -1,5 +1,6 @@
 package com.tpay.domains.customer.application;
 
+import com.tpay.commons.aria.PassportNumberEncryptService;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.domains.customer.domain.CustomerEntity;
@@ -11,18 +12,20 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CustomerFindService {
 
+  private final PassportNumberEncryptService passportNumberEncryptService;
   private final CustomerRepository customerRepository;
   private final CustomerSaveService customerSaveService;
 
   public CustomerEntity findByCustomerNameAndPassportNumber(
       String customerName, String passportNumber, String nationality) {
+    String encryptedPassportNumber = passportNumberEncryptService.encrypt(passportNumber);
     CustomerEntity customerEntity =
         customerRepository
-            .findByCustomerNameAndPassportNumber(customerName, passportNumber)
+            .findByCustomerNameAndPassportNumber(customerName, encryptedPassportNumber)
             .orElseGet(
                 () ->
                     customerSaveService.saveByCustomerInfo(
-                        customerName, passportNumber, nationality));
+                        customerName, encryptedPassportNumber, nationality));
 
     return customerEntity;
   }

@@ -2,6 +2,7 @@ package com.tpay.domains.customer.application;
 
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.customer.domain.CustomerRepository;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,16 +12,18 @@ public class CustomerSaveService {
 
   private final CustomerRepository customerRepository;
 
+  @Transactional
   public CustomerEntity saveByCustomerInfo(
       String customerName, String passportNumber, String nationality) {
 
     CustomerEntity customerEntity =
-        CustomerEntity.builder()
-            .customerName(customerName)
-            .passportNumber(passportNumber)
-            .nation(nationality)
-            .build();
+        customerRepository.save(
+            CustomerEntity.builder()
+                .customerName(customerName)
+                .passportNumber(passportNumber)
+                .nation(nationality)
+                .build());
 
-    return customerRepository.save(customerEntity);
+    return customerEntity;
   }
 }
