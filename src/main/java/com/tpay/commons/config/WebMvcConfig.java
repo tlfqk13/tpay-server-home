@@ -29,6 +29,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
             "/franchisee/business-number",
             "/franchisee/password",
             "/admin/**",
+            "/refunds",
             "/h2-console/**",
             "/favicon.ico",
             "/error");

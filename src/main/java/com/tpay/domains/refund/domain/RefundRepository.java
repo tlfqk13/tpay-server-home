@@ -20,6 +20,16 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
 
   @Query(
       value =
+          "select * from refund r right join orders o on r.order_id = o.id left join customer c on o.customer_id = c.id where o.franchisee_id = :franchiseeIndex and c.cus_pass_no = :passportNumber and r.created_date between :startDate and :endDate",
+      nativeQuery = true)
+  List<RefundEntity> findAllByPassportNumber(
+      @Param("franchiseeIndex") Long franchiseeIndex,
+      @Param("passportNumber") String passportNumber,
+      @Param("startDate") LocalDateTime startDate,
+      @Param("endDate") LocalDateTime endDate);
+
+  @Query(
+      value =
           "select *, (results.totalAmount - results.totalRefund) as actualAmount\n"
               + "from (select date(o.created_date)                 as date,\n"
               + "             cast(sum(o.tot_amt) as integer)      as totalAmount,\n"
