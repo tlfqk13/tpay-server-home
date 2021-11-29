@@ -3,22 +3,15 @@ package com.tpay.domains.order.domain;
 import com.tpay.domains.BaseTimeEntity;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
+import com.tpay.domains.refund.domain.RefundEntity;
 import com.tpay.domains.refund_core.application.dto.RefundProductInfo;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -55,6 +48,9 @@ public class OrderEntity extends BaseTimeEntity {
   @ManyToOne
   @JoinColumn(name = "franchisee_id", nullable = false)
   private FranchiseeEntity franchiseeEntity;
+
+  @OneToOne(mappedBy = "orderEntity")
+  private RefundEntity refundEntity;
 
   @OneToMany(mappedBy = "orderEntity", cascade = CascadeType.PERSIST)
   private List<OrderLineEntity> orderLineEntityList;
@@ -128,5 +124,9 @@ public class OrderEntity extends BaseTimeEntity {
   public OrderEntity setOrderNumber(String orderNumber) {
     this.orderNumber = orderNumber;
     return this;
+  }
+
+  public void setRefundEntity(RefundEntity refundEntity) {
+    this.refundEntity = refundEntity;
   }
 }
