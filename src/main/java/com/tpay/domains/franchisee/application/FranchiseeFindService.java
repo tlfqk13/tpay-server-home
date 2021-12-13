@@ -8,10 +8,12 @@ import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeRepository;
 import com.tpay.domains.order.application.OrderFindService;
 import com.tpay.domains.order.domain.OrderEntity;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.tpay.domains.refund.domain.RefundStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -48,6 +50,7 @@ public class FranchiseeFindService {
 
     Long totalSaleAmount =
         orderEntityList.stream()
+            .filter(orderEntity -> orderEntity.getRefundEntity().getRefundStatus() != RefundStatus.CANCEL)
             .mapToLong(saleEntity -> Long.parseLong(saleEntity.getTotalAmount()))
             .sum();
 

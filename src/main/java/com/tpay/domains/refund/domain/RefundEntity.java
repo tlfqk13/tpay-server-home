@@ -50,6 +50,7 @@ public class RefundEntity extends BaseTimeEntity {
     this.takeOutNumber = takeOutNumber;
 
     orderEntity.setOrderNumber(orderNumber);
+    orderEntity.setRefundEntity(this);
   }
 
   public void updateCancel(String responseCode) {

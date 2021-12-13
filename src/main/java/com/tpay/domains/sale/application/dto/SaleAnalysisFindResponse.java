@@ -14,4 +14,6 @@ public interface SaleAnalysisFindResponse {
   String getActualAmount();
 
   long getSaleCount();
+
+  long getCancelCount();
 }
