@@ -75,6 +75,6 @@ spring:
       ddl-auto: none
 custom:
   refund:
-    server: ENC(vIOoRRzJSa0iqX39B4ogkiYcB9p++ieiU4J6sGZXUAXXWm4/TDvC6A==)
+    server: ENC(hxk5+ZX6sWPGpnOWu9fyzafJZfh064XzNInyoxD7VE32h5SnOjvl6w==)
 server:
   port: 50921
