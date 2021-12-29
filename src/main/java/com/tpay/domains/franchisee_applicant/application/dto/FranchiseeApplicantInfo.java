@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -25,6 +27,7 @@ public class FranchiseeApplicantInfo {
   private String sellerName;
   private String storeTel;
   private String productCategory;
+  private String createdDate;
 
   public static FranchiseeApplicantInfo toResponse(FranchiseeApplicantEntity franchiseeApplicantEntity) {
     FranchiseeEntity franchiseeEntity = franchiseeApplicantEntity.getFranchiseeEntity();
@@ -40,6 +43,7 @@ public class FranchiseeApplicantInfo {
         .sellerName(franchiseeEntity.getSellerName())
         .storeTel(franchiseeEntity.getStoreTel())
         .productCategory(franchiseeEntity.getProductCategory())
+        .createdDate(franchiseeEntity.getCreatedDate().toString())
         .build();
   }
 }
