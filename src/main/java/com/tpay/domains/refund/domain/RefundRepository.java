@@ -52,6 +52,6 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
       nativeQuery = true)
   List<SaleAnalysisFindResponse> findSaleAnalysis(
       @Param("franchiseeIndex") Long franchiseeIndex,
-      @Param("startDate") LocalDateTime startDate,
-      @Param("endDate") LocalDateTime endDate);
+      @Param("startDate") LocalDateTime startDateTime,
+      @Param("endDate") LocalDateTime endDateTime);
 }
