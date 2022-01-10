@@ -20,6 +20,17 @@ custom:
       code: 990
 logging:
   config: classpath:log4j2.yml
+cloud:
+  aws:
+    credentials:
+      accessKey: ENC(CFM0Qhk08A7Fzmrj70ZyHiUqBkX3BqVxv2UP7HqlB40=)
+      secretKey: ENC(YddPKtalywKnXs8JRDVrVUJQcUgnLzG1YBVGBzEQa+uV/WCUBKXYuqXfg0Km1UlB9P7QvQ8yYvA=)
+    s3:
+      bucket: ktp-image
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
 
 ---
 
