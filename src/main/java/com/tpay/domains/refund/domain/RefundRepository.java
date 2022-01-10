@@ -52,6 +52,31 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
       nativeQuery = true)
   List<SaleAnalysisFindResponse> findSaleAnalysis(
       @Param("franchiseeIndex") Long franchiseeIndex,
-      @Param("startDate") LocalDateTime startDate,
-      @Param("endDate") LocalDateTime endDate);
+      @Param("startDate") LocalDateTime startDateTime,
+      @Param("endDate") LocalDateTime endDateTime);
+
+
+  @Query(
+      value =
+          "select *, (results.totalAmount - results.totalRefund) as actualAmount\n" +
+          "              from (select date(o.created_date)                                                      as date,\n" +
+          "                           cast(sum(if(r.refund_status = 'APPROVAL', o.tot_amt, 0)) as integer)      as totalAmount,\n" +
+          "                           cast(sum(if(r.refund_status = 'APPROVAL', o.tot_vat, 0)) as integer)      as totalVat,\n" +
+          "                           cast(sum(if(r.refund_status = 'APPROVAL', r.tot_refund, 0)) as integer)   as totalRefund,\n" +
+          "                           cast(sum(if(r.refund_status = 'APPROVAL', p.change_value, 0)) as integer) as totalPoint,\n" +
+          "                           sum(if(r.refund_status = 'APPROVAL', 1, 0))                               as saleCount,\n" +
+          "                           sum(if(r.refund_status = 'CANCEL', 1, 0))                                 as cancelCount\n" +
+          "                    from orders o\n" +
+          "                             left join refund r\n" +
+          "                                       on o.id = r.order_id\n" +
+          "                             left join points p on o.id = p.order_id\n" +
+          "                    where o.franchisee_id = :franchiseeIndex\n" +
+          "                      and p.point_status = 'SAVE'\n" +
+          "                      and replace(date(o.created_date),'-','') between :startDate and :endDate\n" +
+          "                    group by date(o.sale_datm)) as results\n" +
+          "              order by date desc;", nativeQuery = true)
+  List<SaleAnalysisFindResponse> findSaleAnalysisV2(
+      @Param("franchiseeIndex") Long franchiseeIndex,
+      @Param("startDate") String startDate,
+      @Param("endDate") String endDate);
 }

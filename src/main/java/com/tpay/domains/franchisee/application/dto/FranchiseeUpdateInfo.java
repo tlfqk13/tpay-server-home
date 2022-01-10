@@ -15,4 +15,9 @@ public class FranchiseeUpdateInfo {
   private String storeAddress;
   private String businessNumber;
   private String productCategory;
+
+  private String businessType; // 업종
+  private String signboard; // 간판명
+  private String storeNumber; // 매장번호
+  private String email; // email 주소
 }
