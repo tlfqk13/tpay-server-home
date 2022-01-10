@@ -26,6 +26,11 @@ public class LimitFindService {
   public RefundResponse find(RefundLimitRequest request) {
     WebClient webClient = builder.build();
     String uri = CustomValue.REFUND_SERVER + "/refund/limit";
+
+    CustomerEntity customerEntity =
+        customerFindService.findByCustomerNameAndPassportNumber(
+            request.getName(), request.getPassportNumber(), request.getNationality());
+
     RefundResponse refundResponse =
         webClient
             .post()
@@ -40,10 +45,6 @@ public class LimitFindService {
             .bodyToMono(RefundResponse.class)
             // .exchangeToMono(clientResponse -> clientResponse.bodyToMono(RefundResponse.class))
             .block();
-
-    CustomerEntity customerEntity =
-        customerFindService.findByCustomerNameAndPassportNumber(
-            request.getName(), request.getPassportNumber(), request.getNationality());
 
     return refundResponse.addCustomerInfo(customerEntity.getId());
   }
