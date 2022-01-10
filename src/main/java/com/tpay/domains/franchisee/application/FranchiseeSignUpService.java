@@ -3,6 +3,7 @@ package com.tpay.domains.franchisee.application;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.AlreadyExistsException;
 import com.tpay.commons.exception.detail.InvalidBusinessNumberException;
+import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.exception.detail.InvalidPasswordException;
 import com.tpay.commons.regex.RegExType;
 import com.tpay.commons.regex.RegExUtils;
@@ -42,6 +43,10 @@ public class FranchiseeSignUpService {
 
     if (franchiseeRepository.existsByBusinessNumber(businessNumber.replaceAll("-", ""))) {
       throw new AlreadyExistsException(ExceptionState.ALREADY_EXISTS, "Franchisee Already Exists");
+    }
+
+    if (!regExUtils.validate(RegExType.EMAIL, request.getEmail())){
+      throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER,"Invalid Email Format");
     }
 
     String encodedPassword = passwordEncoder.encode(password);
