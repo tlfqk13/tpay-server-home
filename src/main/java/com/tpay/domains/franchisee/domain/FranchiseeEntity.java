@@ -113,11 +113,15 @@ public class FranchiseeEntity extends BaseTimeEntity {
   }
 
   public void modifyInfo(
-      String storeName, String storeAddress, String businessNumber, String productCategory) {
+      String storeName, String storeAddress, String businessNumber, String productCategory, String businessType, String signboard, String storeNumber, String email) {
     this.storeName = storeName;
     this.storeAddress = storeAddress;
     this.businessNumber = businessNumber.replaceAll("-", "");
     this.productCategory = productCategory;
+    this.businessType = businessType;
+    this.signboard = signboard;
+    this.storeNumber = storeNumber;
+    this.email = email;
   }
 
   public void memberInfo(String memberName, String memberNumber) {
