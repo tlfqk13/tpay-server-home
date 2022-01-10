@@ -7,7 +7,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum RegExType {
   BUSINESS_NUMBER("^\\d{3}-\\d{2}-\\d{5}$"),
-  PASSWORD("((?=.*[a-zA-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{8,})");
+  PASSWORD("((?=.*[a-zA-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{8,})"),
+  EMAIL("^[_a-zA-Z0-9-\\.]+@[\\.a-zA-Z0-9-]+\\.[a-zA-Z]+$");
 
   private final String pattern;
 }
