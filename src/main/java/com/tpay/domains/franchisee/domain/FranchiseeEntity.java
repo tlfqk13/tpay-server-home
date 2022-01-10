@@ -62,6 +62,11 @@ public class FranchiseeEntity extends BaseTimeEntity {
 
   private long balance;
 
+  private String businessType;
+  private String signboard; // 간판명
+  private String storeNumber; // 매장번호
+  private String email; // email 주소
+
   @Builder
   public FranchiseeEntity(
       String businessNumber,
@@ -70,7 +75,13 @@ public class FranchiseeEntity extends BaseTimeEntity {
       String sellerName,
       String storeTel,
       String productCategory,
-      String password) {
+      String password,
+
+      String businessType,
+      String signboard,
+      String storeNumber,
+      String email
+  ) {
     this.memberName = "";
     this.memberNumber = "";
     this.businessNumber = businessNumber.replaceAll("-", "");
@@ -81,6 +92,11 @@ public class FranchiseeEntity extends BaseTimeEntity {
     this.productCategory = productCategory;
     this.password = password;
     this.balance = 0;
+
+    this.businessType = businessType;
+    this.signboard = signboard;
+    this.storeNumber = storeNumber;
+    this.email = email;
   }
 
   public FranchiseeEntity changeBalance(SignType signType, long change) {

@@ -54,6 +54,10 @@ public class FranchiseeSignUpService {
             .storeTel(request.getStoreTel())
             .productCategory(request.getProductCategory())
             .password(encodedPassword)
+            .businessType(request.getBusinessType())
+            .signboard(request.getSignboard())
+            .storeNumber(request.getStoreNumber())
+            .email(request.getEmail())
             .build();
     franchiseeRepository.save(franchiseeEntity);
     franchiseeApplicantSaveService.save(franchiseeEntity);
