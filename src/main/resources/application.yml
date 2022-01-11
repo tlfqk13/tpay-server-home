@@ -89,3 +89,28 @@ custom:
     server: ENC(1G1Em0TfqKIRa78TPL1+wmAhlykscw4z7FmXUHFKlXmovCBJ/yQdMQ==)
 server:
   port: 50921
+
+---
+### Operation ###
+spring:
+  config:
+    activate:
+      on-profile: operation
+  datasource:
+    url: ENC(ObZrFlFGQOYWEcnUVXAYfB0VkHa/T0cqmq4KarP0MAMk3vkxRWrQXD6wZz6XRX1T58+qjAjwIFL6kcEZrKQVknAQ3aCeihBjhvYbwO8NiKo7rHd8kUfSXryYwHD7x9K63t5KttOl4KQt6qFTuFT3Lz+/caZTsOPxNWwzhKkssuPFA15/Wjocng==)
+    username: ENC(0Jwk1Hd6bYJexLqbNVfZAA==)
+    password: ENC(YBmOxehPGVqDcKl79oiEEvefewVUQFFB)
+    driver-class-name: org.mariadb.jdbc.Driver
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+        format_sql: true
+    hibernate:
+      ddl-auto: none
+custom:
+  refund:
+    server: ENC(1G1Em0TfqKIRa78TPL1+wmAhlykscw4z7FmXUHFKlXmovCBJ/yQdMQ==)
+server:
+  port: 50921
