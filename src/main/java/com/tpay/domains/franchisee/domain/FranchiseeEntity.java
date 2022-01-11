@@ -62,9 +62,16 @@ public class FranchiseeEntity extends BaseTimeEntity {
 
   private long balance;
 
+  @Column(name = "businessType")
   private String businessType;
+
+  @Column(name = "signboard")
   private String signboard; // 간판명
+
+  @Column(name = "storeNumber")
   private String storeNumber; // 매장번호
+
+  @Column(name = "email")
   private String email; // email 주소
 
   @Builder
