@@ -8,11 +8,10 @@ import javax.validation.constraints.NotNull;
 
 
 @Getter
-@Builder
-@RequiredArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString
 @Table(name = "franchisee_bank")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
+@AllArgsConstructor
 @Entity
 public class FranchiseeBankEntity {
 
@@ -29,3 +28,5 @@ public class FranchiseeBankEntity {
   @NotNull
   private String withdrawalDate;
 }
+
+
