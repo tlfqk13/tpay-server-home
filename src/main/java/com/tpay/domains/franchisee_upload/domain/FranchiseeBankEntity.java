@@ -1,25 +1,32 @@
 package com.tpay.domains.franchisee_upload.domain;
 
 
-import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+
 
 @Getter
-@Builder
+@Table(name = "franchisee_bank")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
 @AllArgsConstructor
-@Table(name = "business_license")
 @Entity
-public class BusinessLicenseEntity {
+public class FranchiseeBankEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  private String s3Path;
+  @NotNull
+  private String accountNumber;
 
-//  @OneToOne(mappedBy = "franchiseeEntity")
-//  private FranchiseeEntity franchiseeEntity;
+  @NotNull
+  private String bankName;
+
+  @NotNull
+  private String withdrawalDate;
 }
+
+

@@ -2,7 +2,6 @@ package com.tpay.domains.franchisee_upload.presentation;
 
 
 import com.tpay.domains.franchisee_upload.application.FranchiseeUploadService;
-import com.tpay.domains.franchisee_upload.application.dto.FranchiseeUploadRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,12 +16,13 @@ public class franchiseeUploadController {
 
   private final FranchiseeUploadService franchiseeUploadService;
 
-  @PostMapping("/uploadTest/{franchiseeIndex}")
-  public ResponseEntity uploadDocuments(
-      @PathVariable Long franchiseeIndex,
+  @PostMapping("/franchiseeUpload/{franchiseeIndex}")
+  public ResponseEntity<String> uploadDocuments(
+      @PathVariable String franchiseeIndex,
+      @RequestParam String imageCategory,
 //      @RequestParam FranchiseeUploadRequest franchiseeUploadRequest,
-      @RequestParam MultipartFile businessLicenseImage) {
-    franchiseeUploadService.uploadDocuments(franchiseeIndex,businessLicenseImage) ;
-    return ResponseEntity.ok().build();
+      @RequestParam MultipartFile uploadImage) {
+    String s3Path = franchiseeUploadService.uploadDocuments(franchiseeIndex, imageCategory, uploadImage);
+    return ResponseEntity.ok(s3Path);
   }
 }
