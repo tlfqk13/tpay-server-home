@@ -10,16 +10,23 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Table(name = "business_license")
+@Table(name = "franchisee_upload")
 @Entity
-public class BusinessLicenseEntity {
+public class FranchiseeUploadEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  private String franchiseeIndex;
+  private String imageCategory;
   private String s3Path;
 
-//  @OneToOne(mappedBy = "franchiseeEntity")
-//  private FranchiseeEntity franchiseeEntity;
+  @ManyToOne
+  @JoinColumn(name = "franchisee_id")
+  private FranchiseeEntity franchiseeEntity;
+
+  public void update(String s3Path) {
+    this.s3Path = s3Path;
+  }
 }
