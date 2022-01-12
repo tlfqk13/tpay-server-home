@@ -9,6 +9,7 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.tpay.domains.franchisee_upload.application.dto.FranchiseeUploadRequest;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -34,6 +35,9 @@ public class S3FileUploader {
   @Value("${cloud.aws.region.static}")
   private String region;
 
+  @Value("${spring.config.activate.on-profile}")
+  private String profileName;
+
   private AmazonS3 s3Client;
 
   @PostConstruct
@@ -46,13 +50,19 @@ public class S3FileUploader {
         .build();
   }
 
-  public String upload(String franchiseeIndex, MultipartFile file) throws IOException {
-    String filename = file.getOriginalFilename();
+  public String upload(String franchiseeIndex, String imageCategory, MultipartFile file) throws IOException {
     ObjectMetadata objectMetadata = new ObjectMetadata();
-    objectMetadata.setContentType(MediaType.IMAGE_PNG_VALUE);
+    objectMetadata.setContentType(MediaType.ALL_VALUE);
     objectMetadata.setContentLength(file.getSize());
-    s3Client.putObject(new PutObjectRequest(bucket,franchiseeIndex+"/"+filename,file.getInputStream(),objectMetadata).withCannedAcl(CannedAccessControlList.PublicRead));
-    return s3Client.getUrl(bucket,filename).toString();
+    String key = profileName + "/" + franchiseeIndex + imageCategory;
+    s3Client.putObject(new PutObjectRequest(bucket, key, file.getInputStream(), objectMetadata)
+        .withCannedAcl(CannedAccessControlList.PublicRead));
+    return s3Client.getUrl(bucket, key).toString();
   }
 
+  public String delete(String franchiseeIndex, String imageCategory){
+    String key = profileName + "/" + franchiseeIndex + imageCategory;
+    s3Client.deleteObject(bucket, key);
+    return "Delete : "+key;
+  }
 }
