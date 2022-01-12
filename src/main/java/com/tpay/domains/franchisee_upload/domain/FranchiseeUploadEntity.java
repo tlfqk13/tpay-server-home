@@ -5,6 +5,7 @@ import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Builder
@@ -18,8 +19,13 @@ public class FranchiseeUploadEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @NotNull
   private String franchiseeIndex;
+
+  @NotNull
   private String imageCategory;
+
+  @NotNull
   private String s3Path;
 
   @ManyToOne
