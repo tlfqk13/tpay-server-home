@@ -32,6 +32,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
             "/refunds",
             "/h2-console/**",
             "/favicon.ico",
+            "/validate/**",
             "/error");
     registry.addInterceptor(printRequestInterceptor).addPathPatterns("/**");
   }
