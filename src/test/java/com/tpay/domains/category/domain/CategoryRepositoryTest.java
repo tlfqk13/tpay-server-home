@@ -11,7 +11,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 
 @DataJpaTest
-@ActiveProfiles(profiles = {"local", "test"})
+@ActiveProfiles(profiles = {"local"})
 class CategoryRepositoryTest {
 
   @Autowired private CategoryRepository categoryRepository;

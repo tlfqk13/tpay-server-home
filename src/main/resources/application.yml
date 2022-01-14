@@ -18,6 +18,12 @@ custom:
   refund:
     application:
       code: 990
+  upload:
+    business: ENC(yYudqWBEsFG2igWHyrciIu5qRjB0S6FWEU9yAp2dNSEf3v6umpsoxOL0CAQtApDXbj2YK6wMYdHcWxpyJ0y206nK1EVrKCH6GIGnOp1oVkpMsge7B0y72lgYon3Hx/HlNKKc72KDCCwJ7wedbrVItw==)
+    bank:
+      client-id: ENC(Yksp5cuMZ9sfTjThjIRxn3bTIuY5JTJOFclCIr8J2jSEgN+EgxnUx7ATv3L15BXj)
+      client-secret: ENC(huu6kX1rSeH606lK6OFtbl2GTLS6PTKuHxTvJWlBiTIYeWHcgWom7VWHVAgf1UZe)
+
 logging:
   config: classpath:log4j2.yml
 cloud:

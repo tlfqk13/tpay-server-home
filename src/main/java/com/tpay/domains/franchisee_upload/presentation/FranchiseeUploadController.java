@@ -12,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
-public class franchiseeUploadController {
+public class FranchiseeUploadController {
 
   private final FranchiseeUploadService franchiseeUploadService;
 

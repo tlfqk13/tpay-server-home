@@ -12,6 +12,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.ActiveProfiles;
 
+import javax.validation.ConstraintViolationException;
+
 @DataJpaTest
 @ActiveProfiles(profiles = {"local", "test"})
 class CustomerRepositoryTest {
@@ -47,6 +49,6 @@ class CustomerRepositoryTest {
 
     // 제약조건 위반 Exception
     assertThrows(
-        DataIntegrityViolationException.class, () -> customerRepository.save(customerEntity));
+        ConstraintViolationException.class, () -> customerRepository.save(customerEntity));
   }
 }
