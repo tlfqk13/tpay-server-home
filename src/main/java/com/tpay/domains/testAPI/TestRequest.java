@@ -1,6 +1,6 @@
 package com.tpay.domains.testAPI;
 
-import lombok.Getter;
+import lombok.*;
 
 @Getter
 public class TestRequest {
