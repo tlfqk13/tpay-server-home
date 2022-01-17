@@ -16,15 +16,12 @@ import java.util.List;
 public class RefundTestWebflux {
   private final WebClient.Builder builder;
 
-  @PostMapping("/testtestktp")
+  @PostMapping("/testtestktpmy")
   @Transactional
   public ResponseEntity<TestResponse> webfluxTest(@RequestBody TestRequest testRequest) {
     List<String> b_noList = new ArrayList<>();
     b_noList.add(testRequest.getTestRequestData());
     TestListRequest testListRequest = TestListRequest.builder().b_no(b_noList).build();
-//    b_no.add(testRequest.getTestRequestData());
-//    String[] b_no = new String[1];
-//    b_no[0] = testRequest.getTestRequestData();
     String uri = "localhost:20001/testtestrefund";
     WebClient webClient = builder.build();
     TestResponse testResponse =

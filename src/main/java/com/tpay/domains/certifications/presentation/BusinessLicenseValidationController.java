@@ -14,9 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class BusinessLicenseValidationController {
 
+
   private final BusinessLicenseValidationService businessLicenseValidationService;
 
-  @PostMapping("validate/business")
+  @PostMapping("/validate/business")
   public ResponseEntity<BusinessValidResponse> validCheckBusinessLicense(@RequestBody BusinessValidRequest businessValidRequest) {
     BusinessValidResponse result = businessLicenseValidationService.valid(businessValidRequest);
     return ResponseEntity.ok(result);
