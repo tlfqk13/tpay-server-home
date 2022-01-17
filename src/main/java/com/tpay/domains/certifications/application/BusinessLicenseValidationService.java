@@ -31,28 +31,30 @@ public class BusinessLicenseValidationService {
     BusinessValidRequestList businessValidRequestList = BusinessValidRequestList.builder().b_no(businessNumberList).build();
     WebClient webClient = WebClient.builder().build();
     JSONObject jsonObject = new JSONObject("{\"b_no\":[\"2390401226\"]}");
-//    String s = JSONObject.valueToString(businessValidRequestList);
+    String s = JSONObject.valueToString(businessValidRequestList);
 
 //    String baseUri = "https://api.odcloud.kr/api/nts-businessman/v1/status?serviceKey=";
 //    String uri = baseUri + CustomValue.BUSINESS_VALID_ACCESS;
-    String uri = "https://api.odcloud.kr/api/nts-businessman/v1/status";
-    UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(uri).queryParam("serviceKey","7BNL%2FH3LcgXHdOPmpxUXTMJRnYvv1BXLKAK76lLC%2BOtWootlhEk5%2FOiDAvXAcNGneemJ%2FtImQBpORzcEG0IPhQ%3D%3D");
-    URI endUri = builder.build().encode().toUri();
-    ResponseEntity<String> res = new RestTemplate().postForEntity(endUri,businessValidRequestList,String.class);
-    System.out.println(res.getBody());
-//    BusinessValidResponse businessValidResponse =
-//        webClient
-//            .post()
-//            .uri(uri)
-//            .contentType(MediaType.APPLICATION_JSON)
-//            .bodyValue(s)
-//            .retrieve()
-////            .onStatus(
-////                HttpStatus::isError,
-////                clientResponse -> clientResponse.bodyToMono(ExceptionResponse.class).flatMap(error -> Mono.error(new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Exception at WebFlux")))
-////            )
-//            .bodyToMono(BusinessValidResponse.class)
-//            .block();
+    String uri = "https://api.odcloud.kr/api/nts-businessman/v1/status?serviceKey=7BNL%2FH3LcgXHdOPmpxUXTMJRnYvv1BXLKAK76lLC%2BOtWootlhEk5%2FOiDAvXAcNGneemJ%2FtImQBpORzcEG0IPhQ%3D%3D";
+//    UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("https://api.odcloud.kr/api/nts-businessman/v1/status?serviceKey=7BNL/H3LcgXHdOPmpxUXTMJRnYvv1BXLKAK76lLC+OtWootlhEk5/OiDAvXAcNGneemJ/tImQBpORzcEG0IPhQ==");
+//    URI endUri = builder.build().encode().toUri();
+//    UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(uri).queryParam("serviceKey","7BNL%2FH3LcgXHdOPmpxUXTMJRnYvv1BXLKAK76lLC%2BOtWootlhEk5%2FOiDAvXAcNGneemJ%2FtImQBpORzcEG0IPhQ%3D%3D");
+//    URI endUri = builder.build().encode().toUri();
+//    ResponseEntity<String> res = new RestTemplate().postForEntity(endUri,businessValidRequestList,String.class);
+//    System.out.println(res.getBody());
+    BusinessValidResponse businessValidResponse =
+        webClient
+            .post()
+            .uri(uri)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(s)
+            .retrieve()
+//            .onStatus(
+//                HttpStatus::isError,
+//                clientResponse -> clientResponse.bodyToMono(ExceptionResponse.class).flatMap(error -> Mono.error(new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Exception at WebFlux")))
+//            )
+            .bodyToMono(BusinessValidResponse.class)
+            .block();
     return BusinessValidResponse.builder().request_cnt("1").build();
 //    return businessValidResponse;
   }

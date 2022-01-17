@@ -16,7 +16,7 @@ import java.util.List;
 public class RefundTestWebflux {
   private final WebClient.Builder builder;
 
-  @PostMapping("/testtestktpmy")
+  @PostMapping("/testtestktp")
   @Transactional
   public ResponseEntity<TestResponse> webfluxTest(@RequestBody TestRequest testRequest) {
     List<String> b_noList = new ArrayList<>();
