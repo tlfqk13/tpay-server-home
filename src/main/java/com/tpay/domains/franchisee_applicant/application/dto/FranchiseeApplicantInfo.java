@@ -3,13 +3,7 @@ package com.tpay.domains.franchisee_applicant.application.dto;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeStatus;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
+import lombok.*;
 
 @Getter
 @Builder
@@ -23,7 +17,9 @@ public class FranchiseeApplicantInfo {
   private String memberName;
   private String businessNumber;
   private String storeName;
-  private String storeAddress;
+  private String storeAddressNumber;
+  private String storeAddressBasic;
+  private String storeAddressDetail;
   private String sellerName;
   private String storeTel;
   private String productCategory;
@@ -39,7 +35,9 @@ public class FranchiseeApplicantInfo {
         .memberName(franchiseeEntity.getMemberName())
         .businessNumber(franchiseeEntity.getBusinessNumber())
         .storeName(franchiseeEntity.getStoreName())
-        .storeAddress(franchiseeEntity.getStoreAddress())
+        .storeAddressNumber(franchiseeEntity.getStoreAddressNumber())
+        .storeAddressBasic(franchiseeEntity.getStoreAddressBasic())
+        .storeAddressDetail(franchiseeEntity.getStoreAddressDetail())
         .sellerName(franchiseeEntity.getSellerName())
         .storeTel(franchiseeEntity.getStoreTel())
         .productCategory(franchiseeEntity.getProductCategory())

@@ -17,7 +17,9 @@ public class FranchiseeSignUpRequest {
   //매장 정보
   private String storeName; // 판매자상호 K1: 상호(법인명)
   private String signboard; // 간판명
-  private String storeAddress; // 판매자주소 K1: 사업장 주소
+  private String storeAddressNumber; // 판매자주소 K1: 사업장 주소 중 우편번호
+  private String storeAddressBasic; // 판매자주소 K1: 사업장 주소 중 기본주소
+  private String storeAddressDetail; // 판매자주소 K1: 사업장 주소 중 상세주소
   private String productCategory; // 판매 상품 종목
   private String storeNumber; // 매장 전화번호
 

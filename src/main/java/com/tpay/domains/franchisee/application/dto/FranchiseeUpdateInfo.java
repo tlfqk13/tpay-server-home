@@ -12,7 +12,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class FranchiseeUpdateInfo {
   private String storeName;
-  private String storeAddress;
+  private String storeAddressNumber;
+  private String storeAddressBasic;
+  private String storeAddressDetail;
+
   private String businessNumber;
   private String productCategory;
 

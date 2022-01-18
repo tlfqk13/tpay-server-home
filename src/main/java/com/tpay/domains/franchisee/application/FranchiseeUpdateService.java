@@ -36,7 +36,9 @@ public class FranchiseeUpdateService {
 
     franchiseeEntity.modifyInfo(
         request.getStoreName(),
-        request.getStoreAddress(),
+        request.getStoreAddressNumber(),
+        request.getStoreAddressBasic(),
+        request.getStoreAddressDetail(),
         request.getBusinessNumber(),
         request.getProductCategory(),
         request.getSignboard(),
@@ -45,7 +47,9 @@ public class FranchiseeUpdateService {
 
     return FranchiseeUpdateInfo.builder()
         .storeName(franchiseeEntity.getStoreName())
-        .storeAddress(franchiseeEntity.getStoreAddress())
+        .storeAddressNumber(franchiseeEntity.getStoreAddressNumber())
+        .storeAddressBasic(franchiseeEntity.getStoreAddressBasic())
+        .storeAddressDetail(franchiseeEntity.getStoreAddressDetail())
         .businessNumber(franchiseeEntity.getBusinessNumber())
         .productCategory(franchiseeEntity.getProductCategory())
         .signboard(franchiseeEntity.getSignboard())
