@@ -64,6 +64,7 @@ public class FranchiseeSignUpService {
             .signboard(request.getSignboard())
             .storeNumber(request.getStoreNumber().replaceAll("-",""))
             .email(request.getEmail())
+            .isTaxRefundShop(request.getIsTaxRefundShop())
             .build();
     franchiseeRepository.save(franchiseeEntity);
     franchiseeApplicantSaveService.save(franchiseeEntity);

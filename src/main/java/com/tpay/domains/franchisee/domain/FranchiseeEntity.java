@@ -79,6 +79,9 @@ public class FranchiseeEntity extends BaseTimeEntity {
   @Column(name = "email")
   private String email; // email 주소
 
+  @Column(name = "isTaxRefundShop", length = 5)
+  private String isTaxRefundShop;
+
   @Builder
   public FranchiseeEntity(
       String businessNumber,
@@ -93,7 +96,8 @@ public class FranchiseeEntity extends BaseTimeEntity {
 
       String signboard,
       String storeNumber,
-      String email
+      String email,
+      String isTaxRefundShop
   ) {
     this.memberName = "";
     this.memberNumber = "";
@@ -111,6 +115,7 @@ public class FranchiseeEntity extends BaseTimeEntity {
     this.signboard = signboard;
     this.storeNumber = storeNumber;
     this.email = email;
+    this.isTaxRefundShop = isTaxRefundShop;
   }
 
   public FranchiseeEntity changeBalance(SignType signType, long change) {
