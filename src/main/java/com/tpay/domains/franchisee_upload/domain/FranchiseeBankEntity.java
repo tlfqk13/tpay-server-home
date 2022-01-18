@@ -1,6 +1,7 @@
 package com.tpay.domains.franchisee_upload.domain;
 
 
+import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import lombok.*;
 
 import javax.persistence.*;
@@ -27,6 +28,10 @@ public class FranchiseeBankEntity {
 
   @NotNull
   private String withdrawalDate;
+
+  @OneToOne
+  @JoinColumn(name = "franchisee_id")
+  FranchiseeEntity franchiseeEntity;
 }
 
 

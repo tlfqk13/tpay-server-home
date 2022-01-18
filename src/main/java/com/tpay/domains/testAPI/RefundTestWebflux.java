@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,15 +19,16 @@ public class RefundTestWebflux {
   @PostMapping("/testtestktp")
   @Transactional
   public ResponseEntity<TestResponse> webfluxTest(@RequestBody TestRequest testRequest) {
-    String[] b_no = new String[1];
-    b_no[0] = testRequest.getTestRequestData();
+    List<String> b_noList = new ArrayList<>();
+    b_noList.add(testRequest.getTestRequestData());
+    TestListRequest testListRequest = TestListRequest.builder().b_no(b_noList).build();
     String uri = "localhost:20001/testtestrefund";
     WebClient webClient = builder.build();
     TestResponse testResponse =
         webClient
             .post()
             .uri(uri)
-            .bodyValue(testRequest)
+            .bodyValue(testListRequest)
             .retrieve()
             .bodyToMono(TestResponse.class)
             .block();

@@ -55,7 +55,7 @@ public class RefundApproveRequest {
         .indListNow("1")
         .productInfoList(refundProductInfo)
         .sellerName(franchiseeEntity.getSellerName())
-        .storeAddress(franchiseeEntity.getStoreAddress())
+        .storeAddress(franchiseeEntity.getStoreAddressBasic()+" "+franchiseeEntity.getStoreAddressDetail())
         .storeName(franchiseeEntity.getStoreName())
         .storeTel(franchiseeEntity.getStoreTel())
         .totalEdut("0")
