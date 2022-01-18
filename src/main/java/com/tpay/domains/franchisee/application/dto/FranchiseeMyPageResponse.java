@@ -15,7 +15,9 @@ public class FranchiseeMyPageResponse {
   private LocalDateTime createdDate;
   private String businessNumber;
   private String storeName;
-  private String storeAddress;
+  private String storeAddressNumber;
+  private String storeAddressBasic;
+  private String storeAddressDetail;
   private Long totalSalesAmount;
   private Long totalPoint;
   private String productCategory;

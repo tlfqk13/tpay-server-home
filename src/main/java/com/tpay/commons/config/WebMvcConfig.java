@@ -34,6 +34,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
             "/favicon.ico",
             "/validate/**",
             "/testtestktp/**",
+            "/franchisee/bank/**",
             "/error");
     registry.addInterceptor(printRequestInterceptor).addPathPatterns("/**");
   }
