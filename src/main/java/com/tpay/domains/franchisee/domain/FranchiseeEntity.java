@@ -62,9 +62,6 @@ public class FranchiseeEntity extends BaseTimeEntity {
 
   private long balance;
 
-  @Column(name = "businessType")
-  private String businessType;
-
   @Column(name = "signboard")
   private String signboard; // 간판명
 
@@ -84,7 +81,6 @@ public class FranchiseeEntity extends BaseTimeEntity {
       String productCategory,
       String password,
 
-      String businessType,
       String signboard,
       String storeNumber,
       String email
@@ -100,7 +96,6 @@ public class FranchiseeEntity extends BaseTimeEntity {
     this.password = password;
     this.balance = 0;
 
-    this.businessType = businessType;
     this.signboard = signboard;
     this.storeNumber = storeNumber;
     this.email = email;
@@ -120,12 +115,12 @@ public class FranchiseeEntity extends BaseTimeEntity {
   }
 
   public void modifyInfo(
-      String storeName, String storeAddress, String businessNumber, String productCategory, String businessType, String signboard, String storeNumber, String email) {
+      String storeName, String storeAddress, String businessNumber, String productCategory, String signboard, String storeNumber, String email) {
     this.storeName = storeName;
     this.storeAddress = storeAddress;
     this.businessNumber = businessNumber.replaceAll("-", "");
     this.productCategory = productCategory;
-    this.businessType = businessType;
+
     this.signboard = signboard;
     this.storeNumber = storeNumber;
     this.email = email;

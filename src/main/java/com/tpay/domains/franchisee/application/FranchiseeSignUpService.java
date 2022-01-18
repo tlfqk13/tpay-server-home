@@ -56,12 +56,11 @@ public class FranchiseeSignUpService {
             .storeName(request.getStoreName())
             .storeAddress(request.getStoreAddress())
             .sellerName(request.getSellerName())
-            .storeTel(request.getStoreTel())
+            .storeTel(request.getStoreTel().replaceAll("-",""))
             .productCategory(request.getProductCategory())
             .password(encodedPassword)
-            .businessType(request.getBusinessType())
             .signboard(request.getSignboard())
-            .storeNumber(request.getStoreNumber())
+            .storeNumber(request.getStoreNumber().replaceAll("-",""))
             .email(request.getEmail())
             .build();
     franchiseeRepository.save(franchiseeEntity);

@@ -39,7 +39,6 @@ public class FranchiseeUpdateService {
         request.getStoreAddress(),
         request.getBusinessNumber(),
         request.getProductCategory(),
-        request.getBusinessType(),
         request.getSignboard(),
         request.getStoreNumber(),
         request.getEmail());
@@ -49,7 +48,6 @@ public class FranchiseeUpdateService {
         .storeAddress(franchiseeEntity.getStoreAddress())
         .businessNumber(franchiseeEntity.getBusinessNumber())
         .productCategory(franchiseeEntity.getProductCategory())
-        .businessType(franchiseeEntity.getBusinessType())
         .signboard(franchiseeEntity.getSignboard())
         .storeNumber(franchiseeEntity.getStoreNumber())
         .email(franchiseeEntity.getEmail())
