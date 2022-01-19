@@ -22,7 +22,7 @@ public class FranchiseeApplicantDetailResponse {
   private String storeAddressDetail;
   // Applicants
   private String imageUrl;
-  private String taxFreeStoreNumber;
+//  private String taxFreeStoreNumber; 지금은 없음
   private String bankName;
   private String bankAccount;
   private String withdrawalDate;

@@ -1,5 +1,6 @@
 package com.tpay.domains.franchisee_upload.application;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tpay.commons.aws.S3FileUploader;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.UnknownException;
@@ -27,8 +28,10 @@ public class FranchiseeUploadService {
   private final FranchiseeBankRepository franchiseeBankRepository;
 
   @Transactional
-  public String uploadDocuments(Long franchiseeIndex, FranchiseeBankInfo franchiseeBankInfo, String imageCategory, MultipartFile uploadImage) {
+  public String uploadDocuments(Long franchiseeIndex, String franchiseeBankInfoString, String imageCategory, MultipartFile uploadImage) {
     try {
+      ObjectMapper objectMapper = new ObjectMapper();
+      FranchiseeBankInfo franchiseeBankInfo = objectMapper.readValue(franchiseeBankInfoString,FranchiseeBankInfo.class);
       FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
       FranchiseeBankEntity franchiseeBankEntity = FranchiseeBankEntity.builder()
           .accountNumber(franchiseeBankInfo.getAccountNumber().replaceAll("-", ""))
@@ -48,8 +51,8 @@ public class FranchiseeUploadService {
         String delete = s3FileUploader.delete(franchiseeIndex, imageCategory);
         System.out.println(delete);
         String s3Path = s3FileUploader.upload(franchiseeIndex, imageCategory, uploadImage);
-        FranchiseeUploadEntity franchiseeUploadEntity = franchiseeUploadRepository.findByFranchiseeIndexAndImageCategory(franchiseeIndex, imageCategory);
 //        필요 없음 - s3Path를 만드는 규칙이 franchiseeIndex와 imageCategory 임
+//        FranchiseeUploadEntity franchiseeUploadEntity = franchiseeUploadRepository.findByFranchiseeIndexAndImageCategory(franchiseeIndex, imageCategory);
 //        franchiseeUploadEntity.update(s3Path);
         return s3Path;
 

@@ -33,7 +33,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
             "/h2-console/**",
             "/favicon.ico",
             "/validate/**",
-            "/franchisee/bank/**",
+            "/franchiseeUpload/**",
             "/testtestktp/**",
             "/refund/approval/fake",
             "/error");
