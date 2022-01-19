@@ -28,7 +28,7 @@ public class FranchiseeUploadEntity {
   @NotNull
   private String s3Path;
 
-  @ManyToOne
+  @OneToOne
   @JoinColumn(name = "franchisee_id")
   private FranchiseeEntity franchiseeEntity;
 

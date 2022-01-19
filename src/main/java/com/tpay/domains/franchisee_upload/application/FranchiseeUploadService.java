@@ -3,6 +3,7 @@ package com.tpay.domains.franchisee_upload.application;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tpay.commons.aws.S3FileUploader;
 import com.tpay.commons.exception.ExceptionState;
+import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.exception.detail.UnknownException;
 import com.tpay.domains.franchisee.application.FranchiseeFindService;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
@@ -29,10 +30,15 @@ public class FranchiseeUploadService {
 
   @Transactional
   public String uploadDocuments(Long franchiseeIndex, String franchiseeBankInfoString, String imageCategory, MultipartFile uploadImage) {
+    FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
+    boolean checkExistBank = franchiseeBankRepository.existsByFranchiseeEntity(franchiseeEntity);
+    if(checkExistBank){
+      throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER,"Already Exists Bank Info");
+    }
+
     try {
       ObjectMapper objectMapper = new ObjectMapper();
       FranchiseeBankInfo franchiseeBankInfo = objectMapper.readValue(franchiseeBankInfoString,FranchiseeBankInfo.class);
-      FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
       FranchiseeBankEntity franchiseeBankEntity = FranchiseeBankEntity.builder()
           .accountNumber(franchiseeBankInfo.getAccountNumber().replaceAll("-", ""))
           .bankName(franchiseeBankInfo.getBankName())
@@ -59,7 +65,7 @@ public class FranchiseeUploadService {
       } else {
         printNewFranchisee();
         String s3Path = s3FileUploader.upload(franchiseeIndex, imageCategory, uploadImage);
-        FranchiseeUploadEntity franchiseeUploadEntity = FranchiseeUploadEntity.builder().franchiseeIndex(franchiseeIndex).imageCategory(imageCategory).s3Path(s3Path).build();
+        FranchiseeUploadEntity franchiseeUploadEntity = FranchiseeUploadEntity.builder().franchiseeIndex(franchiseeIndex).imageCategory(imageCategory).s3Path(s3Path).franchiseeEntity(franchiseeEntity).build();
         franchiseeUploadRepository.save(franchiseeUploadEntity);
         return s3Path;
       }
