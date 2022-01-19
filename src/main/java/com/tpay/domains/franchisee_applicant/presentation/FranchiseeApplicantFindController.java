@@ -2,6 +2,7 @@ package com.tpay.domains.franchisee_applicant.presentation;
 
 import com.tpay.domains.franchisee_applicant.application.FranchiseeApplicantFindService;
 import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeApplicantInfo;
+import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeApplicantInfoInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,8 +17,8 @@ public class FranchiseeApplicantFindController {
   private final FranchiseeApplicantFindService franchiseeApplicantFindService;
 
   @GetMapping("/admin/franchisee-applicants")
-  public ResponseEntity<List<FranchiseeApplicantInfo>> findAll() {
-    List<FranchiseeApplicantInfo> responseList = franchiseeApplicantFindService.findAll();
+  public ResponseEntity<List<FranchiseeApplicantInfoInterface>> findAll() {
+    List<FranchiseeApplicantInfoInterface> responseList = franchiseeApplicantFindService.findAll();
     return ResponseEntity.ok(responseList);
   }
 
