@@ -20,7 +20,7 @@ public class FranchiseeUploadEntity {
   private Long id;
 
   @NotNull
-  private String franchiseeIndex;
+  private Long franchiseeIndex;
 
   @NotNull
   private String imageCategory;

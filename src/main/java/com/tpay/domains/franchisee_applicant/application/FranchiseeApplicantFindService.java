@@ -5,10 +5,11 @@ import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeApplicantInfo;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantRepository;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -33,13 +34,6 @@ public class FranchiseeApplicantFindService {
                     FranchiseeApplicantInfo.toResponse(franchiseeApplicantEntity))
             .collect(Collectors.toList());
     return franchiseeApplicantInfoList;
-  }
-
-  public FranchiseeApplicantInfo find(Long franchiseeApplicantIndex) {
-    FranchiseeApplicantEntity franchiseeApplicantEntity =
-        this.findByIndex(franchiseeApplicantIndex);
-
-    return FranchiseeApplicantInfo.toResponse(franchiseeApplicantEntity);
   }
 
   public FranchiseeApplicantEntity findByBusinessNumber(String businessNumber) {

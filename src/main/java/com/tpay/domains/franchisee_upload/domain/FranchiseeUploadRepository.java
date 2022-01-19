@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface FranchiseeUploadRepository extends JpaRepository<FranchiseeUploadEntity, Long> {
 
-  boolean existsByFranchiseeIndexAndImageCategory(String franchiseeIndex, String imageCategory);
-  FranchiseeUploadEntity findByFranchiseeIndexAndImageCategory(String franchiseeIndex, String imageCategory);
+  boolean existsByFranchiseeIndexAndImageCategory(Long franchiseeIndex, String imageCategory);
+  FranchiseeUploadEntity findByFranchiseeIndexAndImageCategory(Long franchiseeIndex, String imageCategory);
 }

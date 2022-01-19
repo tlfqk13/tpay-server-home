@@ -9,7 +9,6 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.tpay.domains.franchisee_upload.application.dto.FranchiseeUploadRequest;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -50,7 +49,7 @@ public class S3FileUploader {
         .build();
   }
 
-  public String upload(String franchiseeIndex, String imageCategory, MultipartFile file) throws IOException {
+  public String upload(Long franchiseeIndex, String imageCategory, MultipartFile file) throws IOException {
     ObjectMetadata objectMetadata = new ObjectMetadata();
     objectMetadata.setContentType(MediaType.ALL_VALUE);
     objectMetadata.setContentLength(file.getSize());
@@ -60,7 +59,7 @@ public class S3FileUploader {
     return s3Client.getUrl(bucket, key).toString();
   }
 
-  public String delete(String franchiseeIndex, String imageCategory){
+  public String delete(Long franchiseeIndex, String imageCategory){
     String key = profileName + "/" + franchiseeIndex + imageCategory;
     s3Client.deleteObject(bucket, key);
     return "Delete : "+key;
