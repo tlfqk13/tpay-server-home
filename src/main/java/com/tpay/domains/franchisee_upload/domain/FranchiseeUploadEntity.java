@@ -28,6 +28,8 @@ public class FranchiseeUploadEntity {
   @NotNull
   private String s3Path;
 
+  private String taxFreeStoreNumber;
+
   @OneToOne
   @JoinColumn(name = "franchisee_id")
   private FranchiseeEntity franchiseeEntity;

@@ -1,5 +1,6 @@
 package com.tpay.domains.franchisee_applicant.application.dto;
 
+import com.tpay.domains.franchisee_applicant.domain.FranchiseeStatus;
 import lombok.*;
 
 @Getter
@@ -14,7 +15,7 @@ public class FranchiseeApplicantDetailResponse {
   private String storeTel;
   private String email;
   private String isTaxFreeStore;
-  private String franchiseeStatus;
+  private FranchiseeStatus franchiseeStatus;
   private String signboard;
   private String productCategory;
   private String storeNumber;
@@ -22,10 +23,10 @@ public class FranchiseeApplicantDetailResponse {
   private String storeAddressDetail;
   // Applicants
   private String imageUrl;
-//  private String taxFreeStoreNumber; 지금은 없음
+  private String taxFreeStoreNumber;
   private String bankName;
   private String bankAccount;
   private String withdrawalDate;
-  //etc
   private String rejectReason;
+
 }
