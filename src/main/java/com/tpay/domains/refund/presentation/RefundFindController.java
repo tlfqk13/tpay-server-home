@@ -4,16 +4,13 @@ import com.tpay.commons.util.DateFilter;
 import com.tpay.domains.customer.application.dto.CustomerInfo;
 import com.tpay.domains.refund.application.RefundFindService;
 import com.tpay.domains.refund.application.dto.RefundFindResponse;
-import java.time.LocalDate;
-import java.util.List;
+import com.tpay.domains.refund.application.dto.RefundFindResponseInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -34,17 +31,17 @@ public class RefundFindController {
   }
 
   @GetMapping("/refunds")
-  public ResponseEntity<List<RefundFindResponse>> findAll() {
-    List<RefundFindResponse> response = refundFindService.findAll();
+  public ResponseEntity<List<RefundFindResponseInterface>> findAll() {
+    List<RefundFindResponseInterface> response = refundFindService.findAll();
     return ResponseEntity.ok(response);
   }
 
   @PostMapping("/refunds/customer/{franchiseeIndex}")
   public ResponseEntity<List<RefundFindResponse>> findAllByCustomerInfo(@RequestParam DateFilter dateFilter,
-      @PathVariable Long franchiseeIndex,
-      @RequestParam(required = false) LocalDate startDate,
-      @RequestParam(required = false) LocalDate endDate,
-      @RequestBody CustomerInfo customerInfo) {
+                                                                        @PathVariable Long franchiseeIndex,
+                                                                        @RequestParam(required = false) LocalDate startDate,
+                                                                        @RequestParam(required = false) LocalDate endDate,
+                                                                        @RequestBody CustomerInfo customerInfo) {
     List<RefundFindResponse> responseList =
         refundFindService.findAllByCustomerInfo(franchiseeIndex, customerInfo, dateFilter, startDate, endDate);
     return ResponseEntity.ok(responseList);
