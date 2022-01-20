@@ -2,17 +2,12 @@ package com.tpay.domains.franchisee_applicant.domain;
 
 import com.tpay.domains.BaseTimeEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -27,14 +22,18 @@ public class FranchiseeApplicantEntity extends BaseTimeEntity {
   private FranchiseeStatus franchiseeStatus;
   private String rejectReason;
 
+  @Column(length = 10)
+  private String isRead;
+
   @OneToOne
   @JoinColumn(name = "franchisee_id")
   private FranchiseeEntity franchiseeEntity;
 
   @Builder
   public FranchiseeApplicantEntity(FranchiseeEntity franchiseeEntity) {
-    this.franchiseeStatus = FranchiseeStatus.WAIT;
+    this.franchiseeStatus = FranchiseeStatus.INIT;
     this.rejectReason = "";
+    this.isRead = "false";
     this.franchiseeEntity = franchiseeEntity;
   }
 

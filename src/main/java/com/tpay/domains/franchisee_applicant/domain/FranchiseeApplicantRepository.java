@@ -19,7 +19,8 @@ public interface FranchiseeApplicantRepository
       "       f.store_nm           as storeName,\n" +
       "       f.sel_nm             as sellerName,\n" +
       "       f.created_date       as createdDate,\n" +
-      "       f.is_refund_once     as isRefundOnce\n" +
+      "       f.is_refund_once     as isRefundOnce,\n" +
+      "       fa.is_read     as isRead\n" +
       "    from franchisee_applicant fa\n" +
       "        inner join franchisee f on fa.franchisee_id = f.id", nativeQuery = true)
   List<FranchiseeApplicantInfoInterface> findAllNativeQuery();
