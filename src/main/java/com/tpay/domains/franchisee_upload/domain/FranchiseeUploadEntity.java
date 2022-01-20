@@ -37,4 +37,9 @@ public class FranchiseeUploadEntity {
   public void update(String s3Path) {
     this.s3Path = s3Path;
   }
+
+  public String updateTaxFreeStoreNumber(String taxFreeStoreNumber){
+    this.taxFreeStoreNumber =taxFreeStoreNumber;
+    return this.taxFreeStoreNumber;
+  }
 }
