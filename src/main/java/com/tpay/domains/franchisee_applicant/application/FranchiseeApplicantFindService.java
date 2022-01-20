@@ -2,13 +2,14 @@ package com.tpay.domains.franchisee_applicant.application;
 
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
-import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeApplicantInfo;
+import com.tpay.domains.franchisee.domain.FranchiseeEntity;
+import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeApplicantInfoInterface;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantRepository;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -25,21 +26,15 @@ public class FranchiseeApplicantFindService {
     return franchiseeApplicantEntity;
   }
 
-  public List<FranchiseeApplicantInfo> findAll() {
-    List<FranchiseeApplicantInfo> franchiseeApplicantInfoList =
-        franchiseeApplicantRepository.findAll().stream()
-            .map(
-                franchiseeApplicantEntity ->
-                    FranchiseeApplicantInfo.toResponse(franchiseeApplicantEntity))
-            .collect(Collectors.toList());
-    return franchiseeApplicantInfoList;
+  public FranchiseeApplicantEntity findByFranchiseeEntity(FranchiseeEntity franchiseeEntity) {
+    FranchiseeApplicantEntity franchiseeApplicantEntity = franchiseeApplicantRepository.findByFranchiseeEntity(franchiseeEntity)
+        .orElseThrow(() -> new IllegalArgumentException("Invalid Franchisee Entity"));
+    return franchiseeApplicantEntity;
   }
 
-  public FranchiseeApplicantInfo find(Long franchiseeApplicantIndex) {
-    FranchiseeApplicantEntity franchiseeApplicantEntity =
-        this.findByIndex(franchiseeApplicantIndex);
-
-    return FranchiseeApplicantInfo.toResponse(franchiseeApplicantEntity);
+  public List<FranchiseeApplicantInfoInterface> findAll() {
+    List<FranchiseeApplicantInfoInterface> franchiseeApplicantInfoInterfaceList = franchiseeApplicantRepository.findAllNativeQuery();
+    return franchiseeApplicantInfoInterfaceList;
   }
 
   public FranchiseeApplicantEntity findByBusinessNumber(String businessNumber) {

@@ -20,7 +20,7 @@ public class FranchiseeUploadEntity {
   private Long id;
 
   @NotNull
-  private String franchiseeIndex;
+  private Long franchiseeIndex;
 
   @NotNull
   private String imageCategory;
@@ -28,11 +28,18 @@ public class FranchiseeUploadEntity {
   @NotNull
   private String s3Path;
 
-  @ManyToOne
+  private String taxFreeStoreNumber;
+
+  @OneToOne
   @JoinColumn(name = "franchisee_id")
   private FranchiseeEntity franchiseeEntity;
 
   public void update(String s3Path) {
     this.s3Path = s3Path;
+  }
+
+  public String updateTaxFreeStoreNumber(String taxFreeStoreNumber){
+    this.taxFreeStoreNumber =taxFreeStoreNumber;
+    return this.taxFreeStoreNumber;
   }
 }

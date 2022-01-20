@@ -14,6 +14,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.ColumnDefault;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -79,6 +80,13 @@ public class FranchiseeEntity extends BaseTimeEntity {
   @Column(name = "email")
   private String email; // email 주소
 
+  @Column(name = "isTaxRefundShop", length = 5)
+  private String isTaxRefundShop;
+
+  @Column(name = "isRefundOnce", length = 5)
+  @ColumnDefault("false") // ddl auto-create 아니면 쓸모는 없음
+  private String isRefundOnce;
+
   @Builder
   public FranchiseeEntity(
       String businessNumber,
@@ -93,7 +101,8 @@ public class FranchiseeEntity extends BaseTimeEntity {
 
       String signboard,
       String storeNumber,
-      String email
+      String email,
+      String isTaxRefundShop
   ) {
     this.memberName = "";
     this.memberNumber = "";
@@ -111,6 +120,8 @@ public class FranchiseeEntity extends BaseTimeEntity {
     this.signboard = signboard;
     this.storeNumber = storeNumber;
     this.email = email;
+    this.isTaxRefundShop = isTaxRefundShop;
+    this.isRefundOnce = "false";
   }
 
   public FranchiseeEntity changeBalance(SignType signType, long change) {
@@ -143,6 +154,10 @@ public class FranchiseeEntity extends BaseTimeEntity {
   public void memberInfo(String memberName, String memberNumber) {
     this.memberName = memberName;
     this.memberNumber = memberNumber;
+  }
+
+  public void isRefundOnce() {
+    this.isRefundOnce = "true";
   }
 
   public boolean isValidUser(String name, String phoneNumber) {

@@ -4,6 +4,8 @@ import com.tpay.commons.custom.CustomValue;
 import com.tpay.commons.exception.ExceptionResponse;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
+import com.tpay.domains.franchisee.application.FranchiseeFindService;
+import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.order.application.OrderSaveService;
 import com.tpay.domains.order.domain.OrderEntity;
 import com.tpay.domains.point.application.PointSaveService;
@@ -28,6 +30,7 @@ public class RefundApproveService {
   private final OrderSaveService orderSaveService;
   private final RefundSaveService refundSaveService;
   private final PointSaveService pointSaveService;
+  private final FranchiseeFindService franchiseeFindService;
   private final WebClient.Builder builder;
 
   private final PointRepository pointRepository;
@@ -35,6 +38,7 @@ public class RefundApproveService {
   @Transactional
   public RefundResponse approve(RefundSaveRequest request) {
     OrderEntity orderEntity = orderSaveService.save(request);
+    FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(request.getFranchiseeIndex());
     RefundApproveRequest refundApproveRequest = RefundApproveRequest.of(orderEntity);
 
     WebClient webClient = builder.build();
@@ -63,7 +67,7 @@ public class RefundApproveService {
             orderEntity);
 
     pointSaveService.save(refundEntity);
-
+    franchiseeEntity.isRefundOnce();
     return refundResponse;
   }
 }

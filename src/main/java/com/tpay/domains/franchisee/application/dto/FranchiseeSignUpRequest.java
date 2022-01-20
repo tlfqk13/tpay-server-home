@@ -23,4 +23,5 @@ public class FranchiseeSignUpRequest {
   private String productCategory; // 판매 상품 종목
   private String storeNumber; // 매장 전화번호
 
+  private String isTaxRefundShop; //사후면세점 가입여부
 }
