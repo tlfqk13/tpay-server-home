@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +26,7 @@ public class FranchiseeApplicantFindService {
     return franchiseeApplicantEntity;
   }
 
-  public FranchiseeApplicantEntity findByFranchiseeEntity(FranchiseeEntity franchiseeEntity){
+  public FranchiseeApplicantEntity findByFranchiseeEntity(FranchiseeEntity franchiseeEntity) {
     FranchiseeApplicantEntity franchiseeApplicantEntity = franchiseeApplicantRepository.findByFranchiseeEntity(franchiseeEntity)
         .orElseThrow(() -> new IllegalArgumentException("Invalid Franchisee Entity"));
     return franchiseeApplicantEntity;

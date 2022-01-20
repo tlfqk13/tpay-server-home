@@ -23,7 +23,7 @@ public class FranchiseeApplicantEntity extends BaseTimeEntity {
   private String rejectReason;
 
   @Column(length = 10)
-  private String isRead;
+  private Boolean isRead;
 
   @OneToOne
   @JoinColumn(name = "franchisee_id")
@@ -33,7 +33,7 @@ public class FranchiseeApplicantEntity extends BaseTimeEntity {
   public FranchiseeApplicantEntity(FranchiseeEntity franchiseeEntity) {
     this.franchiseeStatus = FranchiseeStatus.INIT;
     this.rejectReason = "";
-    this.isRead = "false";
+    this.isRead = false;
     this.franchiseeEntity = franchiseeEntity;
   }
 
@@ -57,4 +57,9 @@ public class FranchiseeApplicantEntity extends BaseTimeEntity {
     this.franchiseeStatus = FranchiseeStatus.REAPPLIED;
     return this;
   }
+
+  public void read(){
+    this.isRead = !isRead;
+  }
+
 }
