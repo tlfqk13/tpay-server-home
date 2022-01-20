@@ -2,6 +2,7 @@ package com.tpay.domains.franchisee_applicant.application;
 
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
+import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeApplicantInfoInterface;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantRepository;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +24,12 @@ public class FranchiseeApplicantFindService {
             .findById(franchiseeApplicantIndex)
             .orElseThrow(() -> new IllegalArgumentException("Invalid Franchisee Applicant Index"));
 
+    return franchiseeApplicantEntity;
+  }
+
+  public FranchiseeApplicantEntity findByFranchiseeEntity(FranchiseeEntity franchiseeEntity){
+    FranchiseeApplicantEntity franchiseeApplicantEntity = franchiseeApplicantRepository.findByFranchiseeEntity(franchiseeEntity)
+        .orElseThrow(() -> new IllegalArgumentException("Invalid Franchisee Entity"));
     return franchiseeApplicantEntity;
   }
 

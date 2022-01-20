@@ -20,7 +20,7 @@ public class FranchiseeUploadController {
   public ResponseEntity<String> uploadDocuments(
       @PathVariable Long franchiseeIndex,
       @RequestParam String imageCategory,
-      @RequestParam("FranchiseeBankInfo") String franchiseeBankInfoString,
+      @RequestParam("franchiseeBankInfo") String franchiseeBankInfoString,
 //      @RequestParam FranchiseeUploadRequest franchiseeUploadRequest,
       @RequestParam MultipartFile uploadImage) {
 

@@ -43,6 +43,10 @@ public class FranchiseeApplicantEntity extends BaseTimeEntity {
     return this;
   }
 
+  public void apply() {
+    this.franchiseeStatus = FranchiseeStatus.WAIT;
+  }
+
   public FranchiseeApplicantEntity reject(String rejectReason) {
     this.rejectReason = rejectReason;
     this.franchiseeStatus = FranchiseeStatus.REJECTED;

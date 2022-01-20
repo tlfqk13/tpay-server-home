@@ -8,5 +8,6 @@ public enum FranchiseeStatus {
   ACCEPTED,
   REJECTED,
   REAPPLIED,
-  CANCEL;
+  CANCEL,
+  INIT
 }
