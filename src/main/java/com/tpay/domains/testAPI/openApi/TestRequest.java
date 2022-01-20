@@ -1,4 +1,4 @@
-package com.tpay.domains.testAPI;
+package com.tpay.domains.testAPI.openApi;
 
 import lombok.*;
 

@@ -1,8 +1,17 @@
 package com.tpay.domains.franchisee_upload.application;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tpay.commons.aws.S3FileUploader;
 import com.tpay.commons.exception.ExceptionState;
+import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.exception.detail.UnknownException;
+import com.tpay.domains.franchisee.application.FranchiseeFindService;
+import com.tpay.domains.franchisee.domain.FranchiseeEntity;
+import com.tpay.domains.franchisee_applicant.application.FranchiseeApplicantFindService;
+import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
+import com.tpay.domains.franchisee_upload.application.dto.FranchiseeBankInfo;
+import com.tpay.domains.franchisee_upload.domain.FranchiseeBankEntity;
+import com.tpay.domains.franchisee_upload.domain.FranchiseeBankRepository;
 import com.tpay.domains.franchisee_upload.domain.FranchiseeUploadEntity;
 import com.tpay.domains.franchisee_upload.domain.FranchiseeUploadRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,33 +27,54 @@ public class FranchiseeUploadService {
 
   private final S3FileUploader s3FileUploader;
   private final FranchiseeUploadRepository franchiseeUploadRepository;
+  private final FranchiseeFindService franchiseeFindService;
+  private final FranchiseeBankRepository franchiseeBankRepository;
+  private final FranchiseeApplicantFindService franchiseeApplicantFindService;
 
   @Transactional
-  public String uploadDocuments(String franchiseeIndex, String imageCategory, MultipartFile uploadImage) {
+  public String uploadDocuments(Long franchiseeIndex, String franchiseeBankInfoString, String imageCategory, MultipartFile uploadImage) {
+    FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
+    boolean checkExistBank = franchiseeBankRepository.existsByFranchiseeEntity(franchiseeEntity);
+    if (checkExistBank) {
+      throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Already Exists Bank Info");
+    }
 
+    try {
+      ObjectMapper objectMapper = new ObjectMapper();
+      FranchiseeBankInfo franchiseeBankInfo = objectMapper.readValue(franchiseeBankInfoString, FranchiseeBankInfo.class);
+      FranchiseeBankEntity franchiseeBankEntity = FranchiseeBankEntity.builder()
+          .accountNumber(franchiseeBankInfo.getAccountNumber().replaceAll("-", ""))
+          .bankName(franchiseeBankInfo.getBankName())
+          .withdrawalDate(franchiseeBankInfo.getWithdrawalDate())
+          .franchiseeEntity(franchiseeEntity)
+          .build();
+      franchiseeBankRepository.save(franchiseeBankEntity);
+    } catch (Exception e) {
+      throw new UnknownException(ExceptionState.UNKNOWN, "Bank Info Save Fail");
+    }
     boolean exists = franchiseeUploadRepository.existsByFranchiseeIndexAndImageCategory(franchiseeIndex, imageCategory);
+    String s3Path;
     try {
 
       if (exists) {
         printUpdateFranchisee();
         String delete = s3FileUploader.delete(franchiseeIndex, imageCategory);
         System.out.println(delete);
-        String s3Path = s3FileUploader.upload(franchiseeIndex, imageCategory, uploadImage);
-        FranchiseeUploadEntity franchiseeUploadEntity = franchiseeUploadRepository.findByFranchiseeIndexAndImageCategory(franchiseeIndex, imageCategory);
-//        필요 없음 - s3Path를 만드는 규칙이 franchiseeIndex와 imageCategory 임
-//        franchiseeUploadEntity.update(s3Path);
-        return s3Path;
-
+        s3Path = s3FileUploader.upload(franchiseeIndex, imageCategory, uploadImage);
       } else {
         printNewFranchisee();
-        String s3Path = s3FileUploader.upload(franchiseeIndex, imageCategory, uploadImage);
-        FranchiseeUploadEntity franchiseeUploadEntity = FranchiseeUploadEntity.builder().franchiseeIndex(franchiseeIndex).imageCategory(imageCategory).s3Path(s3Path).build();
+        s3Path = s3FileUploader.upload(franchiseeIndex, imageCategory, uploadImage);
+        FranchiseeUploadEntity franchiseeUploadEntity = FranchiseeUploadEntity.builder().franchiseeIndex(franchiseeIndex).imageCategory(imageCategory).s3Path(s3Path).franchiseeEntity(franchiseeEntity).build();
         franchiseeUploadRepository.save(franchiseeUploadEntity);
-        return s3Path;
       }
     } catch (Exception e) {
       throw new UnknownException(ExceptionState.UNKNOWN, "S3 Image Upload Fail");
     }
+
+    FranchiseeApplicantEntity franchiseeApplicantEntity = franchiseeApplicantFindService.findByFranchiseeEntity(franchiseeEntity);
+    franchiseeApplicantEntity.apply();
+    return s3Path;
+
   }
 
   void printNewFranchisee() {

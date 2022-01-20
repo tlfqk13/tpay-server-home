@@ -18,11 +18,13 @@ public class FranchiseeUploadController {
 
   @PostMapping("/franchiseeUpload/{franchiseeIndex}")
   public ResponseEntity<String> uploadDocuments(
-      @PathVariable String franchiseeIndex,
+      @PathVariable Long franchiseeIndex,
       @RequestParam String imageCategory,
+      @RequestParam("franchiseeBankInfo") String franchiseeBankInfoString,
 //      @RequestParam FranchiseeUploadRequest franchiseeUploadRequest,
       @RequestParam MultipartFile uploadImage) {
-    String s3Path = franchiseeUploadService.uploadDocuments(franchiseeIndex, imageCategory, uploadImage);
+
+    String s3Path = franchiseeUploadService.uploadDocuments(franchiseeIndex, franchiseeBankInfoString, imageCategory, uploadImage);
     return ResponseEntity.ok(s3Path);
   }
 }

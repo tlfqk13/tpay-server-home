@@ -31,7 +31,7 @@ public class FranchiseeBankEntity {
 
   @OneToOne
   @JoinColumn(name = "franchisee_id")
-  FranchiseeEntity franchiseeEntity;
+  private FranchiseeEntity franchiseeEntity;
 }
 
 

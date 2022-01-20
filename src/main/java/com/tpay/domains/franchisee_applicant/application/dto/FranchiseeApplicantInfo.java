@@ -12,18 +12,19 @@ import lombok.*;
 public class FranchiseeApplicantInfo {
   private Long franchiseeApplicantIndex;
   private FranchiseeStatus franchiseeStatus;
-  private String rejectReason;
+//  private String rejectReason;
 
   private String memberName;
   private String businessNumber;
   private String storeName;
-  private String storeAddressNumber;
-  private String storeAddressBasic;
-  private String storeAddressDetail;
+//  private String storeAddressNumber;
+//  private String storeAddressBasic;
+//  private String storeAddressDetail;
   private String sellerName;
-  private String storeTel;
-  private String productCategory;
+//  private String storeTel;
+//  private String productCategory;
   private String createdDate;
+  private String isRefundOnce;
 
   public static FranchiseeApplicantInfo toResponse(FranchiseeApplicantEntity franchiseeApplicantEntity) {
     FranchiseeEntity franchiseeEntity = franchiseeApplicantEntity.getFranchiseeEntity();
@@ -31,17 +32,18 @@ public class FranchiseeApplicantInfo {
     return FranchiseeApplicantInfo.builder()
         .franchiseeApplicantIndex(franchiseeApplicantEntity.getId())
         .franchiseeStatus(franchiseeApplicantEntity.getFranchiseeStatus())
-        .rejectReason(franchiseeApplicantEntity.getRejectReason())
+//        .rejectReason(franchiseeApplicantEntity.getRejectReason())
         .memberName(franchiseeEntity.getMemberName())
         .businessNumber(franchiseeEntity.getBusinessNumber())
         .storeName(franchiseeEntity.getStoreName())
-        .storeAddressNumber(franchiseeEntity.getStoreAddressNumber())
-        .storeAddressBasic(franchiseeEntity.getStoreAddressBasic())
-        .storeAddressDetail(franchiseeEntity.getStoreAddressDetail())
+//        .storeAddressNumber(franchiseeEntity.getStoreAddressNumber())
+//        .storeAddressBasic(franchiseeEntity.getStoreAddressBasic())
+//        .storeAddressDetail(franchiseeEntity.getStoreAddressDetail())
         .sellerName(franchiseeEntity.getSellerName())
-        .storeTel(franchiseeEntity.getStoreTel())
-        .productCategory(franchiseeEntity.getProductCategory())
+//        .storeTel(franchiseeEntity.getStoreTel())
+//        .productCategory(franchiseeEntity.getProductCategory())
         .createdDate(franchiseeEntity.getCreatedDate().toString())
+        .isRefundOnce(franchiseeEntity.getIsRefundOnce())
         .build();
   }
 }
