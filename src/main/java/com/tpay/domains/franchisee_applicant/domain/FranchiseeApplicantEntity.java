@@ -58,8 +58,9 @@ public class FranchiseeApplicantEntity extends BaseTimeEntity {
     return this;
   }
 
-  public void read(){
+  public boolean read(){
     this.isRead = !isRead;
+    return this.isRead;
   }
 
 }

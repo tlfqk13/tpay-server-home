@@ -14,8 +14,9 @@ public class FranchiseeApplicantReadService {
   private final FranchiseeApplicantFindService franchiseeApplicantFindService;
 
   @Transactional
-  public void read(Long franchiseeApplicantIndex){
+  public boolean read(Long franchiseeApplicantIndex){
     FranchiseeApplicantEntity franchiseeApplicantEntity = franchiseeApplicantFindService.findByIndex(franchiseeApplicantIndex);
-    franchiseeApplicantEntity.read();
+    boolean result = franchiseeApplicantEntity.read();
+    return result;
   }
 }

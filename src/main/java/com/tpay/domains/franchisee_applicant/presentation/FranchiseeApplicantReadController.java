@@ -15,8 +15,8 @@ public class FranchiseeApplicantReadController {
   private final FranchiseeApplicantReadService franchiseeApplicantReadService;
 
   @PatchMapping("/admin/franchisee-applicants/check/{franchiseeApplicantIndex}")
-  public ResponseEntity read(@PathVariable Long franchiseeApplicantIndex){
-    franchiseeApplicantReadService.read(franchiseeApplicantIndex);
-    return ResponseEntity.ok().build();
+  public ResponseEntity<Boolean> read(@PathVariable Long franchiseeApplicantIndex){
+    boolean result = franchiseeApplicantReadService.read(franchiseeApplicantIndex);
+    return ResponseEntity.ok(result);
   }
 }
