@@ -6,6 +6,7 @@ import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeApplicantInfoInterface;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantRepository;
+import com.tpay.domains.franchisee_applicant.domain.FranchiseeStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -33,8 +34,31 @@ public class FranchiseeApplicantFindService {
   }
 
   public List<FranchiseeApplicantInfoInterface> findAll() {
-    List<FranchiseeApplicantInfoInterface> franchiseeApplicantInfoInterfaceList = franchiseeApplicantRepository.findAllNativeQuery();
-    return franchiseeApplicantInfoInterfaceList;
+    return franchiseeApplicantRepository.findAllNativeQuery();
+  }
+
+  public List<FranchiseeApplicantInfoInterface> filterIsRead(String value) {
+    boolean valueBoolean;
+    String filter;
+    try
+    {
+       valueBoolean = Boolean.parseBoolean(value);
+    } catch (Exception e) {
+      throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER,"value must be true/false");
+    }
+    if(valueBoolean) {
+      filter = "1";
+    }
+    else{
+      filter = "0";
+    }
+    return franchiseeApplicantRepository.filterIsReadNativeQuery(filter);
+  }
+
+  public List<FranchiseeApplicantInfoInterface> filterFranchiseeStatus(FranchiseeStatus value){
+    Integer ordinal = value.ordinal();
+    String filter = ordinal.toString();
+    return franchiseeApplicantRepository.filterFranchiseeStatusNativeQuery(filter);
   }
 
   public FranchiseeApplicantEntity findByBusinessNumber(String businessNumber) {
