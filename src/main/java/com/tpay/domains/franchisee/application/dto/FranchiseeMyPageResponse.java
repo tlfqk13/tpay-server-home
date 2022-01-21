@@ -1,6 +1,8 @@
 package com.tpay.domains.franchisee.application.dto;
 
 import java.time.LocalDateTime;
+
+import com.tpay.domains.franchisee_applicant.domain.FranchiseeStatus;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,4 +23,5 @@ public class FranchiseeMyPageResponse {
   private Long totalSalesAmount;
   private Long totalPoint;
   private String productCategory;
+  private FranchiseeStatus franchiseeStatus;
 }
