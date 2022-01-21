@@ -11,4 +11,6 @@ public interface RefundFindResponseInterface {
   String getTotalAmount();
   String getTotalRefund();
   RefundStatus getRefundStatus();
+  String getBusinessNumber();
+  String getStoreName();
 }

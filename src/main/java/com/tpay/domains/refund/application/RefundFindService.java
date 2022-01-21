@@ -99,4 +99,8 @@ public class RefundFindService {
                     .build())
         .collect(Collectors.toList());
   }
+
+  public List<RefundFindResponseInterface> findAFranchisee(Long franchiseeIndex) {
+    return refundRepository.findAFranchiseeNativeQuery(franchiseeIndex);
+  }
 }

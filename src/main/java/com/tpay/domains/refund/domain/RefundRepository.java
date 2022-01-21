@@ -36,9 +36,29 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
           "       r.created_date   as createdDate,\n" +
           "       o.tot_amt        as totalAmount,\n" +
           "       r.tot_refund     as totalRefund,\n" +
-          "       r.refund_status  as refundStatus\n" +
-          "    from refund r inner join orders o on r.order_id = o.id;", nativeQuery = true)
+          "       r.refund_status  as refundStatus,\n" +
+          "       f.biz_no         as businessNumber,\n" +
+          "       f.store_nm       as storeName\n" +
+          "    from refund r inner join orders o on r.order_id = o.id\n" +
+          "                  left join franchisee f on o.franchisee_id = f.id\n" +
+          "    order by refundIndex desc;", nativeQuery = true)
   List<RefundFindResponseInterface> findAllNativeQuery();
+
+
+  @Query(value = "select\n" +
+      "       r.id             as refundIndex,\n" +
+      "       o.purchs_sn      as orderNumber,\n" +
+      "       r.created_date   as createdDate,\n" +
+      "       o.tot_amt        as totalAmount,\n" +
+      "       r.tot_refund     as totalRefund,\n" +
+      "       r.refund_status  as refundStatus,\n" +
+      "       f.biz_no         as businessNumber,\n" +
+      "       f.store_nm       as storeName\n" +
+      "    from refund r inner join orders o on r.order_id = o.id\n" +
+      "                  left join franchisee f on o.franchisee_id = f.id\n" +
+      "    where f.id = :franchiseeIndex\n" +
+      "    order by refundIndex desc;", nativeQuery = true)
+  List<RefundFindResponseInterface> findAFranchiseeNativeQuery(Long franchiseeIndex);
 
   @Query(
       value =
