@@ -6,6 +6,8 @@ import com.tpay.domains.franchisee.application.dto.FranchiseeInfo;
 import com.tpay.domains.franchisee.application.dto.FranchiseeMyPageResponse;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeRepository;
+import com.tpay.domains.franchisee_applicant.application.FranchiseeApplicantFindService;
+import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
 import com.tpay.domains.order.application.OrderFindService;
 import com.tpay.domains.order.domain.OrderEntity;
 import com.tpay.domains.refund.domain.RefundStatus;
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 public class FranchiseeFindService {
   private final FranchiseeRepository franchiseeRepository;
   private final OrderFindService orderFindService;
+  private final FranchiseeApplicantFindService franchiseeApplicantFindService;
 
   public FranchiseeEntity findByBusinessNumber(String businessNumber) {
     FranchiseeEntity franchiseeEntity =
@@ -44,6 +47,7 @@ public class FranchiseeFindService {
 
   public FranchiseeMyPageResponse findMyPageInfo(Long franchiseeIndex) {
     FranchiseeEntity franchiseeEntity = this.findByIndex(franchiseeIndex);
+    FranchiseeApplicantEntity franchiseeApplicantEntity = franchiseeApplicantFindService.findByFranchiseeEntity(franchiseeEntity);
 
     List<OrderEntity> orderEntityList =
         orderFindService.findAllByFranchiseeEntityIndex(franchiseeIndex);
@@ -64,6 +68,7 @@ public class FranchiseeFindService {
         .totalSalesAmount(totalSaleAmount)
         .totalPoint(franchiseeEntity.getBalance())
         .productCategory(franchiseeEntity.getProductCategory())
+        .franchiseeStatus(franchiseeApplicantEntity.getFranchiseeStatus())
         .build();
   }
 
