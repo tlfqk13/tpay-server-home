@@ -2,6 +2,7 @@ package com.tpay.domains.franchisee_upload.domain;
 
 
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
+import com.tpay.domains.franchisee_upload.application.dto.FranchiseeBankInfo;
 import lombok.*;
 
 import javax.persistence.*;
@@ -32,6 +33,13 @@ public class FranchiseeBankEntity {
   @OneToOne
   @JoinColumn(name = "franchisee_id")
   private FranchiseeEntity franchiseeEntity;
+
+  public FranchiseeBankEntity updateBankInfo(FranchiseeBankInfo franchiseeBankInfo) {
+    this.accountNumber = franchiseeBankInfo.getAccountNumber();
+    this.bankName = franchiseeBankInfo.getBankName();
+    this.withdrawalDate = franchiseeBankInfo.getWithdrawalDate();
+    return this;
+  }
 }
 
 
