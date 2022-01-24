@@ -137,16 +137,7 @@ public class FranchiseeEntity extends BaseTimeEntity {
     return this;
   }
 
-  public void modifyInfo(
-      String storeName, String storeAddressNumber, String storeAddressBasic, String storeAddressDetail, String businessNumber, String productCategory, String signboard, String storeNumber, String email) {
-    this.storeName = storeName;
-    this.storeAddressNumber = storeAddressNumber;
-    this.storeAddressBasic = storeAddressBasic;
-    this.storeAddressDetail = storeAddressDetail;
-    this.businessNumber = businessNumber.replaceAll("-", "");
-    this.productCategory = productCategory;
-
-    this.signboard = signboard;
+  public void modifyInfo( String storeNumber, String email) {
     this.storeNumber = storeNumber;
     this.email = email;
   }
@@ -161,10 +152,6 @@ public class FranchiseeEntity extends BaseTimeEntity {
   }
 
   public boolean isValidUser(String name, String phoneNumber) {
-    boolean isValid = false;
-    if(name.equals(this.sellerName) && phoneNumber.equals(this.storeTel)) {
-      isValid = true;
-    }
-    return isValid;
+    return name.equals(this.sellerName) && phoneNumber.equals(this.storeTel);
   }
 }

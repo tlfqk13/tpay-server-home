@@ -22,37 +22,16 @@ public class FranchiseeUpdateService {
   public FranchiseeUpdateInfo update(Long franchiseeIndex, FranchiseeUpdateInfo request) {
     FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
 
-    String businessNumber = request.getBusinessNumber();
-    if (!regExUtils.validate(RegExType.BUSINESS_NUMBER, businessNumber)) {
-      throw new InvalidBusinessNumberException(
-          ExceptionState.INVALID_BUSINESS_NUMBER,
-          "Required Business Number Format : (XXX-XX-XXXXX)");
-    }
-
     // 수정 안되어도 Request 전체 다 옴 (근데 왜 patch?)
     if (!regExUtils.validate(RegExType.EMAIL, request.getEmail())){
       throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER,"Invalid Email Format");
     }
 
     franchiseeEntity.modifyInfo(
-        request.getStoreName(),
-        request.getStoreAddressNumber(),
-        request.getStoreAddressBasic(),
-        request.getStoreAddressDetail(),
-        request.getBusinessNumber(),
-        request.getProductCategory(),
-        request.getSignboard(),
         request.getStoreNumber(),
         request.getEmail());
 
     return FranchiseeUpdateInfo.builder()
-        .storeName(franchiseeEntity.getStoreName())
-        .storeAddressNumber(franchiseeEntity.getStoreAddressNumber())
-        .storeAddressBasic(franchiseeEntity.getStoreAddressBasic())
-        .storeAddressDetail(franchiseeEntity.getStoreAddressDetail())
-        .businessNumber(franchiseeEntity.getBusinessNumber())
-        .productCategory(franchiseeEntity.getProductCategory())
-        .signboard(franchiseeEntity.getSignboard())
         .storeNumber(franchiseeEntity.getStoreNumber())
         .email(franchiseeEntity.getEmail())
         .build();
