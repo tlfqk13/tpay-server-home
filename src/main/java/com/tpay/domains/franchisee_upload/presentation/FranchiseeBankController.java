@@ -14,6 +14,7 @@ public class FranchiseeBankController {
   private final FranchiseeBankService franchiseeBankService;
 
   @PostMapping("/franchisee/bank/{franchiseeIndex}")
+  //이제 안 씀
   public ResponseEntity<FranchiseeBankInfo> save(
       @PathVariable Long franchiseeIndex,
       @RequestBody FranchiseeBankInfo franchiseeBankInfo
