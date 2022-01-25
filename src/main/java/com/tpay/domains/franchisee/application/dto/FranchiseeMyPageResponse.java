@@ -24,4 +24,10 @@ public class FranchiseeMyPageResponse {
   private Long totalPoint;
   private String productCategory;
   private FranchiseeStatus franchiseeStatus;
+
+  private String sellerName;
+  private String storeTel;
+  private String email;
+  private String signboard;
+  private String storeNumber;
 }

@@ -1,8 +1,6 @@
 package com.tpay.domains.franchisee_upload.application.dto;
 
 
-import com.tpay.domains.franchisee.application.dto.FranchiseeInfo;
-import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee_upload.domain.FranchiseeBankEntity;
 import lombok.*;
 
@@ -16,7 +14,6 @@ public class FranchiseeBankInfo {
   private String withdrawalDate;
 
 
-
   public static FranchiseeBankInfo of(FranchiseeBankEntity franchiseeBankEntity) {
     return FranchiseeBankInfo.builder()
         .accountNumber(franchiseeBankEntity.getAccountNumber())
@@ -24,4 +21,5 @@ public class FranchiseeBankInfo {
         .withdrawalDate(franchiseeBankEntity.getWithdrawalDate())
         .build();
   }
+
 }

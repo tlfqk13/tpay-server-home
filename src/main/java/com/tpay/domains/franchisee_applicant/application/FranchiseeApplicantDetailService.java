@@ -37,6 +37,8 @@ public class FranchiseeApplicantDetailService {
         .storeNumber(franchiseeEntity.getStoreNumber())
         .storeAddressBasic(franchiseeEntity.getStoreAddressBasic())
         .storeAddressDetail(franchiseeEntity.getStoreAddressDetail())
+        .createdDate(franchiseeEntity.getCreatedDate())
+        .isRead(franchiseeApplicantEntity.getIsRead())
 
         .imageUrl(franchiseeUploadEntity.getS3Path())
         .taxFreeStoreNumber(franchiseeUploadEntity.getTaxFreeStoreNumber())

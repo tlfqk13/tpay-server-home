@@ -40,25 +40,30 @@ public class FranchiseeApplicantFindService {
   public List<FranchiseeApplicantInfoInterface> filterIsRead(String value) {
     boolean valueBoolean;
     String filter;
-    try
-    {
-       valueBoolean = Boolean.parseBoolean(value);
+    try {
+      valueBoolean = Boolean.parseBoolean(value);
     } catch (Exception e) {
-      throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER,"value must be true/false");
+      throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "value must be true/false");
     }
-    if(valueBoolean) {
+    if (valueBoolean) {
       filter = "1";
-    }
-    else{
+    } else {
       filter = "0";
     }
     return franchiseeApplicantRepository.filterIsReadNativeQuery(filter);
   }
 
-  public List<FranchiseeApplicantInfoInterface> filterFranchiseeStatus(FranchiseeStatus value){
+  public List<FranchiseeApplicantInfoInterface> filterFranchiseeStatus(FranchiseeStatus value) {
     Integer ordinal = value.ordinal();
     String filter = ordinal.toString();
     return franchiseeApplicantRepository.filterFranchiseeStatusNativeQuery(filter);
+  }
+
+  public List<FranchiseeApplicantInfoInterface> filterBoth(FranchiseeStatus value) {
+    Integer ordinal = value.ordinal();
+    String statusFilter = ordinal.toString();
+    return franchiseeApplicantRepository.filterBothNativeQuery(statusFilter);
+
   }
 
   public FranchiseeApplicantEntity findByBusinessNumber(String businessNumber) {
