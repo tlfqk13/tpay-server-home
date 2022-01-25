@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BusinessValidResponse {
   private String request_cnt;
-//  private String matchnt;
+//  private String match_cnt;
 //  private String statusCode;
 //  private List<Data> data;
 }

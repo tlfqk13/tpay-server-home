@@ -53,15 +53,16 @@ public class S3FileUploader {
     ObjectMetadata objectMetadata = new ObjectMetadata();
     objectMetadata.setContentType(MediaType.ALL_VALUE);
     objectMetadata.setContentLength(file.getSize());
+    objectMetadata.setContentDisposition("attachment; filename=\"" + franchiseeIndex + imageCategory + ".jpg\"");
     String key = profileName + "/" + franchiseeIndex + imageCategory;
     s3Client.putObject(new PutObjectRequest(bucket, key, file.getInputStream(), objectMetadata)
         .withCannedAcl(CannedAccessControlList.PublicRead));
     return s3Client.getUrl(bucket, key).toString();
   }
 
-  public String delete(Long franchiseeIndex, String imageCategory){
+  public String delete(Long franchiseeIndex, String imageCategory) {
     String key = profileName + "/" + franchiseeIndex + imageCategory;
     s3Client.deleteObject(bucket, key);
-    return "Delete : "+key;
+    return "Delete : " + key;
   }
 }

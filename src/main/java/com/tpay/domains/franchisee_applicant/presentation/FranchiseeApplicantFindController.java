@@ -34,4 +34,10 @@ public class FranchiseeApplicantFindController {
     List<FranchiseeApplicantInfoInterface> responseList = franchiseeApplicantFindService.filterFranchiseeStatus(value);
     return ResponseEntity.ok(responseList);
   }
+
+  @GetMapping("/admin/franchisee-applicants/both/{value}")
+  public ResponseEntity<List<FranchiseeApplicantInfoInterface>> filterBoth(@PathVariable FranchiseeStatus value){
+    List<FranchiseeApplicantInfoInterface> result = franchiseeApplicantFindService.filterBoth(value);
+    return ResponseEntity.ok(result);
+  }
 }

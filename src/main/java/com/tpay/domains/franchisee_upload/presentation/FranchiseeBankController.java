@@ -14,11 +14,27 @@ public class FranchiseeBankController {
   private final FranchiseeBankService franchiseeBankService;
 
   @PostMapping("/franchisee/bank/{franchiseeIndex}")
+  //이제 안 씀
   public ResponseEntity<FranchiseeBankInfo> save(
       @PathVariable Long franchiseeIndex,
       @RequestBody FranchiseeBankInfo franchiseeBankInfo
   ) {
-    FranchiseeBankInfo result = franchiseeBankService.save(franchiseeIndex,franchiseeBankInfo);
+    FranchiseeBankInfo result = franchiseeBankService.save(franchiseeIndex, franchiseeBankInfo);
+    return ResponseEntity.ok(result);
+  }
+
+
+  @GetMapping("/franchisee/bank/{franchiseeIndex}")
+  public ResponseEntity<FranchiseeBankInfo> findMyAccount(@PathVariable Long franchiseeIndex) {
+    FranchiseeBankInfo result = franchiseeBankService.findMyAccount(franchiseeIndex);
+    return ResponseEntity.ok(result);
+  }
+
+  @PatchMapping("/franchisee/bank/{franchiseeIndex}")
+  public ResponseEntity<FranchiseeBankInfo> updateMyAccount(
+      @PathVariable Long franchiseeIndex,
+      @RequestBody FranchiseeBankInfo franchiseeBankInfo){
+    FranchiseeBankInfo result = franchiseeBankService.updateMyAccount(franchiseeIndex, franchiseeBankInfo);
     return ResponseEntity.ok(result);
   }
 }

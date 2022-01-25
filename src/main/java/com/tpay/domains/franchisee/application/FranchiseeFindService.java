@@ -69,6 +69,11 @@ public class FranchiseeFindService {
         .totalPoint(franchiseeEntity.getBalance())
         .productCategory(franchiseeEntity.getProductCategory())
         .franchiseeStatus(franchiseeApplicantEntity.getFranchiseeStatus())
+        .sellerName(franchiseeEntity.getSellerName())
+        .storeTel(franchiseeEntity.getStoreTel())
+        .email(franchiseeEntity.getEmail())
+        .signboard(franchiseeEntity.getSignboard())
+        .storeNumber(franchiseeEntity.getStoreNumber())
         .build();
   }
 

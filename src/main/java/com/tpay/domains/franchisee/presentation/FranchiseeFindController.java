@@ -3,12 +3,13 @@ package com.tpay.domains.franchisee.presentation;
 import com.tpay.domains.franchisee.application.FranchiseeFindService;
 import com.tpay.domains.franchisee.application.dto.FranchiseeInfo;
 import com.tpay.domains.franchisee.application.dto.FranchiseeMyPageResponse;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,9 +24,13 @@ public class FranchiseeFindController {
     return ResponseEntity.ok(response);
   }
 
+
+
   @GetMapping("/franchisee")
   public ResponseEntity<List<FranchiseeInfo>> findAll() {
     List<FranchiseeInfo> response = franchiseeFindService.findAll();
     return ResponseEntity.ok(response);
   }
+
+
 }

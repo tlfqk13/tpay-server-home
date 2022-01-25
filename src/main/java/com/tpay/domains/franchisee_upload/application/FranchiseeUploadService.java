@@ -45,7 +45,7 @@ public class FranchiseeUploadService {
       FranchiseeBankEntity franchiseeBankEntity = FranchiseeBankEntity.builder()
           .accountNumber(franchiseeBankInfo.getAccountNumber().replaceAll("-", ""))
           .bankName(franchiseeBankInfo.getBankName())
-          .withdrawalDate(franchiseeBankInfo.getWithdrawalDate())
+          .withdrawalDate(franchiseeBankInfo.getWithdrawalDate().replaceAll("일",""))
           .franchiseeEntity(franchiseeEntity)
           .build();
       franchiseeBankRepository.save(franchiseeBankEntity);
