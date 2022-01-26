@@ -48,15 +48,8 @@ public class FranchiseeFindService {
   public FranchiseeMyPageResponse findMyPageInfo(Long franchiseeIndex) {
     FranchiseeEntity franchiseeEntity = this.findByIndex(franchiseeIndex);
     FranchiseeApplicantEntity franchiseeApplicantEntity = franchiseeApplicantFindService.findByFranchiseeEntity(franchiseeEntity);
-
-//    List<OrderEntity> orderEntityList = orderFindService.findAllByFranchiseeEntityIndex(franchiseeIndex);
-
+    
     Long sumTotalSaleAmount = orderFindService.sumTotalSaleAmountByFranchiseeIndex(franchiseeIndex);
-//    Long totalSaleAmount =
-//        orderEntityList.stream()
-//            .filter(orderEntity -> orderEntity.getRefundEntity().getRefundStatus() != RefundStatus.CANCEL)
-//            .mapToLong(saleEntity -> Long.parseLong(saleEntity.getTotalAmount()))
-//            .sum();
 
     return FranchiseeMyPageResponse.builder()
         .createdDate(franchiseeEntity.getCreatedDate())
