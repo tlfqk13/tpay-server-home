@@ -28,5 +28,5 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
       "    from orders o inner join refund r on o.id = r.order_id\n" +
       "    where refund_status = 'APPROVAL'\n" +
       "    and franchisee_id = :franchiseeIndex",nativeQuery = true)
-  Long sumTotalSaleAmountByFranchiseeIndex(@Param("franchiseeIndex") Long franchiseeIndex);
+  Optional<Long> sumTotalSaleAmountByFranchiseeIndex(@Param("franchiseeIndex") Long franchiseeIndex);
 }
