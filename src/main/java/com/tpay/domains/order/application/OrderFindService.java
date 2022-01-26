@@ -19,4 +19,9 @@ public class OrderFindService {
         .findAllByFranchiseeEntityId(franchiseeIndex)
         .orElse(Collections.emptyList());
   }
+
+  @Transactional
+  public Long sumTotalSaleAmountByFranchiseeIndex(Long franchiseeIndex){
+    return orderRepository.sumTotalSaleAmountByFranchiseeIndex(franchiseeIndex);
+  }
 }
