@@ -1,8 +1,9 @@
 package com.tpay.domains.franchisee.presentation;
 
 
-import com.tpay.domains.franchisee.application.FranchiseeVatReportService;
-import com.tpay.domains.franchisee.application.dto.FranchiseeVatReportResponseInterface;
+import com.tpay.domains.franchisee.application.FranchiseeVatService;
+import com.tpay.domains.franchisee.application.dto.vat.FranchiseeVatDetailResponse;
+import com.tpay.domains.franchisee.application.dto.vat.FranchiseeVatReportResponseInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,23 +11,29 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDate;
-
 @RestController
 @RequiredArgsConstructor
 public class FranchiseeVatReportController {
 
-  private final FranchiseeVatReportService franchiseeVatReportService;
+  private final FranchiseeVatService franchiseeVatService;
 
 
   @GetMapping("/franchisee/{franchiseeIndex}/vat")
   public ResponseEntity<FranchiseeVatReportResponseInterface> vatReport(
       @PathVariable Long franchiseeIndex,
-      @RequestParam LocalDate startDate,
-      @RequestParam LocalDate endDate
+      @RequestParam String requestDate
   ) {
-    FranchiseeVatReportResponseInterface result = franchiseeVatReportService.vatReport(franchiseeIndex, startDate, endDate);
+    FranchiseeVatReportResponseInterface result = franchiseeVatService.vatReport(franchiseeIndex, requestDate);
     return ResponseEntity.ok(result);
+  }
+
+  @GetMapping("/franchisee/{franchiseeIndex}/vat/detail")
+  public ResponseEntity<FranchiseeVatDetailResponse> vatDetail(
+      @PathVariable Long franchiseeIndex,
+      @RequestParam String requestDate
+  ){
+    FranchiseeVatDetailResponse franchiseeVatDetailResponse = franchiseeVatService.vatDetail(franchiseeIndex, requestDate);
+    return ResponseEntity.ok(franchiseeVatDetailResponse);
   }
 
 

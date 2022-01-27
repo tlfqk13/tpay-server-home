@@ -1,4 +1,4 @@
-package com.tpay.domains.franchisee.application.dto;
+package com.tpay.domains.franchisee.application.dto.vat;
 
 
 public interface FranchiseeVatReportResponseInterface {
