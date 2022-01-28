@@ -14,7 +14,7 @@ public class BusinessNumberValidationService {
   private final FranchiseeRepository franchiseeRepository;
 
   public void valid(Long businessNumber) {
-    if (franchiseeRepository.existsByBusinessNumber(businessNumber.toString())) {
+    if (franchiseeRepository.existsByBusinessNumber(businessNumber.toString().replaceAll("-",""))) {
       throw new AlreadyExistsException(ExceptionState.ALREADY_EXISTS, "Franchisee Already Exists");
     }
   }
