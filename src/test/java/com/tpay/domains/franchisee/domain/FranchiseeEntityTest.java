@@ -18,7 +18,7 @@ class FranchiseeEntityTest {
         FranchiseeEntity.builder()
             .sellerName("테스트코드")
             .storeTel("555-5555-5555")
-            .businessNumber("121-12-12121")
+            .businessNumber("121-12'-12121")
             .email("namSK@TestCode.co.kr")
             .password("test1234!@")
             .storeName("매장명")

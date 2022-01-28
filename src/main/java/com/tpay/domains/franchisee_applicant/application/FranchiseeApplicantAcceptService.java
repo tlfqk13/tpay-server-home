@@ -25,7 +25,6 @@ public class FranchiseeApplicantAcceptService {
     FranchiseeApplicantEntity franchiseeApplicantEntity =
         franchiseeApplicantFindService.findByIndex(franchiseeApplicantIndex);
 
-
     FranchiseeEntity franchiseeEntity = franchiseeApplicantEntity.getFranchiseeEntity();
     franchiseeBankFindService.findByFranchiseeEntity(franchiseeEntity);
     FranchiseeFindRequest response = sendTo(franchiseeFindRequest);
