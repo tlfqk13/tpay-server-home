@@ -1,6 +1,8 @@
 package com.tpay.domains.franchisee_upload.application;
 
 
+import com.tpay.commons.exception.ExceptionState;
+import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee_upload.domain.FranchiseeBankEntity;
 import com.tpay.domains.franchisee_upload.domain.FranchiseeBankRepository;
@@ -18,7 +20,7 @@ public class FranchiseeBankFindService {
   public FranchiseeBankEntity findByFranchiseeEntity(FranchiseeEntity franchiseeEntity){
     Optional<FranchiseeBankEntity> optionalFranchiseeBankEntity = franchiseeBankRepository.findByFranchiseeEntity(franchiseeEntity);
     if(optionalFranchiseeBankEntity.isEmpty()){
-      return FranchiseeBankEntity.builder().build();
+      throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Franchisee Bank Entity doesn't exists");
     }
     return optionalFranchiseeBankEntity.get();
   }

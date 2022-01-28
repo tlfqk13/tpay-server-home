@@ -14,7 +14,21 @@ class FranchiseeEntityTest {
 
   @BeforeEach
   public void setup() {
-    franchiseeEntity = FranchiseeEntity.builder().build();
+    franchiseeEntity =
+        FranchiseeEntity.builder()
+            .sellerName("테스트코드")
+            .storeTel("555-5555-5555")
+            .businessNumber("121-12-12121")
+            .email("namSK@TestCode.co.kr")
+            .password("test1234!@")
+            .storeName("매장명")
+            .signboard("간판명")
+            .storeAddressNumber("12345")
+            .storeAddressBasic("경기도 수원시 권선구")
+            .storeAddressDetail("권선로")
+            .productCategory("아무거나 넣어도 됨")
+            .isTaxRefundShop("N")
+            .build();
     franchiseeEntity.changeBalance(SignType.POSITIVE, 20000L);
   }
 

@@ -5,6 +5,8 @@ import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeFindRequest;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
 import javax.transaction.Transactional;
+
+import com.tpay.domains.franchisee_upload.application.FranchiseeBankFindService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class FranchiseeApplicantAcceptService {
 
   private final FranchiseeApplicantFindService franchiseeApplicantFindService;
+  private final FranchiseeBankFindService franchiseeBankFindService;
   private final WebClient.Builder builder;
 
   @Transactional
@@ -22,10 +25,10 @@ public class FranchiseeApplicantAcceptService {
     FranchiseeApplicantEntity franchiseeApplicantEntity =
         franchiseeApplicantFindService.findByIndex(franchiseeApplicantIndex);
 
+
     FranchiseeEntity franchiseeEntity = franchiseeApplicantEntity.getFranchiseeEntity();
-
+    franchiseeBankFindService.findByFranchiseeEntity(franchiseeEntity);
     FranchiseeFindRequest response = sendTo(franchiseeFindRequest);
-
     franchiseeApplicantEntity.accept();
     franchiseeEntity.memberInfo(response.getFranchiseeName(), response.getFranchiseeNumber());
     return response;
