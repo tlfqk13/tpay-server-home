@@ -2,6 +2,7 @@ package com.tpay.domains.franchisee.presentation;
 
 
 import com.tpay.domains.franchisee.application.FranchiseeCmsService;
+import com.tpay.domains.franchisee.application.dto.cms.FranchiseeCmsResponseDetailInterface;
 import com.tpay.domains.franchisee.application.dto.cms.FranchiseeCmsResponseInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,4 +26,12 @@ public class FranchiseeCmsController {
     return ResponseEntity.ok(result);
   }
 
+  @GetMapping("/franchisee/{franchiseeIndex}/cms/detail")
+  public ResponseEntity<FranchiseeCmsResponseDetailInterface> cmsDetail(
+      @PathVariable Long franchiseeIndex,
+      @RequestParam String requestDate
+  ) {
+    FranchiseeCmsResponseDetailInterface result = franchiseeCmsService.cmsDetail(franchiseeIndex, requestDate);
+    return ResponseEntity.ok(result);
+  }
 }
