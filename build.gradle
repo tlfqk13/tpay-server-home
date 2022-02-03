@@ -61,6 +61,10 @@ dependencies {
     // S3
     implementation 'org.springframework.cloud:spring-cloud-aws:2.2.5.RELEASE'
     implementation 'org.springframework.cloud:spring-cloud-aws-context:2.2.5.RELEASE'
+
+    //Excel
+    implementation group: 'org.apache.poi', name: 'poi', version: '5.0.0'
+    implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '5.0.0'
 }
 
 test {

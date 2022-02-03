@@ -7,10 +7,19 @@ import com.tpay.domains.franchisee.application.dto.cms.FranchiseeCmsResponseDeta
 import com.tpay.domains.franchisee.application.dto.cms.FranchiseeCmsResponseInterface;
 import com.tpay.domains.order.domain.OrderRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.apache.poi.ss.usermodel.CellType.STRING;
 
 @Service
 @RequiredArgsConstructor
@@ -32,13 +41,35 @@ public class FranchiseeCmsService {
     return orderRepository.findMonthlyCmsDetail(franchiseeIndex, year, month);
   }
 
-  public List<String> setUpDate(String requestDate){
+  public String cmsDownloads(Long franchiseeIndex, String requestDate) {
+    try {
+      ClassPathResource resource = new ClassPathResource("KTP_CMS_Form.xlsx");
+      File file = resource.getFile();
+      FileInputStream fileInputStream = new FileInputStream(file);
+      XSSFWorkbook xssfWorkbook = new XSSFWorkbook(fileInputStream);
+      XSSFSheet sheet = xssfWorkbook.getSheetAt(0);
+      XSSFRow row = sheet.createRow(0);
+      row.createCell(0, STRING);
+      row.getCell(0).setCellValue("0번 cellNum에 입력");
+      // TODO: 2022/02/03 엑셀파일 일부 write 후 저장까지 테스트 완료 포멧에 맞게 입력하는 로직 구현할 것
+      FileOutputStream fileOutputStream = new FileOutputStream("/Users/sunba/excelExportTest.xlsx", false);
+      xssfWorkbook.write(fileOutputStream);
+      fileOutputStream.close();
+    } catch (Exception e) {
+      throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "File Input Faild");
+    }
+
+    FranchiseeCmsResponseDetailInterface franchiseeCmsResponseDetailInterface = cmsDetail(franchiseeIndex, requestDate);
+    return "aa";
+  }
+
+  public List<String> setUpDate(String requestDate) {
     List<String> dateList = new ArrayList<>();
-    String year = requestDate.substring(0,4);
+    String year = requestDate.substring(0, 4);
     String month = requestDate.substring(4);
     int monthInt = Integer.parseInt(month);
-    if( !(requestDate.length() == 6 && monthInt <= 12 && monthInt >= 1)) {
-      throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER,"Invalid Date format");
+    if (!(requestDate.length() == 6 && monthInt <= 12 && monthInt >= 1)) {
+      throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid Date format");
     }
     dateList.add(year);
     dateList.add(month);

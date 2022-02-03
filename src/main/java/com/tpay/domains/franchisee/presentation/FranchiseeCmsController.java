@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+
 @RestController
 @RequiredArgsConstructor
 public class FranchiseeCmsController {
@@ -33,5 +35,14 @@ public class FranchiseeCmsController {
   ) {
     FranchiseeCmsResponseDetailInterface result = franchiseeCmsService.cmsDetail(franchiseeIndex, requestDate);
     return ResponseEntity.ok(result);
+  }
+
+  @GetMapping("/franchisee/{franchiseeIndex}/cms/downloads")
+  public ResponseEntity<String> cmsDownloads (
+      @PathVariable Long franchiseeIndex,
+      @RequestParam String requestDate
+  ) {
+    String result = franchiseeCmsService.cmsDownloads(franchiseeIndex, requestDate);
+    return ResponseEntity.ok("Asdf");
   }
 }
