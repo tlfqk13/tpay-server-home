@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import com.tpay.domains.franchisee.application.dto.cms.FranchiseeCmsResponseInterface;
 import com.tpay.domains.franchisee.application.dto.vat.FranchiseeVatDetailResponseInterface;
 import com.tpay.domains.franchisee.application.dto.vat.FranchiseeVatReportResponseInterface;
 import com.tpay.domains.franchisee.application.dto.vat.FranchiseeVatTotalResponseInterface;
@@ -56,4 +57,18 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
       "    and o.created_date between :startDate and :endDate\n" +
       "    order by 3 desc", nativeQuery = true)
   List<FranchiseeVatDetailResponseInterface> findQuarterlyVatDetail(@Param("franchiseeIndex") Long franchiseeIndex, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+  @Query(value = "select\n" +
+      "    franchisee_id as franchiseeIndex,\n" +
+      "    count(*) as totalCount,\n" +
+      "    sum(cast( tot_amt as INTEGER )) as totalAmount,\n" +
+      "    sum(cast( tot_vat as INTEGER )) as totalVat,\n" +
+      "    sum(cast( tot_vat - tot_refund as INTEGER )) as totalCommission\n" +
+      "    from orders o inner join refund r on o.id = r.order_id\n" +
+      "where franchisee_id = :franchiseeIndex\n" +
+      "and substr(o.created_date,1,4) = :year\n" +
+      "and substr(o.created_date,6,2) = :month\n" +
+      "group by franchisee_id", nativeQuery = true)
+  FranchiseeCmsResponseInterface findMonthlyCmsReport(@Param("franchiseeIndex") Long franchiseeIndex,@Param("year") String year,@Param("month") String month);
+
 }
