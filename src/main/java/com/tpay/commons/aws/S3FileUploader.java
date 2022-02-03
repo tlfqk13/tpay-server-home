@@ -49,7 +49,7 @@ public class S3FileUploader {
         .build();
   }
 
-  public String upload(Long franchiseeIndex, String imageCategory, MultipartFile file) throws IOException {
+  public String uploadJpg(Long franchiseeIndex, String imageCategory, MultipartFile file) throws IOException {
     ObjectMetadata objectMetadata = new ObjectMetadata();
     objectMetadata.setContentType(MediaType.ALL_VALUE);
     objectMetadata.setContentLength(file.getSize());
@@ -60,7 +60,7 @@ public class S3FileUploader {
     return s3Client.getUrl(bucket, key).toString();
   }
 
-  public String delete(Long franchiseeIndex, String imageCategory) {
+  public String deleteJpg(Long franchiseeIndex, String imageCategory) {
     String key = profileName + "/" + franchiseeIndex + imageCategory;
     s3Client.deleteObject(bucket, key);
     return "Delete : " + key;

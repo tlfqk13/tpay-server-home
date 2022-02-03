@@ -53,7 +53,7 @@ public class FranchiseeUploadService {
           .build();
       franchiseeBankRepository.save(franchiseeBankEntity);
       printNewFranchisee();
-      s3Path = s3FileUploader.upload(franchiseeIndex, imageCategory, uploadImage);
+      s3Path = s3FileUploader.uploadJpg(franchiseeIndex, imageCategory, uploadImage);
       FranchiseeUploadEntity franchiseeUploadEntity = FranchiseeUploadEntity.builder().franchiseeIndex(franchiseeIndex).imageCategory(imageCategory).s3Path(s3Path).franchiseeEntity(franchiseeEntity).build();
       franchiseeUploadRepository.save(franchiseeUploadEntity);
     } catch (Exception e) {
@@ -89,9 +89,9 @@ public class FranchiseeUploadService {
       if (uploadImage.isEmpty()) {
         s3Path = "Bank Info Updated Only";
       } else {
-        String delete = s3FileUploader.delete(franchiseeIndex, imageCategory);
+        String delete = s3FileUploader.deleteJpg(franchiseeIndex, imageCategory);
         System.out.println(delete);
-        s3Path = s3FileUploader.upload(franchiseeIndex, imageCategory, uploadImage);
+        s3Path = s3FileUploader.uploadJpg(franchiseeIndex, imageCategory, uploadImage);
       }
     } catch (Exception e) {
       throw new UnknownException(ExceptionState.UNKNOWN, "Contact Backend Developer");
