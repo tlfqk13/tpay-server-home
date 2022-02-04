@@ -76,7 +76,8 @@ public class FranchiseeCmsService {
 //    return "실패";
   }
 
-  public List<String> setUpDate(String requestDate) {
+  public List<String> setUpDate(String requestDatePart) {
+    String requestDate = "20"+requestDatePart;
     List<String> dateList = new ArrayList<>();
     String year = requestDate.substring(0, 4);
     String month = requestDate.substring(4);

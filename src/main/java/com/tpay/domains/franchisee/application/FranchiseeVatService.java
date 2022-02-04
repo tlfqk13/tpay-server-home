@@ -77,8 +77,9 @@ public class FranchiseeVatService {
         .build();
   }
 
-  public List<Object> setUpDate(String requestDate){
+  public List<Object> setUpDate(String requestDatePart){
     List<Object> dateList = new ArrayList<>();
+    String requestDate = "20"+requestDatePart;
     String year = requestDate.substring(0,4);
     String halfOfYear = requestDate.substring(4);
     LocalDate startDate;

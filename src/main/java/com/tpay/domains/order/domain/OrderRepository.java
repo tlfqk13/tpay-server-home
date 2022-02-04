@@ -16,14 +16,17 @@ import java.util.Optional;
 public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
   Optional<List<OrderEntity>> findAllByFranchiseeEntityId(Long franchiseeId);
 
-  @Query(value = "select  franchisee_id as franchiseeIndex\n" +
-      "        ,sum( cast(tot_amt as INTEGER )) as totalAmount\n" +
-      "        ,count(*) as totalCount\n" +
-      "    from orders o inner join refund r on o.id = r.order_id\n" +
-      "    where refund_status = 'APPROVAL'\n" +
-      "    and o.created_date between :startDate and :endDate\n" +
-      "    and franchisee_id = :franchiseeIndex\n" +
-      "    group by franchisee_id;", nativeQuery = true)
+  @Query(value = "select franchisee_id                           as franchiseeIndex\n" +
+      "     , sum(cast(tot_amt as INTEGER))           as totalAmount\n" +
+      "     , cast(sum(tot_amt - tot_vat) as INTEGER) as totalSupply\n" +
+      "     , sum(cast(tot_vat as INTEGER))           as totalVat\n" +
+      "     , count(*)                                as totalCount\n" +
+      "from orders o\n" +
+      "         inner join refund r on o.id = r.order_id\n" +
+      "where refund_status = 'APPROVAL'\n" +
+      "  and o.created_date between :startDate and :endDate\n" +
+      "  and franchisee_id = :franchiseeIndex\n" +
+      "group by franchisee_id", nativeQuery = true)
   FranchiseeVatReportResponseInterface findQuarterlyVatReport(@Param("franchiseeIndex") Long franchiseeIndex, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
 
