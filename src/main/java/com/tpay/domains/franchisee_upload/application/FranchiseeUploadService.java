@@ -71,12 +71,11 @@ public class FranchiseeUploadService {
   public String uploadUpdateImageAndBankInfo(Long franchiseeIndex, String franchiseeBankInfoString, String imageCategory, MultipartFile uploadImage) {
 
     printUpdateFranchisee();
+    String message;
     FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
-    String s3Path;
     boolean checkExistBank = franchiseeBankRepository.existsByFranchiseeEntity(franchiseeEntity);
-    boolean checkUploadImage = franchiseeUploadRepository.existsByFranchiseeIndexAndImageCategory(franchiseeIndex, imageCategory);
-    if (!(checkExistBank && checkUploadImage)) {
-      throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "[Bank Info] or [S3-Image] doesn't exist.");
+    if (!(checkExistBank)) {
+      throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "[Bank Info] doesn't exist.");
     }
 
     try {
@@ -86,17 +85,18 @@ public class FranchiseeUploadService {
       FranchiseeBankEntity franchiseeBankEntity = franchiseeBankFindService.findByFranchiseeEntity(franchiseeEntity);
       franchiseeBankEntity.updateBankInfo(franchiseeBankInfo);
 
-      if (uploadImage.isEmpty()) {
-        s3Path = "Bank Info Updated Only";
+      if (imageCategory.equals("X")) {
+        message = "Bank Info Updated Only";
       } else {
         String delete = s3FileUploader.deleteJpg(franchiseeIndex, imageCategory);
         System.out.println(delete);
-        s3Path = s3FileUploader.uploadJpg(franchiseeIndex, imageCategory, uploadImage);
+        message = s3FileUploader.uploadJpg(franchiseeIndex, imageCategory, uploadImage);
       }
     } catch (Exception e) {
       throw new UnknownException(ExceptionState.UNKNOWN, "Contact Backend Developer");
     }
-    return s3Path;
+    franchiseeApplicantFindService.findByFranchiseeEntity(franchiseeEntity).reapply();
+    return message;
   }
 
   void printNewFranchisee() {

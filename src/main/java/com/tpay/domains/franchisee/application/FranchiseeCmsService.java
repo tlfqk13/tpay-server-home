@@ -56,7 +56,7 @@ public class FranchiseeCmsService {
       xssfWorkbook.write(fileOutputStream);
       fileOutputStream.close();
     } catch (Exception e) {
-      throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "File Input Faild");
+      throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "File Input Failed");
     }
 
     FranchiseeCmsResponseDetailInterface franchiseeCmsResponseDetailInterface = cmsDetail(franchiseeIndex, requestDate);
