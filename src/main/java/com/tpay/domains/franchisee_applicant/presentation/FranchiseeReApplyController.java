@@ -18,9 +18,9 @@ public class FranchiseeReApplyController {
 
 
 
-  @GetMapping("/franchisee-applicants/reapply/{franchiseeApplicantIndex}")
-  public ResponseEntity<FranchiseeApplicantReapplyResponse> findBaseInfo(@PathVariable Long franchiseeApplicantIndex) {
-    FranchiseeApplicantReapplyResponse result = franchiseeReApplyService.findBaseInfo(franchiseeApplicantIndex);
+  @GetMapping("/franchisee-applicants/reapply/{franchiseeIndex}")
+  public ResponseEntity<FranchiseeApplicantReapplyResponse> findBaseInfo(@PathVariable Long franchiseeIndex) {
+    FranchiseeApplicantReapplyResponse result = franchiseeReApplyService.findBaseInfo(franchiseeIndex);
     return ResponseEntity.ok(result);
   }
 

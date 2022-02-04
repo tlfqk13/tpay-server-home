@@ -87,6 +87,9 @@ public class FranchiseeEntity extends BaseTimeEntity {
   @ColumnDefault("false") // ddl auto-create 아니면 쓸모는 없음
   private String isRefundOnce;
 
+  @Column(name = "popUp", length = 1)
+  private boolean popUp;
+
   @Builder
   public FranchiseeEntity(
       String businessNumber,
@@ -122,6 +125,7 @@ public class FranchiseeEntity extends BaseTimeEntity {
     this.email = email;
     this.isTaxRefundShop = isTaxRefundShop;
     this.isRefundOnce = "false";
+    this.popUp = true;
   }
 
   public FranchiseeEntity changeBalance(SignType signType, long change) {
@@ -153,5 +157,9 @@ public class FranchiseeEntity extends BaseTimeEntity {
 
   public boolean isValidUser(String name, String phoneNumber) {
     return name.equals(this.sellerName) && phoneNumber.equals(this.storeTel);
+  }
+
+  public void popUpFalse() {
+    this.popUp = false;
   }
 }
