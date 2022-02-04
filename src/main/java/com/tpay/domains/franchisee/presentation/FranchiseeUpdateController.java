@@ -21,4 +21,10 @@ public class FranchiseeUpdateController {
     FranchiseeUpdateInfo response = franchiseeUpdateService.update(franchiseeIndex, request);
     return ResponseEntity.ok(response);
   }
+
+  @PatchMapping("/franchisee/{franchiseeIndex}/popUp")
+  public ResponseEntity<Boolean> updatePopUp(@PathVariable Long franchiseeIndex) {
+    boolean result = franchiseeUpdateService.updatePopUp(franchiseeIndex);
+    return ResponseEntity.ok(result);
+  }
 }
