@@ -36,4 +36,11 @@ public class FranchiseeUpdateService {
         .email(franchiseeEntity.getEmail())
         .build();
   }
+
+  @Transactional
+  public boolean updatePopUp(Long franchiseeIndex){
+    FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
+    franchiseeEntity.popUpFalse();
+    return false;
+  }
 }

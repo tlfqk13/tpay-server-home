@@ -1,5 +1,6 @@
 package com.tpay.domains.franchisee_applicant.application;
 
+import com.tpay.domains.franchisee.application.FranchiseeFindService;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeApplicantInfo;
 import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeApplicantReapplyResponse;
@@ -21,6 +22,7 @@ public class FranchiseeReApplyService {
   private final FranchiseeApplicantFindService franchiseeApplicantFindService;
   private final FranchiseeBankFindService franchiseeBankFindService;
   private final FranchiseeUploadFindService franchiseeUploadFindService;
+  private final FranchiseeFindService franchiseeFindService;
 
   @Transactional
   public FranchiseeApplicantInfo reapply(String businessNumber) {
@@ -32,9 +34,8 @@ public class FranchiseeReApplyService {
 
 
   @Transactional
-  public FranchiseeApplicantReapplyResponse findBaseInfo(Long franchiseeApplicantIndex) {
-    FranchiseeApplicantEntity franchiseeApplicantEntity = franchiseeApplicantFindService.findByIndex(franchiseeApplicantIndex);
-    FranchiseeEntity franchiseeEntity = franchiseeApplicantEntity.getFranchiseeEntity();
+  public FranchiseeApplicantReapplyResponse findBaseInfo(Long franchiseeIndex) {
+    FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
     FranchiseeUploadEntity franchiseeUploadEntity = franchiseeUploadFindService.findByFranchiseeIndex(franchiseeEntity.getId());
     FranchiseeBankEntity franchiseeBankEntity = franchiseeBankFindService.findByFranchiseeEntity(franchiseeEntity);
     return FranchiseeApplicantReapplyResponse.builder()

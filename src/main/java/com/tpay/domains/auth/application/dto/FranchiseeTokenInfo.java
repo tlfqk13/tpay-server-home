@@ -18,4 +18,5 @@ public class FranchiseeTokenInfo {
   private String rejectReason;
   private String accessToken;
   private String refreshToken;
+  private boolean popUp;
 }
