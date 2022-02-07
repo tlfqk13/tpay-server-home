@@ -38,12 +38,12 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
 
 
   @Query(value = "select\n" +
-      "    count(*) as totalCount\n" +
-      "    ,sum( cast ( tot_amt  as INTEGER )) as totalAmount\n" +
-      "    ,sum( cast ( tot_vat  as INTEGER )) as totalVat\n" +
-      "    from orders o inner join refund r on o.id = r.order_id\n" +
-      "    where franchisee_id = :franchiseeIndex\n" +
-      "    and o.created_date between :startDate and :endDate", nativeQuery = true)
+      "      count(*) as totalCount\n" +
+      "      ,IFNULL(sum( cast ( tot_amt  as INTEGER )),0) as totalAmount\n" +
+      "      ,IFNULL(sum( cast ( tot_vat  as INTEGER )),0) as totalVat\n" +
+      "      from orders o inner join refund r on o.id = r.order_id\n" +
+      "      where franchisee_id = :franchiseeIndex\n" +
+      "      and o.created_date between :startDate and :endDate", nativeQuery = true)
   FranchiseeVatTotalResponseInterface findQuarterlyTotal(@Param("franchiseeIndex") Long franchiseeIndex, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
 
