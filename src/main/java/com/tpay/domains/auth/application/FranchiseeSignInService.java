@@ -44,6 +44,7 @@ public class FranchiseeSignInService {
         .accessToken(accessToken.getValue())
         .refreshToken(refreshToken.getValue())
         .popUp(franchiseeEntity.isPopUp())
+        .signUpDate(franchiseeEntity.getCreatedDate())
         .build();
   }
 }

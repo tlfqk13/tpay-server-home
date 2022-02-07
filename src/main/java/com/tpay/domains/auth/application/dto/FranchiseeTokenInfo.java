@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -18,5 +20,6 @@ public class FranchiseeTokenInfo {
   private String rejectReason;
   private String accessToken;
   private String refreshToken;
+  private LocalDateTime signUpDate;
   private boolean popUp;
 }

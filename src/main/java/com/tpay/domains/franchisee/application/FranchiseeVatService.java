@@ -1,6 +1,7 @@
 package com.tpay.domains.franchisee.application;
 
 
+import com.tpay.commons.converter.NumberFormatUtil;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.domains.franchisee.application.dto.vat.*;
@@ -23,6 +24,7 @@ public class FranchiseeVatService {
   private final OrderRepository orderRepository;
   private final FranchiseeFindService franchiseeFindService;
   private final FranchiseeUploadFindService franchiseeUploadFindService;
+  private final NumberFormatUtil numberFormatUtil;
 
   public FranchiseeVatReportResponseInterface vatReport(Long franchiseeIndex, String requestDate) {
     List<Object> localDates = setUpDate(requestDate);
@@ -33,8 +35,8 @@ public class FranchiseeVatService {
 
   public FranchiseeVatDetailResponse vatDetail(Long franchiseeIndex, String requestDate) {
     List<Object> localDates = setUpDate(requestDate);
-    LocalDate startDate =(LocalDate) localDates.get(0);
-    LocalDate endDate =(LocalDate) localDates.get(1);
+    LocalDate startDate = (LocalDate) localDates.get(0);
+    LocalDate endDate = (LocalDate) localDates.get(1);
     String saleTerm = (String) localDates.get(2);
     //연월일
     //1. 제출자 인적사항
@@ -44,10 +46,20 @@ public class FranchiseeVatService {
         .sellerName(franchiseeEntity.getSellerName())
         .businessNumber(franchiseeEntity.getBusinessNumber())
         .storeName(franchiseeEntity.getStoreName())
-        .storeAddress(franchiseeEntity.getStoreAddressBasic()+" "+franchiseeEntity.getStoreAddressDetail())
+        .storeAddress(franchiseeEntity.getStoreAddressBasic() + " " + franchiseeEntity.getStoreAddressDetail())
         .saleTerm(saleTerm)
         .taxFreeStoreNumber(franchiseeUploadEntity.getTaxFreeStoreNumber())
         .build();
+    //1-1. 제출자 인적사항 리스트변환 (추가 요청에 의함)
+    List<Object> vatDetailResponsePersonalInfoList = new ArrayList<>();
+    vatDetailResponsePersonalInfoList.add(vatDetailResponsePersonalInfo.getSellerName());
+    String businessNumberBar = numberFormatUtil.addBarToBusinessNumber(vatDetailResponsePersonalInfo.getBusinessNumber());
+    vatDetailResponsePersonalInfoList.add(businessNumberBar);
+    vatDetailResponsePersonalInfoList.add(vatDetailResponsePersonalInfo.getStoreName());
+    vatDetailResponsePersonalInfoList.add(vatDetailResponsePersonalInfo.getStoreAddress());
+    vatDetailResponsePersonalInfoList.add(vatDetailResponsePersonalInfo.getSaleTerm());
+    vatDetailResponsePersonalInfoList.add(vatDetailResponsePersonalInfo.getTaxFreeStoreNumber());
+
 
     //2. 물품판매 총합계
     FranchiseeVatTotalResponseInterface franchiseeVatTotalResponseInterface = orderRepository.findQuarterlyTotal(franchiseeIndex, startDate, endDate);
@@ -57,6 +69,13 @@ public class FranchiseeVatService {
         .totalVat(franchiseeVatTotalResponseInterface.getTotalVat())
         .build();
 
+    //2-1 리스트 변환
+    List<Object> vatDetailResponseTotalInfoList = new ArrayList<>();
+    vatDetailResponseTotalInfoList.add(numberFormatUtil.addCommaToNumber(vatDetailResponseTotalInfo.getTotalCount()));
+    vatDetailResponseTotalInfoList.add(numberFormatUtil.addCommaToNumber(vatDetailResponseTotalInfo.getTotalAmount()));
+    vatDetailResponseTotalInfoList.add(numberFormatUtil.addCommaToNumber(vatDetailResponseTotalInfo.getTotalVat()));
+
+
     //3. 물품판매 명세
     List<FranchiseeVatDetailResponseInterface> franchiseeVatDetailResponseInterfaceList = orderRepository.findQuarterlyVatDetail(franchiseeIndex, startDate, endDate);
     List<VatDetailResponseDetailInfo> vatDetailResponseDetailInfoList = franchiseeVatDetailResponseInterfaceList.stream()
@@ -65,38 +84,52 @@ public class FranchiseeVatService {
                 .purchaseSerialNumber(franchiseeVatDetailResponseInterface.getPurchaseSerialNumber())
                 .saleDate(franchiseeVatDetailResponseInterface.getSaleDate())
                 .takeoutConfirmNumber(franchiseeVatDetailResponseInterface.getTakeoutConfirmNumber())
+                .refundAmount(franchiseeVatDetailResponseInterface.getRefundAmount())
                 .amount(franchiseeVatDetailResponseInterface.getAmount())
                 .vat(franchiseeVatDetailResponseInterface.getVat())
                 .build())
         .collect(Collectors.toList());
 
+    //3-1 리스트 변환 (RefundAmount 추가됨)
+    List<List<Object>> detailList = new ArrayList<>();
+    for (VatDetailResponseDetailInfo vatDetailResponseDetailInfo : vatDetailResponseDetailInfoList) {
+      List<Object> baseList = new ArrayList<>();
+      baseList.add(vatDetailResponseDetailInfo.getPurchaseSerialNumber());
+      baseList.add(vatDetailResponseDetailInfo.getSaleDate());
+      baseList.add(vatDetailResponseDetailInfo.getTakeoutConfirmNumber());
+      baseList.add(numberFormatUtil.addCommaToNumber(vatDetailResponseDetailInfo.getRefundAmount()));
+      baseList.add(numberFormatUtil.addCommaToNumber(vatDetailResponseDetailInfo.getAmount()));
+      baseList.add(numberFormatUtil.addCommaToNumber(vatDetailResponseDetailInfo.getVat()));
+      detailList.add(baseList);
+    }
+
     return FranchiseeVatDetailResponse.builder()
-        .vatDetailResponsePersonalInfo(vatDetailResponsePersonalInfo)
-        .vatDetailResponseTotalInfo(vatDetailResponseTotalInfo)
-        .vatDetailResponseDetailInfoList(vatDetailResponseDetailInfoList)
+        .vatDetailResponsePersonalInfoList(vatDetailResponsePersonalInfoList)
+        .vatDetailResponseTotalInfoList(vatDetailResponseTotalInfoList)
+        .vatDetailResponseDetailInfoListList(detailList)
         .build();
   }
 
-  public List<Object> setUpDate(String requestDate){
+  public List<Object> setUpDate(String requestDatePart) {
     List<Object> dateList = new ArrayList<>();
-    String year = requestDate.substring(0,4);
+    String requestDate = "20" + requestDatePart;
+    String year = requestDate.substring(0, 4);
     String halfOfYear = requestDate.substring(4);
     LocalDate startDate;
     LocalDate endDate;
     String saleTerm;
-    if (!(requestDate.length() == 5 && (halfOfYear.equals("1") || halfOfYear.equals("2")))){
-      throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER,"Invalid request data format");
+    if (!(requestDate.length() == 5 && (halfOfYear.equals("1") || halfOfYear.equals("2")))) {
+      throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid request data format");
     }
 
-    if(halfOfYear.equals("1")){
-      startDate = LocalDate.parse(year+"-01-01");
-      endDate = LocalDate.parse(year+"-06-30");
-      saleTerm = year+"년01월01일~"+year+"년06월30일";
-    }
-    else{
-      startDate = LocalDate.parse(year+"-07-01");
-      endDate = LocalDate.parse(year+"-12-31");
-      saleTerm = year+"년07월01일~"+year+"년12월31일";
+    if (halfOfYear.equals("1")) {
+      startDate = LocalDate.parse(year + "-01-01");
+      endDate = LocalDate.parse(year + "-06-30");
+      saleTerm = year + "년 01월 01일 ~ " + year + "년 06월 30일";
+    } else {
+      startDate = LocalDate.parse(year + "-07-01");
+      endDate = LocalDate.parse(year + "-12-31");
+      saleTerm = year + "년 07월 01일 ~ " + year + "년 12월 31일";
     }
     dateList.add(startDate);
     dateList.add(endDate);

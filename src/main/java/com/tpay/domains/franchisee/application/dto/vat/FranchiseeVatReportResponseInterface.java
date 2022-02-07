@@ -5,4 +5,6 @@ public interface FranchiseeVatReportResponseInterface {
   Long getFranchiseeIndex();
   String getTotalAmount();
   String getTotalCount();
+  String getTotalVat();
+  String getTotalSupply();
 }
