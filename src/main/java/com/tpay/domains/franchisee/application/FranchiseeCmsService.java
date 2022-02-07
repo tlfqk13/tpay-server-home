@@ -2,6 +2,7 @@ package com.tpay.domains.franchisee.application;
 
 
 import com.tpay.commons.aws.S3FileUploader;
+import com.tpay.commons.converter.NumberFormatUtil;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.domains.franchisee.application.dto.cms.FranchiseeCmsResponseDetailInterface;
@@ -18,6 +19,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.apache.poi.ss.usermodel.CellType.STRING;
@@ -28,6 +30,7 @@ public class FranchiseeCmsService {
 
   private final OrderRepository orderRepository;
   private final S3FileUploader s3FileUploader;
+  private final NumberFormatUtil numberFormatUtil;
 
   public FranchiseeCmsResponseInterface cmsReport(Long franchiseeIndex, String requestDate) {
     List<String> date = setUpDate(requestDate);
@@ -36,11 +39,27 @@ public class FranchiseeCmsService {
     return orderRepository.findMonthlyCmsReport(franchiseeIndex, year, month);
   }
 
-  public FranchiseeCmsResponseDetailInterface cmsDetail(Long franchiseeIndex, String requestDate) {
+  public List<Object> cmsDetail(Long franchiseeIndex, String requestDate) {
     List<String> date = setUpDate(requestDate);
     String year = date.get(0);
     String month = date.get(1);
-    return orderRepository.findMonthlyCmsDetail(franchiseeIndex, year, month);
+    FranchiseeCmsResponseDetailInterface queryResult = orderRepository.findMonthlyCmsDetail(franchiseeIndex, year, month);
+    if(queryResult==null){
+      return new ArrayList<>(Arrays.asList("","0","0","0","0","","","","","0"));
+    }
+    List<Object> resultList = new ArrayList<>();
+    resultList.add(queryResult.getFranchiseeIndex());
+    resultList.add(numberFormatUtil.addCommaToNumber(queryResult.getTotalCount()));
+    resultList.add(numberFormatUtil.addCommaToNumber(queryResult.getTotalAmount()));
+    resultList.add(numberFormatUtil.addCommaToNumber(queryResult.getTotalVat()));
+    resultList.add(numberFormatUtil.addCommaToNumber(queryResult.getTotalCommission()));
+
+    resultList.add(queryResult.getSellerName());
+    resultList.add(queryResult.getBankName());
+    resultList.add(queryResult.getAccountNumber());
+    resultList.add(queryResult.getWithdrawalDate());
+    resultList.add(queryResult.getTotalBill());
+    return resultList;
   }
 
   public String cmsDownloads(Long franchiseeIndex, String requestDate) {
