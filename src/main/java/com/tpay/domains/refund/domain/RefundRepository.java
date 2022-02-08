@@ -106,7 +106,7 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
               "                      and p.point_status = 'SAVE'\n" +
               "                      and replace(date(o.created_date),'-','') between :startDate and :endDate\n" +
               "                    group by date(o.sale_datm)) as results\n" +
-              "              order by date desc;", nativeQuery = true)
+              "              order by date desc", nativeQuery = true)
   List<SaleAnalysisFindResponse> findSaleAnalysisV2(
       @Param("franchiseeIndex") Long franchiseeIndex,
       @Param("startDate") String startDate,
