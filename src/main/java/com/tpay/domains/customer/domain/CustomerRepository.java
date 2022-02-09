@@ -10,4 +10,6 @@ public interface CustomerRepository extends JpaRepository<CustomerEntity, Long> 
 
   Optional<CustomerEntity> findByNationAndPassportNumber(
       String nation, String passportNumber);
+
+  boolean existsByPassportNumber(String passportNumber);
 }

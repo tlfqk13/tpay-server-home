@@ -8,6 +8,8 @@ import com.tpay.domains.customer.domain.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class CustomerFindService {
@@ -18,12 +20,16 @@ public class CustomerFindService {
 
   public CustomerEntity findByNationAndPassportNumber(String customerName, String passportNumber, String nation) {
     String encryptedPassportNumber = passportNumberEncryptService.encrypt(passportNumber);
-    CustomerEntity customerEntity =
+    Optional<CustomerEntity> optionalCustomerEntity =
         customerRepository
-            .findByNationAndPassportNumber(nation,encryptedPassportNumber)
-            .orElseGet(() -> customerSaveService.saveByCustomerInfo(customerName, encryptedPassportNumber, nation));
-
-    return customerEntity;
+            .findByNationAndPassportNumber(nation,encryptedPassportNumber);
+    if (optionalCustomerEntity.isEmpty()) {
+      if(existByPassportNumber(passportNumber)) {
+        throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER,"passportNumber Already Exists(might incorrect nation)");
+      }
+      else return customerSaveService.saveByCustomerInfo(customerName,encryptedPassportNumber,nation);
+    }
+    else return optionalCustomerEntity.get();
   }
 
   public CustomerEntity findByIndex(Long customerIndex) {
@@ -36,5 +42,10 @@ public class CustomerFindService {
                         ExceptionState.INVALID_PARAMETER, "Invalid Customer Index"));
 
     return customerEntity;
+  }
+
+  public boolean existByPassportNumber(String passportNumber) {
+    String encryptPassportNumber = passportNumberEncryptService.encrypt(passportNumber);
+    return customerRepository.existsByPassportNumber(encryptPassportNumber);
   }
 }
