@@ -124,4 +124,24 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
       @Param("franchiseeIndex") Long franchiseeIndex,
       @Param("startDate") String startDate,
       @Param("endDate") String endDate);
+
+  @Query(value = "select r.id           as refundIndex,\n" +
+      "       purchs_sn      as orderNumber,\n" +
+      "       r.created_date as createdDate,\n" +
+      "       tot_amt        as totalAmount,\n" +
+      "       tot_refund     as totalRefund,\n" +
+      "       refund_status  as refundStatus\n" +
+      "from refund r\n" +
+      "         left join orders o on o.id = r.order_id\n" +
+      "         left join customer c on c.id = o.customer_id\n" +
+      "         left join franchisee f on o.franchisee_id = f.id\n" +
+      "where franchisee_id = :franchiseeIndex\n" +
+      "  and r.created_date between :startDate and :endDate\n" +
+      "  and customer_id = :customerIndex\n" +
+      "order by 3",nativeQuery = true)
+  List<RefundFindResponseInterface> findRefundsByCustomerInfo(
+      @Param("franchiseeIndex") Long franchiseeIndex,
+      @Param("startDate") String startDate,
+      @Param("endDate") String endDate,
+      @Param("customerIndex") Long customerIndex);
 }

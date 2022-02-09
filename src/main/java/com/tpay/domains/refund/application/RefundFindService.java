@@ -4,15 +4,16 @@ import com.tpay.commons.aria.PassportNumberEncryptService;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.util.DateFilter;
+import com.tpay.domains.customer.application.CustomerFindService;
 import com.tpay.domains.customer.application.dto.CustomerInfo;
-import com.tpay.domains.refund.application.dto.RefundFindResponse;
-import com.tpay.domains.refund.application.dto.RefundFindResponseInterface;
+import com.tpay.domains.refund.application.dto.*;
 import com.tpay.domains.refund.domain.RefundEntity;
 import com.tpay.domains.refund.domain.RefundRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,6 +23,7 @@ public class RefundFindService {
 
   private final PassportNumberEncryptService passportNumberEncryptService;
   private final RefundRepository refundRepository;
+  private final CustomerFindService customerFindService;
 
   public RefundEntity findByIndex(Long refundIndex) {
     RefundEntity refundEntity =
@@ -102,5 +104,52 @@ public class RefundFindService {
 
   public List<RefundFindResponseInterface> findAFranchisee(Long franchiseeIndex) {
     return refundRepository.findAFranchiseeNativeQuery(franchiseeIndex);
+  }
+
+  public List<RefundByCustomerResponse> findRefundsByCustomerInfo(Long franchiseeIndex, RefundCustomerRequest refundCustomerRequest) {
+    RefundCustomerInfoRequest refundCustomerInfoRequest = refundCustomerRequest.getRefundCustomerInfoRequest();
+    RefundCustomerDateRequest refundCustomerDateRequest = refundCustomerRequest.getRefundCustomerDateRequest();
+
+    String startDate = refundCustomerDateRequest.getStartDate();
+    String endDate = refundCustomerDateRequest.getEndDate();
+    String orderCheck = refundCustomerDateRequest.getOrderCheck();
+
+    String name = refundCustomerInfoRequest.getName();
+    String nation = refundCustomerInfoRequest.getNationality();
+    String passportNumber = refundCustomerInfoRequest.getPassportNumber();
+    Long customerIndex = customerFindService.findByNationAndPassportNumber(name, passportNumber, nation).getId();
+
+    List<RefundFindResponseInterface> refundsByCustomerInfo = refundRepository.findRefundsByCustomerInfo(franchiseeIndex, startDate, endDate, customerIndex);
+    List<RefundByCustomerResponse> refundByCustomerResponseList;
+    if(orderCheck.equals("ASC")) {
+      refundByCustomerResponseList = refundsByCustomerInfo.stream()
+          .map(refundFindResponseInterface ->
+              RefundByCustomerResponse.builder()
+                  .refundIndex(refundFindResponseInterface.getRefundIndex())
+                  .orderNumber(refundFindResponseInterface.getOrderNumber())
+                  .createdDate(refundFindResponseInterface.getCreatedDate())
+                  .totalAmount(refundFindResponseInterface.getTotalAmount())
+                  .totalRefund(refundFindResponseInterface.getTotalRefund())
+                  .refundStatus(refundFindResponseInterface.getRefundStatus())
+                  .build())
+          .sorted(Comparator.comparing(RefundByCustomerResponse::getCreatedDate))
+          .collect(Collectors.toList());
+    }
+    else {
+      refundByCustomerResponseList = refundsByCustomerInfo.stream()
+          .map(refundFindResponseInterface ->
+              RefundByCustomerResponse.builder()
+                  .refundIndex(refundFindResponseInterface.getRefundIndex())
+                  .orderNumber(refundFindResponseInterface.getOrderNumber())
+                  .createdDate(refundFindResponseInterface.getCreatedDate())
+                  .totalAmount(refundFindResponseInterface.getTotalAmount())
+                  .totalRefund(refundFindResponseInterface.getTotalRefund())
+                  .refundStatus(refundFindResponseInterface.getRefundStatus())
+                  .build())
+          .sorted(Comparator.comparing(RefundByCustomerResponse::getCreatedDate).reversed())
+          .collect(Collectors.toList());
+    }
+    return refundByCustomerResponseList;
+
   }
 }

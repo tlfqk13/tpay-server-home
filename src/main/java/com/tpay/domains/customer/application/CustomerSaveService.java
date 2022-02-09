@@ -18,18 +18,19 @@ public class CustomerSaveService {
   private final RegExUtils regExUtils;
 
   @Transactional
-  public CustomerEntity saveByCustomerInfo(String customerName, String passportNumber, String nationality) {
+  public CustomerEntity saveByCustomerInfo(String customerName, String passportNumber, String nation) {
 
-    if(!regExUtils.validate(RegExType.PASSPORT,passportNumber)){
-     throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER,"Invalid passportNumber format");
-    }
+    // TODO: 2022/02/09 아래 검증은 이미 암호화된 여권번호이므로 다른곳으로 옮겨야함 추후 개선할 것
+//    if(!regExUtils.validate(RegExType.PASSPORT,passportNumber)){
+//     throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER,"Invalid passportNumber format");
+//    }
 
     CustomerEntity customerEntity =
         customerRepository.save(
             CustomerEntity.builder()
                 .customerName(customerName)
                 .passportNumber(passportNumber)
-                .nation(nationality)
+                .nation(nation)
                 .build());
 
     return customerEntity;

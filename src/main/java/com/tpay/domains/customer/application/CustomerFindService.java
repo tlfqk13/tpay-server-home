@@ -16,13 +16,12 @@ public class CustomerFindService {
   private final CustomerRepository customerRepository;
   private final CustomerSaveService customerSaveService;
 
-  public CustomerEntity findByNationAndPassportNumber(
-      String customerName, String passportNumber, String nationality) {
+  public CustomerEntity findByNationAndPassportNumber(String customerName, String passportNumber, String nation) {
     String encryptedPassportNumber = passportNumberEncryptService.encrypt(passportNumber);
     CustomerEntity customerEntity =
         customerRepository
-            .findByNationAndPassportNumber(nationality,passportNumber)
-            .orElseGet(() -> customerSaveService.saveByCustomerInfo(customerName, encryptedPassportNumber, nationality));
+            .findByNationAndPassportNumber(nation,encryptedPassportNumber)
+            .orElseGet(() -> customerSaveService.saveByCustomerInfo(customerName, encryptedPassportNumber, nation));
 
     return customerEntity;
   }
