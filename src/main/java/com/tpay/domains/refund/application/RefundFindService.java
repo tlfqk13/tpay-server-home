@@ -120,36 +120,27 @@ public class RefundFindService {
     Long customerIndex = customerFindService.findByNationAndPassportNumber(name, passportNumber, nation).getId();
 
     List<RefundFindResponseInterface> refundsByCustomerInfo = refundRepository.findRefundsByCustomerInfo(franchiseeIndex, startDate, endDate, customerIndex);
-    List<RefundByCustomerResponse> refundByCustomerResponseList;
-    if(orderCheck.equals("ASC")) {
-      refundByCustomerResponseList = refundsByCustomerInfo.stream()
-          .map(refundFindResponseInterface ->
-              RefundByCustomerResponse.builder()
-                  .refundIndex(refundFindResponseInterface.getRefundIndex())
-                  .orderNumber(refundFindResponseInterface.getOrderNumber())
-                  .createdDate(refundFindResponseInterface.getCreatedDate())
-                  .totalAmount(refundFindResponseInterface.getTotalAmount())
-                  .totalRefund(refundFindResponseInterface.getTotalRefund())
-                  .refundStatus(refundFindResponseInterface.getRefundStatus())
-                  .build())
-          .sorted(Comparator.comparing(RefundByCustomerResponse::getCreatedDate))
-          .collect(Collectors.toList());
-    }
-    else {
-      refundByCustomerResponseList = refundsByCustomerInfo.stream()
-          .map(refundFindResponseInterface ->
-              RefundByCustomerResponse.builder()
-                  .refundIndex(refundFindResponseInterface.getRefundIndex())
-                  .orderNumber(refundFindResponseInterface.getOrderNumber())
-                  .createdDate(refundFindResponseInterface.getCreatedDate())
-                  .totalAmount(refundFindResponseInterface.getTotalAmount())
-                  .totalRefund(refundFindResponseInterface.getTotalRefund())
-                  .refundStatus(refundFindResponseInterface.getRefundStatus())
-                  .build())
+    List<RefundByCustomerResponse> refundByCustomerResponseList =
+        refundsByCustomerInfo.stream()
+            .map(refundFindResponseInterface ->
+                RefundByCustomerResponse.builder()
+                    .refundIndex(refundFindResponseInterface.getRefundIndex())
+                    .orderNumber(refundFindResponseInterface.getOrderNumber())
+                    .createdDate(refundFindResponseInterface.getCreatedDate())
+                    .totalAmount(refundFindResponseInterface.getTotalAmount())
+                    .totalRefund(refundFindResponseInterface.getTotalRefund())
+                    .refundStatus(refundFindResponseInterface.getRefundStatus())
+                    .build())
+            .sorted(Comparator.comparing(RefundByCustomerResponse::getCreatedDate))
+            .collect(Collectors.toList());
+    if (orderCheck.equals("ASC")) {
+      return refundByCustomerResponseList;
+    } else if (orderCheck.equals("DESC")) {
+      return refundByCustomerResponseList.stream()
           .sorted(Comparator.comparing(RefundByCustomerResponse::getCreatedDate).reversed())
           .collect(Collectors.toList());
+    } else {
+      throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER,"invalid orderCheck");
     }
-    return refundByCustomerResponseList;
-
   }
 }
