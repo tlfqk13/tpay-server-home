@@ -3,6 +3,7 @@ package com.tpay.domains.customer.application;
 import com.tpay.commons.aria.PassportNumberEncryptService;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
+import com.tpay.commons.exception.detail.InvalidPassportInfoException;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.customer.domain.CustomerRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ public class CustomerFindService {
             .findByNationAndPassportNumber(nation,encryptedPassportNumber);
     if (optionalCustomerEntity.isEmpty()) {
       if(existByPassportNumber(passportNumber)) {
-        throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER,"passportNumber Already Exists(might incorrect nation)");
+        throw new InvalidPassportInfoException(ExceptionState.INVALID_PASSPORT_INFO,"passportNumber Already Exists(might incorrect nation)");
       }
       else return customerSaveService.saveByCustomerInfo(customerName,encryptedPassportNumber,nation);
     }

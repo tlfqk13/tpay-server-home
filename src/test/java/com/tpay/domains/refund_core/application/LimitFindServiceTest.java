@@ -3,6 +3,7 @@ package com.tpay.domains.refund_core.application;
 
 import com.tpay.commons.aria.PassportNumberEncryptService;
 import com.tpay.commons.exception.detail.InvalidParameterException;
+import com.tpay.commons.exception.detail.InvalidPassportInfoException;
 import com.tpay.domains.customer.application.CustomerFindService;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.refund_core.application.dto.RefundLimitRequest;
@@ -66,6 +67,6 @@ public class LimitFindServiceTest {
         .build();
 
     CustomerEntity customerEntity = customerFindService.findByNationAndPassportNumber(request.getName(), request.getPassportNumber(), request.getNationality());
-    assertThrows(InvalidParameterException.class,() -> customerFindService.findByNationAndPassportNumber(request2.getName(), request2.getPassportNumber(), request2.getNationality()));
+    assertThrows(InvalidPassportInfoException.class,() -> customerFindService.findByNationAndPassportNumber(request2.getName(), request2.getPassportNumber(), request2.getNationality()));
   }
 }
