@@ -1,12 +1,7 @@
 package com.tpay.commons.exception;
 
-import com.tpay.commons.exception.detail.AlreadyExistsException;
-import com.tpay.commons.exception.detail.FranchiseeAuthenticationException;
-import com.tpay.commons.exception.detail.InvalidBusinessNumberException;
-import com.tpay.commons.exception.detail.InvalidParameterException;
-import com.tpay.commons.exception.detail.InvalidPasswordException;
-import com.tpay.commons.exception.detail.JwtRuntimeException;
-import com.tpay.commons.exception.detail.UnknownException;
+import com.tpay.commons.exception.detail.*;
+
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -74,6 +69,15 @@ public class GlobalExceptionHandler {
 
     return ResponseEntity.status(response.getValue()).body(response);
   }
+
+  @ExceptionHandler(InvalidPassportInfoException.class)
+  public ResponseEntity<ExceptionResponse> handleInvalidPassportInfoException(
+      HttpServletRequest request, InvalidPassportInfoException exception) {
+    System.out.println("handleInvalidPassportInfoException() : " + exception.getMessage());
+    ExceptionResponse response = ExceptionResponse.of(request, exception);
+    return ResponseEntity.status(response.getValue()).body(response);
+  }
+
 
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ExceptionResponse> handleException(

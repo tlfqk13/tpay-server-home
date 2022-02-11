@@ -6,4 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface CustomerRepository extends JpaRepository<CustomerEntity, Long> {
   Optional<CustomerEntity> findByCustomerNameAndPassportNumber(
       String customerName, String passportNumber);
+
+
+  Optional<CustomerEntity> findByNationAndPassportNumber(
+      String nation, String passportNumber);
+
+  boolean existsByPassportNumber(String passportNumber);
 }

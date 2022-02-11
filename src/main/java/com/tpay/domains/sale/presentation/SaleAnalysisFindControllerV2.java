@@ -22,7 +22,9 @@ public class SaleAnalysisFindControllerV2 {
   @GetMapping("/sales/franchiseeV2/{franchiseeIndex}")
   public ResponseEntity<List<SaleAnalysisFindResponse>> findByDateRange(
       @PathVariable Long franchiseeIndex,
-      @RequestParam DateFilterV2 dateFilter
+      @RequestParam DateFilterV2 dateFilter,
+      @RequestParam(required = false) String startDate,
+      @RequestParam(required = false) String endDate
       ) {
     List<SaleAnalysisFindResponse> result = saleAnalysisFindServiceV2.findByDateRange(franchiseeIndex, dateFilter);
     return ResponseEntity.ok(result);
