@@ -2,7 +2,6 @@ package com.tpay.domains.refund_core.application;
 
 
 import com.tpay.commons.aria.PassportNumberEncryptService;
-import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.exception.detail.InvalidPassportInfoException;
 import com.tpay.domains.customer.application.CustomerFindService;
 import com.tpay.domains.customer.domain.CustomerEntity;
@@ -15,7 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 @SpringBootTest
@@ -66,7 +65,7 @@ public class LimitFindServiceTest {
         .saleDate(LocalDate.now().toString())
         .build();
 
-    CustomerEntity customerEntity = customerFindService.findByNationAndPassportNumber(request.getName(), request.getPassportNumber(), request.getNationality());
-    assertThrows(InvalidPassportInfoException.class,() -> customerFindService.findByNationAndPassportNumber(request2.getName(), request2.getPassportNumber(), request2.getNationality()));
+    customerFindService.findByNationAndPassportNumber(request.getName(), request.getPassportNumber(), request.getNationality());
+    assertThrows(InvalidPassportInfoException.class, () -> customerFindService.findByNationAndPassportNumber(request2.getName(), request2.getPassportNumber(), request2.getNationality()));
   }
 }

@@ -2,15 +2,13 @@ package com.tpay.domains.employee.domain;
 
 
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Getter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Table(name = "employee")
@@ -22,7 +20,10 @@ public class EmployeeEntity {
   private Long id;
 
   @NotNull
-  private String employeeId;
+  private String name;
+
+  @NotNull
+  private String userId;
 
   @NotNull
   private String password;

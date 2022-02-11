@@ -1,5 +1,6 @@
 package com.tpay.domains.franchisee_applicant.application;
 
+import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeApplicantDetailResponse;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
@@ -22,7 +23,12 @@ public class FranchiseeApplicantDetailService {
     FranchiseeApplicantEntity franchiseeApplicantEntity = franchiseeApplicantFindService.findByIndex(franchiseeApplicantIndex);
     FranchiseeEntity franchiseeEntity = franchiseeApplicantEntity.getFranchiseeEntity();
     FranchiseeUploadEntity franchiseeUploadEntity = franchiseeUploadFindService.findByFranchiseeIndex(franchiseeEntity.getId());
-    FranchiseeBankEntity franchiseeBankEntity = franchiseeBankFindService.findByFranchiseeEntity(franchiseeEntity);
+    FranchiseeBankEntity franchiseeBankEntity;
+    try {
+      franchiseeBankEntity = franchiseeBankFindService.findByFranchiseeEntity(franchiseeEntity);
+    } catch (InvalidParameterException e) {
+      franchiseeBankEntity = FranchiseeBankEntity.builder().build();
+    }
 
     FranchiseeApplicantDetailResponse franchiseeApplicantDetailResponse = FranchiseeApplicantDetailResponse.builder()
         .storeName(franchiseeEntity.getStoreName())
