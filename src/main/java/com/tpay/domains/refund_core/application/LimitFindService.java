@@ -28,8 +28,7 @@ public class LimitFindService {
     String uri = CustomValue.REFUND_SERVER + "/refund/limit";
 
     CustomerEntity customerEntity =
-        customerFindService.findByCustomerNameAndPassportNumber(
-            request.getName(), request.getPassportNumber(), request.getNationality());
+        customerFindService.findByNationAndPassportNumber(request.getName(), request.getPassportNumber(), request.getNationality());
 
     RefundResponse refundResponse =
         webClient
