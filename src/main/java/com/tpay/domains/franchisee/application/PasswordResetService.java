@@ -24,6 +24,7 @@ public class PasswordResetService {
   private final RegExUtils regExUtils;
 
 
+  // ========================= 로그인 전 ========================= //
   public boolean existBusinessNumber(String businessNumber) {
     return franchiseeRepository.existsByBusinessNumber(businessNumber);
   }
@@ -45,7 +46,7 @@ public class PasswordResetService {
     return true;
   }
 
-  // 이 위는 로그아웃 상태에서, 이 아래는 로그인 상태에서
+  // ========================= 로그인 상태 ========================= //
 
   public boolean correctPassword(Long franchiseeIndex, String password) {
     FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
@@ -65,7 +66,8 @@ public class PasswordResetService {
     return true;
   }
 
-  // 내부용 메서드
+  // ====================내부용 메서드==================== //
+
   private void certificationValid(FranchiseeEntity franchiseeEntity, String name, String phoneNumber) {
     if (!franchiseeEntity.isValidUser(name, phoneNumber)) {
       throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Mismatch between BusinessNumber and Certification Info");
