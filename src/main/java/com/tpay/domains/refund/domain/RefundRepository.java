@@ -12,7 +12,7 @@ import java.util.List;
 public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
   @Query(
       value =
-          "select * from refund r left join orders o on r.order_id = o.id where o.franchisee_id = :franchiseeIndex and r.created_date between :startDate and :endDate",
+          "select * from refund r left join orders o on r.order_id = o.id where o.franchisee_id = :franchiseeIndex and r.created_date between :startDate and :endDateselect * from refund r left join orders o on r.order_id = o.id where o.franchisee_id = :franchiseeIndex and r.created_date between :startDate and :endDate order by r.created_date desc",
       nativeQuery = true)
   List<RefundEntity> findAllByFranchiseeIndex(
       @Param("franchiseeIndex") Long franchiseeIndex,
