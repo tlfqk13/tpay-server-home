@@ -26,7 +26,11 @@ public class PasswordResetService {
 
   // ========================= 로그인 전 ========================= //
   public boolean existBusinessNumber(String businessNumber) {
-    return franchiseeRepository.existsByBusinessNumber(businessNumber);
+    boolean result = franchiseeRepository.existsByBusinessNumber(businessNumber);
+    if(!result){
+      throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER,"Invalid Business Number");
+    }
+    return true;
   }
 
 
