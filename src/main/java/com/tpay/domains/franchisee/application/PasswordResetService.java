@@ -6,8 +6,6 @@ import com.tpay.commons.exception.detail.InvalidPasswordException;
 import com.tpay.commons.regex.RegExType;
 import com.tpay.commons.regex.RegExUtils;
 import com.tpay.domains.franchisee.application.dto.PasswordChangeRequest;
-import com.tpay.domains.franchisee.application.dto.PasswordCorrectRequest;
-import com.tpay.domains.franchisee.application.dto.PasswordResetRequest;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,25 +23,34 @@ public class PasswordResetService {
   private final PasswordEncoder passwordEncoder;
   private final RegExUtils regExUtils;
 
+
   public boolean existBusinessNumber(String businessNumber) {
     return franchiseeRepository.existsByBusinessNumber(businessNumber);
   }
 
-  @Transactional
-  public boolean reset(String businessNumber, PasswordResetRequest request) {
 
+  public boolean selfCertification(String businessNumber, String name, String phoneNumber) {
     FranchiseeEntity franchiseeEntity = franchiseeFindService.findByBusinessNumber(businessNumber);
-    certificationValid(franchiseeEntity, request.getName(), request.getPhoneNumber().replaceAll("-", ""));
-    passwordValid(request.getNewPassword(), request.getNewPasswordCheck());
-    franchiseeEntity.resetPassword(passwordEncoder.encode(request.getNewPassword()));
+    certificationValid(franchiseeEntity, name, phoneNumber.replaceAll("-", ""));
     return true;
   }
 
-  public boolean correctPassword(Long franchiseeIndex, PasswordCorrectRequest passwordCorrectRequest) {
-    String password = passwordCorrectRequest.getPassword();
+  @Transactional
+  public boolean reset(String businessNumber, PasswordChangeRequest passwordChangeRequest) {
+    String newPassword = passwordChangeRequest.getNewPassword();
+    String newPasswordCheck = passwordChangeRequest.getNewPasswordCheck();
+    FranchiseeEntity franchiseeEntity = franchiseeFindService.findByBusinessNumber(businessNumber);
+    passwordValid(newPassword,newPasswordCheck);
+    franchiseeEntity.resetPassword(passwordEncoder.encode(newPassword));
+    return true;
+  }
+
+  // 이 위는 로그아웃 상태에서, 이 아래는 로그인 상태에서
+
+  public boolean correctPassword(Long franchiseeIndex, String password) {
     FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
-    if(!passwordEncoder.matches(password, franchiseeEntity.getPassword())){
-      throw new InvalidPasswordException(ExceptionState.INVALID_PASSWORD,"Mismatch between 'input Password' and 'franchisee Password'");
+    if (!passwordEncoder.matches(password, franchiseeEntity.getPassword())) {
+      throw new InvalidPasswordException(ExceptionState.INVALID_PASSWORD, "Mismatch between 'input Password' and 'franchisee Password'");
     }
     return true;
   }
@@ -53,11 +60,12 @@ public class PasswordResetService {
     String newPassword = passwordChangeRequest.getNewPassword();
     String newPasswordCheck = passwordChangeRequest.getNewPasswordCheck();
     FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
-    passwordValid(newPassword,newPasswordCheck);
+    passwordValid(newPassword, newPasswordCheck);
     franchiseeEntity.resetPassword(passwordEncoder.encode(newPassword));
     return true;
   }
 
+  // 내부용 메서드
   private void certificationValid(FranchiseeEntity franchiseeEntity, String name, String phoneNumber) {
     if (!franchiseeEntity.isValidUser(name, phoneNumber)) {
       throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Mismatch between BusinessNumber and Certification Info");

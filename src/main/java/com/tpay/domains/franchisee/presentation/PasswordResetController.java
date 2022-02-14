@@ -2,8 +2,6 @@ package com.tpay.domains.franchisee.presentation;
 
 import com.tpay.domains.franchisee.application.PasswordResetService;
 import com.tpay.domains.franchisee.application.dto.PasswordChangeRequest;
-import com.tpay.domains.franchisee.application.dto.PasswordCorrectRequest;
-import com.tpay.domains.franchisee.application.dto.PasswordResetRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,32 +12,42 @@ public class PasswordResetController {
 
   private final PasswordResetService passwordResetService;
 
-  @GetMapping("/franchisee/password/{businessNumber}")
+  @GetMapping("/franchisee/password/exists/{businessNumber}")
   public ResponseEntity<Boolean> existBusinessNumber(@PathVariable String businessNumber) {
     boolean result = passwordResetService.existBusinessNumber(businessNumber);
     return ResponseEntity.ok(result);
   }
 
-
-  @PatchMapping("/franchisee/password/{businessNumber}")
-  public ResponseEntity<Boolean> resetPasswordOut(
+  @GetMapping("/franchisee/password/selfCertification/{businessNumber}")
+  public ResponseEntity<Boolean> selfCertification(
       @PathVariable String businessNumber,
-      @RequestBody PasswordResetRequest passwordResetRequest) {
-    boolean result = passwordResetService.reset(businessNumber, passwordResetRequest);
+      @RequestParam String name,
+      @RequestParam String phoneNumber
+      ) {
+    boolean result = passwordResetService.selfCertification(businessNumber, name, phoneNumber);
     return ResponseEntity.ok(result);
   }
 
-  @GetMapping("/franchisee/password/in/{franchiseeIndex}")
+  @PatchMapping("/franchisee/password/out/{businessNumber}")
+  public ResponseEntity<Boolean> resetOutPassword(
+      @PathVariable String businessNumber,
+      @RequestBody PasswordChangeRequest passwordChangeRequest
+  ) {
+    boolean result = passwordResetService.reset(businessNumber, passwordChangeRequest);
+    return ResponseEntity.ok(result);
+  }
+
+  @GetMapping("/franchisee/password/equals/{franchiseeIndex}")
   public ResponseEntity<Boolean> correctPassword(
       @PathVariable Long franchiseeIndex,
-      @RequestBody PasswordCorrectRequest passwordCorrectRequest
+      @RequestParam String password
   ) {
-    boolean result = passwordResetService.correctPassword(franchiseeIndex, passwordCorrectRequest);
+    boolean result = passwordResetService.correctPassword(franchiseeIndex, password);
     return ResponseEntity.ok(result);
   }
 
   @PatchMapping("/franchisee/password/in/{franchiseeIndex}")
-  public ResponseEntity<Boolean> resetPasswordIn(
+  public ResponseEntity<Boolean> resetPassword(
       @PathVariable Long franchiseeIndex,
       @RequestBody PasswordChangeRequest passwordChangeRequest) {
     boolean result = passwordResetService.change(franchiseeIndex, passwordChangeRequest);
