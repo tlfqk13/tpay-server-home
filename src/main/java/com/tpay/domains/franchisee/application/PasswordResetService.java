@@ -5,6 +5,7 @@ import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.exception.detail.InvalidPasswordException;
 import com.tpay.commons.regex.RegExType;
 import com.tpay.commons.regex.RegExUtils;
+import com.tpay.domains.franchisee.application.dto.PasswordCorrectRequest;
 import com.tpay.domains.franchisee.application.dto.PasswordResetRequest;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeRepository;
@@ -51,5 +52,14 @@ public class PasswordResetService {
     if (!(regExCompile && equals)) {
       throw new InvalidPasswordException(ExceptionState.INVALID_PASSWORD, "RegEx Or Equals Error");
     }
+  }
+
+  public boolean correctPassword(Long franchiseeIndex, PasswordCorrectRequest passwordCorrectRequest) {
+    String password = passwordCorrectRequest.getPassword();
+    FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
+    if(!passwordEncoder.matches(password, franchiseeEntity.getPassword())){
+      throw new InvalidPasswordException(ExceptionState.INVALID_PASSWORD,"Mismatch Password");
+    }
+    return true;
   }
 }

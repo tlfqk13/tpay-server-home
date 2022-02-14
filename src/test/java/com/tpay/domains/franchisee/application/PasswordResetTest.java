@@ -3,13 +3,12 @@ package com.tpay.domains.franchisee.application;
 
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 public class PasswordResetTest {
@@ -60,6 +59,6 @@ public class PasswordResetTest {
     //then
     assertThat(result).isEqualTo(false);
   }
-  
+
 
 }
