@@ -43,7 +43,7 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
       "      ,IFNULL(sum( cast ( tot_vat  as INTEGER )),0) as totalVat\n" +
       "      from orders o inner join refund r on o.id = r.order_id\n" +
       "      where franchisee_id = :franchiseeIndex\n" +
-      "      and o.created_date between :startDate and :endDate", nativeQuery = true)
+      "      and refund_status = 'APPROVAL' and o.created_date between :startDate and :endDate", nativeQuery = true)
   FranchiseeVatTotalResponseInterface findQuarterlyTotal(@Param("franchiseeIndex") Long franchiseeIndex, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
 
@@ -56,7 +56,7 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
       "    ,tot_vat                                    as vat\n" +
       "    from orders o inner join refund r on o.id = r.order_id\n" +
       "    where franchisee_id = :franchiseeIndex\n" +
-      "    and o.created_date between :startDate and :endDate\n" +
+      "    and refund_status = 'APPROVAL' and o.created_date between :startDate and :endDate\n" +
       "    order by 3 desc", nativeQuery = true)
   List<FranchiseeVatDetailResponseInterface> findQuarterlyVatDetail(@Param("franchiseeIndex") Long franchiseeIndex, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
@@ -69,7 +69,7 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
       "    from orders o inner join refund r on o.id = r.order_id\n" +
       "where franchisee_id = :franchiseeIndex\n" +
       "and substr(o.created_date,1,4) = :year\n" +
-      "and substr(o.created_date,6,2) = :month\n" +
+      "and substr(o.created_date,6,2) = :month and refund_status = 'APPROVAL'\n" +
       "group by franchisee_id", nativeQuery = true)
   FranchiseeCmsResponseInterface findMonthlyCmsReport(@Param("franchiseeIndex") Long franchiseeIndex, @Param("year") String year, @Param("month") String month);
 
@@ -92,7 +92,7 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
       "               inner join refund r on o.id = r.order_id\n" +
       "      where franchisee_id = :franchiseeIndex\n" +
       "        and substr(o.created_date, 1, 4) = :year\n" +
-      "        and substr(o.created_date, 6, 2) = :month\n" +
+      "        and substr(o.created_date, 6, 2) = :month and refund_status = 'APPROVAL'\n" +
       "      group by franchisee_id) ro\n" +
       "         left join franchisee_bank b\n" +
       "                   on ro.franchiseeIndex = b.franchisee_id\n" +
