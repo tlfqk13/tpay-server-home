@@ -64,7 +64,7 @@ public class FranchiseeCmsService {
     }
     List<String> commissionInfoList = new ArrayList<>();
     List<String> customerInfoList = new ArrayList<>();
-    commissionInfoList.add(numberFormatConverter.addCommaToNumber(queryResult.getTotalCount()));
+    commissionInfoList.add(numberFormatConverter.addCommaToNumber(queryResult.getTotalCount())+"건");
     commissionInfoList.add(numberFormatConverter.addCommaToNumber(queryResult.getTotalAmount()));
     commissionInfoList.add(numberFormatConverter.addCommaToNumber(queryResult.getTotalVat()));
     commissionInfoList.add(numberFormatConverter.addCommaToNumber(queryResult.getTotalCommission()));
@@ -72,7 +72,7 @@ public class FranchiseeCmsService {
     customerInfoList.add(queryResult.getSellerName());
     customerInfoList.add(queryResult.getBankName());
     customerInfoList.add(queryResult.getAccountNumber());
-    customerInfoList.add(queryResult.getWithdrawalDate());
+    customerInfoList.add(queryResult.getWithdrawalDate()+"일");
     customerInfoList.add(numberFormatConverter.addCommaToNumber(queryResult.getTotalBill()));
     return FranchiseeCmsDetailResponse.builder().commissionInfoList(commissionInfoList).customerInfoList(customerInfoList).build();
   }
