@@ -6,6 +6,7 @@ import com.tpay.commons.converter.NumberFormatConverter;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.domains.franchisee.application.dto.cms.FranchiseeCmsDetailResponse;
+import com.tpay.domains.franchisee.application.dto.cms.FranchiseeCmsResponse;
 import com.tpay.domains.franchisee.application.dto.cms.FranchiseeCmsResponseDetailInterface;
 import com.tpay.domains.franchisee.application.dto.cms.FranchiseeCmsResponseInterface;
 import com.tpay.domains.order.domain.OrderRepository;
@@ -33,11 +34,22 @@ public class FranchiseeCmsService {
   private final S3FileUploader s3FileUploader;
   private final NumberFormatConverter numberFormatConverter;
 
-  public FranchiseeCmsResponseInterface cmsReport(Long franchiseeIndex, String requestDate) {
+  public FranchiseeCmsResponse cmsReport(Long franchiseeIndex, String requestDate) {
     List<String> date = setUpDate(requestDate);
     String year = date.get(0);
     String month = date.get(1);
-    return orderRepository.findMonthlyCmsReport(franchiseeIndex, year, month);
+    FranchiseeCmsResponseInterface queryResult = orderRepository.findMonthlyCmsReport(franchiseeIndex, year, month);
+    if(queryResult==null){
+      return FranchiseeCmsResponse.builder().totalAmount("0").totalCount("0").totalVat("0").totalCommission("0").build();
+    }
+
+    return FranchiseeCmsResponse.builder()
+        .totalCount(queryResult.getTotalCount())
+        .totalAmount(queryResult.getTotalAmount())
+        .totalCommission(queryResult.getTotalCommission())
+        .totalVat(queryResult.getTotalVat())
+        .build();
+
   }
 
   public FranchiseeCmsDetailResponse cmsDetail(Long franchiseeIndex, String requestDate) {
