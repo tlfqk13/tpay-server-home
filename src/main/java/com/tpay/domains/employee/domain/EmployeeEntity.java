@@ -1,6 +1,7 @@
 package com.tpay.domains.employee.domain;
 
 
+import com.tpay.domains.BaseTimeEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import lombok.*;
 
@@ -13,7 +14,7 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @Table(name = "employee")
 @Entity
-public class EmployeeEntity {
+public class EmployeeEntity extends BaseTimeEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

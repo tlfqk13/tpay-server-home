@@ -18,7 +18,8 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
 
   @Query(value = "select franchisee_id                           as franchiseeIndex\n" +
       "     , sum(cast(tot_amt as INTEGER))           as totalAmount\n" +
-      "     , cast(sum(tot_amt - tot_vat) as INTEGER) as totalSupply\n" +
+//      "     , cast(sum(tot_amt - tot_vat) as INTEGER) as totalSupply\n" +
+      "     , (sum(cast(tot_amt as INTEGER)) - sum(cast(tot_vat as INTEGER))) as totalSupply\n" +
       "     , sum(cast(tot_vat as INTEGER))           as totalVat\n" +
       "     , count(*)                                as totalCount\n" +
       "from orders o\n" +
