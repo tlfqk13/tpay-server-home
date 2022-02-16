@@ -4,6 +4,7 @@ package com.tpay.domains.franchisee.presentation;
 import com.tpay.domains.franchisee.application.FranchiseeVatService;
 import com.tpay.domains.franchisee.application.dto.vat.FranchiseeVatDetailResponse;
 import com.tpay.domains.franchisee.application.dto.vat.FranchiseeVatReportResponseInterface;
+import com.tpay.domains.franchisee.application.dto.vat.FranchiseeVatResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,11 +20,11 @@ public class FranchiseeVatReportController {
 
 
   @GetMapping("/franchisee/{franchiseeIndex}/vat")
-  public ResponseEntity<FranchiseeVatReportResponseInterface> vatReport(
+  public ResponseEntity<FranchiseeVatResponse> vatReport(
       @PathVariable Long franchiseeIndex,
       @RequestParam String requestDate
   ) {
-    FranchiseeVatReportResponseInterface result = franchiseeVatService.vatReport(franchiseeIndex, requestDate);
+    FranchiseeVatResponse result = franchiseeVatService.vatReport(franchiseeIndex, requestDate);
     return ResponseEntity.ok(result);
   }
 

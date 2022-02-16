@@ -26,11 +26,20 @@ public class FranchiseeVatService {
   private final FranchiseeUploadFindService franchiseeUploadFindService;
   private final NumberFormatConverter numberFormatConverter;
 
-  public FranchiseeVatReportResponseInterface vatReport(Long franchiseeIndex, String requestDate) {
+  public FranchiseeVatResponse vatReport(Long franchiseeIndex, String requestDate) {
     List<Object> localDates = setUpDate(requestDate);
     LocalDate startDate = (LocalDate) localDates.get(0);
     LocalDate endDate = (LocalDate) localDates.get(1);
-    return orderRepository.findQuarterlyVatReport(franchiseeIndex, startDate, endDate);
+    FranchiseeVatReportResponseInterface queryResult = orderRepository.findQuarterlyVatReport(franchiseeIndex, startDate, endDate);
+    if(queryResult==null){
+      return FranchiseeVatResponse.builder().totalAmount("0").totalCount("0").totalVat("0").totalSupply("0").build();
+    }
+    return FranchiseeVatResponse.builder()
+        .totalAmount(queryResult.getTotalAmount())
+        .totalCount(queryResult.getTotalCount())
+        .totalVat(queryResult.getTotalVat())
+        .totalSupply(queryResult.getTotalSupply())
+        .build();
   }
 
   public FranchiseeVatDetailResponse vatDetail(Long franchiseeIndex, String requestDate) {
