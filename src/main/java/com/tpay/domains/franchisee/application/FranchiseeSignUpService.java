@@ -11,10 +11,11 @@ import com.tpay.domains.franchisee.application.dto.FranchiseeSignUpRequest;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeRepository;
 import com.tpay.domains.franchisee_applicant.application.FranchiseeApplicantSaveService;
-import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -45,8 +46,8 @@ public class FranchiseeSignUpService {
       throw new AlreadyExistsException(ExceptionState.ALREADY_EXISTS, "Franchisee Already Exists");
     }
 
-    if (!regExUtils.validate(RegExType.EMAIL, request.getEmail())){
-      throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER,"Invalid Email Format");
+    if (!regExUtils.validate(RegExType.EMAIL, request.getEmail())) {
+      throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid Email Format");
     }
 
     String encodedPassword = passwordEncoder.encode(password);
@@ -58,11 +59,11 @@ public class FranchiseeSignUpService {
             .storeAddressBasic(request.getStoreAddressBasic())
             .storeAddressDetail(request.getStoreAddressDetail())
             .sellerName(request.getSellerName())
-            .storeTel(request.getStoreTel().replaceAll("-",""))
+            .storeTel(request.getStoreTel().replaceAll("-", ""))
             .productCategory(request.getProductCategory())
             .password(encodedPassword)
             .signboard(request.getSignboard())
-            .storeNumber(request.getStoreNumber().replaceAll("-",""))
+            .storeNumber(request.getStoreNumber().replaceAll("-", ""))
             .email(request.getEmail())
             .isTaxRefundShop(request.getIsTaxRefundShop())
             .build();

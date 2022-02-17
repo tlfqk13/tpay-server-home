@@ -7,11 +7,13 @@ import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.domains.franchisee.application.dto.PasswordChangeRequest;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeRepository;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -22,6 +24,8 @@ public class PasswordResetTest {
   FranchiseeRepository franchiseeRepository;
   @Autowired
   PasswordResetService passwordResetService;
+  @Autowired
+  PasswordEncoder passwordEncoder;
   FranchiseeEntity franchiseeEntity;
   Long franchiseeId;
   String businessNumber;
@@ -30,6 +34,7 @@ public class PasswordResetTest {
 
   @BeforeEach
   void setup() {
+    franchiseeRepository.deleteAll();
     franchiseeEntity =
         FranchiseeEntity.builder()
             .businessNumber("123-33-12345")
@@ -50,11 +55,6 @@ public class PasswordResetTest {
     savedFranchiseeEntity = save;
     franchiseeId = save.getId();
     businessNumber = save.getBusinessNumber();
-  }
-
-  @AfterEach
-  void setDelete() {
-    franchiseeRepository.deleteAll();
   }
 
   @Test
@@ -118,6 +118,27 @@ public class PasswordResetTest {
     PasswordChangeRequest passwordChangeRequest = objectMapper.readValue(json, PasswordChangeRequest.class);
     boolean reset = passwordResetService.reset(businessNumber, passwordChangeRequest);
     assertThat(reset).isEqualTo(true);
+  }
+
+  @Test
+  public void 재설정후_조회성공() throws JsonProcessingException{
+    //given
+    String businessNumber = "123-33-12345";
+    String json = "{\n" +
+        " \"newPassword\": \"abcde123!!\",\n" +
+        " \"newPasswordCheck\": \"abcde123!!\"\n" +
+        "}";
+    ObjectMapper objectMapper = new ObjectMapper();
+    //when
+    PasswordChangeRequest passwordChangeRequest = objectMapper.readValue(json, PasswordChangeRequest.class);
+    boolean reset = passwordResetService.reset(businessNumber, passwordChangeRequest);
+    System.out.println(reset);
+    Optional<FranchiseeEntity> byBusinessNumber = franchiseeRepository.findByBusinessNumber(businessNumber.replaceAll("-", ""));
+    String updatedPassword = byBusinessNumber.get().getPassword();
+
+    boolean matches = passwordEncoder.matches("abcde123!!", updatedPassword);
+    assertThat(matches).isEqualTo(true);
+
   }
 
 
