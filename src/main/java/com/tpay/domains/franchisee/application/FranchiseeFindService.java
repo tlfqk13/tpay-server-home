@@ -9,8 +9,6 @@ import com.tpay.domains.franchisee.domain.FranchiseeRepository;
 import com.tpay.domains.franchisee_applicant.application.FranchiseeApplicantFindService;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
 import com.tpay.domains.order.application.OrderFindService;
-import com.tpay.domains.order.domain.OrderEntity;
-import com.tpay.domains.refund.domain.RefundStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -48,7 +46,7 @@ public class FranchiseeFindService {
   public FranchiseeMyPageResponse findMyPageInfo(Long franchiseeIndex) {
     FranchiseeEntity franchiseeEntity = this.findByIndex(franchiseeIndex);
     FranchiseeApplicantEntity franchiseeApplicantEntity = franchiseeApplicantFindService.findByFranchiseeEntity(franchiseeEntity);
-    
+
     Long sumTotalSaleAmount = orderFindService.sumTotalSaleAmountByFranchiseeIndex(franchiseeIndex);
 
     return FranchiseeMyPageResponse.builder()

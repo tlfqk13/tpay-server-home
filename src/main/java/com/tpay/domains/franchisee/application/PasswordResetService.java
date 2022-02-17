@@ -27,8 +27,8 @@ public class PasswordResetService {
   // ========================= 로그인 전 ========================= //
   public boolean existBusinessNumber(String businessNumber) {
     boolean result = franchiseeRepository.existsByBusinessNumber(businessNumber);
-    if(!result){
-      throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER,"Invalid Business Number");
+    if (!result) {
+      throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid Business Number");
     }
     return true;
   }
@@ -45,7 +45,7 @@ public class PasswordResetService {
     String newPassword = passwordChangeRequest.getNewPassword();
     String newPasswordCheck = passwordChangeRequest.getNewPasswordCheck();
     FranchiseeEntity franchiseeEntity = franchiseeFindService.findByBusinessNumber(businessNumber);
-    passwordValid(newPassword,newPasswordCheck);
+    passwordValid(newPassword, newPasswordCheck);
     franchiseeEntity.resetPassword(passwordEncoder.encode(newPassword));
     return true;
   }
@@ -70,7 +70,7 @@ public class PasswordResetService {
     return true;
   }
 
-  // ====================내부용 메서드==================== //
+  // ====================내부 메서드==================== //
 
   private void certificationValid(FranchiseeEntity franchiseeEntity, String name, String phoneNumber) {
     if (!franchiseeEntity.isValidUser(name, phoneNumber)) {

@@ -2,6 +2,8 @@ package com.tpay.domains.franchisee.presentation;
 
 
 import com.tpay.domains.franchisee.application.FranchiseeCmsService;
+import com.tpay.domains.franchisee.application.dto.cms.FranchiseeCmsDetailResponse;
+import com.tpay.domains.franchisee.application.dto.cms.FranchiseeCmsResponse;
 import com.tpay.domains.franchisee.application.dto.cms.FranchiseeCmsResponseDetailInterface;
 import com.tpay.domains.franchisee.application.dto.cms.FranchiseeCmsResponseInterface;
 import lombok.RequiredArgsConstructor;
@@ -20,20 +22,20 @@ public class FranchiseeCmsController {
   private final FranchiseeCmsService franchiseeCmsService;
 
   @GetMapping("/franchisee/{franchiseeIndex}/cms")
-  public ResponseEntity<FranchiseeCmsResponseInterface> cmsReport(
+  public ResponseEntity<FranchiseeCmsResponse> cmsReport(
       @PathVariable Long franchiseeIndex,
       @RequestParam String requestDate
   ) {
-    FranchiseeCmsResponseInterface result = franchiseeCmsService.cmsReport(franchiseeIndex, requestDate);
+    FranchiseeCmsResponse result = franchiseeCmsService.cmsReport(franchiseeIndex, requestDate);
     return ResponseEntity.ok(result);
   }
 
   @GetMapping("/franchisee/{franchiseeIndex}/cms/detail")
-  public ResponseEntity<List<Object>> cmsDetail(
+  public ResponseEntity<FranchiseeCmsDetailResponse> cmsDetail(
       @PathVariable Long franchiseeIndex,
       @RequestParam String requestDate
   ) {
-    List<Object> result = franchiseeCmsService.cmsDetail(franchiseeIndex, requestDate);
+    FranchiseeCmsDetailResponse result = franchiseeCmsService.cmsDetail(franchiseeIndex, requestDate);
     return ResponseEntity.ok(result);
   }
 
