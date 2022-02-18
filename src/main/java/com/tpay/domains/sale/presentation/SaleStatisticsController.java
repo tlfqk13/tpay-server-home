@@ -1,7 +1,6 @@
 package com.tpay.domains.sale.presentation;
 
 
-import com.tpay.commons.util.DateFilterV2;
 import com.tpay.domains.sale.application.SaleStatisticsService;
 import com.tpay.domains.sale.application.dto.SaleStatisticsResponseInterface;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +19,10 @@ public class SaleStatisticsController {
   @GetMapping("/sales/statistics/{franchiseeIndex}")
   public ResponseEntity<SaleStatisticsResponseInterface> salesStatistics(
       @PathVariable Long franchiseeIndex,
-      @RequestParam DateFilterV2 dateFilter
-      ) {
-    SaleStatisticsResponseInterface result = saleStatisticsService.saleStatistics(franchiseeIndex, dateFilter);
+      @RequestParam String startDate,
+      @RequestParam String endDate
+  ) {
+    SaleStatisticsResponseInterface result = saleStatisticsService.saleStatistics(franchiseeIndex, startDate, endDate);
     return ResponseEntity.ok(result);
   }
 

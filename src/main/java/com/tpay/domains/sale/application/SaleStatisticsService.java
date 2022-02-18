@@ -13,9 +13,7 @@ public class SaleStatisticsService {
 
   private final RefundRepository refundRepository;
 
-  public SaleStatisticsResponseInterface saleStatistics(Long franchiseeIndex, DateFilterV2 dateFilter){
-    String startDate = dateFilter.getStartDate();
-    String endDate = dateFilter.getEndDate();
+  public SaleStatisticsResponseInterface saleStatistics(Long franchiseeIndex, String startDate, String endDate){
     return refundRepository.findStatistics(franchiseeIndex, startDate, endDate);
   }
 }
