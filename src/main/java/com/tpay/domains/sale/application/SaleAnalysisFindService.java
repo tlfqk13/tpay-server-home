@@ -1,14 +1,12 @@
 package com.tpay.domains.sale.application;
 
-import com.tpay.commons.util.DateFilter;
+
+import com.tpay.commons.util.DateFilterV2;
 import com.tpay.domains.refund.domain.RefundRepository;
-import com.tpay.domains.sale.application.dto.SaleAnalysisFindResponse;
+import com.tpay.domains.sale.application.dto.SaleAnalysisFindResponseInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -17,23 +15,36 @@ public class SaleAnalysisFindService {
 
   private final RefundRepository refundRepository;
 
-  public List<SaleAnalysisFindResponse> findByDateRange(
-      Long franchiseeIndex, DateFilter dateFilter, LocalDate startDate, LocalDate endDate) {
-
-    if (endDate != null) {
-      endDate = endDate.plusDays(1);
+  public List<SaleAnalysisFindResponseInterface> findByDateRange(
+      Long franchiseeIndex, DateFilterV2 dateFilterV2, String startDate, String endDate) {
+    String startDateQuery;
+    String endDateQuery;
+    if (dateFilterV2.equals(DateFilterV2.CUSTOM)) {
+      startDateQuery = startDate.replaceAll("-", "");
+      endDateQuery = endDate.replaceAll("-", "");
+    } else {
+      startDateQuery = dateFilterV2.getStartDate().replaceAll("-", "");
+      endDateQuery = dateFilterV2.getEndDate().replaceAll("-", "");
     }
 
-    if (dateFilter != DateFilter.CUSTOM) {
-      startDate = dateFilter.getStartDate();
-      endDate = dateFilter.getEndDate();
+    List<SaleAnalysisFindResponseInterface> saleAnalysisFindResponseInterfaceList =
+        refundRepository.findSaleAnalysisV2(franchiseeIndex, startDateQuery, endDateQuery);
+
+    return saleAnalysisFindResponseInterfaceList;
+  }
+
+  //테스트용 메서드
+  public List<String> testDateNativeQuery(
+      Long franchiseeIndex, DateFilterV2 dateFilterV2, String startDate, String endDate) {
+    String startDateQueryTest;
+    String endDateQueryTest;
+    if (dateFilterV2.equals(DateFilterV2.CUSTOM)) {
+      startDateQueryTest = startDate.replaceAll("-", "");
+      endDateQueryTest = endDate.replaceAll("-", "");
+    } else {
+      startDateQueryTest = dateFilterV2.getStartDate().replaceAll("-", "");
+      endDateQueryTest = dateFilterV2.getEndDate().replaceAll("-", "");
     }
-
-    LocalDateTime startDateTime = startDate.atStartOfDay();
-    LocalDateTime endDateTime = endDate.atTime(LocalTime.MAX);
-    List<SaleAnalysisFindResponse> saleAnalysisFindResponseList =
-        refundRepository.findSaleAnalysis(franchiseeIndex, startDateTime, endDateTime);
-
-    return saleAnalysisFindResponseList;
+    return refundRepository.dateTestNativeQuery(franchiseeIndex, startDateQueryTest, endDateQueryTest);
   }
 }

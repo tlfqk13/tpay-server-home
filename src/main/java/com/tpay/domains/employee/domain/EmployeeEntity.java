@@ -29,6 +29,9 @@ public class EmployeeEntity extends BaseTimeEntity {
   @NotNull
   private String password;
 
+  @NotNull
+  private Boolean isDelete;
+
   @ManyToOne
   @JoinColumn(name = "franchisee_id", nullable = false)
   private FranchiseeEntity franchiseeEntity;
