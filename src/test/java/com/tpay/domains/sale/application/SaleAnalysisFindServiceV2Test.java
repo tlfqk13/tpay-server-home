@@ -10,11 +10,9 @@ import com.tpay.domains.refund.domain.RefundRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.List;
-
-@DataJpaTest
+@SpringBootTest
 class SaleAnalysisFindServiceV2Test {
 
   @Autowired
@@ -53,7 +51,7 @@ class SaleAnalysisFindServiceV2Test {
     String endDate = dateFilterV2.getEndDate().replaceAll("-", "");
 //    when
 //    List<SaleAnalysisFindResponse> saleAnalysisV2 = refundRepository.findSaleAnalysisV2(franchiseeIndex, startDate, endDate);
-    List<Object> result = refundRepository.dateReturnTest(franchiseeIndex, startDate, endDate);
+
     // TODO: 2022/02/08 매출분석 날짜테스트 이어서 계속 할 것
 
   }

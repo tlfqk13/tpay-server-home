@@ -26,7 +26,7 @@ public class SaleAnalysisFindControllerV2 {
       @RequestParam(required = false) String startDate,
       @RequestParam(required = false) String endDate
       ) {
-    List<SaleAnalysisFindResponse> result = saleAnalysisFindServiceV2.findByDateRange(franchiseeIndex, dateFilter);
+    List<SaleAnalysisFindResponse> result = saleAnalysisFindServiceV2.findByDateRange(franchiseeIndex, dateFilter, startDate, endDate);
     return ResponseEntity.ok(result);
   }
 }
