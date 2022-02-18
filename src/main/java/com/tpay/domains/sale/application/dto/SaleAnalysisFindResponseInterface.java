@@ -1,6 +1,6 @@
 package com.tpay.domains.sale.application.dto;
 
-public interface SaleAnalysisFindResponse {
+public interface SaleAnalysisFindResponseInterface {
   String getDate();
 
   String getTotalAmount();
