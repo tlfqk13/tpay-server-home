@@ -27,10 +27,6 @@ public class SaleAnalysisFindServiceV2 {
       endDateQuery = dateFilterV2.getEndDate().replaceAll("-", "");
     }
 
-    System.out.println("=====V2 Logger=====");
-    System.out.println("startDate : " + startDate);
-    System.out.println("endDate : " + endDate);
-    System.out.println("=====V2 Logger=====");
     List<SaleAnalysisFindResponse> saleAnalysisFindResponseList =
         refundRepository.findSaleAnalysisV2(franchiseeIndex, startDateQuery, endDateQuery);
 
