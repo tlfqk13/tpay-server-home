@@ -2,8 +2,8 @@ package com.tpay.domains.sale.presentation;
 
 
 import com.tpay.commons.util.DateFilterV2;
-import com.tpay.domains.sale.application.SaleAnalysisFindServiceV2;
-import com.tpay.domains.sale.application.dto.SaleAnalysisFindResponse;
+import com.tpay.domains.sale.application.SaleAnalysisFindService;
+import com.tpay.domains.sale.application.dto.SaleAnalysisFindResponseInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,18 +15,18 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class SaleAnalysisFindControllerV2 {
+public class SaleAnalysisFindController {
 
-  private final SaleAnalysisFindServiceV2 saleAnalysisFindServiceV2;
+  private final SaleAnalysisFindService saleAnalysisFindServiceV2;
 
   @GetMapping("/sales/franchiseeV2/{franchiseeIndex}")
-  public ResponseEntity<List<SaleAnalysisFindResponse>> findByDateRange(
+  public ResponseEntity<List<SaleAnalysisFindResponseInterface>> findByDateRange(
       @PathVariable Long franchiseeIndex,
       @RequestParam DateFilterV2 dateFilter,
       @RequestParam(required = false) String startDate,
       @RequestParam(required = false) String endDate
       ) {
-    List<SaleAnalysisFindResponse> result = saleAnalysisFindServiceV2.findByDateRange(franchiseeIndex, dateFilter, startDate, endDate);
+    List<SaleAnalysisFindResponseInterface> result = saleAnalysisFindServiceV2.findByDateRange(franchiseeIndex, dateFilter, startDate, endDate);
     return ResponseEntity.ok(result);
   }
 }

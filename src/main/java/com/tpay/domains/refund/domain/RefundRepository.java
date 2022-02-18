@@ -1,7 +1,8 @@
 package com.tpay.domains.refund.domain;
 
 import com.tpay.domains.refund.application.dto.RefundFindResponseInterface;
-import com.tpay.domains.sale.application.dto.SaleAnalysisFindResponse;
+import com.tpay.domains.sale.application.dto.SaleAnalysisFindResponseInterface;
+import com.tpay.domains.sale.application.dto.SaleStatisticsResponseInterface;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -82,7 +83,7 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
               "      group by date(o.sale_datm)) as results\n" +
               "order by date desc;",
       nativeQuery = true)
-  List<SaleAnalysisFindResponse> findSaleAnalysis(
+  List<SaleAnalysisFindResponseInterface> findSaleAnalysis(
       @Param("franchiseeIndex") Long franchiseeIndex,
       @Param("startDate") LocalDateTime startDateTime,
       @Param("endDate") LocalDateTime endDateTime);
@@ -107,7 +108,7 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
               "                      and replace(date(o.created_date),'-','') between :startDate and :endDate\n" +
               "                    group by date(o.sale_datm)) as results\n" +
               "              order by date desc;", nativeQuery = true)
-  List<SaleAnalysisFindResponse> findSaleAnalysisV2(
+  List<SaleAnalysisFindResponseInterface> findSaleAnalysisV2(
       @Param("franchiseeIndex") Long franchiseeIndex,
       @Param("startDate") String startDate,
       @Param("endDate") String endDate);
@@ -145,6 +146,22 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
       @Param("endDate") String endDate,
       @Param("customerIndex") Long customerIndex);
 
+  @Query(value =
+      "select cast(sum(if(r.refund_status = 'APPROVAL', o.tot_amt, 0)) as integer)      as totalAmount,\n" +
+      "       (cast(sum(if(r.refund_status = 'APPROVAL', o.tot_amt, 0)) as integer)) -\n" +
+      "       (cast(sum(if(r.refund_status = 'APPROVAL', r.tot_refund, 0)) as integer)) as totalActualAmount,\n" +
+      "       cast(sum(if(r.refund_status = 'APPROVAL', r.tot_refund, 0)) as integer)   as totalRefund,\n" +
+      "       count(*)                                                                  as totalCount,\n" +
+      "       sum(if(r.refund_status = 'CANCEL', 1, 0))                                 as totalCancel\n" +
+      "from orders o\n" +
+      "         left join refund r on o.id = r.order_id\n" +
+      "where franchisee_id = :franchiseeIndex\n" +
+      "  and o.created_date between :startDate and :endDate", nativeQuery = true)
+  SaleStatisticsResponseInterface findStatistics(
+      @Param("franchiseeIndex") Long franchiseeIndex,
+      @Param("startDate") String startDate,
+      @Param("endDate") String endDate
+  );
 
   @Query(value = "select substr(o.created_date, 1, 10) as dateFormat\n" +
       "from orders o\n" +

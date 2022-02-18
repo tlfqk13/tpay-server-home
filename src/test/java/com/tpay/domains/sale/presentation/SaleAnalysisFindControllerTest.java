@@ -13,7 +13,7 @@ import com.tpay.domains.order.domain.OrderEntity;
 import com.tpay.domains.refund.application.RefundSaveService;
 import com.tpay.domains.refund.application.dto.RefundSaveRequest;
 import com.tpay.domains.refund.domain.RefundEntity;
-import com.tpay.domains.sale.application.SaleAnalysisFindServiceV2;
+import com.tpay.domains.sale.application.SaleAnalysisFindService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,10 +24,10 @@ import java.time.LocalDate;
 import java.util.List;
 
 @SpringBootTest
-public class SaleAnalysisFindControllerV2Test {
+public class SaleAnalysisFindControllerTest {
 
   @Autowired
-  SaleAnalysisFindServiceV2 saleAnalysisFindServiceV2;
+  SaleAnalysisFindService saleAnalysisFindServiceV2;
   @Autowired
   RefundSaveService refundSaveService;
   @Autowired
