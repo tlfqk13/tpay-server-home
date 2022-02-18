@@ -32,11 +32,13 @@ public class EmployeeRegistrationService {
     }
 
     FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
+
     EmployeeEntity employeeEntity = EmployeeEntity.builder()
         .name(employeeRegistrationRequest.getName())
         .userId(employeeRegistrationRequest.getUserId())
         .password(passwordEncoder.encode(password))
         .franchiseeEntity(franchiseeEntity)
+        .isDelete(false)
         .build();
 
     EmployeeEntity result = employeeRepository.save(employeeEntity);
