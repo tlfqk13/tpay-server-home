@@ -2,7 +2,6 @@ package com.tpay.domains.auth.presentation;
 
 
 import com.tpay.domains.auth.application.SignInService;
-import com.tpay.domains.auth.application.dto.FranchiseeTokenInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,9 +15,9 @@ public class SignInController {
   private final SignInService signInService;
 
   @PostMapping("/sign-in")
-  public ResponseEntity<FranchiseeTokenInfo> signIn(@RequestBody SignInRequest signInRequest) {
-    FranchiseeTokenInfo franchiseeTokenInfo = signInService.signIn(signInRequest);
-    return ResponseEntity.ok(franchiseeTokenInfo);
+  public ResponseEntity<Object> signIn(@RequestBody SignInRequest signInRequest) {
+    Object o = signInService.signIn(signInRequest);
+    return ResponseEntity.ok(o);
   }
 
 }
