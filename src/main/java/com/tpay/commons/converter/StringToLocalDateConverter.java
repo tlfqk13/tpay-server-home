@@ -13,7 +13,7 @@ public class StringToLocalDateConverter implements Converter<String, LocalDate> 
     try {
       return LocalDate.parse(source, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     } catch (Exception e) {
-      throw new IllegalArgumentException("Passing date format must be yyyy-MM-dd");
+      throw new IllegalArgumentException("date format must be yyyy-MM-dd");
     }
   }
 }
