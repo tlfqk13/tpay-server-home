@@ -20,15 +20,14 @@ public class FranchiseeSignInService {
   private final PasswordEncoder passwordEncoder;
 
   @Transactional
-  public FranchiseeTokenInfo signIn(FranchiseeSignInRequest franchiseeSignInRequest) {
+  public FranchiseeTokenInfo signIn(String businessNumber, String password) {
     FranchiseeApplicantEntity franchiseeApplicantEntity =
-        franchiseeApplicantFindService.findByBusinessNumber(
-            franchiseeSignInRequest.getBusinessNumber());
+        franchiseeApplicantFindService.findByBusinessNumber(businessNumber);
 
     FranchiseeEntity franchiseeEntity = franchiseeApplicantEntity.getFranchiseeEntity();
 
     if (!passwordEncoder.matches(
-        franchiseeSignInRequest.getPassword(), franchiseeEntity.getPassword())) {
+        password, franchiseeEntity.getPassword())) {
       throw new IllegalArgumentException("Invalid Password");
     }
 
