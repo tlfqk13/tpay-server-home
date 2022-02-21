@@ -1,7 +1,6 @@
 package com.tpay.domains.auth.application;
 
 import com.tpay.commons.jwt.AuthToken;
-import com.tpay.domains.auth.application.dto.FranchiseeSignInRequest;
 import com.tpay.domains.auth.application.dto.FranchiseeTokenInfo;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee_applicant.application.FranchiseeApplicantFindService;
@@ -20,21 +19,20 @@ public class FranchiseeSignInService {
   private final PasswordEncoder passwordEncoder;
 
   @Transactional
-  public FranchiseeTokenInfo signIn(FranchiseeSignInRequest franchiseeSignInRequest) {
+  public FranchiseeTokenInfo signIn(String businessNumber, String password) {
     FranchiseeApplicantEntity franchiseeApplicantEntity =
-        franchiseeApplicantFindService.findByBusinessNumber(
-            franchiseeSignInRequest.getBusinessNumber());
+        franchiseeApplicantFindService.findByBusinessNumber(businessNumber);
 
     FranchiseeEntity franchiseeEntity = franchiseeApplicantEntity.getFranchiseeEntity();
 
     if (!passwordEncoder.matches(
-        franchiseeSignInRequest.getPassword(), franchiseeEntity.getPassword())) {
+        password, franchiseeEntity.getPassword())) {
       throw new IllegalArgumentException("Invalid Password");
     }
 
     AuthToken accessToken = authService.createAccessToken(franchiseeEntity);
     AuthToken refreshToken = authService.createRefreshToken(franchiseeEntity);
-    authService.save(franchiseeEntity, refreshToken.getValue());
+    authService.updateOrSave(franchiseeEntity, refreshToken.getValue());
 
     return FranchiseeTokenInfo.builder()
         .franchiseeIndex(franchiseeEntity.getId())
