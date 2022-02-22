@@ -1,4 +1,4 @@
-package com.tpay.domains.auth.presentation;
+package com.tpay.domains.auth.application.dto;
 
 import com.tpay.commons.util.SignInSelector;
 import lombok.Getter;

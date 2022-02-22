@@ -7,7 +7,7 @@ import com.tpay.commons.util.SignInSelector;
 import com.tpay.domains.auth.application.dto.EmployeeTokenInfo;
 import com.tpay.domains.auth.application.dto.FranchiseeTokenInfo;
 import com.tpay.domains.auth.application.dto.SignInTokenResponse;
-import com.tpay.domains.auth.presentation.SignInRequest;
+import com.tpay.domains.auth.application.dto.SignInRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

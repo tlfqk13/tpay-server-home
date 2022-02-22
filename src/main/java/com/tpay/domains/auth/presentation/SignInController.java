@@ -2,6 +2,7 @@ package com.tpay.domains.auth.presentation;
 
 
 import com.tpay.domains.auth.application.SignInService;
+import com.tpay.domains.auth.application.dto.SignInRequest;
 import com.tpay.domains.auth.application.dto.SignInTokenResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
