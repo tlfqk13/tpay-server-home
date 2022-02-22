@@ -36,4 +36,8 @@ public class EmployeeEntity extends BaseTimeEntity {
   @JoinColumn(name = "franchisee_id", nullable = false)
   private FranchiseeEntity franchiseeEntity;
 
+  public EmployeeEntity updateDelete() {
+    this.isDelete = true;
+    return this;
+  }
 }
