@@ -6,8 +6,8 @@ import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.util.SignInSelector;
 import com.tpay.domains.auth.application.dto.EmployeeTokenInfo;
 import com.tpay.domains.auth.application.dto.FranchiseeTokenInfo;
-import com.tpay.domains.auth.application.dto.SignInTokenResponse;
 import com.tpay.domains.auth.application.dto.SignInRequest;
+import com.tpay.domains.auth.application.dto.SignInTokenResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,8 +20,6 @@ public class SignInService {
   private final FranchiseeSignInService franchiseeSignInService;
   private final EmployeeSignInService employeeSignInService;
 
-
-  // TODO: 2022/02/21 Object 적절히 변환할 것
   @Transactional
   public SignInTokenResponse signIn(SignInRequest signInRequest) {
     SignInTokenResponse signInTokenResponse;
