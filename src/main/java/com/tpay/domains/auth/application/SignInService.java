@@ -6,6 +6,7 @@ import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.util.SignInSelector;
 import com.tpay.domains.auth.application.dto.EmployeeTokenInfo;
 import com.tpay.domains.auth.application.dto.FranchiseeTokenInfo;
+import com.tpay.domains.auth.application.dto.SignInTokenResponse;
 import com.tpay.domains.auth.presentation.SignInRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,17 +21,36 @@ public class SignInService {
   private final EmployeeSignInService employeeSignInService;
 
 
+  // TODO: 2022/02/21 Object 적절히 변환할 것
   @Transactional
-  public Object signIn(SignInRequest signInRequest) {
+  public SignInTokenResponse signIn(SignInRequest signInRequest) {
+    SignInTokenResponse signInTokenResponse;
     if (signInRequest.getSignInSelector().equals(SignInSelector.FRANCHISEE)) {
       FranchiseeTokenInfo franchiseeTokenInfo = franchiseeSignInService.signIn(signInRequest.getBusinessNumber(), signInRequest.getPassword());
-      return franchiseeTokenInfo;
+      signInTokenResponse = SignInTokenResponse.builder()
+          .signUpDate(franchiseeTokenInfo.getSignUpDate())
+          .franchiseeStatus(franchiseeTokenInfo.getFranchiseeStatus())
+          .franchiseeIndex(franchiseeTokenInfo.getFranchiseeIndex())
+          .businessNumber(franchiseeTokenInfo.getBusinessNumber())
+          .rejectReason(franchiseeTokenInfo.getRejectReason())
+          .popUp(franchiseeTokenInfo.isPopUp())
+          .accessToken(franchiseeTokenInfo.getAccessToken())
+          .refreshToken(franchiseeTokenInfo.getRefreshToken())
+          .build();
     } else if (signInRequest.getSignInSelector().equals(SignInSelector.EMPLOYEE)) {
       EmployeeTokenInfo employeeTokenInfo = employeeSignInService.signIn(signInRequest.getUserId(), signInRequest.getPassword());
-      return employeeTokenInfo;
+      signInTokenResponse = SignInTokenResponse.builder()
+          .employeeIndex(employeeTokenInfo.getEmployeeIndex())
+          .userId(employeeTokenInfo.getUserId())
+          .name(employeeTokenInfo.getName())
+          .registeredDate(employeeTokenInfo.getRegisteredDate())
+          .accessToken(employeeTokenInfo.getAccessToken())
+          .refreshToken(employeeTokenInfo.getRefreshToken())
+          .build();
     } else {
       throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Parse Failed");
     }
+    return signInTokenResponse;
   }
 
 }
