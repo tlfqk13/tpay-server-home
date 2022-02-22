@@ -3,7 +3,6 @@ package com.tpay.domains.auth.application;
 
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
-import com.tpay.commons.util.SignInSelector;
 import com.tpay.domains.auth.application.dto.EmployeeTokenInfo;
 import com.tpay.domains.auth.application.dto.FranchiseeTokenInfo;
 import com.tpay.domains.auth.application.dto.SignInRequest;
@@ -12,6 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+
+import static com.tpay.commons.util.SignInSelector.EMPLOYEE;
+import static com.tpay.commons.util.SignInSelector.FRANCHISEE;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +25,7 @@ public class SignInService {
   @Transactional
   public SignInTokenResponse signIn(SignInRequest signInRequest) {
     SignInTokenResponse signInTokenResponse;
-    if (signInRequest.getSignInSelector().equals(SignInSelector.FRANCHISEE)) {
+    if (signInRequest.getSignInSelector().equals(FRANCHISEE)) {
       FranchiseeTokenInfo franchiseeTokenInfo = franchiseeSignInService.signIn(signInRequest.getBusinessNumber(), signInRequest.getPassword());
       signInTokenResponse = SignInTokenResponse.builder()
           .signUpDate(franchiseeTokenInfo.getSignUpDate())
@@ -35,7 +37,7 @@ public class SignInService {
           .accessToken(franchiseeTokenInfo.getAccessToken())
           .refreshToken(franchiseeTokenInfo.getRefreshToken())
           .build();
-    } else if (signInRequest.getSignInSelector().equals(SignInSelector.EMPLOYEE)) {
+    } else if (signInRequest.getSignInSelector().equals(EMPLOYEE)) {
       EmployeeTokenInfo employeeTokenInfo = employeeSignInService.signIn(signInRequest.getUserId(), signInRequest.getPassword());
       signInTokenResponse = SignInTokenResponse.builder()
           .employeeIndex(employeeTokenInfo.getEmployeeIndex())
