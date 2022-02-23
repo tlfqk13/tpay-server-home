@@ -11,7 +11,11 @@ public class NumberFormatConverter {
   }
 
   public String addCommaToNumber(String targetNumber) {
-    targetNumber = targetNumber.replaceAll("\\B(?=(\\d{3})+(?!\\d))", ",");
+    try {
+      targetNumber = targetNumber.replaceAll("\\B(?=(\\d{3})+(?!\\d))", ",");
+    } catch (NullPointerException e) {
+      targetNumber = "0";
+    }
     return targetNumber;
   }
 }
