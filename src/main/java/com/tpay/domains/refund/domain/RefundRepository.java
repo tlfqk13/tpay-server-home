@@ -151,12 +151,12 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
           "       (cast(sum(if(r.refund_status = 'APPROVAL', o.tot_amt, 0)) as integer)) -\n" +
           "       (cast(sum(if(r.refund_status = 'APPROVAL', r.tot_refund, 0)) as integer)) as totalActualAmount,\n" +
           "       cast(sum(if(r.refund_status = 'APPROVAL', r.tot_refund, 0)) as integer)   as totalRefund,\n" +
-          "       count(*)                                                                  as totalCount,\n" +
+          "       cast(sum(if(r.refund_status = 'APPROVAL', 1, 0)) as integer)              as totalCount,\n" +
           "       sum(if(r.refund_status = 'CANCEL', 1, 0))                                 as totalCancel\n" +
           "from orders o\n" +
           "         left join refund r on o.id = r.order_id\n" +
           "where franchisee_id = :franchiseeIndex\n" +
-          "  and substr(replace(o.created_date,'-',''),1,6) between :startDate and :endDate", nativeQuery = true)
+          "  and substr(replace(o.created_date, '-', ''), 1, 6) between :startDate and :endDate", nativeQuery = true)
   SaleStatisticsResponseInterface findStatistics(
       @Param("franchiseeIndex") Long franchiseeIndex,
       @Param("startDate") String startDate,
