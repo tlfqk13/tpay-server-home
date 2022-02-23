@@ -21,21 +21,20 @@ public class SaleStatisticsController {
   @GetMapping("/sales/statistics/{franchiseeIndex}")
   public ResponseEntity<SaleStatisticsResponseInterface> salesStatistics(
       @PathVariable Long franchiseeIndex,
-      @RequestParam String startDate,
-      @RequestParam String endDate
+      @RequestParam String targetDate,
+      @RequestParam DateSelector dateSelector
   ) {
-    SaleStatisticsResponseInterface result = saleStatisticsService.saleStatistics(franchiseeIndex, startDate, endDate);
+    SaleStatisticsResponseInterface result = saleStatisticsService.saleStatistics(franchiseeIndex, targetDate, dateSelector);
     return ResponseEntity.ok(result);
   }
 
   @GetMapping("/sales/statistics/detail/{franchiseeIndex}")
-  public ResponseEntity<SaleStatisticsResponse> saleCompareMonth(
+  public ResponseEntity<SaleStatisticsResponse> saleCompare(
       @PathVariable Long franchiseeIndex,
-      @RequestParam String startDate,
-      @RequestParam String endDate,
+      @RequestParam String targetDate,
       @RequestParam DateSelector dateSelector
   ) {
-    SaleStatisticsResponse result = saleStatisticsService.saleCompare(franchiseeIndex, startDate, endDate, dateSelector);
+    SaleStatisticsResponse result = saleStatisticsService.saleCompare(franchiseeIndex, targetDate, dateSelector);
     return ResponseEntity.ok(result);
   }
 

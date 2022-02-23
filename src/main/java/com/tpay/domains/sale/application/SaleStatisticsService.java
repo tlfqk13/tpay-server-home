@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 
+import static com.tpay.commons.util.DateSelector.*;
+
 @Service
 @RequiredArgsConstructor
 public class SaleStatisticsService {
@@ -24,14 +26,40 @@ public class SaleStatisticsService {
   private final StringToLocalDateConverter stringToLocalDateConverter;
   private final NumberFormatConverter numberFormatConverter;
 
-  public SaleStatisticsResponseInterface saleStatistics(Long franchiseeIndex, String startDate, String endDate) {
-    return refundRepository.findStatistics(franchiseeIndex, startDate, endDate);
+  public SaleStatisticsResponseInterface saleStatistics(Long franchiseeIndex, String targetDate, DateSelector dateSelector) {
+    if(dateSelector.equals(MONTH)){
+      return refundRepository.findMonthStatistics(franchiseeIndex, targetDate);
+    }
+    else if(dateSelector.equals(YEAR)){
+      String targetDateYear = targetDate.substring(0,4);
+      return refundRepository.findYearStatistics(franchiseeIndex,targetDateYear);
+    }
+    else if(dateSelector.equals(ALL)){
+      return refundRepository.findAllStatistics(franchiseeIndex);
+    }
+    else {
+      throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "DateSelector : MONTH or YEAR ");
+    }
   }
 
-  public SaleStatisticsResponse saleCompare(Long franchiseeIndex, String startDate, String endDate, DateSelector dateSelector) {
-    LocalDate convertStartDate = stringToLocalDateConverter.convert(startDate.substring(0, 4) + "-" + startDate.substring(4) + "-01");
-    LocalDate convertEndDate = stringToLocalDateConverter.convert(endDate.substring(0, 4) + "-" + endDate.substring(4) + "-01");
-    SaleStatisticsResponseInterface curr = refundRepository.findStatistics(franchiseeIndex, startDate, endDate);
+  public SaleStatisticsResponse saleCompare(Long franchiseeIndex, String targetDate, DateSelector dateSelector) {
+    LocalDate convertTargetDate = stringToLocalDateConverter.convert(targetDate.substring(0, 4) + "-" + targetDate.substring(4) + "-01");
+    SaleStatisticsResponseInterface curr;
+    SaleStatisticsResponseInterface prev;
+    if (dateSelector.equals(MONTH)) {
+      String preMonthTargetDate = convertTargetDate.minusMonths(1).toString().replaceAll("-", "").substring(0, 6);
+      curr = refundRepository.findMonthStatistics(franchiseeIndex, targetDate);
+      prev = refundRepository.findMonthStatistics(franchiseeIndex, preMonthTargetDate);
+    } else if (dateSelector.equals(YEAR)) {
+      String preYearTargetDate = convertTargetDate.minusYears(1).toString().replaceAll("-", "").substring(0, 6);
+      String targetDateYear = targetDate.substring(0,4);
+      String preYearTargetDateYear = preYearTargetDate.substring(0,4);
+      curr = refundRepository.findYearStatistics(franchiseeIndex,targetDateYear);
+      prev = refundRepository.findYearStatistics(franchiseeIndex, preYearTargetDateYear);
+    } else {
+      throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "DateSelector : MONTH or YEAR ");
+    }
+
     SaleStatisticsCurrentResponse saleStatisticsCurrentResponse = SaleStatisticsCurrentResponse.builder()
         .totalAmount(numberFormatConverter.addCommaToNumber(curr.getTotalAmount())+"원")
         .totalActualAmount(numberFormatConverter.addCommaToNumber(curr.getTotalActualAmount())+"원")
@@ -39,19 +67,6 @@ public class SaleStatisticsService {
         .totalCount(numberFormatConverter.addCommaToNumber(curr.getTotalCount())+"건")
         .totalCancel(numberFormatConverter.addCommaToNumber(curr.getTotalCancel())+"건")
         .build();
-
-    SaleStatisticsResponseInterface prev;
-    if (dateSelector.equals(DateSelector.MONTH)) {
-      String preMonthStartDate = convertStartDate.minusMonths(1).toString().replaceAll("-", "").substring(0, 6);
-      String preMonthEndDate = convertEndDate.minusMonths(1).toString().replaceAll("-", "").substring(0, 6);
-      prev = refundRepository.findStatistics(franchiseeIndex, preMonthStartDate, preMonthEndDate);
-    } else if (dateSelector.equals(DateSelector.YEAR)) {
-      String preYearStartDate = convertStartDate.minusYears(1).toString().replaceAll("-", "").substring(0, 6);
-      String preYearEndDate = convertEndDate.minusYears(1).toString().replaceAll("-", "").substring(0, 6);
-      prev = refundRepository.findStatistics(franchiseeIndex, preYearStartDate, preYearEndDate);
-    } else {
-      throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "DateSelector : MONTH or YEAR ");
-    }
 
     SaleStatisticsPreviousResponse saleStatisticsPreviousResponse = SaleStatisticsPreviousResponse.builder()
         .totalAmount(numberFormatConverter.addCommaToNumber(prev.getTotalAmount())+"원")
