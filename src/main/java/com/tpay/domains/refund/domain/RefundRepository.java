@@ -151,17 +151,49 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
           "       (cast(sum(if(r.refund_status = 'APPROVAL', o.tot_amt, 0)) as integer)) -\n" +
           "       (cast(sum(if(r.refund_status = 'APPROVAL', r.tot_refund, 0)) as integer)) as totalActualAmount,\n" +
           "       cast(sum(if(r.refund_status = 'APPROVAL', r.tot_refund, 0)) as integer)   as totalRefund,\n" +
-          "       count(*)                                                                  as totalCount,\n" +
+          "       cast(sum(if(r.refund_status = 'APPROVAL', 1, 0)) as integer)              as totalCount,\n" +
           "       sum(if(r.refund_status = 'CANCEL', 1, 0))                                 as totalCancel\n" +
           "from orders o\n" +
           "         left join refund r on o.id = r.order_id\n" +
           "where franchisee_id = :franchiseeIndex\n" +
-          "  and substr(replace(o.created_date,'-',''),1,6) between :startDate and :endDate", nativeQuery = true)
-  SaleStatisticsResponseInterface findStatistics(
+          "  and substr(replace(o.created_date, '-', ''), 1, 6) = :targetDate", nativeQuery = true)
+  SaleStatisticsResponseInterface findMonthStatistics(
       @Param("franchiseeIndex") Long franchiseeIndex,
-      @Param("startDate") String startDate,
-      @Param("endDate") String endDate
+      @Param("targetDate") String targetDate
   );
+
+  @Query(value =
+      "select cast(sum(if(r.refund_status = 'APPROVAL', o.tot_amt, 0)) as integer)      as totalAmount,\n" +
+          "       (cast(sum(if(r.refund_status = 'APPROVAL', o.tot_amt, 0)) as integer)) -\n" +
+          "       (cast(sum(if(r.refund_status = 'APPROVAL', r.tot_refund, 0)) as integer)) as totalActualAmount,\n" +
+          "       cast(sum(if(r.refund_status = 'APPROVAL', r.tot_refund, 0)) as integer)   as totalRefund,\n" +
+          "       cast(sum(if(r.refund_status = 'APPROVAL', 1, 0)) as integer)              as totalCount,\n" +
+          "       sum(if(r.refund_status = 'CANCEL', 1, 0))                                 as totalCancel\n" +
+          "from orders o\n" +
+          "         left join refund r on o.id = r.order_id\n" +
+          "where franchisee_id = :franchiseeIndex\n" +
+          "  and substr(replace(o.created_date, '-', ''), 1, 4) = :targetDate", nativeQuery = true)
+  SaleStatisticsResponseInterface findYearStatistics(
+      @Param("franchiseeIndex") Long franchiseeIndex,
+      @Param("targetDate") String targetDate
+  );
+
+
+  @Query(value =
+      "select cast(sum(if(r.refund_status = 'APPROVAL', o.tot_amt, 0)) as integer)      as totalAmount,\n" +
+          "       (cast(sum(if(r.refund_status = 'APPROVAL', o.tot_amt, 0)) as integer)) -\n" +
+          "       (cast(sum(if(r.refund_status = 'APPROVAL', r.tot_refund, 0)) as integer)) as totalActualAmount,\n" +
+          "       cast(sum(if(r.refund_status = 'APPROVAL', r.tot_refund, 0)) as integer)   as totalRefund,\n" +
+          "       cast(sum(if(r.refund_status = 'APPROVAL', 1, 0)) as integer)              as totalCount,\n" +
+          "       sum(if(r.refund_status = 'CANCEL', 1, 0))                                 as totalCancel\n" +
+          "from orders o\n" +
+          "         left join refund r on o.id = r.order_id\n" +
+          "where franchisee_id = :franchiseeIndex", nativeQuery = true)
+  SaleStatisticsResponseInterface findAllStatistics(
+      @Param("franchiseeIndex") Long franchiseeIndex
+  );
+
+
 
   @Query(value = "select substr(o.created_date, 1, 10) as dateFormat\n" +
       "from orders o\n" +
