@@ -36,18 +36,18 @@ class BaseTimeEntityTest {
     franchiseeRepository.save(franchiseeEntity);
   }
 
-  @Test
-  public void JPA_AUDITING_TEST() {
-    System.out.println("시작");
-    // given
+//  @Test
+//  public void JPA_AUDITING_TEST() {
+//    System.out.println("시작");
+//    // given
 //    LocalDateTime now = LocalDateTime.now();
-
-    // when
+//
+//    // when
 //    FranchiseeEntity savedFranchiseeEntity =
 //        franchiseeRepository.findAll().stream().findFirst().get();
-
+//
 //    // then
 //    assertTrue(savedFranchiseeEntity.getCreatedDate().isBefore(now));
 //    assertTrue(savedFranchiseeEntity.getModifiedDate().isBefore(now));
-  }
+//  }
 }
