@@ -2,11 +2,13 @@ package com.tpay.domains.employee.application;
 
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
+import com.tpay.domains.employee.application.dto.EmployeeFindResponseInterface;
 import com.tpay.domains.employee.domain.EmployeeEntity;
 import com.tpay.domains.employee.domain.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -20,7 +22,12 @@ public class EmployeeFindService {
         .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "UserId Not Exists"));
   }
 
-  public Optional<EmployeeEntity> findById(Long employeeIndex){
+  public Optional<EmployeeEntity> findById(Long employeeIndex) {
     return employeeRepository.findById(employeeIndex);
+  }
+
+
+  public List<EmployeeFindResponseInterface> findAllByFranchiseeId(Long franchiseeIndex) {
+    return employeeRepository.findAllByFranchiseeId(franchiseeIndex);
   }
 }
