@@ -37,7 +37,7 @@ public class RefundFindService {
     return refundEntity;
   }
 
-  public List<RefundFindResponse> findList(
+  public List<RefundFindResponseInterface> findList(
       Long franchiseeIndex, DateFilter dateFilter, LocalDate startDate, LocalDate endDate) {
 
     if (endDate != null) {
@@ -49,22 +49,10 @@ public class RefundFindService {
       endDate = dateFilter.getEndDate();
     }
 
-    List<RefundEntity> refundEntityList =
-        refundRepository.findAllByFranchiseeIndex(
-            franchiseeIndex, startDate.atTime(0, 0), endDate.atTime(0, 0));
 
-    return refundEntityList.stream()
-        .map(
-            refundEntity ->
-                RefundFindResponse.builder()
-                    .refundIndex(refundEntity.getId())
-                    .createdDate(refundEntity.getCreatedDate())
-                    .orderNumber(refundEntity.getOrderEntity().getOrderNumber())
-                    .totalAmount(refundEntity.getOrderEntity().getTotalAmount())
-                    .totalRefund(refundEntity.getTotalRefund())
-                    .refundStatus(refundEntity.getRefundStatus())
-                    .build())
-        .collect(Collectors.toList());
+    return refundRepository.findAllByFranchiseeIndex(franchiseeIndex, startDate.atTime(0, 0), endDate.atTime(0, 0));
+
+
   }
 
   public List<RefundFindResponseInterface> findAll() {
