@@ -42,7 +42,7 @@ public class FranchiseeTokenEntity {
   }
 
   public void validUser(Long parsedIndex) {
-    if (this.franchiseeEntity.getId() != parsedIndex) {
+    if (!this.franchiseeEntity.getId().equals(parsedIndex)) {
       throw new JwtRuntimeException(ExceptionState.FORCE_REFRESH);
     }
   }

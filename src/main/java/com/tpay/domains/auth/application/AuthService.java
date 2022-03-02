@@ -73,7 +73,7 @@ public class AuthService {
 
   public AuthToken createRefreshToken(EmployeeEntity employeeEntity){
     Map<String, Object> payload = new LinkedHashMap<>();
-    payload.put("name", employeeEntity.getName());
+    payload.put("employeeIndexJwt", employeeEntity.getId());
     return jwtUtils.createAuthToken(payload, TokenType.REFRESH_TOKEN);
   }
 }

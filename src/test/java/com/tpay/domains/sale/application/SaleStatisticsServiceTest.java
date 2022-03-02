@@ -2,7 +2,7 @@ package com.tpay.domains.sale.application;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tpay.domains.auth.application.dto.SignInTokenResponse;
+import com.tpay.domains.auth.application.dto.SignInTokenInfo;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.customer.domain.CustomerRepository;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
@@ -25,7 +25,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
@@ -110,8 +109,8 @@ public class SaleStatisticsServiceTest {
         .andReturn();
 
     String contentAsString = mvcResult.getResponse().getContentAsString();
-    SignInTokenResponse signInTokenResponse = objectMapper.readValue(contentAsString, SignInTokenResponse.class);
-    accessToken = signInTokenResponse.getAccessToken();
+    SignInTokenInfo signInTokenInfo = objectMapper.readValue(contentAsString, SignInTokenInfo.class);
+    accessToken = signInTokenInfo.getAccessToken();
 
   }
 
