@@ -20,13 +20,13 @@ public class RefundFindController {
   private final RefundFindService refundFindService;
 
   @GetMapping("/refunds/franchisee/{franchiseeIndex}")
-  public ResponseEntity<List<RefundFindResponse>> findList(
+  public ResponseEntity<List<RefundFindResponseInterface>> findList(
       @PathVariable Long franchiseeIndex,
       @RequestParam DateFilter dateFilter,
       @RequestParam(required = false) LocalDate startDate,
       @RequestParam(required = false) LocalDate endDate) {
 
-    List<RefundFindResponse> responseList =
+    List<RefundFindResponseInterface> responseList =
         refundFindService.findList(franchiseeIndex, dateFilter, startDate, endDate);
     return ResponseEntity.ok(responseList);
   }
