@@ -1,5 +1,7 @@
 package com.tpay.domains.auth.domain;
 
+import com.tpay.commons.exception.ExceptionState;
+import com.tpay.commons.exception.detail.JwtRuntimeException;
 import com.tpay.domains.BaseTimeEntity;
 import com.tpay.domains.employee.domain.EmployeeEntity;
 import lombok.AccessLevel;
@@ -34,5 +36,17 @@ public class EmployeeTokenEntity extends BaseTimeEntity {
   public EmployeeTokenEntity refreshToken(String refreshToken){
     this.refreshToken = refreshToken;
     return this;
+  }
+
+  public void validUser(Long parsedIndex) {
+    if(!this.employeeEntity.getId().equals(parsedIndex)){
+      throw new JwtRuntimeException(ExceptionState.FORCE_REFRESH);
+    }
+  }
+
+  public void validToken(String refreshToken) {
+    if(!this.refreshToken.equals(refreshToken)){
+      throw new JwtRuntimeException(ExceptionState.FORCE_REFRESH);
+    }
   }
 }

@@ -13,9 +13,17 @@ import java.util.List;
 public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
   @Query(
       value =
-          "select * from refund r left join orders o on r.order_id = o.id where o.franchisee_id = :franchiseeIndex and r.created_date between :startDate and :endDate order by r.created_date desc",
+          "select r.id           as refundIndex,\n" +
+              "       purchs_sn      as orderNumber,\n" +
+              "       r.created_date as createdDate,\n" +
+              "       tot_amt        as totalAmount,\n" +
+              "       tot_refund     as totalRefund,\n" +
+              "       refund_status  as refundStatus\n" +
+              "from refund r left join orders o on r.order_id = o.id\n" +
+              "where o.franchisee_id = :franchiseeIndex and r.created_date between :startDate and :endDate \n" +
+              "order by r.created_date desc",
       nativeQuery = true)
-  List<RefundEntity> findAllByFranchiseeIndex(
+  List<RefundFindResponseInterface> findAllByFranchiseeIndex(
       @Param("franchiseeIndex") Long franchiseeIndex,
       @Param("startDate") LocalDateTime startDate,
       @Param("endDate") LocalDateTime endDate);
@@ -42,7 +50,7 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
           "       f.store_nm       as storeName\n" +
           "    from refund r inner join orders o on r.order_id = o.id\n" +
           "                  left join franchisee f on o.franchisee_id = f.id\n" +
-          "    order by refundIndex desc;", nativeQuery = true)
+          "    order by refundIndex desc", nativeQuery = true)
   List<RefundFindResponseInterface> findAllNativeQuery();
 
 

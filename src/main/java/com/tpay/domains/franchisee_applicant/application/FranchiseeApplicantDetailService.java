@@ -1,6 +1,8 @@
 package com.tpay.domains.franchisee_applicant.application;
 
 import com.tpay.commons.exception.detail.InvalidParameterException;
+import com.tpay.domains.employee.application.EmployeeFindService;
+import com.tpay.domains.employee.application.dto.EmployeeFindResponseInterface;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeApplicantDetailResponse;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
@@ -11,6 +13,8 @@ import com.tpay.domains.franchisee_upload.domain.FranchiseeUploadEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class FranchiseeApplicantDetailService {
@@ -18,11 +22,13 @@ public class FranchiseeApplicantDetailService {
   private final FranchiseeApplicantFindService franchiseeApplicantFindService;
   private final FranchiseeUploadFindService franchiseeUploadFindService;
   private final FranchiseeBankFindService franchiseeBankFindService;
+  private final EmployeeFindService employeeFindService;
 
   public FranchiseeApplicantDetailResponse detail(Long franchiseeApplicantIndex) {
     FranchiseeApplicantEntity franchiseeApplicantEntity = franchiseeApplicantFindService.findByIndex(franchiseeApplicantIndex);
     FranchiseeEntity franchiseeEntity = franchiseeApplicantEntity.getFranchiseeEntity();
     FranchiseeUploadEntity franchiseeUploadEntity = franchiseeUploadFindService.findByFranchiseeIndex(franchiseeEntity.getId());
+    List<EmployeeFindResponseInterface> employeeResponse = employeeFindService.findAllByFranchiseeId(franchiseeEntity.getId());
     FranchiseeBankEntity franchiseeBankEntity;
     try {
       franchiseeBankEntity = franchiseeBankFindService.findByFranchiseeEntity(franchiseeEntity);
@@ -52,6 +58,8 @@ public class FranchiseeApplicantDetailService {
         .bankAccount(franchiseeBankEntity.getAccountNumber())
         .withdrawalDate(franchiseeBankEntity.getWithdrawalDate())
         .rejectReason(franchiseeApplicantEntity.getRejectReason())
+
+        .employeeFindResponseInterfaceList(employeeResponse)
         .build();
     return franchiseeApplicantDetailResponse;
   }

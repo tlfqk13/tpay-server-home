@@ -1,9 +1,11 @@
 package com.tpay.domains.franchisee_applicant.application.dto;
 
+import com.tpay.domains.employee.application.dto.EmployeeFindResponseInterface;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeStatus;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Builder
@@ -33,4 +35,6 @@ public class FranchiseeApplicantDetailResponse {
   private String withdrawalDate;
   private String rejectReason;
 
+  //Employee List
+  private List<EmployeeFindResponseInterface> employeeFindResponseInterfaceList;
 }
