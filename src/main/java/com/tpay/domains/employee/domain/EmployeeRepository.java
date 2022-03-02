@@ -16,4 +16,7 @@ public interface EmployeeRepository extends JpaRepository<EmployeeEntity, Long> 
       "from employee\n" +
       "where franchisee_id = :franchiseeIndex", nativeQuery = true)
   List<EmployeeFindResponseInterface> findAllByFranchiseeId(@Param("franchiseeIndex") Long franchiseeIndex);
+
+
+  boolean existsByFranchiseeEntityIdAndUserId(Long franchiseeIndex, String userId);
 }
