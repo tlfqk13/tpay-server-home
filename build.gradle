@@ -19,6 +19,10 @@ configurations {
 
 repositories {
     mavenCentral()
+    maven {
+        url 'https://repo.clojars.org'
+        name 'Clojars'
+    }
 }
 
 dependencies {
@@ -65,6 +69,13 @@ dependencies {
     //Excel
     implementation group: 'org.apache.poi', name: 'poi', version: '5.0.0'
     implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '5.0.0'
+
+    // https://mvnrepository.com/artifact/net.sourceforge.barbecue/barbecue 바코드
+    implementation group: 'net.sourceforge.barbecue', name: 'barbecue', version: '1.5-beta1'
+
+    // QR코드
+
+
 }
 
 test {

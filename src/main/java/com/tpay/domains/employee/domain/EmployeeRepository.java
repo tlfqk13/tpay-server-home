@@ -14,7 +14,7 @@ public interface EmployeeRepository extends JpaRepository<EmployeeEntity, Long> 
 
   @Query(value = "select id as employeeIndex,name,user_id as userId\n" +
       "from employee\n" +
-      "where franchisee_id = :franchiseeIndex", nativeQuery = true)
+      "where franchisee_id = :franchiseeIndex and is_delete = 0", nativeQuery = true)
   List<EmployeeFindResponseInterface> findAllByFranchiseeId(@Param("franchiseeIndex") Long franchiseeIndex);
 
 
