@@ -1,6 +1,5 @@
 package com.tpay.domains.sale.application;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tpay.domains.auth.application.dto.SignInTokenInfo;
 import com.tpay.domains.customer.domain.CustomerEntity;
@@ -32,7 +31,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -64,17 +63,17 @@ public class SaleStatisticsServiceTest {
   PasswordEncoder passwordEncoder;
 
   @BeforeEach
-  public void setup() throws JsonProcessingException, Exception {
+  public void setup() throws Exception {
     franchiseeEntity =
         FranchiseeEntity.builder()
             .businessNumber("123-33-12345")
             .storeName("SuccessMode")
             .storeAddressNumber("00011")
-            .storeAddressBasic("안양시")
-            .storeAddressDetail("평촌동")
+            .storeAddressBasic("통계테스트")
+            .storeAddressDetail("통계테스트")
             .sellerName("Kim")
             .storeTel("01012341234")
-            .productCategory("잡화")
+            .productCategory("통계테스트")
             .password(passwordEncoder.encode("qq123456!!"))
             .signboard("간판")
             .storeNumber("031-234-2345")
@@ -116,11 +115,11 @@ public class SaleStatisticsServiceTest {
 
 
   @Test
-  public void 매출통계_기본조회() throws Exception{
+  public void 매출통계_기본조회() throws Exception {
     MultiValueMap<String, String> param = new LinkedMultiValueMap<>();
     String nowYearMonth = LocalDate.now().format(DateTimeFormatter.ofPattern("YYYYMM"));
-    param.add("targetDate",nowYearMonth );
-    param.add("dateSelector","MONTH");
+    param.add("targetDate", nowYearMonth);
+    param.add("dateSelector", "MONTH");
     System.out.println();
     Optional<FranchiseeEntity> franchiseeEntity = franchiseeRepository.findById(1L);
     Assertions.assertThat(franchiseeEntity.get().getStoreName()).isEqualTo("SuccessMode");
