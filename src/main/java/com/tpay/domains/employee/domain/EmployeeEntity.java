@@ -40,4 +40,10 @@ public class EmployeeEntity extends BaseTimeEntity {
     this.isDelete = true;
     return this;
   }
+
+  public EmployeeEntity updateInfo(String name, String password) {
+    this.name = name;
+    this.password = password;
+    return this;
+  }
 }
