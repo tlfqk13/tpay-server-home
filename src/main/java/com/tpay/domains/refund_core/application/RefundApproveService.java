@@ -4,6 +4,8 @@ import com.tpay.commons.custom.CustomValue;
 import com.tpay.commons.exception.ExceptionResponse;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
+import com.tpay.domains.employee.application.EmployeeFindService;
+import com.tpay.domains.employee.domain.EmployeeEntity;
 import com.tpay.domains.franchisee.application.FranchiseeFindService;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.order.application.OrderSaveService;
@@ -23,6 +25,9 @@ import reactor.core.publisher.Mono;
 
 import javax.transaction.Transactional;
 
+import static com.tpay.commons.util.UserSelector.EMPLOYEE;
+import static com.tpay.commons.util.UserSelector.FRANCHISEE;
+
 @Service
 @RequiredArgsConstructor
 public class RefundApproveService {
@@ -34,12 +39,32 @@ public class RefundApproveService {
   private final WebClient.Builder builder;
 
   private final PointRepository pointRepository;
+  private final EmployeeFindService employeeFindService;
 
   @Transactional
   public RefundResponse approve(RefundSaveRequest request) {
+
+    if(request.getUserSelector().equals(EMPLOYEE)) {
+    EmployeeEntity employeeEntity = employeeFindService.findById(request.getEmployeeIndex())
+          .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER,"Employee not exists"));
+      request.updateFranchiseeIndex(employeeEntity);
+    }
+    else if(!request.getUserSelector().equals(FRANCHISEE)){
+      throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER,"UserSelector must FRANCHISEE or EMPLOYEE");
+    }
+
     OrderEntity orderEntity = orderSaveService.save(request);
+
+    if(request.getUserSelector().equals(EMPLOYEE)){
+      EmployeeEntity employeeEntity = employeeFindService.findById(request.getEmployeeIndex())
+          .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER,"Employee not exists"));
+      orderEntity.setEmployeeEntity(employeeEntity);
+    }
+
     FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(request.getFranchiseeIndex());
     RefundApproveRequest refundApproveRequest = RefundApproveRequest.of(orderEntity);
+
+
 
     WebClient webClient = builder.build();
     String uri = CustomValue.REFUND_SERVER + "/refund/approval";

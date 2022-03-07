@@ -75,7 +75,8 @@ public class SaleAnalysisFindControllerTest {
     String json = "{\n" +
         "    \"franchiseeIndex\": \"1\",\n" +
         "    \"customerIndex\": \"1\",\n" +
-        "    \"price\": \"10000\"\n" +
+        "    \"price\": \"10000\",\n" +
+        "    \"userSelector\": \"FRANCHISEE\"\n" +
         "}";
     RefundSaveRequest refundSaveRequest = objectMapper.readValue(json, RefundSaveRequest.class);
     orderEntity = orderSaveService.save(refundSaveRequest);

@@ -4,6 +4,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,5 +51,10 @@ class FranchiseeRepositoryTest {
     boolean isExists = franchiseeRepository.existsByBusinessNumber("1211212121");
     // then
     assertThat(isExists, is(true));
+  }
+
+  @AfterEach
+  public void deleteAll() {
+    franchiseeRepository.deleteAll();
   }
 }

@@ -1,6 +1,7 @@
 package com.tpay.domains.auth.application.dto;
 
 
+import com.tpay.domains.franchisee_applicant.domain.FranchiseeStatus;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -16,4 +17,6 @@ public class EmployeeTokenInfo {
   private String accessToken;
   private String refreshToken;
   private LocalDateTime registeredDate;
+  private Long franchiseeIndex;
+  private FranchiseeStatus franchiseeStatus;
 }
