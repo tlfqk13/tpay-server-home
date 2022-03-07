@@ -2,6 +2,7 @@ package com.tpay.domains.order.domain;
 
 import com.tpay.domains.BaseTimeEntity;
 import com.tpay.domains.customer.domain.CustomerEntity;
+import com.tpay.domains.employee.domain.EmployeeEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.refund.domain.RefundEntity;
 import com.tpay.domains.refund_core.application.dto.RefundProductInfo;
@@ -55,6 +56,10 @@ public class OrderEntity extends BaseTimeEntity {
   @OneToMany(mappedBy = "orderEntity", cascade = CascadeType.PERSIST)
   private List<OrderLineEntity> orderLineEntityList;
 
+  @ManyToOne
+  @JoinColumn(name = "employee_id")
+  private EmployeeEntity employeeEntity;
+
   @Builder
   public OrderEntity(CustomerEntity customerEntity, FranchiseeEntity franchiseeEntity) {
     this.customerEntity = customerEntity;
@@ -66,6 +71,7 @@ public class OrderEntity extends BaseTimeEntity {
   public void initialize() {
     String saleDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
     this.saleDate = saleDate;
+    this.employeeEntity = null;
   }
 
   public OrderEntity addOrderLine(OrderLineEntity orderLineEntity) {
@@ -128,5 +134,9 @@ public class OrderEntity extends BaseTimeEntity {
 
   public void setRefundEntity(RefundEntity refundEntity) {
     this.refundEntity = refundEntity;
+  }
+
+  public void setEmployeeEntity(EmployeeEntity employeeEntity) {
+    this.employeeEntity = employeeEntity;
   }
 }

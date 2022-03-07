@@ -2,6 +2,7 @@ package com.tpay.domains.order.application;
 
 import com.tpay.domains.customer.application.CustomerFindService;
 import com.tpay.domains.customer.domain.CustomerEntity;
+import com.tpay.domains.employee.application.EmployeeFindService;
 import com.tpay.domains.franchisee.application.FranchiseeFindService;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.order.domain.OrderEntity;
@@ -10,9 +11,10 @@ import com.tpay.domains.order.domain.OrderRepository;
 import com.tpay.domains.product.application.ProductFindService;
 import com.tpay.domains.product.domain.ProductEntity;
 import com.tpay.domains.refund.application.dto.RefundSaveRequest;
-import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +25,7 @@ public class OrderSaveService {
   private final CustomerFindService customerFindService;
   private final ProductFindService productFindService;
   private final OrderLineSaveService orderLineSaveService;
+  private final EmployeeFindService employeeFindService;
 
   @Transactional
   public OrderEntity save(RefundSaveRequest request) {
@@ -42,7 +45,8 @@ public class OrderSaveService {
   public OrderEntity save(
       FranchiseeEntity franchiseeEntity,
       CustomerEntity customerEntity,
-      ProductEntity productEntity) {
+      ProductEntity productEntity
+  ) {
 
     OrderEntity orderEntity =
         OrderEntity.builder()
