@@ -48,6 +48,7 @@ public class SignInService {
           .accessToken(employeeTokenInfo.getAccessToken())
           .refreshToken(employeeTokenInfo.getRefreshToken())
           .franchiseeIndex(employeeTokenInfo.getFranchiseeIndex())
+          .franchiseeStatus(employeeTokenInfo.getFranchiseeStatus())
           .signInSelector(EMPLOYEE)
           .build();
     } else {
