@@ -12,15 +12,11 @@ import com.tpay.domains.order.application.OrderSaveService;
 import com.tpay.domains.order.domain.OrderEntity;
 import com.tpay.domains.order.domain.OrderRepository;
 import com.tpay.domains.refund.application.RefundSaveService;
-import com.tpay.domains.refund.domain.RefundEntity;
-import org.junit.Before;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
 
