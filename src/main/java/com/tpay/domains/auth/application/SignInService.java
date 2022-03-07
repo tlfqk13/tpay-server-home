@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
-import static com.tpay.commons.util.SignInSelector.EMPLOYEE;
-import static com.tpay.commons.util.SignInSelector.FRANCHISEE;
+import static com.tpay.commons.util.UserSelector.EMPLOYEE;
+import static com.tpay.commons.util.UserSelector.FRANCHISEE;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +25,7 @@ public class SignInService {
   @Transactional
   public SignInTokenInfo signIn(SignInRequest signInRequest) {
     SignInTokenInfo signInTokenInfo;
-    if (signInRequest.getSignInSelector().equals(FRANCHISEE)) {
+    if (signInRequest.getUserSelector().equals(FRANCHISEE)) {
       FranchiseeTokenInfo franchiseeTokenInfo = franchiseeSignInService.signIn(signInRequest.getBusinessNumber(), signInRequest.getPassword());
       signInTokenInfo = SignInTokenInfo.builder()
           .signUpDate(franchiseeTokenInfo.getSignUpDate())
@@ -36,9 +36,9 @@ public class SignInService {
           .popUp(franchiseeTokenInfo.isPopUp())
           .accessToken(franchiseeTokenInfo.getAccessToken())
           .refreshToken(franchiseeTokenInfo.getRefreshToken())
-          .signInSelector(FRANCHISEE)
+          .userSelector(FRANCHISEE)
           .build();
-    } else if (signInRequest.getSignInSelector().equals(EMPLOYEE)) {
+    } else if (signInRequest.getUserSelector().equals(EMPLOYEE)) {
       EmployeeTokenInfo employeeTokenInfo = employeeSignInService.signIn(signInRequest.getUserId(), signInRequest.getPassword());
       signInTokenInfo = SignInTokenInfo.builder()
           .employeeIndex(employeeTokenInfo.getEmployeeIndex())
@@ -49,7 +49,7 @@ public class SignInService {
           .refreshToken(employeeTokenInfo.getRefreshToken())
           .franchiseeIndex(employeeTokenInfo.getFranchiseeIndex())
           .franchiseeStatus(employeeTokenInfo.getFranchiseeStatus())
-          .signInSelector(EMPLOYEE)
+          .userSelector(EMPLOYEE)
           .build();
     } else {
       throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Parse Failed");

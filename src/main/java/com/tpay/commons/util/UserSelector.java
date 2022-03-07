@@ -1,6 +1,6 @@
 package com.tpay.commons.util;
 
-public enum SignInSelector {
+public enum UserSelector {
   FRANCHISEE,
   EMPLOYEE
 }

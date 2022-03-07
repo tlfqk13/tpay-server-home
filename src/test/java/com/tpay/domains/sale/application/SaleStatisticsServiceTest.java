@@ -99,7 +99,7 @@ public class SaleStatisticsServiceTest {
     orderEntity = orderSaveService.save(refundSaveRequest);
     refundEntity = refundSaveService.save("0000", "123412341234", "99999999999", orderEntity);
 
-    String signInData = "{\"signInSelector\": \"FRANCHISEE\",\"businessNumber\": \"123-33-12345\",\"password\": \"qq123456!!\"}";
+    String signInData = "{\"userSelector\": \"FRANCHISEE\",\"businessNumber\": \"123-33-12345\",\"password\": \"qq123456!!\"}";
 
     MvcResult mvcResult = mockMvc.perform(post("/sign-in")
             .contentType(MediaType.APPLICATION_JSON)
@@ -122,7 +122,7 @@ public class SaleStatisticsServiceTest {
     param.add("dateSelector", "MONTH");
     System.out.println();
     Optional<FranchiseeEntity> franchiseeEntity = franchiseeRepository.findById(1L);
-    Assertions.assertThat(franchiseeEntity.get().getStoreName()).isEqualTo("SuccessMode");
+    Assertions.assertThat(franchiseeEntity.get().getStoreName()).isEqualTo("이십오일테스트");
 
 
     mockMvc.perform(get("/sales/statistics/1")

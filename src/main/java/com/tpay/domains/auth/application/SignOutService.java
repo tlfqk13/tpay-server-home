@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
-import static com.tpay.commons.util.SignInSelector.EMPLOYEE;
-import static com.tpay.commons.util.SignInSelector.FRANCHISEE;
+import static com.tpay.commons.util.UserSelector.EMPLOYEE;
+import static com.tpay.commons.util.UserSelector.FRANCHISEE;
 
 @Service
 @RequiredArgsConstructor
@@ -23,10 +23,10 @@ public class SignOutService {
 
   @Transactional
   public String signOut(SignOutRequest signOutRequest) {
-    if (signOutRequest.getSignInSelector().equals(FRANCHISEE) && signOutRequest.getFranchiseeIndex() != null) {
+    if (signOutRequest.getUserSelector().equals(FRANCHISEE) && signOutRequest.getFranchiseeIndex() != null) {
       franchiseeTokenRepository.deleteByFranchiseeEntityId(signOutRequest.getFranchiseeIndex());
       return "FRANCHISEE Log out";
-    } else if (signOutRequest.getSignInSelector().equals(EMPLOYEE) && signOutRequest.getEmployeeIndex() != null) {
+    } else if (signOutRequest.getUserSelector().equals(EMPLOYEE) && signOutRequest.getEmployeeIndex() != null) {
       employeeTokenRepository.deleteByEmployeeEntity_Id(signOutRequest.getEmployeeIndex());
       return "EMPLOYEE Log out";
     } else {

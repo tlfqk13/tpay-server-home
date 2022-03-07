@@ -1,6 +1,6 @@
 package com.tpay.domains.auth.application.dto;
 
-import com.tpay.commons.util.SignInSelector;
+import com.tpay.commons.util.UserSelector;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeStatus;
 import lombok.*;
 
@@ -30,5 +30,5 @@ public class SignInTokenInfo {
   //3. common
   private String accessToken;
   private String refreshToken;
-  private SignInSelector signInSelector;
+  private UserSelector userSelector;
 }

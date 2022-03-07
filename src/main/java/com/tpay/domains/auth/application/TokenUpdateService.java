@@ -17,8 +17,8 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
-import static com.tpay.commons.util.SignInSelector.EMPLOYEE;
-import static com.tpay.commons.util.SignInSelector.FRANCHISEE;
+import static com.tpay.commons.util.UserSelector.EMPLOYEE;
+import static com.tpay.commons.util.UserSelector.FRANCHISEE;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +34,7 @@ public class TokenUpdateService {
     AuthToken refreshToken = jwtUtils.convertAuthToken(signInTokenInfo.getRefreshToken());
     Long parsedIndex;
 
-    if (signInTokenInfo.getSignInSelector().equals(FRANCHISEE)) {
+    if (signInTokenInfo.getUserSelector().equals(FRANCHISEE)) {
 
       FranchiseeTokenEntity franchiseeTokenEntity =
           franchiseeTokenRepository
@@ -60,9 +60,9 @@ public class TokenUpdateService {
           .popUp(signInTokenInfo.isPopUp())
           .accessToken(accessToken.getValue())
           .refreshToken(signInTokenInfo.getRefreshToken())
-          .signInSelector(FRANCHISEE)
+          .userSelector(FRANCHISEE)
           .build();
-    } else if (signInTokenInfo.getSignInSelector().equals(EMPLOYEE)) {
+    } else if (signInTokenInfo.getUserSelector().equals(EMPLOYEE)) {
       EmployeeEntity employeeEntity = employeeFindService.findById(signInTokenInfo.getEmployeeIndex())
           .orElseThrow(() -> new IllegalArgumentException("Invalid Employee"));
       EmployeeTokenEntity employeeTokenEntity = employeeTokenRepository.findByEmployeeEntity(employeeEntity)
@@ -85,7 +85,7 @@ public class TokenUpdateService {
           .registeredDate(signInTokenInfo.getRegisteredDate())
           .accessToken(accessToken.getValue())
           .refreshToken(signInTokenInfo.getRefreshToken())
-          .signInSelector(EMPLOYEE)
+          .userSelector(EMPLOYEE)
           .build();
     }
     else {
