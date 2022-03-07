@@ -1,11 +1,11 @@
 package com.tpay.domains.auth.application.dto;
 
-import com.tpay.commons.util.SignInSelector;
+import com.tpay.commons.util.UserSelector;
 import lombok.Getter;
 
 @Getter
 public class SignInRequest {
-  private SignInSelector signInSelector;
+  private UserSelector userSelector;
   private String businessNumber;
   private String userId;
   private String password;

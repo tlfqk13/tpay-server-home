@@ -3,7 +3,9 @@ package com.tpay.domains.franchisee.application;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
+import com.tpay.domains.franchisee.application.dto.FranchiseeSignUpRequest;
 import com.tpay.domains.franchisee.application.dto.PasswordChangeRequest;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeRepository;
@@ -21,40 +23,50 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 @SpringBootTest
 public class PasswordResetTest {
   @Autowired
-  FranchiseeRepository franchiseeRepository;
+  FranchiseeSignUpService franchiseeSignUpService;
   @Autowired
   PasswordResetService passwordResetService;
   @Autowired
   PasswordEncoder passwordEncoder;
+
+  @Autowired
+  FranchiseeRepository franchiseeRepository;
+
   FranchiseeEntity franchiseeEntity;
   Long franchiseeId;
   String businessNumber;
   FranchiseeEntity savedFranchiseeEntity;
 
+  @Autowired
+  ObjectMapper objectMapper;
 
   @BeforeEach
   void setup() {
-    franchiseeRepository.deleteAll();
-    franchiseeEntity =
-        FranchiseeEntity.builder()
-            .businessNumber("123-33-12345")
-            .storeName("SuccessMode")
-            .storeAddressNumber("00011")
-            .storeAddressBasic("안양시")
-            .storeAddressDetail("평촌동")
-            .sellerName("Kim")
-            .storeTel("01012341234")
-            .productCategory("잡화")
-            .password("qq123456!!")
-            .signboard("간판")
-            .storeNumber("031-234-2345")
-            .email("abc@defg.co.kr")
-            .isTaxRefundShop("false")
-            .build();
-    FranchiseeEntity save = franchiseeRepository.save(franchiseeEntity);
-    savedFranchiseeEntity = save;
-    franchiseeId = save.getId();
-    businessNumber = save.getBusinessNumber();
+    String json = "{\n" +
+        "    \"sellerName\": \"동시성테스트\",\n" +
+        "    \"storeTel\": \"010-0101-1010\",\n" +
+        "    \"businessNumber\": \"333-33-33333\",\n" +
+        "    \"email\": \"dondsi@sungtae.st\",\n" +
+        "    \"password\": \"qq123456!!\",\n" +
+        "\n" +
+        "    \"storeName\": \"이십오일테스트\",\n" +
+        "    \"signboard\": \"이십오일간판명\",\n" +
+        "    \"storeAddressNumber\": \"01133\",\n" +
+        "    \"storeAddressBasic\": \"기본 안양 주소\",\n" +
+        "    \"storeAddressDetail\": \"상세 안양 302 주소\",\n" +
+        "    \"productCategory\": \"아이맥\",\n" +
+        "    \"storeNumber\": \"123-5678-6666\",\n" +
+        "    \"isTaxRefundShop\":\"Y\"\n" +
+        "}";
+    try {
+      FranchiseeSignUpRequest franchiseeSignUpRequest = objectMapper.readValue(json, FranchiseeSignUpRequest.class);
+      franchiseeSignUpService.signUp(franchiseeSignUpRequest);
+    } catch (Exception e) {
+
+    }
+    savedFranchiseeEntity = franchiseeRepository.findById(1L).get();
+    franchiseeId = savedFranchiseeEntity.getId();
+    businessNumber = savedFranchiseeEntity.getBusinessNumber();
   }
 
   @Test
@@ -77,9 +89,9 @@ public class PasswordResetTest {
   @Test
   public void 본인인증_성공() {
     //given
-    String businessNumber = "1-23331234-5"; //이상하게 줘도 되어야 함
-    String name = "Kim";
-    String phoneNumber = "010-123412-34"; //이상해게 줘도 되어야 함
+    String businessNumber = "3-33333333-3"; //이상하게 줘도 되어야 함
+    String name = "동시성테스트";
+    String phoneNumber = "010-010110-10"; //이상해게 줘도 되어야 함
 
     //when
     boolean result = passwordResetService.selfCertification(businessNumber, name, phoneNumber);
@@ -108,7 +120,7 @@ public class PasswordResetTest {
   @Test
   public void 로그인전_재설정_성공() throws JsonProcessingException {
     //given
-    String businessNumber = "123-33-12345";
+    String businessNumber = "333-33-33333";
     String json = "{\n" +
         " \"newPassword\": \"qq123456!!\",\n" +
         " \"newPasswordCheck\": \"qq123456!!\"\n" +
@@ -123,7 +135,7 @@ public class PasswordResetTest {
   @Test
   public void 재설정후_조회성공() throws JsonProcessingException{
     //given
-    String businessNumber = "123-33-12345";
+    String businessNumber = "333-33-33333";
     String json = "{\n" +
         " \"newPassword\": \"abcde123!!\",\n" +
         " \"newPasswordCheck\": \"abcde123!!\"\n" +
