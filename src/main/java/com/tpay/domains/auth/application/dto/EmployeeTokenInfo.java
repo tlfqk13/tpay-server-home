@@ -16,4 +16,5 @@ public class EmployeeTokenInfo {
   private String accessToken;
   private String refreshToken;
   private LocalDateTime registeredDate;
+  private Long franchiseeIndex;
 }

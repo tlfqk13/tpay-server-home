@@ -38,6 +38,7 @@ public class EmployeeSignInService {
         .accessToken(accessToken.getValue())
         .refreshToken(refreshToken.getValue())
         .registeredDate(employeeEntity.getCreatedDate())
+        .franchiseeIndex(employeeEntity.getFranchiseeEntity().getId())
         .build();
 
 
