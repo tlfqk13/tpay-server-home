@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 public class PointFindService {
 
   private final PointRepository pointRepository;
+  private final PointsUpdateService pointsUpdateService;
 
   public PointFindResponse findPoints(
       Long franchiseeIndex, Integer week, Integer month, Integer page, Integer size) {
@@ -59,7 +60,8 @@ public class PointFindService {
 
   public PointTotalResponseInterface findPointsTotal(Long franchiseeIndex) {
     LocalDate disappearDate = LocalDate.now().minusYears(5);
-    LocalDate scheduledDate = LocalDate.now().minusWeeks(2).minusDays(1);
+    LocalDate scheduledDate = LocalDate.now().minusWeeks(2);
+    System.out.println(pointsUpdateService.updateStatus(franchiseeIndex, scheduledDate));
     return pointRepository.findPointsTotal(franchiseeIndex, disappearDate, scheduledDate);
   }
 }

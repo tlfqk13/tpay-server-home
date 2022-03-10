@@ -31,7 +31,7 @@ public class PointSaveService {
             .createdDate(LocalDateTime.now())
             .signType(SignType.POSITIVE)
             .change(points)
-            .pointStatus(PointStatus.SAVE)
+            .pointStatus(PointStatus.SCHEDULED)
             .balance(franchiseeEntity.getBalance())
             .franchiseeEntity(franchiseeEntity)
             .orderEntity(orderEntity)
