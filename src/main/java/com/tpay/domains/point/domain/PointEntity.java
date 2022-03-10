@@ -68,4 +68,8 @@ public class PointEntity {
     this.orderEntity = orderEntity;
     this.franchiseeEntity = franchiseeEntity;
   }
+
+  public void updateStatus() {
+    this.pointStatus = PointStatus.SAVE;
+  }
 }

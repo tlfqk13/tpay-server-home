@@ -91,7 +91,7 @@ public class FranchiseeCmsService {
       row1.getCell(5).setCellValue("수신자만 바뀌었으면 성공");
       row.getCell(5).setCellValue("기존것도 바뀌는지 테스트"); //실패
       row.getCell(11).setCellValue("가맹점번호 : " + franchiseeIndex + "가 입력되었습니다.");
-      // TODO: 2022/02/03 엑셀파일 일부 write 후 저장까지 테스트 완료 포멧에 맞게 입력하는 로직 구현할 것
+      // TODO: 2022/02/03 엑셀파일 일부 write 후 저장까지 테스트 완료 포멧에 맞게 입력하는 로직 정해지면 구현할 것
 //      FileOutputStream fileOutputStream = new FileOutputStream("/Users/sunba/excelExportTest.xlsx", false);
 //      xssfWorkbook.write(fileOutputStream);
 //      fileOutputStream.flush();

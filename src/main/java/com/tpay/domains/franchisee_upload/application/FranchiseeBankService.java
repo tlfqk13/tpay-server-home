@@ -37,7 +37,7 @@ public class FranchiseeBankService {
   public FranchiseeBankInfo findMyAccount(Long franchiseeIndex) {
     FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
     FranchiseeBankEntity franchiseeBankEntity = franchiseeBankFindService.findByFranchiseeEntity(franchiseeEntity);
-    return FranchiseeBankInfo.of(franchiseeBankEntity);
+    return FranchiseeBankInfo.of(franchiseeBankEntity,franchiseeEntity);
   }
 
   @Transactional
