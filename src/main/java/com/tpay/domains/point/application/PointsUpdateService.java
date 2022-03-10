@@ -8,6 +8,7 @@ import com.tpay.domains.point.domain.PointRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,7 @@ public class PointsUpdateService {
 
   private final PointRepository pointRepository;
 
+  @Transactional
   public String updateStatus(Long franchiseeIndex, LocalDate scheduledDate) {
     Optional<List<StatusUpdateResponseInterface>> needUpdateEntity = pointRepository.findNeedUpdateEntity(franchiseeIndex, scheduledDate);
     if (needUpdateEntity.isEmpty()) {
