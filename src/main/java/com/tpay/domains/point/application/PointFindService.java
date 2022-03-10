@@ -2,16 +2,18 @@ package com.tpay.domains.point.application;
 
 import com.tpay.domains.point.application.dto.PointFindResponse;
 import com.tpay.domains.point.application.dto.PointInfo;
+import com.tpay.domains.point.application.dto.PointTotalResponseInterface;
 import com.tpay.domains.point.domain.PointEntity;
 import com.tpay.domains.point.domain.PointRepository;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -53,5 +55,11 @@ public class PointFindService {
         .endDate(endDate)
         .pointInfoList(pointInfoList)
         .build();
+  }
+
+  public PointTotalResponseInterface findPointsTotal(Long franchiseeIndex) {
+    LocalDate disappearDate = LocalDate.now().minusYears(5);
+    LocalDate scheduledDate = LocalDate.now().minusWeeks(2).minusDays(1);
+    return pointRepository.findPointsTotal(franchiseeIndex, disappearDate, scheduledDate);
   }
 }
