@@ -24,7 +24,7 @@ public class PointSaveService {
     FranchiseeEntity franchiseeEntity = orderEntity.getFranchiseeEntity();
 
     long points = orderEntity.getPoints();
-    franchiseeEntity.changeBalance(SignType.POSITIVE, points);
+//    franchiseeEntity.changeBalance(SignType.POSITIVE, points);
 
     PointEntity pointEntity =
         PointEntity.builder()
