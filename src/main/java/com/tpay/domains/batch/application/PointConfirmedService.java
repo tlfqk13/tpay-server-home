@@ -1,4 +1,4 @@
-package com.tpay.domains.point.application;
+package com.tpay.domains.batch.application;
 
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
@@ -25,16 +25,18 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class PointsUpdateService {
+public class PointConfirmedService {
 
   private final PointRepository pointRepository;
   private final PointScheduledRepository pointScheduledRepository;
   private final OrderFindService orderFindService;
 
   @Transactional
-  public String updateStatus(Long franchiseeIndex, LocalDate scheduledDate) {
-    Optional<List<StatusUpdateResponseInterface>> needUpdateEntity = pointScheduledRepository.findNeedUpdateEntity(franchiseeIndex, scheduledDate);
+  public String updateStatus() {
+    LocalDate scheduledDate = LocalDate.now().minusWeeks(2);
+    Optional<List<StatusUpdateResponseInterface>> needUpdateEntity = pointScheduledRepository.findNeedUpdateEntity(scheduledDate);
     if (needUpdateEntity.get().isEmpty()) {
+      System.out.println("Nothing to Update Status");
       return "Nothing to Update Status";
     } else {
 
@@ -47,6 +49,7 @@ public class PointsUpdateService {
           .forEach(PointScheduledEntity::updateStatus);
 
       // 프랜차이즈 balance 변경
+      // TODO: 2022/03/15 기능 추가에 의해 상태변경과 balance 로직이 따로 구현되어있으나, 추후 리팩토링 요망
       List<Long> saveTargetList = new ArrayList<>();
       needUpdateEntity.get().forEach(i -> saveTargetList.add(i.getOrderId()));
       List<OrderEntity> orderEntityList = saveTargetList.stream().map(orderFindService::findById)
@@ -67,8 +70,7 @@ public class PointsUpdateService {
         pointRepository.save(pointEntity);
 
       }
-
-
+      System.out.println(targetList.size() + "Entity was Updated");
       return targetList.size() + "Entity was Updated";
     }
   }
