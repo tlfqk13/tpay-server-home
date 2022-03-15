@@ -8,8 +8,8 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class PointWithdrawalResponse {
-  private String amount;
+  private Long amount;
   private String bankName;
   private String accountNumber;
-  private String restPoint;
+  private Long restPoint;
 }

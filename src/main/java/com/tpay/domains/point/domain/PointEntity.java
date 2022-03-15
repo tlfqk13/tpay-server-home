@@ -75,4 +75,8 @@ public class PointEntity {
   public void updateStatus() {
     this.pointStatus = PointStatus.SAVE;
   }
+
+  public void updateWithdrawalCheck(Long amount) {
+    this.withdrawalCheck -= amount;
+  }
 }

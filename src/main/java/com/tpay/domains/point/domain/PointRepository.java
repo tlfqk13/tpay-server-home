@@ -2,19 +2,16 @@ package com.tpay.domains.point.domain;
 
 import com.tpay.domains.point.application.dto.PointTotalResponseInterface;
 import com.tpay.domains.point.application.dto.StatusUpdateResponseInterface;
-import org.springframework.data.domain.Pageable;
+import com.tpay.domains.point.application.dto.WithdrawalFindNextInterface;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 public interface PointRepository extends JpaRepository<PointEntity, Long> {
-  List<PointEntity> findAllByFranchiseeEntityIdAndCreatedDateBetween(
-      Long franchiseeId, LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
 
   @Query(value = "select psf.*, ifNull(dis.disappearPoint,0) as disappearPoint\n" +
       "from (\n" +
@@ -48,4 +45,12 @@ public interface PointRepository extends JpaRepository<PointEntity, Long> {
       "        and point_status = 'SCHEDULED'", nativeQuery = true)
   Optional<List<StatusUpdateResponseInterface>> findNeedUpdateEntity(Long franchiseeIndex, LocalDate scheduledDate);
 
+
+  @Query(value = "select id, franchisee_id, withdrawal_check as withdrawalCheck\n" +
+      "from points\n" +
+      "where franchisee_id = :franchiseeIndex\n" +
+      "  and withdrawal_check != 0 and point_status = 'SAVE'\n" +
+      "Order by id\n" +
+      "limit 0, 1", nativeQuery = true)
+  WithdrawalFindNextInterface findNext(@Param("franchiseeIndex") Long franchiseeIndex);
 }

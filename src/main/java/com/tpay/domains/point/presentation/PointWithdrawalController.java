@@ -17,10 +17,10 @@ public class PointWithdrawalController {
   private final PointWithdrawalService pointWithdrawalService;
 
   @PostMapping("/points/franchisee/{franchiseeIndex}")
-  public void pointWithdrawal(
+  public ResponseEntity<PointWithdrawalResponse> pointWithdrawal(
       @PathVariable Long franchiseeIndex,
       @RequestBody PointWithdrawalRequest pointWithdrawalRequest) {
-    pointWithdrawalService.pointWithdrawal(franchiseeIndex,pointWithdrawalRequest);
-    // TODO: 2022/03/11 PointWithdrawalResponse 리턴하는 로직 만들 것
+    PointWithdrawalResponse pointWithdrawalResponse = pointWithdrawalService.pointWithdrawal(franchiseeIndex, pointWithdrawalRequest);
+    return ResponseEntity.ok(pointWithdrawalResponse);
   }
 }
