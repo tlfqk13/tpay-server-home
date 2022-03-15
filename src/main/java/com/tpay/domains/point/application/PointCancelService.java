@@ -24,7 +24,7 @@ public class PointCancelService {
     FranchiseeEntity franchiseeEntity = orderEntity.getFranchiseeEntity();
 
     long points = orderEntity.getPoints();
-    franchiseeEntity.changeBalance(SignType.NEGATIVE, points);
+//    franchiseeEntity.changeBalance(SignType.NEGATIVE, points);
     PointEntity pointEntity =
         PointEntity.builder()
             .createdDate(LocalDateTime.now())

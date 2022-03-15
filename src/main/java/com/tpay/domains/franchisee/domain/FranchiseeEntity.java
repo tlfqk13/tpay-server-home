@@ -136,6 +136,14 @@ public class FranchiseeEntity extends BaseTimeEntity {
     return this;
   }
 
+  public FranchiseeEntity withdrawalBalance(long amount){
+    this.balance -= amount;
+    if( balance < 0 ){
+      throw new IllegalArgumentException("Balance should not ne negative.");
+    }
+    return this;
+  }
+
   public FranchiseeEntity resetPassword(String password) {
     this.password = password;
     return this;

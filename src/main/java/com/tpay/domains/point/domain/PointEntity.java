@@ -2,22 +2,10 @@ package com.tpay.domains.point.domain;
 
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.order.domain.OrderEntity;
+import lombok.*;
+
+import javax.persistence.*;
 import java.time.LocalDateTime;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -43,6 +31,11 @@ public class PointEntity {
 
   private long balance;
 
+  private long withdrawalCheck;
+
+  @Column(length = 1)
+  private Boolean isRead;
+
   @ManyToOne
   @JoinColumn(name = "order_id")
   private OrderEntity orderEntity;
@@ -67,9 +60,15 @@ public class PointEntity {
     this.balance = balance;
     this.orderEntity = orderEntity;
     this.franchiseeEntity = franchiseeEntity;
+    this.withdrawalCheck = change;
+    this.isRead = false;
   }
 
   public void updateStatus() {
     this.pointStatus = PointStatus.SAVE;
+  }
+
+  public void updateWithdrawalCheck(Long amount) {
+    this.withdrawalCheck -= amount;
   }
 }

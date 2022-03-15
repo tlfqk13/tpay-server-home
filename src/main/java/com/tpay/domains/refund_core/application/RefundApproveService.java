@@ -12,6 +12,8 @@ import com.tpay.domains.order.application.OrderSaveService;
 import com.tpay.domains.order.domain.OrderEntity;
 import com.tpay.domains.point.application.PointSaveService;
 import com.tpay.domains.point.domain.PointRepository;
+import com.tpay.domains.point.domain.SignType;
+import com.tpay.domains.point_scheduled.application.PointScheduledChangeService;
 import com.tpay.domains.refund.application.RefundSaveService;
 import com.tpay.domains.refund.application.dto.RefundSaveRequest;
 import com.tpay.domains.refund.domain.RefundEntity;
@@ -34,7 +36,7 @@ public class RefundApproveService {
 
   private final OrderSaveService orderSaveService;
   private final RefundSaveService refundSaveService;
-  private final PointSaveService pointSaveService;
+  private final PointScheduledChangeService pointScheduledChangeService;
   private final FranchiseeFindService franchiseeFindService;
   private final WebClient.Builder builder;
 
@@ -91,7 +93,7 @@ public class RefundApproveService {
             refundResponse.getTakeoutNumber(),
             orderEntity);
 
-    pointSaveService.save(refundEntity);
+    pointScheduledChangeService.change(refundEntity, SignType.POSITIVE);
     franchiseeEntity.isRefundOnce();
     return refundResponse;
   }

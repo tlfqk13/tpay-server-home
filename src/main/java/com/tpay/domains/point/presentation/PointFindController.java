@@ -1,6 +1,8 @@
 package com.tpay.domains.point.presentation;
 
+import com.tpay.commons.util.WithdrawalStatus;
 import com.tpay.domains.point.application.PointFindService;
+import com.tpay.domains.point.application.dto.AdminPointFindResponseInterface;
 import com.tpay.domains.point.application.dto.PointFindResponse;
 import com.tpay.domains.point.application.dto.PointTotalResponseInterface;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +11,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,5 +38,14 @@ public class PointFindController {
   public ResponseEntity<PointTotalResponseInterface> findPointsTotal(@PathVariable Long franchiseeIndex) {
     PointTotalResponseInterface pointTotalResponseInterface = pointFindService.findPointsTotal(franchiseeIndex);
     return ResponseEntity.ok(pointTotalResponseInterface);
+  }
+
+  @GetMapping("/admin/points/{isAll}/{withdrawalStatus}")
+  public ResponseEntity<List<AdminPointFindResponseInterface>> findPointsAdmin(
+      @PathVariable Boolean isAll,
+      @PathVariable WithdrawalStatus withdrawalStatus
+  ) {
+    List<AdminPointFindResponseInterface> pointsAdmin = pointFindService.findPointsAdmin(isAll, withdrawalStatus);
+    return ResponseEntity.ok(pointsAdmin);
   }
 }

@@ -7,6 +7,8 @@ import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.domains.customer.application.CustomerFindService;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.point.application.PointCancelService;
+import com.tpay.domains.point.domain.SignType;
+import com.tpay.domains.point_scheduled.application.PointScheduledChangeService;
 import com.tpay.domains.refund.application.RefundFindService;
 import com.tpay.domains.refund.domain.RefundEntity;
 import com.tpay.domains.refund_core.application.dto.RefundCancelRequest;
@@ -25,7 +27,7 @@ public class RefundCancelService {
 
   private final CustomerFindService customerFindService;
   private final RefundFindService refundFindService;
-  private final PointCancelService pointCancelService;
+  private final PointScheduledChangeService pointScheduledChangeService;
   private final WebClient.Builder builder;
 
   @Transactional
@@ -52,7 +54,7 @@ public class RefundCancelService {
             .block();
 
     refundEntity.updateCancel(refundResponse.getResponseCode());
-    pointCancelService.cancel(refundEntity);
+    pointScheduledChangeService.change(refundEntity, SignType.NEGATIVE);
 
     return refundResponse;
   }
