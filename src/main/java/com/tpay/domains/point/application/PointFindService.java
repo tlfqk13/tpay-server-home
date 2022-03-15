@@ -1,11 +1,11 @@
 package com.tpay.domains.point.application;
 
-import com.tpay.domains.batch.application.PointConfirmedService;
 import com.tpay.domains.point.application.dto.PointFindResponse;
 import com.tpay.domains.point.application.dto.PointInfo;
 import com.tpay.domains.point.application.dto.PointTotalResponseInterface;
-import com.tpay.domains.point.domain.PointEntity;
 import com.tpay.domains.point.domain.PointRepository;
+import com.tpay.domains.point_scheduled.domain.PointScheduledEntity;
+import com.tpay.domains.point_scheduled.domain.PointScheduledRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class PointFindService {
 
   private final PointRepository pointRepository;
-  private final PointConfirmedService pointConfirmedService;
+  private final PointScheduledRepository pointScheduledRepository;
 
   public PointFindResponse findPoints(
       Long franchiseeIndex, Integer week, Integer month, Integer page, Integer size) {
@@ -31,26 +31,27 @@ public class PointFindService {
 
     PageRequest pageRequest = PageRequest.of(page, size, Sort.by("createdDate").descending());
 
-    List<PointEntity> pointEntityList =
-        pointRepository.findAllByFranchiseeEntityIdAndCreatedDateBetween(
+    List<PointScheduledEntity> pointScheduledEntityList =
+        pointScheduledRepository.findAllByFranchiseeEntityIdAndCreatedDateBetween(
             franchiseeIndex, startDate.atStartOfDay(), endDate.atStartOfDay(), pageRequest);
 
     List<PointInfo> pointInfoList =
-        pointEntityList.stream()
+        pointScheduledEntityList.stream()
             .map(
-                pointEntity -> {
+                pointScheduledEntity -> {
                   String createdDateAsString =
-                      pointEntity
+                      pointScheduledEntity
                           .getCreatedDate()
                           .format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH.mm.ss"));
                   return PointInfo.builder()
                       .datetime(createdDateAsString)
-                      .pointStatus(pointEntity.getPointStatus())
-                      .totalAmount(pointEntity.getOrderEntity().getTotalAmount())
-                      .value(pointEntity.getChange())
+                      .pointStatus(pointScheduledEntity.getPointStatus())
+                      .totalAmount(pointScheduledEntity.getOrderEntity().getTotalAmount())
+                      .value(pointScheduledEntity.getValue())
                       .build();
                 })
             .collect(Collectors.toList());
+
 
     return PointFindResponse.builder()
         .startDate(startDate)
