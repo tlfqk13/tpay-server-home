@@ -16,12 +16,12 @@ public interface PointRepository extends JpaRepository<PointEntity, Long> {
   List<PointEntity> findAllByFranchiseeEntityIdAndCreatedDateBetween(
       Long franchiseeId, LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
 
-  @Query(value = "select psf.*, dis.disappearPoint\n" +
+  @Query(value = "select psf.*, ifNull(dis.disappearPoint,0) as disappearPoint\n" +
       "from (\n" +
       "         select franchisee_id\n" +
       "              , scheduledPoint\n" +
       "              , balance as TotalPoint\n" +
-      "              , franchisee_status\n" +
+      "              , franchisee_status as franchiseeStatus\n" +
       "         from (select franchisee_id\n" +
       "                    , cast(sum(if(point_status = 'SCHEDULED', value, 0)) as integer) as scheduledPoint\n" +
       "               from point_scheduled\n" +
