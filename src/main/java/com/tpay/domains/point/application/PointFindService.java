@@ -62,7 +62,6 @@ public class PointFindService {
 
   public PointTotalResponseInterface findPointsTotal(Long franchiseeIndex) {
     LocalDate disappearDate = LocalDate.now().minusYears(5);
-    LocalDate scheduledDate = LocalDate.now().minusWeeks(2);
-    return pointRepository.findPointsTotal(franchiseeIndex, disappearDate, scheduledDate);
+    return pointRepository.findPointsTotal(franchiseeIndex, disappearDate);
   }
 }

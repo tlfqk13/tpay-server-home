@@ -16,17 +16,29 @@ public interface PointRepository extends JpaRepository<PointEntity, Long> {
   List<PointEntity> findAllByFranchiseeEntityIdAndCreatedDateBetween(
       Long franchiseeId, LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
 
-  @Query(value = "select cast(sum(if(created_date > :scheduledDate, change_value, 0)) as integer)                          as scheduledPoint,\n" +
-      "       cast(sum(if(created_date < :disappearDate, change_value, 0)) as integer)                          as disappearPoint,\n" +
-      "       cast(sum(if(created_date between :disappearDate and :scheduledDate, change_value, 0)) as integer) as totalPoint,\n" +
-      "       franchisee_status as franchiseeStatus\n" +
-      "from (select *\n" +
-      "      from points\n" +
-      "      where order_id not in (select distinct order_id from points where point_status = 'CANCEL')) as points\n" +
-      "         left join (select franchisee_id as fi, franchisee_status from franchisee_applicant) as fa\n" +
-      "                   on points.franchisee_id = fa.fi\n" +
-      "where franchisee_id = :franchiseeIndex", nativeQuery = true)
-  PointTotalResponseInterface findPointsTotal(@Param("franchiseeIndex") Long franchiseeIndex, @Param("disappearDate") LocalDate disappearDate, @Param("scheduledDate") LocalDate scheduledDate);
+  @Query(value = "select psf.*, dis.disappearPoint\n" +
+      "from (\n" +
+      "         select franchisee_id\n" +
+      "              , scheduledPoint\n" +
+      "              , balance as TotalPoint\n" +
+      "              , franchisee_status\n" +
+      "         from (select franchisee_id\n" +
+      "                    , cast(sum(if(point_status = 'SCHEDULED', value, 0)) as integer) as scheduledPoint\n" +
+      "               from point_scheduled\n" +
+      "               where franchisee_id = :franchiseeIndex) ps\n" +
+      "                  left join (select f.id, f.balance, fa.franchisee_status\n" +
+      "                             from franchisee f\n" +
+      "                                      left join franchisee_applicant fa on f.id = fa.franchisee_id) f\n" +
+      "                            on ps.franchisee_id = f.id\n" +
+      "     ) psf\n" +
+      "         left join\n" +
+      "     (\n" +
+      "         select franchisee_id, sum(withdrawal_check) as disappearPoint\n" +
+      "         from points\n" +
+      "         where created_date < :disappearDate\n" +
+      "           and franchisee_id = :franchiseeIndex\n" +
+      "     ) dis on psf.franchisee_id = dis.franchisee_id", nativeQuery = true)
+  PointTotalResponseInterface findPointsTotal(@Param("franchiseeIndex") Long franchiseeIndex, @Param("disappearDate") LocalDate disappearDate);
 
 
   @Query(value = "select id\n" +

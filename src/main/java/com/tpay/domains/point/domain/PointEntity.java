@@ -43,6 +43,8 @@ public class PointEntity {
 
   private long balance;
 
+  private long withdrawalCheck;
+
   @ManyToOne
   @JoinColumn(name = "order_id")
   private OrderEntity orderEntity;
@@ -67,6 +69,7 @@ public class PointEntity {
     this.balance = balance;
     this.orderEntity = orderEntity;
     this.franchiseeEntity = franchiseeEntity;
+    this.withdrawalCheck = change;
   }
 
   public void updateStatus() {
