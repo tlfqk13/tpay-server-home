@@ -13,19 +13,17 @@ import java.util.Optional;
 
 public interface PointRepository extends JpaRepository<PointEntity, Long> {
 
-  @Query(value = "select psf.*, ifNull(dis.disappearPoint,0) as disappearPoint\n" +
+  @Query(value = "select psf.*, ifNull(dis.disappearPoint, 0) as disappearPoint\n" +
       "from (\n" +
       "         select franchisee_id\n" +
-      "              , scheduledPoint\n" +
-      "              , balance as TotalPoint\n" +
-      "              , franchisee_status as franchiseeStatus\n" +
+      "              , ifNull(scheduledPoint, 0) as scheduledPoint\n" +
+      "              , ifNull(balance, 0)        as TotalPoint\n" +
       "         from (select franchisee_id\n" +
       "                    , cast(sum(if(point_status = 'SCHEDULED', value, 0)) as integer) as scheduledPoint\n" +
       "               from point_scheduled\n" +
       "               where franchisee_id = :franchiseeIndex) ps\n" +
-      "                  left join (select f.id, f.balance, fa.franchisee_status\n" +
-      "                             from franchisee f\n" +
-      "                                      left join franchisee_applicant fa on f.id = fa.franchisee_id) f\n" +
+      "                  left join (select id, balance\n" +
+      "                             from franchisee) f\n" +
       "                            on ps.franchisee_id = f.id\n" +
       "     ) psf\n" +
       "         left join\n" +
