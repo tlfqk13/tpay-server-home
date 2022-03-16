@@ -8,13 +8,10 @@ import com.tpay.domains.franchisee_applicant.application.FranchiseeApplicantFind
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
 import com.tpay.domains.franchisee_upload.application.FranchiseeBankFindService;
 import com.tpay.domains.franchisee_upload.domain.FranchiseeBankEntity;
-import com.tpay.domains.point.application.dto.AdminPointFindResponseInterface;
-import com.tpay.domains.point.application.dto.PointFindResponse;
-import com.tpay.domains.point.application.dto.PointInfo;
-import com.tpay.domains.point.application.dto.PointTotalResponseInterface;
+import com.tpay.domains.point.application.dto.*;
 import com.tpay.domains.point.domain.PointEntity;
 import com.tpay.domains.point.domain.PointRepository;
-import com.tpay.domains.point.application.dto.PointFindDetailResponse;
+import com.tpay.domains.point.domain.PointStatus;
 import com.tpay.domains.point_scheduled.domain.PointScheduledEntity;
 import com.tpay.domains.point_scheduled.domain.PointScheduledRepository;
 import lombok.RequiredArgsConstructor;
@@ -67,7 +64,20 @@ public class PointFindService {
                 })
             .collect(Collectors.toList());
 
+    List<PointEntity> pointEntityList = pointRepository.findAllByFranchiseeEntityIdAndCreatedDateBetweenAndPointStatus(franchiseeIndex, startDate.atStartOfDay(), endDate.atStartOfDay(), pageRequest, PointStatus.WITHDRAW);
+    List<PointInfo> pointInfoList1 = pointEntityList.stream()
+        .map(pointEntity -> {
+          String createdDateAsString = pointEntity.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH.mm.ss"));
+          return PointInfo.builder()
+              .datetime(createdDateAsString)
+              .pointStatus(pointEntity.getPointStatus())
+              .value(pointEntity.getChange())
+              .build();
+        })
+        .collect(Collectors.toList());
 
+    pointInfoList.addAll(pointInfoList1);
+    pointInfoList.sort(new PointComparator());
     return PointFindResponse.builder()
         .startDate(startDate)
         .endDate(endDate)
@@ -132,7 +142,7 @@ public class PointFindService {
         .requestedDate(pointEntity.getCreatedDate())
         .pointStatus(pointEntity.getPointStatus())
         //역산해서 추출하는 것임
-        .currentPoint(pointEntity.getBalance()+pointEntity.getChange())
+        .currentPoint(pointEntity.getBalance() + pointEntity.getChange())
         .amount(pointEntity.getChange())
         .afterPayment(pointEntity.getBalance())
         .isReadTPoint(pointEntity.getIsRead())
@@ -141,7 +151,6 @@ public class PointFindService {
         .accountNumber(franchiseeBankEntity.getAccountNumber())
         .build();
 
-
-
   }
+
 }

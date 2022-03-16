@@ -4,16 +4,23 @@ import com.tpay.domains.point.application.dto.AdminPointFindResponseInterface;
 import com.tpay.domains.point.application.dto.PointTotalResponseInterface;
 import com.tpay.domains.point.application.dto.StatusUpdateResponseInterface;
 import com.tpay.domains.point.application.dto.WithdrawalFindNextInterface;
+import com.tpay.domains.point_scheduled.domain.PointScheduledEntity;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 public interface PointRepository extends JpaRepository<PointEntity, Long> {
+
+
+  List<PointEntity> findAllByFranchiseeEntityIdAndCreatedDateBetweenAndPointStatus(
+      Long franchiseeId, LocalDateTime startDate, LocalDateTime endDate, Pageable pageable, PointStatus pointStatus);
 
   @Query(value = "select psf.*, ifNull(dis.disappearPoint, 0) as disappearPoint\n" +
       "from (\n" +
@@ -72,7 +79,7 @@ public interface PointRepository extends JpaRepository<PointEntity, Long> {
       "       is_read        as isRead\n" +
       "from points p\n" +
       "         left join franchisee f on p.franchisee_id = f.id\n" +
-      "where point_status in ('WITHDRAW', 'COMPLETE')", nativeQuery = true)
+      "where point_status in ('WITHDRAW', 'COMPLETE') order by pointsIndex desc", nativeQuery = true)
   List<AdminPointFindResponseInterface> findPointsAdminAll();
 
 
@@ -89,7 +96,7 @@ public interface PointRepository extends JpaRepository<PointEntity, Long> {
       "from points p\n" +
       "         left join franchisee f on p.franchisee_id = f.id\n" +
       "where point_status in ('WITHDRAW', 'COMPLETE')\n" +
-      "and is_read = false", nativeQuery = true)
+      "and is_read = false order by pointsIndex desc", nativeQuery = true)
   List<AdminPointFindResponseInterface> findPointsAdminIsReadFalse();
 
   //2-2. PointsStatus - Withdraw
@@ -104,7 +111,7 @@ public interface PointRepository extends JpaRepository<PointEntity, Long> {
       "       is_read        as isRead\n" +
       "from points p\n" +
       "         left join franchisee f on p.franchisee_id = f.id\n" +
-      "where point_status = 'WITHDRAW'", nativeQuery = true)
+      "where point_status = 'WITHDRAW' order by pointsIndex desc", nativeQuery = true)
   List<AdminPointFindResponseInterface> findPointsAdminWithdraw();
 
   //2-3. PointStatus - COMPLETE
@@ -118,7 +125,7 @@ public interface PointRepository extends JpaRepository<PointEntity, Long> {
       "       is_read        as isRead\n" +
       "from points p\n" +
       "         left join franchisee f on p.franchisee_id = f.id\n" +
-      "where point_status = 'COMPLETE'", nativeQuery = true)
+      "where point_status = 'COMPLETE' order by pointsIndex desc", nativeQuery = true)
   List<AdminPointFindResponseInterface> findPointsAdminComplete();
 
   //2-4, 2-5 isRead False 이면서 각각 Status별 쿼리
@@ -132,7 +139,7 @@ public interface PointRepository extends JpaRepository<PointEntity, Long> {
       "       is_read        as isRead\n" +
       "from points p\n" +
       "    left join franchisee f on p.franchisee_id = f.id\n" +
-      "where point_status = 'WITHDRAW' and is_read = false", nativeQuery = true)
+      "where point_status = 'WITHDRAW' and is_read = false order by pointsIndex desc", nativeQuery = true)
   List<AdminPointFindResponseInterface> findPointsAdminWithdrawIsReadFalse();
 
   @Query(value = "select p.id           as pointsIndex,\n" +
@@ -145,7 +152,7 @@ public interface PointRepository extends JpaRepository<PointEntity, Long> {
       "       is_read        as isRead\n" +
       "from points p\n" +
       "         left join franchisee f on p.franchisee_id = f.id\n" +
-      "where point_status = 'COMPLETE' and is_read = false", nativeQuery = true)
+      "where point_status = 'COMPLETE' and is_read = false order by pointsIndex desc", nativeQuery = true)
   List<AdminPointFindResponseInterface> findPointsAdminCompleteIsReadFalse();
 
 
