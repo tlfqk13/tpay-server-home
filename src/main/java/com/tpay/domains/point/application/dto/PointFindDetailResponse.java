@@ -1,4 +1,4 @@
-package com.tpay.domains.point.presentation;
+package com.tpay.domains.point.application.dto;
 
 
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeStatus;

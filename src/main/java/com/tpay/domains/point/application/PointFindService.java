@@ -14,7 +14,7 @@ import com.tpay.domains.point.application.dto.PointInfo;
 import com.tpay.domains.point.application.dto.PointTotalResponseInterface;
 import com.tpay.domains.point.domain.PointEntity;
 import com.tpay.domains.point.domain.PointRepository;
-import com.tpay.domains.point.presentation.PointFindDetailResponse;
+import com.tpay.domains.point.application.dto.PointFindDetailResponse;
 import com.tpay.domains.point_scheduled.domain.PointScheduledEntity;
 import com.tpay.domains.point_scheduled.domain.PointScheduledRepository;
 import lombok.RequiredArgsConstructor;

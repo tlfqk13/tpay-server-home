@@ -3,6 +3,7 @@ package com.tpay.domains.point.presentation;
 import com.tpay.commons.util.WithdrawalStatus;
 import com.tpay.domains.point.application.PointFindService;
 import com.tpay.domains.point.application.dto.AdminPointFindResponseInterface;
+import com.tpay.domains.point.application.dto.PointFindDetailResponse;
 import com.tpay.domains.point.application.dto.PointFindResponse;
 import com.tpay.domains.point.application.dto.PointTotalResponseInterface;
 import lombok.RequiredArgsConstructor;
