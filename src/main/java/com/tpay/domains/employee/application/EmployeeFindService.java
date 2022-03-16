@@ -19,7 +19,7 @@ public class EmployeeFindService {
 
   public EmployeeEntity findByUserId(String userId) {
     return employeeRepository.findByUserId(userId)
-        .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "UserId Not Exists"));
+        .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "가입 내역이 존재하지 않습니다."));
   }
 
   public Optional<EmployeeEntity> findById(Long employeeIndex) {
