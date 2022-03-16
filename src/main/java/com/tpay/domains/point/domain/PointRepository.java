@@ -4,6 +4,7 @@ import com.tpay.domains.point.application.dto.AdminPointFindResponseInterface;
 import com.tpay.domains.point.application.dto.PointTotalResponseInterface;
 import com.tpay.domains.point.application.dto.StatusUpdateResponseInterface;
 import com.tpay.domains.point.application.dto.WithdrawalFindNextInterface;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -56,7 +57,7 @@ public interface PointRepository extends JpaRepository<PointEntity, Long> {
 
 
   //이 아래는 admin 요청 관련
-  // TODO: 2022/03/15 이렇게 조건별로 네이티브 쿼리를 각각 구현한 것은, 파라미터 바인딩에는 단순 값만 들어가고 조건에 따른 문장 (예를들어 조회에 따라 쿼리의 where절의 바뀌는 경우 등)은 구현이 불가하다고 판단했기 때문임
+  // TODO: 2022/03/15 이렇게 조건별로 네이티브 쿼리를 각각 구현한 것은, 파라미터 바인딩에는 단순 값만 들어가고 조건에 따른 문장 (예를들어 조회에 따라 쿼리의 where절 자체가 바뀌는 경우 등)은 구현이 불가하다고 판단했기 때문임
   // TODO: 2022/03/15 추후 JPA로 변경 또는 네이티브 쿼리에 where절 자체를 변수로주는 방법을 찾아야함
   // TODO: 2022/03/15 성능은 각각 API를 조건별로 분기하는 것이므로, 지금처럼 하는 것이 제일 빠를 것으로 예상함
   // 포인트 출금 리스트 조회
@@ -146,4 +147,9 @@ public interface PointRepository extends JpaRepository<PointEntity, Long> {
       "         left join franchisee f on p.franchisee_id = f.id\n" +
       "where point_status = 'COMPLETE' and is_read = false", nativeQuery = true)
   List<AdminPointFindResponseInterface> findPointsAdminCompleteIsReadFalse();
+
+
+  @NotNull
+  @Override
+  Optional<PointEntity> findById(@NotNull Long pointsIndex);
 }

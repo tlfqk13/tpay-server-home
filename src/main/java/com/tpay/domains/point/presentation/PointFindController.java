@@ -48,4 +48,10 @@ public class PointFindController {
     List<AdminPointFindResponseInterface> pointsAdmin = pointFindService.findPointsAdmin(isAll, withdrawalStatus);
     return ResponseEntity.ok(pointsAdmin);
   }
+
+  @GetMapping("/admin/detail/points/{pointsIndex}")
+  public ResponseEntity<PointFindDetailResponse> findPointsAdminDetail(@PathVariable Long pointsIndex){
+    PointFindDetailResponse pointFindDetailResponse = pointFindService.findDetailByIndex(pointsIndex);
+    return ResponseEntity.ok(pointFindDetailResponse);
+  }
 }

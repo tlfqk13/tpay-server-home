@@ -80,6 +80,7 @@ public class FranchiseeEntity extends BaseTimeEntity {
   @Column(name = "email")
   private String email; // email 주소
 
+  // TODO: 2022/03/16 Boolean 으로 변경요망
   @Column(name = "isTaxRefundShop", length = 5)
   private String isTaxRefundShop;
 
