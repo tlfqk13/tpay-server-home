@@ -26,14 +26,17 @@ public class EmployeeUpdateService {
 
     String name = employeeUpdateRequest.getName();
     String password = employeeUpdateRequest.getPassword();
-    String passwordCheck = employeeUpdateRequest.getPasswordCheck();
-    String passwordEncoded = passwordEncoder.encode(password);
-
-    if (!password.equals(passwordCheck)) {
-      throw new InvalidPasswordException(ExceptionState.INVALID_PASSWORD, "Password and passwordCheck Mismatch");
+    if (password.equals("")) {
+      employeeEntity.updateInfo(name);
+      return true;
+    } else {
+      String passwordCheck = employeeUpdateRequest.getPasswordCheck();
+      String passwordEncoded = passwordEncoder.encode(password);
+      if (!password.equals(passwordCheck)) {
+        throw new InvalidPasswordException(ExceptionState.INVALID_PASSWORD, "Password and passwordCheck Mismatch");
+      }
+      employeeEntity.updateInfo(name, passwordEncoded);
     }
-
-    employeeEntity.updateInfo(name, passwordEncoded);
 
     return true;
   }

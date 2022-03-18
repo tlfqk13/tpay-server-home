@@ -42,7 +42,7 @@ public class FranchiseeApplicantDetailService {
         .businessNumber(franchiseeEntity.getBusinessNumber())
         .storeTel(franchiseeEntity.getStoreTel())
         .email(franchiseeEntity.getEmail())
-        .isTaxFreeStore(franchiseeEntity.getIsTaxRefundShop())
+        .isTaxRefundShop(franchiseeEntity.getIsTaxRefundShop())
         .franchiseeStatus(franchiseeApplicantEntity.getFranchiseeStatus())
         .signboard(franchiseeEntity.getSignboard())
         .productCategory(franchiseeEntity.getProductCategory())

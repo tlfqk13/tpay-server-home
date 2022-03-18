@@ -46,4 +46,10 @@ public class EmployeeEntity extends BaseTimeEntity {
     this.password = password;
     return this;
   }
+
+
+  public EmployeeEntity updateInfo(String name){
+    this.name = name;
+    return this;
+  }
 }

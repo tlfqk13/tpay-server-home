@@ -36,6 +36,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
             "/refund/approval/fake",
             "/franchisee/password/**",
             "/points/batch",
+            "/external/**",
             "/error");
     registry.addInterceptor(printRequestInterceptor).addPathPatterns("/**");
   }

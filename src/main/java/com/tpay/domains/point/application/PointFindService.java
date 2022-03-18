@@ -2,12 +2,17 @@ package com.tpay.domains.point.application;
 
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
+import com.tpay.commons.util.DisappearDate;
 import com.tpay.commons.util.WithdrawalStatus;
-import com.tpay.domains.point.application.dto.AdminPointFindResponseInterface;
-import com.tpay.domains.point.application.dto.PointFindResponse;
-import com.tpay.domains.point.application.dto.PointInfo;
-import com.tpay.domains.point.application.dto.PointTotalResponseInterface;
+import com.tpay.domains.franchisee.domain.FranchiseeEntity;
+import com.tpay.domains.franchisee_applicant.application.FranchiseeApplicantFindService;
+import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
+import com.tpay.domains.franchisee_upload.application.FranchiseeBankFindService;
+import com.tpay.domains.franchisee_upload.domain.FranchiseeBankEntity;
+import com.tpay.domains.point.application.dto.*;
+import com.tpay.domains.point.domain.PointEntity;
 import com.tpay.domains.point.domain.PointRepository;
+import com.tpay.domains.point.domain.PointStatus;
 import com.tpay.domains.point_scheduled.domain.PointScheduledEntity;
 import com.tpay.domains.point_scheduled.domain.PointScheduledRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +33,8 @@ public class PointFindService {
 
   private final PointRepository pointRepository;
   private final PointScheduledRepository pointScheduledRepository;
+  private final FranchiseeBankFindService franchiseeBankFindService;
+  private final FranchiseeApplicantFindService franchiseeApplicantFindService;
 
   public PointFindResponse findPoints(
       Long franchiseeIndex, Integer week, Integer month, Integer page, Integer size) {
@@ -57,8 +64,21 @@ public class PointFindService {
                       .build();
                 })
             .collect(Collectors.toList());
+// TODO: 2022/03/16 속도 개선을 위해서는 JPA 말고 네이티브 쿼리로
+    List<PointEntity> pointEntityList = pointRepository.findAllByFranchiseeEntityIdAndCreatedDateBetweenAndPointStatus(franchiseeIndex, startDate.atStartOfDay(), endDate.atStartOfDay(), pageRequest, PointStatus.WITHDRAW);
+    List<PointInfo> pointInfoList1 = pointEntityList.stream()
+        .map(pointEntity -> {
+          String createdDateAsString = pointEntity.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH.mm.ss"));
+          return PointInfo.builder()
+              .datetime(createdDateAsString)
+              .pointStatus(pointEntity.getPointStatus())
+              .value(pointEntity.getChange())
+              .build();
+        })
+        .collect(Collectors.toList());
 
-
+    pointInfoList.addAll(pointInfoList1);
+    pointInfoList.sort(new PointComparator());
     return PointFindResponse.builder()
         .startDate(startDate)
         .endDate(endDate)
@@ -67,7 +87,7 @@ public class PointFindService {
   }
 
   public PointTotalResponseInterface findPointsTotal(Long franchiseeIndex) {
-    LocalDate disappearDate = LocalDate.now().minusYears(5);
+    LocalDate disappearDate = DisappearDate.DISAPPEAR_DATE.getDisappearDate();
     return pointRepository.findPointsTotal(franchiseeIndex, disappearDate);
   }
 
@@ -97,4 +117,41 @@ public class PointFindService {
     }
     return pointFindResponseInterfaceList;
   }
+
+  public PointFindDetailResponse findDetailByIndex(Long pointsIndex) {
+    PointEntity pointEntity = pointRepository.findById(pointsIndex).orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid PointsIndex"));
+    FranchiseeEntity franchiseeEntity = pointEntity.getFranchiseeEntity();
+    FranchiseeApplicantEntity franchiseeApplicantEntity = franchiseeApplicantFindService.findByFranchiseeEntity(franchiseeEntity);
+    FranchiseeBankEntity franchiseeBankEntity = franchiseeBankFindService.findByFranchiseeEntity(franchiseeEntity);
+
+    return PointFindDetailResponse.builder()
+        .storeName(franchiseeEntity.getStoreName())
+        .sellerName(franchiseeEntity.getSellerName())
+        .businessNumber(franchiseeEntity.getBusinessNumber())
+        .storeTel(franchiseeEntity.getStoreTel())
+        .email(franchiseeEntity.getEmail())
+        .isTaxRefundShop(franchiseeEntity.getIsTaxRefundShop())
+        .franchiseeStatus(franchiseeApplicantEntity.getFranchiseeStatus())
+        .signboard(franchiseeEntity.getSignboard())
+        .productCategory(franchiseeEntity.getProductCategory())
+        .storeNumber(franchiseeEntity.getStoreNumber())
+        .storeAddressBasic(franchiseeEntity.getStoreAddressBasic())
+        .storeAddressDetail(franchiseeEntity.getStoreAddressDetail())
+        .createdDate(franchiseeEntity.getCreatedDate())
+        .isRead(franchiseeApplicantEntity.getIsRead())
+
+        .requestedDate(pointEntity.getCreatedDate())
+        .pointStatus(pointEntity.getPointStatus())
+        //역산해서 추출하는 것임
+        .currentPoint(pointEntity.getBalance() + pointEntity.getChange())
+        .amount(pointEntity.getChange())
+        .afterPayment(pointEntity.getBalance())
+        .isReadTPoint(pointEntity.getIsRead())
+
+        .bankName(franchiseeBankEntity.getBankName())
+        .accountNumber(franchiseeBankEntity.getAccountNumber())
+        .build();
+
+  }
+
 }
