@@ -1,5 +1,7 @@
 package com.tpay.domains.auth.application;
 
+import com.tpay.commons.exception.ExceptionState;
+import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.jwt.AuthToken;
 import com.tpay.domains.auth.application.dto.EmployeeTokenInfo;
 import com.tpay.domains.employee.application.EmployeeFindService;
@@ -29,6 +31,10 @@ public class EmployeeSignInService {
     if(!passwordEncoder.matches(password, employeeEntity.getPassword())){
       throw new IllegalArgumentException("Invalid Password");
     }
+    if(employeeEntity.getIsDelete()){
+      throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER,"가입 내역이 존재하지 않습니다.");
+    }
+
     FranchiseeApplicantEntity franchiseeApplicantEntity = franchiseeApplicantFindService.findByFranchiseeEntity(employeeEntity.getFranchiseeEntity());
     AuthToken accessToken = authService.createAccessToken(employeeEntity);
     AuthToken refreshToken = authService.createRefreshToken(employeeEntity);

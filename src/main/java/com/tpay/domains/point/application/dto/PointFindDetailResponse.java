@@ -1,18 +1,19 @@
-package com.tpay.domains.franchisee_applicant.application.dto;
+package com.tpay.domains.point.application.dto;
 
-import com.tpay.domains.employee.application.dto.EmployeeFindResponseInterface;
+
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeStatus;
+import com.tpay.domains.point.domain.PointStatus;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class FranchiseeApplicantDetailResponse {
-  // Franchisee
+public class PointFindDetailResponse {
+
+  //Franchisee Info
   private String storeName;
   private String sellerName;
   private String businessNumber;
@@ -27,14 +28,16 @@ public class FranchiseeApplicantDetailResponse {
   private String storeAddressDetail;
   private LocalDateTime createdDate;
   private Boolean isRead;
-  // Applicants
-  private String imageUrl;
-  private String taxFreeStoreNumber;
-  private String bankName;
-  private String bankAccount;
-  private String withdrawalDate;
-  private String rejectReason;
 
-  //Employee List
-  private List<EmployeeFindResponseInterface> employeeFindResponseInterfaceList;
+  //Withdrawal Info
+  private LocalDateTime requestedDate;
+  private PointStatus pointStatus;
+  private Long currentPoint;
+  private Long amount;
+  private Long afterPayment;
+  private Boolean isReadTPoint;
+
+  //Bank Info
+  private String bankName;
+  private String accountNumber;
 }

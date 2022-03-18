@@ -64,11 +64,17 @@ public class PointEntity {
     this.isRead = false;
   }
 
-  public void updateStatus() {
-    this.pointStatus = PointStatus.SAVE;
+  public PointStatus updateStatus(PointStatus pointStatus) {
+    this.pointStatus = pointStatus;
+    return pointStatus;
   }
 
   public void updateWithdrawalCheck(Long amount) {
     this.withdrawalCheck -= amount;
+  }
+
+  public Boolean updateIsRead(Boolean isRead) {
+    this.isRead = isRead;
+    return isRead;
   }
 }
