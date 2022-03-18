@@ -35,7 +35,7 @@ public class RefundEntity extends BaseTimeEntity {
   @Column(name = "totRefund", length = 10)
   private String totalRefund;
 
-  @Enumerated(EnumType.STRING)
+//  @Enumerated(EnumType.STRING)
   private RefundStatus refundStatus;
 
   @OneToOne

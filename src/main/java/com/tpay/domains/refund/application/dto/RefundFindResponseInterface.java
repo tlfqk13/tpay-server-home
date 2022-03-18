@@ -10,6 +10,7 @@ public interface RefundFindResponseInterface {
   LocalDateTime getCreatedDate();
   String getTotalAmount();
   String getTotalRefund();
+  String getActualAmount();
   RefundStatus getRefundStatus();
   String getBusinessNumber();
   String getStoreName();
