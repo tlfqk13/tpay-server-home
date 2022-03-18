@@ -1,10 +1,10 @@
 package com.tpay.domains.point.domain;
 
+import com.tpay.domains.batch.application.dto.DeleteTargetList;
 import com.tpay.domains.point.application.dto.AdminPointFindResponseInterface;
 import com.tpay.domains.point.application.dto.PointTotalResponseInterface;
 import com.tpay.domains.point.application.dto.StatusUpdateResponseInterface;
 import com.tpay.domains.point.application.dto.WithdrawalFindNextInterface;
-import com.tpay.domains.point_scheduled.domain.PointScheduledEntity;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -60,7 +60,6 @@ public interface PointRepository extends JpaRepository<PointEntity, Long> {
       "Order by id\n" +
       "limit 0, 1", nativeQuery = true)
   WithdrawalFindNextInterface findNext(@Param("franchiseeIndex") Long franchiseeIndex);
-
 
 
   //이 아래는 admin 요청 관련
@@ -159,4 +158,13 @@ public interface PointRepository extends JpaRepository<PointEntity, Long> {
   @NotNull
   @Override
   Optional<PointEntity> findById(@NotNull Long pointsIndex);
+
+
+  @Query(value = "select id from points\n" +
+      "where created_date <= :disappearDate", nativeQuery = true)
+  List<DeleteTargetList> findTargetIdList(LocalDate disappearDate);
+
+  @Query(value = "delete from points\n" +
+      "where id in :idList", nativeQuery = true)
+  void deleteByIdList(List<Long> idList);
 }

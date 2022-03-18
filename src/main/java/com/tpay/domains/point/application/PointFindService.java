@@ -2,6 +2,7 @@ package com.tpay.domains.point.application;
 
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
+import com.tpay.commons.util.DisappearDate;
 import com.tpay.commons.util.WithdrawalStatus;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee_applicant.application.FranchiseeApplicantFindService;
@@ -86,7 +87,7 @@ public class PointFindService {
   }
 
   public PointTotalResponseInterface findPointsTotal(Long franchiseeIndex) {
-    LocalDate disappearDate = LocalDate.now().minusYears(5);
+    LocalDate disappearDate = DisappearDate.DISAPPEAR_DATE.getDisappearDate();
     return pointRepository.findPointsTotal(franchiseeIndex, disappearDate);
   }
 
