@@ -6,6 +6,7 @@ import com.tpay.domains.refund.application.dto.RefundByCustomerResponse;
 import com.tpay.domains.refund.application.dto.RefundCustomerRequest;
 import com.tpay.domains.refund.application.dto.RefundFindResponse;
 import com.tpay.domains.refund.application.dto.RefundFindResponseInterface;
+import com.tpay.domains.refund.domain.RefundStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,8 +33,12 @@ public class RefundFindController {
   }
 
   @GetMapping("/admin/refunds")
-  public ResponseEntity<List<RefundFindResponseInterface>> findAll() {
-    List<RefundFindResponseInterface> response = refundFindService.findAll();
+  public ResponseEntity<List<RefundFindResponseInterface>> findAll(
+      @RequestParam String startDate,
+      @RequestParam String endDate,
+      @RequestParam RefundStatus refundStatus
+      ) {
+    List<RefundFindResponseInterface> response = refundFindService.findAll(startDate,endDate,refundStatus);
     return ResponseEntity.ok(response);
   }
 

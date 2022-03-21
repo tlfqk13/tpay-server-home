@@ -9,10 +9,12 @@ import com.tpay.domains.customer.application.dto.CustomerInfo;
 import com.tpay.domains.refund.application.dto.*;
 import com.tpay.domains.refund.domain.RefundEntity;
 import com.tpay.domains.refund.domain.RefundRepository;
+import com.tpay.domains.refund.domain.RefundStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -55,9 +57,18 @@ public class RefundFindService {
 
   }
 
-  public List<RefundFindResponseInterface> findAll() {
-    List<RefundFindResponseInterface> result = refundRepository.findAllNativeQuery();
-    return result;
+  public List<RefundFindResponseInterface> findAll(String startDate, String endDate, RefundStatus refundStatus) {
+    DateTimeFormatter yyyyMMdd = DateTimeFormatter.ofPattern("yyyyMMdd");
+    LocalDate startLocalDate = LocalDate.parse("20" + startDate, yyyyMMdd);
+    LocalDate endLocalDate = LocalDate.parse("20" + endDate, yyyyMMdd);
+
+    if(refundStatus.equals(RefundStatus.ALL)) {
+      return refundRepository.findAllNativeQuery(startLocalDate, endLocalDate);
+    } else {
+      int ordinal = refundStatus.ordinal();
+      return refundRepository.findRefundStatusNativeQuery(startLocalDate, endLocalDate, ordinal);
+    }
+
   }
 
   public List<RefundFindResponse> findAllByCustomerInfo(
