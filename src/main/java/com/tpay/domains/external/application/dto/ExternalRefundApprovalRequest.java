@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public class ExternalRefundApprovalRequest {
-  private String passportNumber;
-  private String franchiseeNumber;
+  private Long customerIndex;
+  private Long franchiseeIndex;
   private String amount;
 }
