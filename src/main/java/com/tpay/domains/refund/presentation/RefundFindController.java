@@ -4,7 +4,6 @@ import com.tpay.commons.util.DateFilter;
 import com.tpay.domains.refund.application.RefundFindService;
 import com.tpay.domains.refund.application.dto.RefundByCustomerResponse;
 import com.tpay.domains.refund.application.dto.RefundCustomerRequest;
-import com.tpay.domains.refund.application.dto.RefundFindResponse;
 import com.tpay.domains.refund.application.dto.RefundFindResponseInterface;
 import com.tpay.domains.refund.domain.RefundStatus;
 import lombok.RequiredArgsConstructor;
@@ -37,8 +36,8 @@ public class RefundFindController {
       @RequestParam String startDate,
       @RequestParam String endDate,
       @RequestParam RefundStatus refundStatus
-      ) {
-    List<RefundFindResponseInterface> response = refundFindService.findAll(startDate,endDate,refundStatus);
+  ) {
+    List<RefundFindResponseInterface> response = refundFindService.findAll(startDate, endDate, refundStatus);
     return ResponseEntity.ok(response);
   }
 
