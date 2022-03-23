@@ -32,7 +32,7 @@ public class EmployeeSignInService {
       throw new IllegalArgumentException("Invalid Password");
     }
     if(employeeEntity.getIsDelete()){
-      throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER,"가입 내역이 존재하지 않습니다.");
+      throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER,"가입 내역이 존재하지 않습니다. 다시 입력해주세요.");
     }
 
     FranchiseeApplicantEntity franchiseeApplicantEntity = franchiseeApplicantFindService.findByFranchiseeEntity(employeeEntity.getFranchiseeEntity());
