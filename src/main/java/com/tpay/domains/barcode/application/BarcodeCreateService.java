@@ -63,7 +63,7 @@ public class BarcodeCreateService {
 
     try {
       Barcode barcode = BarcodeFactory.createCode128B(idPadding + deductionPadding);
-      // TODO: 2022/03/23 File ...로컬에 저장하지 않고 Response?
+      // TODO: 2022/03/23 File ...로컬에 저장하지 않고 Response 주는 방법
       File file = new File("/Users/sunba/nsk/successmode/tpay-server/src/main/resources/testPNG.png");
       BarcodeImageHandler.savePNG(barcode, file);
 
