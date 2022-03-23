@@ -75,7 +75,7 @@ public class FranchiseeApplicantFindService {
             .orElseThrow(
                 () ->
                     new InvalidParameterException(
-                        ExceptionState.INVALID_PARAMETER, "가입 내역이 존재하지 않습니다."));
+                        ExceptionState.INVALID_PARAMETER, "가입 내역이 존재하지 않습니다. 다시 입력해주세요."));
 
     return franchiseeApplicantEntity;
   }

@@ -3,6 +3,7 @@ package com.tpay.domains.order.application;
 import com.tpay.domains.customer.application.CustomerFindService;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.employee.application.EmployeeFindService;
+import com.tpay.domains.external.application.dto.ExternalRefundApprovalRequest;
 import com.tpay.domains.franchisee.application.FranchiseeFindService;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.order.domain.OrderEntity;
@@ -25,7 +26,6 @@ public class OrderSaveService {
   private final CustomerFindService customerFindService;
   private final ProductFindService productFindService;
   private final OrderLineSaveService orderLineSaveService;
-  private final EmployeeFindService employeeFindService;
 
   @Transactional
   public OrderEntity save(RefundSaveRequest request) {
@@ -39,6 +39,15 @@ public class OrderSaveService {
             franchiseeEntity.getProductCategory(), request.getPrice());
 
     return this.save(franchiseeEntity, customerEntity, productEntity);
+  }
+
+  @Transactional
+  public OrderEntity save(ExternalRefundApprovalRequest externalRefundApprovalRequest){
+    FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(externalRefundApprovalRequest.getFranchiseeIndex());
+    CustomerEntity customerEntity = customerFindService.findByIndex(externalRefundApprovalRequest.getCustomerIndex());
+    ProductEntity productEntity = productFindService.findOrElseSave(franchiseeEntity.getProductCategory(), externalRefundApprovalRequest.getAmount());
+    return this.save(franchiseeEntity,customerEntity,productEntity);
+
   }
 
   @Transactional
