@@ -1,6 +1,5 @@
 package com.tpay.domains.barcode.application;
 
-import com.amazonaws.util.IOUtils;
 import com.tpay.commons.custom.CustomValue;
 import com.tpay.commons.exception.ExceptionResponse;
 import com.tpay.commons.exception.ExceptionState;
@@ -17,14 +16,20 @@ import lombok.RequiredArgsConstructor;
 import net.sourceforge.barbecue.Barcode;
 import net.sourceforge.barbecue.BarcodeFactory;
 import net.sourceforge.barbecue.BarcodeImageHandler;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import javax.transaction.Transactional;
 import java.io.File;
-import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Service
 @RequiredArgsConstructor
@@ -35,7 +40,7 @@ public class BarcodeCreateService {
   private final ExternalRepository externalRepository;
 
   @Transactional
-  public byte[] createBarCode(Long franchiseeIndex, RefundLimitRequest request) {
+  public ResponseEntity<Resource> createBarCode(Long franchiseeIndex, RefundLimitRequest request) {
     WebClient webClient = builder.build();
     String uri = CustomValue.REFUND_SERVER + "/refund/limit";
     CustomerEntity customerEntity = customerFindService.findByNationAndPassportNumber(request.getName(), request.getPassportNumber(), request.getNationality());
@@ -63,17 +68,18 @@ public class BarcodeCreateService {
 
     try {
       Barcode barcode = BarcodeFactory.createCode128B(idPadding + deductionPadding);
-      // TODO: 2022/03/23 File ...로컬에 저장하지 않고 Response 주는 방법
-      File file = new File("/Users/sunba/nsk/successmode/tpay-server/src/main/resources/testPNG.png");
+      File file = new File("/home/ec2-user/barcode/testPNG.png");
       BarcodeImageHandler.savePNG(barcode, file);
+      Resource resource = new FileSystemResource("/home/ec2-user/barcode/testPNG.png");
 
-      InputStream in = getClass().getResourceAsStream("/testPNG.png");
-      return IOUtils.toByteArray(in);
+      HttpHeaders headers = new HttpHeaders();
+      Path filePath = Paths.get("/Users/sunba/Desktop/testPNG.png");
+      headers.add("Content-Type", Files.probeContentType(filePath));
+      return new ResponseEntity<Resource>(resource, headers, HttpStatus.OK);
+
     } catch (Exception e) {
       throw new IllegalArgumentException("Barcode Create Fail");
     }
-
-
   }
 
   static String setWithZero(String target, Integer size) {
@@ -89,3 +95,4 @@ public class BarcodeCreateService {
     return after.toString();
   }
 }
+

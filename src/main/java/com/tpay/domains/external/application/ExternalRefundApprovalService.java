@@ -7,6 +7,7 @@ import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.domains.external.application.dto.ExternalRefundApprovalRequest;
 import com.tpay.domains.external.domain.ExternalRefundEntity;
+import com.tpay.domains.external.domain.ExternalRefundStatus;
 import com.tpay.domains.franchisee.application.FranchiseeFindService;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.order.application.OrderSaveService;
@@ -41,6 +42,7 @@ public class ExternalRefundApprovalService {
     ExternalRefundEntity externalRefundEntity = externalRefundFindService.findById(externalRefundApprovalRequest.getExternalRefundIndex());
     FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(externalRefundEntity.getFranchiseeIndex());
     OrderEntity orderEntity = orderSaveService.save(externalRefundEntity, externalRefundApprovalRequest.getAmount());
+    externalRefundEntity.changeStatus(ExternalRefundStatus.APPROVE);
 
     RefundApproveRequest refundApproveRequest = RefundApproveRequest.of(orderEntity);
 

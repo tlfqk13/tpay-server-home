@@ -33,4 +33,9 @@ public class ExternalRefundEntity {
     this.customerIndex = customerIndex;
     this.externalRefundStatus = externalRefundStatus;
   }
+
+  public ExternalRefundEntity changeStatus(ExternalRefundStatus externalRefundStatus) {
+    this.externalRefundStatus = externalRefundStatus;
+    return this;
+  }
 }
