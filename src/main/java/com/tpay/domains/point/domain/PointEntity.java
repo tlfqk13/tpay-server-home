@@ -14,67 +14,67 @@ import java.time.LocalDateTime;
 @ToString
 public class PointEntity {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  private LocalDateTime createdDate;
+    private LocalDateTime createdDate;
 
-  @Enumerated(EnumType.STRING)
-  private SignType signType;
+    @Enumerated(EnumType.STRING)
+    private SignType signType;
 
-  @Column(name = "change_value")
-  private long change;
+    @Column(name = "change_value")
+    private long change;
 
-  @Enumerated(EnumType.STRING)
-  private PointStatus pointStatus;
+    @Enumerated(EnumType.STRING)
+    private PointStatus pointStatus;
 
-  private long balance;
+    private long balance;
 
-  private long withdrawalCheck;
+    private long withdrawalCheck;
 
-  @Column(length = 1)
-  private Boolean isRead;
+    @Column(length = 1)
+    private Boolean isRead;
 
-  @ManyToOne
-  @JoinColumn(name = "order_id")
-  private OrderEntity orderEntity;
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    private OrderEntity orderEntity;
 
-  @ManyToOne
-  @JoinColumn(name = "franchisee_id")
-  private FranchiseeEntity franchiseeEntity;
+    @ManyToOne
+    @JoinColumn(name = "franchisee_id")
+    private FranchiseeEntity franchiseeEntity;
 
-  @Builder
-  public PointEntity(
-      LocalDateTime createdDate,
-      SignType signType,
-      long change,
-      PointStatus pointStatus,
-      long balance,
-      OrderEntity orderEntity,
-      FranchiseeEntity franchiseeEntity) {
-    this.createdDate = createdDate;
-    this.signType = signType;
-    this.change = change;
-    this.pointStatus = pointStatus;
-    this.balance = balance;
-    this.orderEntity = orderEntity;
-    this.franchiseeEntity = franchiseeEntity;
-    this.withdrawalCheck = change;
-    this.isRead = false;
-  }
+    @Builder
+    public PointEntity(
+        LocalDateTime createdDate,
+        SignType signType,
+        long change,
+        PointStatus pointStatus,
+        long balance,
+        OrderEntity orderEntity,
+        FranchiseeEntity franchiseeEntity) {
+        this.createdDate = createdDate;
+        this.signType = signType;
+        this.change = change;
+        this.pointStatus = pointStatus;
+        this.balance = balance;
+        this.orderEntity = orderEntity;
+        this.franchiseeEntity = franchiseeEntity;
+        this.withdrawalCheck = change;
+        this.isRead = false;
+    }
 
-  public PointStatus updateStatus(PointStatus pointStatus) {
-    this.pointStatus = pointStatus;
-    return pointStatus;
-  }
+    public PointStatus updateStatus(PointStatus pointStatus) {
+        this.pointStatus = pointStatus;
+        return pointStatus;
+    }
 
-  public void updateWithdrawalCheck(Long amount) {
-    this.withdrawalCheck -= amount;
-  }
+    public void updateWithdrawalCheck(Long amount) {
+        this.withdrawalCheck -= amount;
+    }
 
-  public Boolean updateIsRead(Boolean isRead) {
-    this.isRead = isRead;
-    return isRead;
-  }
+    public Boolean updateIsRead(Boolean isRead) {
+        this.isRead = isRead;
+        return isRead;
+    }
 }

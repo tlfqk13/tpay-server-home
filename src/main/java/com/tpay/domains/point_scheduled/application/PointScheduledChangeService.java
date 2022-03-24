@@ -15,27 +15,26 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PointScheduledChangeService {
 
-  private final PointScheduledRepository pointScheduledRepository;
+    private final PointScheduledRepository pointScheduledRepository;
 
-  public PointScheduledEntity change(RefundEntity refundEntity, SignType signType){
-    OrderEntity orderEntity = refundEntity.getOrderEntity();
-    FranchiseeEntity franchiseeEntity = orderEntity.getFranchiseeEntity();
-    long points = orderEntity.getPoints();
-    PointStatus pointStatus;
-    if (signType.equals(SignType.POSITIVE)){
-      pointStatus = PointStatus.SCHEDULED;
+    public PointScheduledEntity change(RefundEntity refundEntity, SignType signType) {
+        OrderEntity orderEntity = refundEntity.getOrderEntity();
+        FranchiseeEntity franchiseeEntity = orderEntity.getFranchiseeEntity();
+        long points = orderEntity.getPoints();
+        PointStatus pointStatus;
+        if (signType.equals(SignType.POSITIVE)) {
+            pointStatus = PointStatus.SCHEDULED;
+        } else {
+            pointStatus = PointStatus.CANCEL;
+        }
+
+        PointScheduledEntity entity = PointScheduledEntity.builder()
+            .franchiseeEntity(franchiseeEntity)
+            .orderEntity(orderEntity)
+            .pointStatus(pointStatus)
+            .value(points)
+            .build();
+
+        return pointScheduledRepository.save(entity);
     }
-    else{
-      pointStatus = PointStatus.CANCEL;
-    }
-
-    PointScheduledEntity entity = PointScheduledEntity.builder()
-        .franchiseeEntity(franchiseeEntity)
-        .orderEntity(orderEntity)
-        .pointStatus(pointStatus)
-        .value(points)
-        .build();
-
-    return pointScheduledRepository.save(entity);
-  }
 }

@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 public class SignOutRequest {
-  private UserSelector userSelector;
-  private Long franchiseeIndex;
-  private Long employeeIndex;
+    private UserSelector userSelector;
+    private Long franchiseeIndex;
+    private Long employeeIndex;
 }

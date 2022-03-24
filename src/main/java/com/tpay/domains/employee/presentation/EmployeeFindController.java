@@ -15,11 +15,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EmployeeFindController {
 
-  private final EmployeeFindService employeeFindService;
+    private final EmployeeFindService employeeFindService;
 
-  @GetMapping("/employee/{franchiseeIndex}")
-  public ResponseEntity<List<EmployeeFindResponseInterface>> findAllByFranchiseeId(@PathVariable Long franchiseeIndex) {
-    List<EmployeeFindResponseInterface> result = employeeFindService.findAllByFranchiseeId(franchiseeIndex);
-    return ResponseEntity.ok(result);
-  }
+    @GetMapping("/employee/{franchiseeIndex}")
+    public ResponseEntity<List<EmployeeFindResponseInterface>> findAllByFranchiseeId(@PathVariable Long franchiseeIndex) {
+        List<EmployeeFindResponseInterface> result = employeeFindService.findAllByFranchiseeId(franchiseeIndex);
+        return ResponseEntity.ok(result);
+    }
 }

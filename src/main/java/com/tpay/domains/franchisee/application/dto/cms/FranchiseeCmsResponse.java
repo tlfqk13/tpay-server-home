@@ -8,8 +8,8 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class FranchiseeCmsResponse {
-  private String totalCount;
-  private String totalAmount;
-  private String totalVat;
-  private String totalCommission;
+    private String totalCount;
+    private String totalAmount;
+    private String totalVat;
+    private String totalCommission;
 }

@@ -17,23 +17,23 @@ import javax.transaction.Transactional;
 @RequiredArgsConstructor
 public class RefundApproveControllerFake {
 
-  private final FranchiseeFindService franchiseeFindService;
+    private final FranchiseeFindService franchiseeFindService;
 
-  @PostMapping("/refund/approval/fake")
-  @Transactional
-  public ResponseEntity<RefundResponse> refundApprovalFake(@RequestBody RefundSaveRequest request){
-   RefundResponse response =
-       RefundResponse.builder()
-           .responseCode("8888")
-           .message("Execute fake approval")
-           .purchaseSequenceNumber("122122")
-           .takeoutNumber("1324")
-           .beforeDeduction("1324")
-           .afterDeduction("1324")
-           .customerIndex(request.getCustomerIndex())
-           .build();
-   FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(request.getFranchiseeIndex());
-   franchiseeEntity.isRefundOnce();
-   return ResponseEntity.ok(response);
-  }
+    @PostMapping("/refund/approval/fake")
+    @Transactional
+    public ResponseEntity<RefundResponse> refundApprovalFake(@RequestBody RefundSaveRequest request) {
+        RefundResponse response =
+            RefundResponse.builder()
+                .responseCode("8888")
+                .message("Execute fake approval")
+                .purchaseSequenceNumber("122122")
+                .takeoutNumber("1324")
+                .beforeDeduction("1324")
+                .afterDeduction("1324")
+                .customerIndex(request.getCustomerIndex())
+                .build();
+        FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(request.getFranchiseeIndex());
+        franchiseeEntity.isRefundOnce();
+        return ResponseEntity.ok(response);
+    }
 }

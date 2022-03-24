@@ -14,14 +14,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class ExternalRefundController {
 
-  private final ExternalRefundApprovalService externalRefundApprovalService;
+    private final ExternalRefundApprovalService externalRefundApprovalService;
 
-  @PostMapping("/external/refund")
-  public ResponseEntity<RefundResponse> externalRefundApproval(
-      // TODO: 2022/03/18 POS 관련 API 정해지면 작업 진행
-      @RequestBody ExternalRefundApprovalRequest externalRefundApprovalRequest) {
+    @PostMapping("/external/refund")
+    public ResponseEntity<RefundResponse> externalRefundApproval(
+        // TODO: 2022/03/18 POS 관련 API 정해지면 작업 진행
+        @RequestBody ExternalRefundApprovalRequest externalRefundApprovalRequest) {
 
-    RefundResponse approve = externalRefundApprovalService.approve(externalRefundApprovalRequest);
-    return ResponseEntity.ok(approve);
-  }
+        RefundResponse approve = externalRefundApprovalService.approve(externalRefundApprovalRequest);
+        return ResponseEntity.ok(approve);
+    }
 }

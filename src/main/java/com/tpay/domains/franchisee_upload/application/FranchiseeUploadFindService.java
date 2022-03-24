@@ -11,14 +11,14 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class FranchiseeUploadFindService {
-  private final FranchiseeUploadRepository franchiseeUploadRepository;
+    private final FranchiseeUploadRepository franchiseeUploadRepository;
 
-  public FranchiseeUploadEntity findByFranchiseeIndex(Long franchiseeId){
-    Optional<FranchiseeUploadEntity> optionalFranchiseeUploadEntity = franchiseeUploadRepository.findByFranchiseeIndex(franchiseeId);
+    public FranchiseeUploadEntity findByFranchiseeIndex(Long franchiseeId) {
+        Optional<FranchiseeUploadEntity> optionalFranchiseeUploadEntity = franchiseeUploadRepository.findByFranchiseeIndex(franchiseeId);
 
-    if(optionalFranchiseeUploadEntity.isEmpty()){
-      return FranchiseeUploadEntity.builder().build();
+        if (optionalFranchiseeUploadEntity.isEmpty()) {
+            return FranchiseeUploadEntity.builder().build();
+        }
+        return optionalFranchiseeUploadEntity.get();
     }
-    return optionalFranchiseeUploadEntity.get();
-  }
 }

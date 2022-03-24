@@ -14,12 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class SignInController {
 
-  private final SignInService signInService;
+    private final SignInService signInService;
 
-  @PostMapping("/sign-in")
-  public ResponseEntity<SignInTokenInfo> signIn(@RequestBody SignInRequest signInRequest) {
-    SignInTokenInfo signInTokenInfo = signInService.signIn(signInRequest);
-    return ResponseEntity.ok(signInTokenInfo);
-  }
+    @PostMapping("/sign-in")
+    public ResponseEntity<SignInTokenInfo> signIn(@RequestBody SignInRequest signInRequest) {
+        SignInTokenInfo signInTokenInfo = signInService.signIn(signInRequest);
+        return ResponseEntity.ok(signInTokenInfo);
+    }
 
 }

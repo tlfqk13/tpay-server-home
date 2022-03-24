@@ -10,7 +10,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class FranchiseeVatDetailResponse {
-  private List<Object> vatDetailResponsePersonalInfoList;
-  private List<Object> vatDetailResponseTotalInfoList;
-  private List<List<Object>> vatDetailResponseDetailInfoListList;
+    private List<Object> vatDetailResponsePersonalInfoList;
+    private List<Object> vatDetailResponseTotalInfoList;
+    private List<List<Object>> vatDetailResponseDetailInfoListList;
 }

@@ -1,7 +1,7 @@
 package com.tpay.commons.exception;
 
 public interface CustomException {
-  ExceptionState getState();
+    ExceptionState getState();
 
-  String getMessage();
+    String getMessage();
 }

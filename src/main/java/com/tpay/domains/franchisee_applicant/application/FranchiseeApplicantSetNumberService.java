@@ -16,17 +16,17 @@ import javax.transaction.Transactional;
 @RequiredArgsConstructor
 public class FranchiseeApplicantSetNumberService {
 
-  private final FranchiseeApplicantFindService franchiseeApplicantFindService;
-  private final FranchiseeUploadFindService franchiseeUploadFindService;
+    private final FranchiseeApplicantFindService franchiseeApplicantFindService;
+    private final FranchiseeUploadFindService franchiseeUploadFindService;
 
-  @Transactional
-  public String updateTaxFreeStoreNumber(Long franchiseeApplicantIndex, FranchiseeApplicantSetNumberRequest franchiseeApplicantSetNumberRequest) {
-    FranchiseeApplicantEntity franchiseeApplicantEntity = franchiseeApplicantFindService.findByIndex(franchiseeApplicantIndex);
-    FranchiseeUploadEntity franchiseeUploadEntity = franchiseeUploadFindService.findByFranchiseeIndex(franchiseeApplicantEntity.getFranchiseeEntity().getId());
-    if(franchiseeApplicantSetNumberRequest.getTaxFreeStoreNumber().length() != 8){
-      throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "'Tax Free Store Number' is 8 length digits");
+    @Transactional
+    public String updateTaxFreeStoreNumber(Long franchiseeApplicantIndex, FranchiseeApplicantSetNumberRequest franchiseeApplicantSetNumberRequest) {
+        FranchiseeApplicantEntity franchiseeApplicantEntity = franchiseeApplicantFindService.findByIndex(franchiseeApplicantIndex);
+        FranchiseeUploadEntity franchiseeUploadEntity = franchiseeUploadFindService.findByFranchiseeIndex(franchiseeApplicantEntity.getFranchiseeEntity().getId());
+        if (franchiseeApplicantSetNumberRequest.getTaxFreeStoreNumber().length() != 8) {
+            throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "'Tax Free Store Number' is 8 length digits");
+        }
+        return franchiseeUploadEntity.updateTaxFreeStoreNumber(franchiseeApplicantSetNumberRequest.getTaxFreeStoreNumber());
     }
-    return franchiseeUploadEntity.updateTaxFreeStoreNumber(franchiseeApplicantSetNumberRequest.getTaxFreeStoreNumber());
-  }
 }
 

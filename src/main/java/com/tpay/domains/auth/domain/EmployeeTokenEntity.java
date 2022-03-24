@@ -17,36 +17,36 @@ import javax.persistence.*;
 @Entity
 public class EmployeeTokenEntity extends BaseTimeEntity {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @OneToOne
-  @JoinColumn(name = "employee_id")
-  private EmployeeEntity employeeEntity;
+    @OneToOne
+    @JoinColumn(name = "employee_id")
+    private EmployeeEntity employeeEntity;
 
-  private String refreshToken;
+    private String refreshToken;
 
-  @Builder
-  public EmployeeTokenEntity(EmployeeEntity employeeEntity, String refreshToken) {
-    this.employeeEntity = employeeEntity;
-    this.refreshToken = refreshToken;
-  }
-
-  public EmployeeTokenEntity refreshToken(String refreshToken){
-    this.refreshToken = refreshToken;
-    return this;
-  }
-
-  public void validUser(Long parsedIndex) {
-    if(!this.employeeEntity.getId().equals(parsedIndex)){
-      throw new JwtRuntimeException(ExceptionState.FORCE_REFRESH);
+    @Builder
+    public EmployeeTokenEntity(EmployeeEntity employeeEntity, String refreshToken) {
+        this.employeeEntity = employeeEntity;
+        this.refreshToken = refreshToken;
     }
-  }
 
-  public void validToken(String refreshToken) {
-    if(!this.refreshToken.equals(refreshToken)){
-      throw new JwtRuntimeException(ExceptionState.FORCE_REFRESH);
+    public EmployeeTokenEntity refreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+        return this;
     }
-  }
+
+    public void validUser(Long parsedIndex) {
+        if (!this.employeeEntity.getId().equals(parsedIndex)) {
+            throw new JwtRuntimeException(ExceptionState.FORCE_REFRESH);
+        }
+    }
+
+    public void validToken(String refreshToken) {
+        if (!this.refreshToken.equals(refreshToken)) {
+            throw new JwtRuntimeException(ExceptionState.FORCE_REFRESH);
+        }
+    }
 }

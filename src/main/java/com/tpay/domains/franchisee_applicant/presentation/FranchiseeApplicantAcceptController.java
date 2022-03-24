@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class FranchiseeApplicantAcceptController {
 
-  private final FranchiseeApplicantAcceptService franchiseeApplicantAcceptService;
+    private final FranchiseeApplicantAcceptService franchiseeApplicantAcceptService;
 
-  @PutMapping("/admin/franchisee-applicants/{franchiseeApplicantIndex}")
-  public ResponseEntity<FranchiseeFindRequest> accept(
-      @PathVariable Long franchiseeApplicantIndex, @RequestBody FranchiseeFindRequest franchiseeFindRequest) {
-    FranchiseeFindRequest response =
-        franchiseeApplicantAcceptService.accept(franchiseeApplicantIndex, franchiseeFindRequest);
-    return ResponseEntity.ok(response);
-  }
+    @PutMapping("/admin/franchisee-applicants/{franchiseeApplicantIndex}")
+    public ResponseEntity<FranchiseeFindRequest> accept(
+        @PathVariable Long franchiseeApplicantIndex, @RequestBody FranchiseeFindRequest franchiseeFindRequest) {
+        FranchiseeFindRequest response =
+            franchiseeApplicantAcceptService.accept(franchiseeApplicantIndex, franchiseeFindRequest);
+        return ResponseEntity.ok(response);
+    }
 }

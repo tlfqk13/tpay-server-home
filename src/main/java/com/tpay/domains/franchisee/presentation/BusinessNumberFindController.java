@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class BusinessNumberFindController {
 
-  private final BusinessNumberFindService businessNumberFindService;
+    private final BusinessNumberFindService businessNumberFindService;
 
-  @PostMapping("/franchisee/business-number")
-  public ResponseEntity<String> findBusinessNumber(@RequestBody BusinessNumberFindRequest request) {
-    String businessNumber = businessNumberFindService.findBusinessNumber(request);
-    return ResponseEntity.ok(businessNumber);
-  }
+    @PostMapping("/franchisee/business-number")
+    public ResponseEntity<String> findBusinessNumber(@RequestBody BusinessNumberFindRequest request) {
+        String businessNumber = businessNumberFindService.findBusinessNumber(request);
+        return ResponseEntity.ok(businessNumber);
+    }
 }

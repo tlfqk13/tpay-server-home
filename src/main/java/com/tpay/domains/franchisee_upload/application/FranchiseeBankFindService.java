@@ -15,13 +15,13 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class FranchiseeBankFindService {
 
-  private final FranchiseeBankRepository franchiseeBankRepository;
+    private final FranchiseeBankRepository franchiseeBankRepository;
 
-  public FranchiseeBankEntity findByFranchiseeEntity(FranchiseeEntity franchiseeEntity){
-    Optional<FranchiseeBankEntity> optionalFranchiseeBankEntity = franchiseeBankRepository.findByFranchiseeEntity(franchiseeEntity);
-    if(optionalFranchiseeBankEntity.isEmpty()){
-      throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Franchisee Bank Entity doesn't exists");
+    public FranchiseeBankEntity findByFranchiseeEntity(FranchiseeEntity franchiseeEntity) {
+        Optional<FranchiseeBankEntity> optionalFranchiseeBankEntity = franchiseeBankRepository.findByFranchiseeEntity(franchiseeEntity);
+        if (optionalFranchiseeBankEntity.isEmpty()) {
+            throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Franchisee Bank Entity doesn't exists");
+        }
+        return optionalFranchiseeBankEntity.get();
     }
-    return optionalFranchiseeBankEntity.get();
-  }
 }

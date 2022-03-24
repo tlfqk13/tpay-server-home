@@ -27,51 +27,51 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PointConfirmedService {
 
-  private final PointRepository pointRepository;
-  private final PointScheduledRepository pointScheduledRepository;
-  private final OrderFindService orderFindService;
+    private final PointRepository pointRepository;
+    private final PointScheduledRepository pointScheduledRepository;
+    private final OrderFindService orderFindService;
 
-  @Transactional
-  public String updateStatus() {
-    LocalDate scheduledDate = LocalDate.now().minusWeeks(2);
-    Optional<List<StatusUpdateResponseInterface>> needUpdateEntity = pointScheduledRepository.findNeedUpdateEntity(scheduledDate);
-    if (needUpdateEntity.get().isEmpty()) {
-      System.out.println("Nothing to Update Status");
-      return "Nothing to Update Status";
-    } else {
+    @Transactional
+    public String updateStatus() {
+        LocalDate scheduledDate = LocalDate.now().minusWeeks(2);
+        Optional<List<StatusUpdateResponseInterface>> needUpdateEntity = pointScheduledRepository.findNeedUpdateEntity(scheduledDate);
+        if (needUpdateEntity.get().isEmpty()) {
+            System.out.println("Nothing to Update Status");
+            return "Nothing to Update Status";
+        } else {
 
-      // Scheduled 테이블 상태변경
-      List<Long> targetList = new ArrayList<>();
-      needUpdateEntity.get().forEach(i -> targetList.add(i.getId()));
-      targetList.stream().map(i -> pointScheduledRepository.findById(i)
-              .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Point Id Not Exists"))
-          )
-          .forEach(PointScheduledEntity::updateStatus);
+            // Scheduled 테이블 상태변경
+            List<Long> targetList = new ArrayList<>();
+            needUpdateEntity.get().forEach(i -> targetList.add(i.getId()));
+            targetList.stream().map(i -> pointScheduledRepository.findById(i)
+                    .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Point Id Not Exists"))
+                )
+                .forEach(PointScheduledEntity::updateStatus);
 
-      // 프랜차이즈 balance 변경
-      // TODO: 2022/03/15 기능 추가에 의해 상태변경과 balance 로직이 따로 구현되어있으나, 추후 리팩토링 요망
-      List<Long> saveTargetList = new ArrayList<>();
-      needUpdateEntity.get().forEach(i -> saveTargetList.add(i.getOrderId()));
-      List<OrderEntity> orderEntityList = saveTargetList.stream().map(orderFindService::findById)
-          .collect(Collectors.toList());
+            // 프랜차이즈 balance 변경
+            // TODO: 2022/03/15 기능 추가에 의해 상태변경과 balance 로직이 따로 구현되어있으나, 추후 리팩토링 요망
+            List<Long> saveTargetList = new ArrayList<>();
+            needUpdateEntity.get().forEach(i -> saveTargetList.add(i.getOrderId()));
+            List<OrderEntity> orderEntityList = saveTargetList.stream().map(orderFindService::findById)
+                .collect(Collectors.toList());
 
-      for (OrderEntity orderEntity : orderEntityList) {
-        FranchiseeEntity franchiseeEntity = orderEntity.getFranchiseeEntity();
-        franchiseeEntity.changeBalance(SignType.POSITIVE, orderEntity.getPoints());
-        PointEntity pointEntity = PointEntity.builder()
-            .createdDate(LocalDateTime.now())
-            .signType(SignType.POSITIVE)
-            .change(orderEntity.getPoints())
-            .pointStatus(PointStatus.SAVE)
-            .balance(franchiseeEntity.getBalance())
-            .orderEntity(orderEntity)
-            .build();
+            for (OrderEntity orderEntity : orderEntityList) {
+                FranchiseeEntity franchiseeEntity = orderEntity.getFranchiseeEntity();
+                franchiseeEntity.changeBalance(SignType.POSITIVE, orderEntity.getPoints());
+                PointEntity pointEntity = PointEntity.builder()
+                    .createdDate(LocalDateTime.now())
+                    .signType(SignType.POSITIVE)
+                    .change(orderEntity.getPoints())
+                    .pointStatus(PointStatus.SAVE)
+                    .balance(franchiseeEntity.getBalance())
+                    .orderEntity(orderEntity)
+                    .build();
 
-        pointRepository.save(pointEntity);
+                pointRepository.save(pointEntity);
 
-      }
-      System.out.println(targetList.size() + "Entity was Updated");
-      return targetList.size() + "Entity was Updated";
+            }
+            System.out.println(targetList.size() + "Entity was Updated");
+            return targetList.size() + "Entity was Updated";
+        }
     }
-  }
 }

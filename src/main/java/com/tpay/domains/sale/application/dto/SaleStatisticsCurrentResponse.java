@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class SaleStatisticsCurrentResponse {
-  private String totalAmount;
-  private String totalActualAmount;
-  private String totalRefund;
-  private String totalCount;
-  private String totalCancel;
+    private String totalAmount;
+    private String totalActualAmount;
+    private String totalRefund;
+    private String totalCount;
+    private String totalCancel;
 }

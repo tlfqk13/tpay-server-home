@@ -13,11 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class SignOutController {
 
-  private final SignOutService signOutService;
+    private final SignOutService signOutService;
 
-  @DeleteMapping("/sign-out")
-  public ResponseEntity<String> signOut(@RequestBody SignOutRequest signOutRequest){
-    String result = signOutService.signOut(signOutRequest);
-    return ResponseEntity.ok(result);
-  }
+    @DeleteMapping("/sign-out")
+    public ResponseEntity<String> signOut(@RequestBody SignOutRequest signOutRequest) {
+        String result = signOutService.signOut(signOutRequest);
+        return ResponseEntity.ok(result);
+    }
 }

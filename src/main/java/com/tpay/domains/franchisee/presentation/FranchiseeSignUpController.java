@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class FranchiseeSignUpController {
 
-  private final FranchiseeSignUpService franchiseeSignUpService;
+    private final FranchiseeSignUpService franchiseeSignUpService;
 
-  @PostMapping("/sign-up")
-  public ResponseEntity signUp(@RequestBody FranchiseeSignUpRequest request) {
-    franchiseeSignUpService.signUp(request);
-    return ResponseEntity.ok().build();
-  }
+    @PostMapping("/sign-up")
+    public ResponseEntity signUp(@RequestBody FranchiseeSignUpRequest request) {
+        franchiseeSignUpService.signUp(request);
+        return ResponseEntity.ok().build();
+    }
 }

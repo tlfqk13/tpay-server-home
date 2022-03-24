@@ -17,29 +17,29 @@ import javax.validation.constraints.NotNull;
 @Entity
 public class FranchiseeBankEntity {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @NotNull
-  private String accountNumber;
+    @NotNull
+    private String accountNumber;
 
-  @NotNull
-  private String bankName;
+    @NotNull
+    private String bankName;
 
-  @NotNull
-  private String withdrawalDate;
+    @NotNull
+    private String withdrawalDate;
 
-  @OneToOne
-  @JoinColumn(name = "franchisee_id")
-  private FranchiseeEntity franchiseeEntity;
+    @OneToOne
+    @JoinColumn(name = "franchisee_id")
+    private FranchiseeEntity franchiseeEntity;
 
-  public FranchiseeBankEntity updateBankInfo(FranchiseeBankInfo franchiseeBankInfo) {
-    this.accountNumber = franchiseeBankInfo.getAccountNumber();
-    this.bankName = franchiseeBankInfo.getBankName();
-    this.withdrawalDate = franchiseeBankInfo.getWithdrawalDate().replaceAll("일","");
-    return this;
-  }
+    public FranchiseeBankEntity updateBankInfo(FranchiseeBankInfo franchiseeBankInfo) {
+        this.accountNumber = franchiseeBankInfo.getAccountNumber();
+        this.bankName = franchiseeBankInfo.getBankName();
+        this.withdrawalDate = franchiseeBankInfo.getWithdrawalDate().replaceAll("일", "");
+        return this;
+    }
 }
 
 

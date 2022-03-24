@@ -18,42 +18,41 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class EmployeeRegistrationService {
 
-  private final EmployeeRepository employeeRepository;
-  private final FranchiseeFindService franchiseeFindService;
-  private final PasswordEncoder passwordEncoder;
+    private final EmployeeRepository employeeRepository;
+    private final FranchiseeFindService franchiseeFindService;
+    private final PasswordEncoder passwordEncoder;
 
-  public EmployeeEntity registration(Long franchiseeIndex, EmployeeRegistrationRequest employeeRegistrationRequest) {
+    public EmployeeEntity registration(Long franchiseeIndex, EmployeeRegistrationRequest employeeRegistrationRequest) {
 
 
-    String password = employeeRegistrationRequest.getPassword();
-    String passwordCheck = employeeRegistrationRequest.getPasswordCheck();
-    if(!validPassword(password,passwordCheck)){
-      throw new InvalidPasswordException(ExceptionState.INVALID_PASSWORD,"Invalid Password(regEx or passCheck not matched");
+        String password = employeeRegistrationRequest.getPassword();
+        String passwordCheck = employeeRegistrationRequest.getPasswordCheck();
+        if (!validPassword(password, passwordCheck)) {
+            throw new InvalidPasswordException(ExceptionState.INVALID_PASSWORD, "Invalid Password(regEx or passCheck not matched");
+        }
+
+        FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
+
+        EmployeeEntity employeeEntity = EmployeeEntity.builder()
+            .name(employeeRegistrationRequest.getName())
+            .userId(employeeRegistrationRequest.getUserId())
+            .password(passwordEncoder.encode(password))
+            .franchiseeEntity(franchiseeEntity)
+            .isDelete(false)
+            .build();
+
+        EmployeeEntity result = employeeRepository.save(employeeEntity);
+        return result;
     }
 
-    FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
+    static boolean validPassword(String password, String passwordCheck) {
+        boolean equalEach = password.equals(passwordCheck);
 
-    EmployeeEntity employeeEntity = EmployeeEntity.builder()
-        .name(employeeRegistrationRequest.getName())
-        .userId(employeeRegistrationRequest.getUserId())
-        .password(passwordEncoder.encode(password))
-        .franchiseeEntity(franchiseeEntity)
-        .isDelete(false)
-        .build();
+        RegExUtils regExUtils = new RegExUtils();
+        boolean validate = regExUtils.validate(RegExType.PASSWORD, password);
 
-    EmployeeEntity result = employeeRepository.save(employeeEntity);
-    return result;
-  }
-
-  static boolean validPassword(String password, String passwordCheck){
-    boolean equalEach = password.equals(passwordCheck);
-
-    RegExUtils regExUtils = new RegExUtils();
-    boolean validate = regExUtils.validate(RegExType.PASSWORD, password);
-
-    if(equalEach&&validate) {
-      return true;
+        if (equalEach && validate) {
+            return true;
+        } else return false;
     }
-    else return false;
-  }
 }

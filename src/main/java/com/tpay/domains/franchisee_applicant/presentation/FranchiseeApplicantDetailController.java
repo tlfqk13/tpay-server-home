@@ -12,18 +12,18 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class FranchiseeApplicantDetailController {
 
-  private final FranchiseeApplicantDetailService franchiseeApplicantDetailService;
-  private final FranchiseeApplicantSetNumberService franchiseeApplicantSetNumberService;
+    private final FranchiseeApplicantDetailService franchiseeApplicantDetailService;
+    private final FranchiseeApplicantSetNumberService franchiseeApplicantSetNumberService;
 
-  @GetMapping("/admin/franchisee-applicants/{franchiseeApplicantIndex}")
-  public ResponseEntity<FranchiseeApplicantDetailResponse> detail(@PathVariable Long franchiseeApplicantIndex){
-    FranchiseeApplicantDetailResponse result = franchiseeApplicantDetailService.detail(franchiseeApplicantIndex);
-    return ResponseEntity.ok(result);
-  }
+    @GetMapping("/admin/franchisee-applicants/{franchiseeApplicantIndex}")
+    public ResponseEntity<FranchiseeApplicantDetailResponse> detail(@PathVariable Long franchiseeApplicantIndex) {
+        FranchiseeApplicantDetailResponse result = franchiseeApplicantDetailService.detail(franchiseeApplicantIndex);
+        return ResponseEntity.ok(result);
+    }
 
-  @PatchMapping("/admin/franchisee-applicants/{franchiseeApplicantIndex}/taxFreeStoreNumber")
-  public ResponseEntity<String> updateTaxFreeStoreNumber(@PathVariable Long franchiseeApplicantIndex, @RequestBody FranchiseeApplicantSetNumberRequest franchiseeApplicantSetNumberRequest){
-    String result = franchiseeApplicantSetNumberService.updateTaxFreeStoreNumber(franchiseeApplicantIndex, franchiseeApplicantSetNumberRequest);
-    return ResponseEntity.ok(result);
-  }
+    @PatchMapping("/admin/franchisee-applicants/{franchiseeApplicantIndex}/taxFreeStoreNumber")
+    public ResponseEntity<String> updateTaxFreeStoreNumber(@PathVariable Long franchiseeApplicantIndex, @RequestBody FranchiseeApplicantSetNumberRequest franchiseeApplicantSetNumberRequest) {
+        String result = franchiseeApplicantSetNumberService.updateTaxFreeStoreNumber(franchiseeApplicantIndex, franchiseeApplicantSetNumberRequest);
+        return ResponseEntity.ok(result);
+    }
 }

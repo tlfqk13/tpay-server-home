@@ -6,6 +6,8 @@ import com.tpay.commons.exception.ExceptionResponse;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.domains.external.application.dto.ExternalRefundApprovalRequest;
+import com.tpay.domains.external.domain.ExternalRefundEntity;
+import com.tpay.domains.external.domain.ExternalRefundStatus;
 import com.tpay.domains.franchisee.application.FranchiseeFindService;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.order.application.OrderSaveService;
@@ -28,44 +30,48 @@ import javax.transaction.Transactional;
 @RequiredArgsConstructor
 public class ExternalRefundApprovalService {
 
-  private final OrderSaveService orderSaveService;
-  private final FranchiseeFindService franchiseeFindService;
-  private final WebClient.Builder builder;
-  private final RefundSaveService refundSaveService;
-  private final PointScheduledChangeService pointScheduledChangeService;
+    private final OrderSaveService orderSaveService;
+    private final FranchiseeFindService franchiseeFindService;
+    private final WebClient.Builder builder;
+    private final RefundSaveService refundSaveService;
+    private final PointScheduledChangeService pointScheduledChangeService;
+    private final ExternalRefundFindService externalRefundFindService;
 
-  @Transactional
-  public RefundResponse approve(ExternalRefundApprovalRequest externalRefundApprovalRequest) {
-    OrderEntity orderEntity = orderSaveService.save(externalRefundApprovalRequest);
-    FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(externalRefundApprovalRequest.getFranchiseeIndex());
-    RefundApproveRequest refundApproveRequest = RefundApproveRequest.of(orderEntity);
+    @Transactional
+    public RefundResponse approve(ExternalRefundApprovalRequest externalRefundApprovalRequest) {
+        ExternalRefundEntity externalRefundEntity = externalRefundFindService.findById(externalRefundApprovalRequest.getExternalRefundIndex());
+        FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(externalRefundEntity.getFranchiseeIndex());
+        OrderEntity orderEntity = orderSaveService.save(externalRefundEntity, externalRefundApprovalRequest.getAmount());
+        externalRefundEntity.changeStatus(ExternalRefundStatus.APPROVE);
 
-    WebClient webClient = builder.build();
-    String uri = CustomValue.REFUND_SERVER + "/refund/approval";
-    RefundResponse refundResponse = webClient
-        .post()
-        .uri(uri)
-        .bodyValue(refundApproveRequest)
-        .retrieve()
-        .onStatus(
-            HttpStatus::isError,
-            response ->
-                response.bodyToMono(ExceptionResponse.class).flatMap(error -> Mono.error(new InvalidParameterException(
-                    ExceptionState.REFUND, error.getMessage()))))
-        .bodyToMono(RefundResponse.class)
-        .block();
+        RefundApproveRequest refundApproveRequest = RefundApproveRequest.of(orderEntity);
 
-    RefundEntity refundEntity = refundSaveService.save(
-        refundResponse.getResponseCode(),
-        refundResponse.getPurchaseSequenceNumber(),
-        refundResponse.getTakeoutNumber(),
-        orderEntity);
+        WebClient webClient = builder.build();
+        String uri = CustomValue.REFUND_SERVER + "/refund/approval";
+        RefundResponse refundResponse = webClient
+            .post()
+            .uri(uri)
+            .bodyValue(refundApproveRequest)
+            .retrieve()
+            .onStatus(
+                HttpStatus::isError,
+                response ->
+                    response.bodyToMono(ExceptionResponse.class).flatMap(error -> Mono.error(new InvalidParameterException(
+                        ExceptionState.REFUND, error.getMessage()))))
+            .bodyToMono(RefundResponse.class)
+            .block();
 
-    pointScheduledChangeService.change(refundEntity, SignType.POSITIVE);
-    franchiseeEntity.isRefundOnce();
-    return refundResponse;
+        RefundEntity refundEntity = refundSaveService.save(
+            refundResponse.getResponseCode(),
+            refundResponse.getPurchaseSequenceNumber(),
+            refundResponse.getTakeoutNumber(),
+            orderEntity);
+
+        pointScheduledChangeService.change(refundEntity, SignType.POSITIVE);
+        franchiseeEntity.isRefundOnce();
+        return refundResponse;
 
 
-  }
+    }
 
 }

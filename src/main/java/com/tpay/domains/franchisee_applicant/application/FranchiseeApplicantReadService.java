@@ -11,12 +11,12 @@ import javax.transaction.Transactional;
 @RequiredArgsConstructor
 public class FranchiseeApplicantReadService {
 
-  private final FranchiseeApplicantFindService franchiseeApplicantFindService;
+    private final FranchiseeApplicantFindService franchiseeApplicantFindService;
 
-  @Transactional
-  public boolean read(Long franchiseeApplicantIndex){
-    FranchiseeApplicantEntity franchiseeApplicantEntity = franchiseeApplicantFindService.findByIndex(franchiseeApplicantIndex);
-    boolean result = franchiseeApplicantEntity.read();
-    return result;
-  }
+    @Transactional
+    public boolean read(Long franchiseeApplicantIndex) {
+        FranchiseeApplicantEntity franchiseeApplicantEntity = franchiseeApplicantFindService.findByIndex(franchiseeApplicantIndex);
+        boolean result = franchiseeApplicantEntity.read();
+        return result;
+    }
 }

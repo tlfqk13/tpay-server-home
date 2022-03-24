@@ -15,19 +15,19 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class EmployeeFindService {
 
-  private final EmployeeRepository employeeRepository;
+    private final EmployeeRepository employeeRepository;
 
-  public EmployeeEntity findByUserId(String userId) {
-    return employeeRepository.findByUserId(userId)
-        .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "가입 내역이 존재하지 않습니다. 다시 입력해주세요."));
-  }
+    public EmployeeEntity findByUserId(String userId) {
+        return employeeRepository.findByUserId(userId)
+            .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "가입 내역이 존재하지 않습니다. 다시 입력해주세요."));
+    }
 
-  public Optional<EmployeeEntity> findById(Long employeeIndex) {
-    return employeeRepository.findById(employeeIndex);
-  }
+    public Optional<EmployeeEntity> findById(Long employeeIndex) {
+        return employeeRepository.findById(employeeIndex);
+    }
 
 
-  public List<EmployeeFindResponseInterface> findAllByFranchiseeId(Long franchiseeIndex) {
-    return employeeRepository.findAllByFranchiseeId(franchiseeIndex);
-  }
+    public List<EmployeeFindResponseInterface> findAllByFranchiseeId(Long franchiseeIndex) {
+        return employeeRepository.findAllByFranchiseeId(franchiseeIndex);
+    }
 }

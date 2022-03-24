@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public class RefundCustomerInfoRequest {
-  private String nationality;
-  private String passportNumber;
-  private String name;
+    private String nationality;
+    private String passportNumber;
+    private String name;
 }

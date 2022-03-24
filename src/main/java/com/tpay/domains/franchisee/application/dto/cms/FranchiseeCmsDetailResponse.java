@@ -9,6 +9,6 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class FranchiseeCmsDetailResponse {
-  private List<String> commissionInfoList;
-  private List<String> customerInfoList;
+    private List<String> commissionInfoList;
+    private List<String> customerInfoList;
 }

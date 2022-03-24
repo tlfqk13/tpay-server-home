@@ -4,5 +4,5 @@ import lombok.Getter;
 
 @Getter
 public class PointWithdrawalRequest {
-  private Long amount;
+    private Long amount;
 }

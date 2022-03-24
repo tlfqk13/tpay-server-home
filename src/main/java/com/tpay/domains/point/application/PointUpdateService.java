@@ -16,19 +16,19 @@ import javax.transaction.Transactional;
 @RequiredArgsConstructor
 public class PointUpdateService {
 
-  private final PointRepository pointRepository;
+    private final PointRepository pointRepository;
 
-  @Transactional
-  public String updateStatus(Long pointsIndex, PointUpdateRequest pointUpdateRequest) {
-    Boolean isRead = pointUpdateRequest.getIsRead();
-    PointStatus pointStatus = pointUpdateRequest.getPointStatus();
-    PointEntity pointEntity = pointRepository.findById(pointsIndex).orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid pointsIndex"));
-    if (isRead == null) {
-      PointStatus result = pointEntity.updateStatus(pointStatus);
-      return "pointStatus가 " + result + "로 변경되었습니다.";
-    } else {
-      Boolean result = pointEntity.updateIsRead(isRead);
-      return "isRead가 " + result + "로 변경되었습니다.";
+    @Transactional
+    public String updateStatus(Long pointsIndex, PointUpdateRequest pointUpdateRequest) {
+        Boolean isRead = pointUpdateRequest.getIsRead();
+        PointStatus pointStatus = pointUpdateRequest.getPointStatus();
+        PointEntity pointEntity = pointRepository.findById(pointsIndex).orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid pointsIndex"));
+        if (isRead == null) {
+            PointStatus result = pointEntity.updateStatus(pointStatus);
+            return "pointStatus가 " + result + "로 변경되었습니다.";
+        } else {
+            Boolean result = pointEntity.updateIsRead(isRead);
+            return "isRead가 " + result + "로 변경되었습니다.";
+        }
     }
-  }
 }

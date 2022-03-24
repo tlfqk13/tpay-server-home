@@ -6,5 +6,5 @@ import lombok.ToString;
 @Getter
 @ToString
 public class FranchiseeApplicantRejectRequest {
-  private String rejectReason;
+    private String rejectReason;
 }

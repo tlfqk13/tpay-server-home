@@ -19,40 +19,40 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PointFindController {
 
-  private final PointFindService pointFindService;
+    private final PointFindService pointFindService;
 
-  @GetMapping("/points/franchisee/{franchiseeIndex}")
-  public ResponseEntity<PointFindResponse> findPoints(
-      @PathVariable Long franchiseeIndex,
-      @RequestParam Integer week,
-      @RequestParam Integer month,
-      @RequestParam Integer page,
-      @RequestParam Integer size) {
+    @GetMapping("/points/franchisee/{franchiseeIndex}")
+    public ResponseEntity<PointFindResponse> findPoints(
+        @PathVariable Long franchiseeIndex,
+        @RequestParam Integer week,
+        @RequestParam Integer month,
+        @RequestParam Integer page,
+        @RequestParam Integer size) {
 
-    PointFindResponse response =
-        pointFindService.findPoints(franchiseeIndex, week, month, page, size);
+        PointFindResponse response =
+            pointFindService.findPoints(franchiseeIndex, week, month, page, size);
 
-    return ResponseEntity.ok(response);
-  }
+        return ResponseEntity.ok(response);
+    }
 
-  @GetMapping("/points/franchisee/{franchiseeIndex}/total")
-  public ResponseEntity<PointTotalResponseInterface> findPointsTotal(@PathVariable Long franchiseeIndex) {
-    PointTotalResponseInterface pointTotalResponseInterface = pointFindService.findPointsTotal(franchiseeIndex);
-    return ResponseEntity.ok(pointTotalResponseInterface);
-  }
+    @GetMapping("/points/franchisee/{franchiseeIndex}/total")
+    public ResponseEntity<PointTotalResponseInterface> findPointsTotal(@PathVariable Long franchiseeIndex) {
+        PointTotalResponseInterface pointTotalResponseInterface = pointFindService.findPointsTotal(franchiseeIndex);
+        return ResponseEntity.ok(pointTotalResponseInterface);
+    }
 
-  @GetMapping("/admin/points/{isAll}/{withdrawalStatus}")
-  public ResponseEntity<List<AdminPointFindResponseInterface>> findPointsAdmin(
-      @PathVariable Boolean isAll,
-      @PathVariable WithdrawalStatus withdrawalStatus
-  ) {
-    List<AdminPointFindResponseInterface> pointsAdmin = pointFindService.findPointsAdmin(isAll, withdrawalStatus);
-    return ResponseEntity.ok(pointsAdmin);
-  }
+    @GetMapping("/admin/points/{isAll}/{withdrawalStatus}")
+    public ResponseEntity<List<AdminPointFindResponseInterface>> findPointsAdmin(
+        @PathVariable Boolean isAll,
+        @PathVariable WithdrawalStatus withdrawalStatus
+    ) {
+        List<AdminPointFindResponseInterface> pointsAdmin = pointFindService.findPointsAdmin(isAll, withdrawalStatus);
+        return ResponseEntity.ok(pointsAdmin);
+    }
 
-  @GetMapping("/admin/detail/points/{pointsIndex}")
-  public ResponseEntity<PointFindDetailResponse> findPointsAdminDetail(@PathVariable Long pointsIndex){
-    PointFindDetailResponse pointFindDetailResponse = pointFindService.findDetailByIndex(pointsIndex);
-    return ResponseEntity.ok(pointFindDetailResponse);
-  }
+    @GetMapping("/admin/detail/points/{pointsIndex}")
+    public ResponseEntity<PointFindDetailResponse> findPointsAdminDetail(@PathVariable Long pointsIndex) {
+        PointFindDetailResponse pointFindDetailResponse = pointFindService.findDetailByIndex(pointsIndex);
+        return ResponseEntity.ok(pointFindDetailResponse);
+    }
 }

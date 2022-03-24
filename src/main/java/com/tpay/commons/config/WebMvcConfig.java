@@ -11,41 +11,41 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @RequiredArgsConstructor
 public class WebMvcConfig implements WebMvcConfigurer {
-  private final AuthInterceptor authInterceptor;
-  private final PrintRequestInterceptor printRequestInterceptor;
+    private final AuthInterceptor authInterceptor;
+    private final PrintRequestInterceptor printRequestInterceptor;
 
-  @Override
-  public void addInterceptors(InterceptorRegistry registry) {
-    registry
-        .addInterceptor(authInterceptor)
-        .addPathPatterns("/**")
-        .excludePathPatterns(
-            "/sign-in",
-            "/sign-up",
-            "/sign-out",
-            "/refresh",
-            "/categories",
-            "/certifications/**",
-            "/franchisee/business-number",
-            "/franchisee/password",
-            "/admin/**",
-            "/refunds",
-            "/h2-console/**",
-            "/favicon.ico",
-            "/validate/**",
-            "/refund/approval/fake",
-            "/franchisee/password/**",
-            "/points/batch",
-            "/external/**",
-            "/error");
-    registry.addInterceptor(printRequestInterceptor).addPathPatterns("/**");
-  }
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry
+            .addInterceptor(authInterceptor)
+            .addPathPatterns("/**")
+            .excludePathPatterns(
+                "/sign-in",
+                "/sign-up",
+                "/sign-out",
+                "/refresh",
+                "/categories",
+                "/certifications/**",
+                "/franchisee/business-number",
+                "/franchisee/password",
+                "/admin/**",
+                "/refunds",
+                "/h2-console/**",
+                "/favicon.ico",
+                "/validate/**",
+                "/refund/approval/fake",
+                "/franchisee/password/**",
+                "/points/batch",
+                "/external/**",
+                "/error");
+        registry.addInterceptor(printRequestInterceptor).addPathPatterns("/**");
+    }
 
-  @Override
-  public void addCorsMappings(CorsRegistry registry) {
-    registry
-        .addMapping("/**")
-        .allowedOriginPatterns("*")
-        .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH");
-  }
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry
+            .addMapping("/**")
+            .allowedOriginPatterns("*")
+            .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH");
+    }
 }

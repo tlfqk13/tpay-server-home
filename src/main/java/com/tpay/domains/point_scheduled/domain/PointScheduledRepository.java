@@ -15,13 +15,13 @@ import java.util.Optional;
 @Repository
 public interface PointScheduledRepository extends JpaRepository<PointScheduledEntity, Long> {
 
-  List<PointScheduledEntity> findAllByFranchiseeEntityIdAndCreatedDateBetween(
-      Long franchiseeId, LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
+    List<PointScheduledEntity> findAllByFranchiseeEntityIdAndCreatedDateBetween(
+        Long franchiseeId, LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
 
-  @Query(value = "select id, order_id\n" +
-      "                from point_scheduled\n" +
-      "                where created_date <= :scheduledDate\n" +
-      "                    and point_status = 'SCHEDULED'", nativeQuery = true)
-  Optional<List<StatusUpdateResponseInterface>> findNeedUpdateEntity(@Param("scheduledDate") LocalDate scheduledDate);
+    @Query(value = "select id, order_id\n" +
+        "                from point_scheduled\n" +
+        "                where created_date <= :scheduledDate\n" +
+        "                    and point_status = 'SCHEDULED'", nativeQuery = true)
+    Optional<List<StatusUpdateResponseInterface>> findNeedUpdateEntity(@Param("scheduledDate") LocalDate scheduledDate);
 
 }

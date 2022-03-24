@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class RefundCancelController {
 
-  private final RefundCancelService refundCancelService;
+    private final RefundCancelService refundCancelService;
 
-  @PatchMapping("/refund/cancel")
-  public ResponseEntity<RefundResponse> refundCancel(
-      @RequestParam Long customerIndex, @RequestParam Long refundIndex) {
-    RefundResponse response = refundCancelService.cancel(customerIndex, refundIndex);
-    return ResponseEntity.ok(response);
-  }
+    @PatchMapping("/refund/cancel")
+    public ResponseEntity<RefundResponse> refundCancel(
+        @RequestParam Long customerIndex, @RequestParam Long refundIndex) {
+        RefundResponse response = refundCancelService.cancel(customerIndex, refundIndex);
+        return ResponseEntity.ok(response);
+    }
 }

@@ -12,23 +12,24 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class SignInTokenInfo {
 
-  //1. FranchiseeTokenInfo
-  private Long franchiseeIndex;
-  private String businessNumber;
-  private FranchiseeStatus franchiseeStatus;
-  private String rejectReason;
-  private LocalDateTime signUpDate;
-  private boolean popUp;
+    //1. FranchiseeTokenInfo
+    private Long franchiseeIndex;
+    private String businessNumber;
+    private FranchiseeStatus franchiseeStatus;
+    private String rejectReason;
+    private LocalDateTime signUpDate;
+    private boolean popUp;
 
-  //2. EmployeeTokenInfo
-  private Long employeeIndex;
-  private String userId;
-  private String name;;
-  private LocalDateTime registeredDate;
+    //2. EmployeeTokenInfo
+    private Long employeeIndex;
+    private String userId;
+    private String name;
+    ;
+    private LocalDateTime registeredDate;
 
 
-  //3. common
-  private String accessToken;
-  private String refreshToken;
-  private UserSelector userSelector;
+    //3. common
+    private String accessToken;
+    private String refreshToken;
+    private UserSelector userSelector;
 }
