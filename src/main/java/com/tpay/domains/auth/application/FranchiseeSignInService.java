@@ -5,44 +5,45 @@ import com.tpay.domains.auth.application.dto.FranchiseeTokenInfo;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee_applicant.application.FranchiseeApplicantFindService;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
-import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class FranchiseeSignInService {
 
-  private final FranchiseeApplicantFindService franchiseeApplicantFindService;
-  private final AuthService authService;
-  private final PasswordEncoder passwordEncoder;
+    private final FranchiseeApplicantFindService franchiseeApplicantFindService;
+    private final AuthService authService;
+    private final PasswordEncoder passwordEncoder;
 
-  @Transactional
-  public FranchiseeTokenInfo signIn(String businessNumber, String password) {
-    FranchiseeApplicantEntity franchiseeApplicantEntity =
-        franchiseeApplicantFindService.findByBusinessNumber(businessNumber);
+    @Transactional
+    public FranchiseeTokenInfo signIn(String businessNumber, String password) {
+        FranchiseeApplicantEntity franchiseeApplicantEntity =
+            franchiseeApplicantFindService.findByBusinessNumber(businessNumber);
 
-    FranchiseeEntity franchiseeEntity = franchiseeApplicantEntity.getFranchiseeEntity();
+        FranchiseeEntity franchiseeEntity = franchiseeApplicantEntity.getFranchiseeEntity();
 
-    if (!passwordEncoder.matches(
-        password, franchiseeEntity.getPassword())) {
-      throw new IllegalArgumentException("Invalid Password");
+        if (!passwordEncoder.matches(
+            password, franchiseeEntity.getPassword())) {
+            throw new IllegalArgumentException("Invalid Password");
+        }
+
+        AuthToken accessToken = authService.createAccessToken(franchiseeEntity);
+        AuthToken refreshToken = authService.createRefreshToken(franchiseeEntity);
+        authService.updateOrSave(franchiseeEntity, refreshToken.getValue());
+
+        return FranchiseeTokenInfo.builder()
+            .franchiseeIndex(franchiseeEntity.getId())
+            .businessNumber(franchiseeEntity.getBusinessNumber())
+            .franchiseeStatus(franchiseeApplicantEntity.getFranchiseeStatus())
+            .rejectReason(franchiseeApplicantEntity.getRejectReason())
+            .accessToken(accessToken.getValue())
+            .refreshToken(refreshToken.getValue())
+            .popUp(franchiseeEntity.isPopUp())
+            .signUpDate(franchiseeEntity.getCreatedDate())
+            .build();
     }
-
-    AuthToken accessToken = authService.createAccessToken(franchiseeEntity);
-    AuthToken refreshToken = authService.createRefreshToken(franchiseeEntity);
-    authService.updateOrSave(franchiseeEntity, refreshToken.getValue());
-
-    return FranchiseeTokenInfo.builder()
-        .franchiseeIndex(franchiseeEntity.getId())
-        .businessNumber(franchiseeEntity.getBusinessNumber())
-        .franchiseeStatus(franchiseeApplicantEntity.getFranchiseeStatus())
-        .rejectReason(franchiseeApplicantEntity.getRejectReason())
-        .accessToken(accessToken.getValue())
-        .refreshToken(refreshToken.getValue())
-        .popUp(franchiseeEntity.isPopUp())
-        .signUpDate(franchiseeEntity.getCreatedDate())
-        .build();
-  }
 }

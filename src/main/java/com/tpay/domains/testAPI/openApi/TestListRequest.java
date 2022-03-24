@@ -9,5 +9,5 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class TestListRequest {
-  private List<String> b_no;
+    private List<String> b_no;
 }

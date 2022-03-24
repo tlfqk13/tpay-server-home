@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class EmployeeUpdateController {
 
-  private final EmployeeUpdateService employeeUpdateService;
+    private final EmployeeUpdateService employeeUpdateService;
 
-  @PatchMapping("/employee/{employeeIndex}")
-  public ResponseEntity<Boolean> update(
-      @PathVariable Long employeeIndex,
-      @RequestBody EmployeeUpdateRequest employeeUpdateRequest) {
-    boolean result = employeeUpdateService.update(employeeIndex, employeeUpdateRequest);
-    return ResponseEntity.ok(result);
-  }
+    @PatchMapping("/employee/{employeeIndex}")
+    public ResponseEntity<Boolean> update(
+        @PathVariable Long employeeIndex,
+        @RequestBody EmployeeUpdateRequest employeeUpdateRequest) {
+        boolean result = employeeUpdateService.update(employeeIndex, employeeUpdateRequest);
+        return ResponseEntity.ok(result);
+    }
 }

@@ -1,9 +1,9 @@
 package com.tpay.domains.point.application.dto;
 
 public interface PointTotalResponseInterface {
-  String getTotalPoint();
+    String getTotalPoint();
 
-  String getScheduledPoint();
+    String getScheduledPoint();
 
-  String getDisappearPoint();
+    String getDisappearPoint();
 }

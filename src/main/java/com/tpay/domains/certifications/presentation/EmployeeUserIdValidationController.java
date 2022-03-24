@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class EmployeeUserIdValidationController {
 
-  private final EmployeeUserIdValidationService employeeUserIdValidationService;
+    private final EmployeeUserIdValidationService employeeUserIdValidationService;
 
-  @GetMapping("/validate/employee/{franchiseeIndex}/{userId}")
-  public ResponseEntity<Boolean> validCheckUserId(
-      @PathVariable Long franchiseeIndex,
-      @PathVariable String userId) {
-    boolean result = employeeUserIdValidationService.valid(franchiseeIndex, userId);
-    return ResponseEntity.ok(result);
-  }
+    @GetMapping("/validate/employee/{franchiseeIndex}/{userId}")
+    public ResponseEntity<Boolean> validCheckUserId(
+        @PathVariable Long franchiseeIndex,
+        @PathVariable String userId) {
+        boolean result = employeeUserIdValidationService.valid(franchiseeIndex, userId);
+        return ResponseEntity.ok(result);
+    }
 }

@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class PointUpdateController {
 
-  private final PointUpdateService pointUpdateService;
+    private final PointUpdateService pointUpdateService;
 
-  @PatchMapping("/admin/points/{pointsIndex}")
-  public ResponseEntity<String> updateStatus(
-      @PathVariable Long pointsIndex,
-      @RequestBody PointUpdateRequest pointUpdateRequest) {
-    String result = pointUpdateService.updateStatus(pointsIndex, pointUpdateRequest);
-    return ResponseEntity.ok(result);
-  }
+    @PatchMapping("/admin/points/{pointsIndex}")
+    public ResponseEntity<String> updateStatus(
+        @PathVariable Long pointsIndex,
+        @RequestBody PointUpdateRequest pointUpdateRequest) {
+        String result = pointUpdateService.updateStatus(pointsIndex, pointUpdateRequest);
+        return ResponseEntity.ok(result);
+    }
 }

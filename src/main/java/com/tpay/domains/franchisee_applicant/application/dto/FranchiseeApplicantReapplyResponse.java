@@ -9,6 +9,6 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class FranchiseeApplicantReapplyResponse {
-  private String uploadImage;
-  private FranchiseeBankInfo franchiseeBankInfo;
+    private String uploadImage;
+    private FranchiseeBankInfo franchiseeBankInfo;
 }

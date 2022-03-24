@@ -4,10 +4,10 @@ import lombok.Getter;
 
 @Getter
 public enum FranchiseeStatus {
-  WAIT,
-  ACCEPTED,
-  REJECTED,
-  REAPPLIED,
-  CANCEL,
-  INIT
+    WAIT,
+    ACCEPTED,
+    REJECTED,
+    REAPPLIED,
+    CANCEL,
+    INIT
 }

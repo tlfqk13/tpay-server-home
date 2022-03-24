@@ -9,14 +9,14 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class FranchiseeStatusFindService {
 
-  private final FranchiseeApplicantFindService franchiseeApplicantFindService;
+    private final FranchiseeApplicantFindService franchiseeApplicantFindService;
 
-  public FranchiseeApplicantStatusInfo findByIndex(Long franchiseeApplicantIndex) {
-    FranchiseeApplicantEntity franchiseeApplicantEntity =
-        franchiseeApplicantFindService.findByIndex(franchiseeApplicantIndex);
+    public FranchiseeApplicantStatusInfo findByIndex(Long franchiseeApplicantIndex) {
+        FranchiseeApplicantEntity franchiseeApplicantEntity =
+            franchiseeApplicantFindService.findByIndex(franchiseeApplicantIndex);
 
-    return FranchiseeApplicantStatusInfo.builder()
-        .franchiseeStatus(franchiseeApplicantEntity.getFranchiseeStatus())
-        .build();
-  }
+        return FranchiseeApplicantStatusInfo.builder()
+            .franchiseeStatus(franchiseeApplicantEntity.getFranchiseeStatus())
+            .build();
+    }
 }

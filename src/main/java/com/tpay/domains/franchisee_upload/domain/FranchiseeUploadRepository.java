@@ -9,8 +9,9 @@ import java.util.Optional;
 @Repository
 public interface FranchiseeUploadRepository extends JpaRepository<FranchiseeUploadEntity, Long> {
 
-  boolean existsByFranchiseeIndexAndImageCategory(Long franchiseeIndex, String imageCategory);
-  FranchiseeUploadEntity findByFranchiseeIndexAndImageCategory(Long franchiseeIndex, String imageCategory);
+    boolean existsByFranchiseeIndexAndImageCategory(Long franchiseeIndex, String imageCategory);
 
-  Optional<FranchiseeUploadEntity> findByFranchiseeIndex(Long franchiseeIndex);
+    FranchiseeUploadEntity findByFranchiseeIndexAndImageCategory(Long franchiseeIndex, String imageCategory);
+
+    Optional<FranchiseeUploadEntity> findByFranchiseeIndex(Long franchiseeIndex);
 }

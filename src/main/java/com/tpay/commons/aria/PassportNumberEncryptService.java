@@ -8,12 +8,12 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class PassportNumberEncryptService {
-  public String encrypt(String passportNumber) {
-    try {
-      return ARIAEngine.encrypt(passportNumber);
+    public String encrypt(String passportNumber) {
+        try {
+            return ARIAEngine.encrypt(passportNumber);
 
-    } catch (Exception exception) {
-      throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Decryption Failed");
+        } catch (Exception exception) {
+            throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Decryption Failed");
+        }
     }
-  }
 }

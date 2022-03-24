@@ -6,5 +6,5 @@ import java.util.List;
 
 @Getter
 public class TestResponse {
-  private List<String> b_no;
+    private List<String> b_no;
 }

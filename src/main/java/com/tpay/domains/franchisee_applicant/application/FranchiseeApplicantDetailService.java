@@ -19,48 +19,48 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FranchiseeApplicantDetailService {
 
-  private final FranchiseeApplicantFindService franchiseeApplicantFindService;
-  private final FranchiseeUploadFindService franchiseeUploadFindService;
-  private final FranchiseeBankFindService franchiseeBankFindService;
-  private final EmployeeFindService employeeFindService;
+    private final FranchiseeApplicantFindService franchiseeApplicantFindService;
+    private final FranchiseeUploadFindService franchiseeUploadFindService;
+    private final FranchiseeBankFindService franchiseeBankFindService;
+    private final EmployeeFindService employeeFindService;
 
-  public FranchiseeApplicantDetailResponse detail(Long franchiseeApplicantIndex) {
-    FranchiseeApplicantEntity franchiseeApplicantEntity = franchiseeApplicantFindService.findByIndex(franchiseeApplicantIndex);
-    FranchiseeEntity franchiseeEntity = franchiseeApplicantEntity.getFranchiseeEntity();
-    FranchiseeUploadEntity franchiseeUploadEntity = franchiseeUploadFindService.findByFranchiseeIndex(franchiseeEntity.getId());
-    List<EmployeeFindResponseInterface> employeeResponse = employeeFindService.findAllByFranchiseeId(franchiseeEntity.getId());
-    FranchiseeBankEntity franchiseeBankEntity;
-    try {
-      franchiseeBankEntity = franchiseeBankFindService.findByFranchiseeEntity(franchiseeEntity);
-    } catch (InvalidParameterException e) {
-      franchiseeBankEntity = FranchiseeBankEntity.builder().build();
+    public FranchiseeApplicantDetailResponse detail(Long franchiseeApplicantIndex) {
+        FranchiseeApplicantEntity franchiseeApplicantEntity = franchiseeApplicantFindService.findByIndex(franchiseeApplicantIndex);
+        FranchiseeEntity franchiseeEntity = franchiseeApplicantEntity.getFranchiseeEntity();
+        FranchiseeUploadEntity franchiseeUploadEntity = franchiseeUploadFindService.findByFranchiseeIndex(franchiseeEntity.getId());
+        List<EmployeeFindResponseInterface> employeeResponse = employeeFindService.findAllByFranchiseeId(franchiseeEntity.getId());
+        FranchiseeBankEntity franchiseeBankEntity;
+        try {
+            franchiseeBankEntity = franchiseeBankFindService.findByFranchiseeEntity(franchiseeEntity);
+        } catch (InvalidParameterException e) {
+            franchiseeBankEntity = FranchiseeBankEntity.builder().build();
+        }
+
+        FranchiseeApplicantDetailResponse franchiseeApplicantDetailResponse = FranchiseeApplicantDetailResponse.builder()
+            .storeName(franchiseeEntity.getStoreName())
+            .sellerName(franchiseeEntity.getSellerName())
+            .businessNumber(franchiseeEntity.getBusinessNumber())
+            .storeTel(franchiseeEntity.getStoreTel())
+            .email(franchiseeEntity.getEmail())
+            .isTaxRefundShop(franchiseeEntity.getIsTaxRefundShop())
+            .franchiseeStatus(franchiseeApplicantEntity.getFranchiseeStatus())
+            .signboard(franchiseeEntity.getSignboard())
+            .productCategory(franchiseeEntity.getProductCategory())
+            .storeNumber(franchiseeEntity.getStoreNumber())
+            .storeAddressBasic(franchiseeEntity.getStoreAddressBasic())
+            .storeAddressDetail(franchiseeEntity.getStoreAddressDetail())
+            .createdDate(franchiseeEntity.getCreatedDate())
+            .isRead(franchiseeApplicantEntity.getIsRead())
+
+            .imageUrl(franchiseeUploadEntity.getS3Path())
+            .taxFreeStoreNumber(franchiseeUploadEntity.getTaxFreeStoreNumber())
+            .bankName(franchiseeBankEntity.getBankName())
+            .bankAccount(franchiseeBankEntity.getAccountNumber())
+            .withdrawalDate(franchiseeBankEntity.getWithdrawalDate())
+            .rejectReason(franchiseeApplicantEntity.getRejectReason())
+
+            .employeeFindResponseInterfaceList(employeeResponse)
+            .build();
+        return franchiseeApplicantDetailResponse;
     }
-
-    FranchiseeApplicantDetailResponse franchiseeApplicantDetailResponse = FranchiseeApplicantDetailResponse.builder()
-        .storeName(franchiseeEntity.getStoreName())
-        .sellerName(franchiseeEntity.getSellerName())
-        .businessNumber(franchiseeEntity.getBusinessNumber())
-        .storeTel(franchiseeEntity.getStoreTel())
-        .email(franchiseeEntity.getEmail())
-        .isTaxRefundShop(franchiseeEntity.getIsTaxRefundShop())
-        .franchiseeStatus(franchiseeApplicantEntity.getFranchiseeStatus())
-        .signboard(franchiseeEntity.getSignboard())
-        .productCategory(franchiseeEntity.getProductCategory())
-        .storeNumber(franchiseeEntity.getStoreNumber())
-        .storeAddressBasic(franchiseeEntity.getStoreAddressBasic())
-        .storeAddressDetail(franchiseeEntity.getStoreAddressDetail())
-        .createdDate(franchiseeEntity.getCreatedDate())
-        .isRead(franchiseeApplicantEntity.getIsRead())
-
-        .imageUrl(franchiseeUploadEntity.getS3Path())
-        .taxFreeStoreNumber(franchiseeUploadEntity.getTaxFreeStoreNumber())
-        .bankName(franchiseeBankEntity.getBankName())
-        .bankAccount(franchiseeBankEntity.getAccountNumber())
-        .withdrawalDate(franchiseeBankEntity.getWithdrawalDate())
-        .rejectReason(franchiseeApplicantEntity.getRejectReason())
-
-        .employeeFindResponseInterfaceList(employeeResponse)
-        .build();
-    return franchiseeApplicantDetailResponse;
-  }
 }

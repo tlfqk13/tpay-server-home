@@ -5,6 +5,6 @@ import lombok.Getter;
 
 @Getter
 public class FranchiseeUploadRequest {
-  private String imageCategory; // B, T
+    private String imageCategory; // B, T
 //  private String imageType; // jpg, png ...
 }

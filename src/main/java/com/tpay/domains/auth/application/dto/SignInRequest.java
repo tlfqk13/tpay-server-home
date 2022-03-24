@@ -5,8 +5,8 @@ import lombok.Getter;
 
 @Getter
 public class SignInRequest {
-  private UserSelector userSelector;
-  private String businessNumber;
-  private String userId;
-  private String password;
+    private UserSelector userSelector;
+    private String businessNumber;
+    private String userId;
+    private String password;
 }

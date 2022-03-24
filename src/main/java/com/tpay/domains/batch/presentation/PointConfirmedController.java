@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class PointConfirmedController {
 
-  private final PointConfirmedService pointConfirmedService;
+    private final PointConfirmedService pointConfirmedService;
 
-  @GetMapping("/points/batch")
-  public ResponseEntity<String> pointUpdater(){
-    String s = pointConfirmedService.updateStatus();
-    return ResponseEntity.ok(s);
-  }
+    @GetMapping("/points/batch")
+    public ResponseEntity<String> pointUpdater() {
+        String s = pointConfirmedService.updateStatus();
+        return ResponseEntity.ok(s);
+    }
 
 }

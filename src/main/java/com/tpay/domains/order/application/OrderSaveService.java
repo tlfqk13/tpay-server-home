@@ -2,8 +2,7 @@ package com.tpay.domains.order.application;
 
 import com.tpay.domains.customer.application.CustomerFindService;
 import com.tpay.domains.customer.domain.CustomerEntity;
-import com.tpay.domains.employee.application.EmployeeFindService;
-import com.tpay.domains.external.application.dto.ExternalRefundApprovalRequest;
+import com.tpay.domains.external.domain.ExternalRefundEntity;
 import com.tpay.domains.franchisee.application.FranchiseeFindService;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.order.domain.OrderEntity;
@@ -21,52 +20,52 @@ import javax.transaction.Transactional;
 @RequiredArgsConstructor
 public class OrderSaveService {
 
-  private final OrderRepository orderRepository;
-  private final FranchiseeFindService franchiseeFindService;
-  private final CustomerFindService customerFindService;
-  private final ProductFindService productFindService;
-  private final OrderLineSaveService orderLineSaveService;
+    private final OrderRepository orderRepository;
+    private final FranchiseeFindService franchiseeFindService;
+    private final CustomerFindService customerFindService;
+    private final ProductFindService productFindService;
+    private final OrderLineSaveService orderLineSaveService;
 
-  @Transactional
-  public OrderEntity save(RefundSaveRequest request) {
-    FranchiseeEntity franchiseeEntity =
-        franchiseeFindService.findByIndex(request.getFranchiseeIndex());
+    @Transactional
+    public OrderEntity save(RefundSaveRequest request) {
+        FranchiseeEntity franchiseeEntity =
+            franchiseeFindService.findByIndex(request.getFranchiseeIndex());
 
-    CustomerEntity customerEntity = customerFindService.findByIndex(request.getCustomerIndex());
+        CustomerEntity customerEntity = customerFindService.findByIndex(request.getCustomerIndex());
 
-    ProductEntity productEntity =
-        productFindService.findOrElseSave(
-            franchiseeEntity.getProductCategory(), request.getPrice());
+        ProductEntity productEntity =
+            productFindService.findOrElseSave(
+                franchiseeEntity.getProductCategory(), request.getPrice());
 
-    return this.save(franchiseeEntity, customerEntity, productEntity);
-  }
+        return this.save(franchiseeEntity, customerEntity, productEntity);
+    }
 
-  @Transactional
-  public OrderEntity save(ExternalRefundApprovalRequest externalRefundApprovalRequest){
-    FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(externalRefundApprovalRequest.getFranchiseeIndex());
-    CustomerEntity customerEntity = customerFindService.findByIndex(externalRefundApprovalRequest.getCustomerIndex());
-    ProductEntity productEntity = productFindService.findOrElseSave(franchiseeEntity.getProductCategory(), externalRefundApprovalRequest.getAmount());
-    return this.save(franchiseeEntity,customerEntity,productEntity);
+    @Transactional
+    public OrderEntity save(ExternalRefundEntity externalRefundEntity, String amount) {
+        FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(externalRefundEntity.getFranchiseeIndex());
+        CustomerEntity customerEntity = customerFindService.findByIndex(externalRefundEntity.getCustomerIndex());
+        ProductEntity productEntity = productFindService.findOrElseSave(franchiseeEntity.getProductCategory(), amount);
+        return this.save(franchiseeEntity, customerEntity, productEntity);
 
-  }
+    }
 
-  @Transactional
-  public OrderEntity save(
-      FranchiseeEntity franchiseeEntity,
-      CustomerEntity customerEntity,
-      ProductEntity productEntity
-  ) {
+    @Transactional
+    public OrderEntity save(
+        FranchiseeEntity franchiseeEntity,
+        CustomerEntity customerEntity,
+        ProductEntity productEntity
+    ) {
 
-    OrderEntity orderEntity =
-        OrderEntity.builder()
-            .franchiseeEntity(franchiseeEntity)
-            .customerEntity(customerEntity)
-            .build();
+        OrderEntity orderEntity =
+            OrderEntity.builder()
+                .franchiseeEntity(franchiseeEntity)
+                .customerEntity(customerEntity)
+                .build();
 
-    orderRepository.save(orderEntity);
-    OrderLineEntity orderLineEntity = orderLineSaveService.save(orderEntity, productEntity);
-    orderEntity.addOrderLine(orderLineEntity);
+        orderRepository.save(orderEntity);
+        OrderLineEntity orderLineEntity = orderLineSaveService.save(orderEntity, productEntity);
+        orderEntity.addOrderLine(orderLineEntity);
 
-    return orderEntity;
-  }
+        return orderEntity;
+    }
 }

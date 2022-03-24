@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class SaleStatisticsResponse {
-  SaleStatisticsCurrentResponse saleStatisticsCurrentResponse;
-  SaleStatisticsPreviousResponse saleStatisticsPreviousResponse;
+    SaleStatisticsCurrentResponse saleStatisticsCurrentResponse;
+    SaleStatisticsPreviousResponse saleStatisticsPreviousResponse;
 }

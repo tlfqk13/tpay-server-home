@@ -18,40 +18,38 @@ import javax.transaction.Transactional;
 @RequiredArgsConstructor
 public class EmployeeSignInService {
 
-  private final EmployeeFindService employeeFindService;
-  private final FranchiseeApplicantFindService franchiseeApplicantFindService;
-  private final PasswordEncoder passwordEncoder;
-  private final AuthService authService;
+    private final EmployeeFindService employeeFindService;
+    private final FranchiseeApplicantFindService franchiseeApplicantFindService;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthService authService;
 
 
+    @Transactional
+    public EmployeeTokenInfo signIn(String userId, String password) {
+        EmployeeEntity employeeEntity = employeeFindService.findByUserId(userId);
+        if (!passwordEncoder.matches(password, employeeEntity.getPassword())) {
+            throw new IllegalArgumentException("Invalid Password");
+        }
+        if (employeeEntity.getIsDelete()) {
+            throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "가입 내역이 존재하지 않습니다. 다시 입력해주세요.");
+        }
 
-  @Transactional
-  public EmployeeTokenInfo signIn(String userId, String password) {
-    EmployeeEntity employeeEntity = employeeFindService.findByUserId(userId);
-    if(!passwordEncoder.matches(password, employeeEntity.getPassword())){
-      throw new IllegalArgumentException("Invalid Password");
+        FranchiseeApplicantEntity franchiseeApplicantEntity = franchiseeApplicantFindService.findByFranchiseeEntity(employeeEntity.getFranchiseeEntity());
+        AuthToken accessToken = authService.createAccessToken(employeeEntity);
+        AuthToken refreshToken = authService.createRefreshToken(employeeEntity);
+        authService.updateOrSave(employeeEntity, refreshToken.getValue());
+
+        return EmployeeTokenInfo.builder()
+            .employeeIndex(employeeEntity.getId())
+            .userId(employeeEntity.getUserId())
+            .name(employeeEntity.getName())
+            .accessToken(accessToken.getValue())
+            .refreshToken(refreshToken.getValue())
+            .registeredDate(employeeEntity.getCreatedDate())
+            .franchiseeIndex(employeeEntity.getFranchiseeEntity().getId())
+            .franchiseeStatus(franchiseeApplicantEntity.getFranchiseeStatus())
+            .build();
+
+
     }
-    if(employeeEntity.getIsDelete()){
-      throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER,"가입 내역이 존재하지 않습니다. 다시 입력해주세요.");
-    }
-
-    FranchiseeApplicantEntity franchiseeApplicantEntity = franchiseeApplicantFindService.findByFranchiseeEntity(employeeEntity.getFranchiseeEntity());
-    AuthToken accessToken = authService.createAccessToken(employeeEntity);
-    AuthToken refreshToken = authService.createRefreshToken(employeeEntity);
-    authService.updateOrSave(employeeEntity, refreshToken.getValue());
-
-    return EmployeeTokenInfo.builder()
-        .employeeIndex(employeeEntity.getId())
-        .userId(employeeEntity.getUserId())
-        .name(employeeEntity.getName())
-        .accessToken(accessToken.getValue())
-        .refreshToken(refreshToken.getValue())
-        .registeredDate(employeeEntity.getCreatedDate())
-        .franchiseeIndex(employeeEntity.getFranchiseeEntity().getId())
-        .franchiseeStatus(franchiseeApplicantEntity.getFranchiseeStatus())
-        .build();
-
-
-
-  }
 }

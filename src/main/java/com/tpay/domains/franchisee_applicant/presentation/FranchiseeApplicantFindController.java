@@ -15,29 +15,29 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FranchiseeApplicantFindController {
 
-  private final FranchiseeApplicantFindService franchiseeApplicantFindService;
+    private final FranchiseeApplicantFindService franchiseeApplicantFindService;
 
-  @GetMapping("/admin/franchisee-applicants")
-  public ResponseEntity<List<FranchiseeApplicantInfoInterface>> findAll() {
-    List<FranchiseeApplicantInfoInterface> responseList = franchiseeApplicantFindService.findAll();
-    return ResponseEntity.ok(responseList);
-  }
+    @GetMapping("/admin/franchisee-applicants")
+    public ResponseEntity<List<FranchiseeApplicantInfoInterface>> findAll() {
+        List<FranchiseeApplicantInfoInterface> responseList = franchiseeApplicantFindService.findAll();
+        return ResponseEntity.ok(responseList);
+    }
 
-  @GetMapping("/admin/franchisee-applicants/isRead/{value}")
-  public ResponseEntity<List<FranchiseeApplicantInfoInterface>> filterIsRead(@PathVariable String value){
-    List<FranchiseeApplicantInfoInterface> responseList = franchiseeApplicantFindService.filterIsRead(value);
-    return ResponseEntity.ok(responseList);
-  }
+    @GetMapping("/admin/franchisee-applicants/isRead/{value}")
+    public ResponseEntity<List<FranchiseeApplicantInfoInterface>> filterIsRead(@PathVariable String value) {
+        List<FranchiseeApplicantInfoInterface> responseList = franchiseeApplicantFindService.filterIsRead(value);
+        return ResponseEntity.ok(responseList);
+    }
 
-  @GetMapping("/admin/franchisee-applicants/franchiseeStatus/{value}")
-  public ResponseEntity<List<FranchiseeApplicantInfoInterface>> filterFranchiseeStatus(@PathVariable FranchiseeStatus value){
-    List<FranchiseeApplicantInfoInterface> responseList = franchiseeApplicantFindService.filterFranchiseeStatus(value);
-    return ResponseEntity.ok(responseList);
-  }
+    @GetMapping("/admin/franchisee-applicants/franchiseeStatus/{value}")
+    public ResponseEntity<List<FranchiseeApplicantInfoInterface>> filterFranchiseeStatus(@PathVariable FranchiseeStatus value) {
+        List<FranchiseeApplicantInfoInterface> responseList = franchiseeApplicantFindService.filterFranchiseeStatus(value);
+        return ResponseEntity.ok(responseList);
+    }
 
-  @GetMapping("/admin/franchisee-applicants/both/{value}")
-  public ResponseEntity<List<FranchiseeApplicantInfoInterface>> filterBoth(@PathVariable FranchiseeStatus value){
-    List<FranchiseeApplicantInfoInterface> result = franchiseeApplicantFindService.filterBoth(value);
-    return ResponseEntity.ok(result);
-  }
+    @GetMapping("/admin/franchisee-applicants/both/{value}")
+    public ResponseEntity<List<FranchiseeApplicantInfoInterface>> filterBoth(@PathVariable FranchiseeStatus value) {
+        List<FranchiseeApplicantInfoInterface> result = franchiseeApplicantFindService.filterBoth(value);
+        return ResponseEntity.ok(result);
+    }
 }

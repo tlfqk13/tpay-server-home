@@ -23,73 +23,72 @@ import static com.tpay.commons.util.UserSelector.FRANCHISEE;
 @Service
 @RequiredArgsConstructor
 public class TokenUpdateService {
-  private final FranchiseeTokenRepository franchiseeTokenRepository;
-  private final EmployeeTokenRepository employeeTokenRepository;
-  private final EmployeeFindService employeeFindService;
-  private final JwtUtils jwtUtils;
-  private final AuthService authService;
+    private final FranchiseeTokenRepository franchiseeTokenRepository;
+    private final EmployeeTokenRepository employeeTokenRepository;
+    private final EmployeeFindService employeeFindService;
+    private final JwtUtils jwtUtils;
+    private final AuthService authService;
 
-  @Transactional
-  public SignInTokenInfo refresh(SignInTokenInfo signInTokenInfo) {
-    AuthToken refreshToken = jwtUtils.convertAuthToken(signInTokenInfo.getRefreshToken());
-    Long parsedIndex;
+    @Transactional
+    public SignInTokenInfo refresh(SignInTokenInfo signInTokenInfo) {
+        AuthToken refreshToken = jwtUtils.convertAuthToken(signInTokenInfo.getRefreshToken());
+        Long parsedIndex;
 
-    if (signInTokenInfo.getUserSelector().equals(FRANCHISEE)) {
+        if (signInTokenInfo.getUserSelector().equals(FRANCHISEE)) {
 
-      FranchiseeTokenEntity franchiseeTokenEntity =
-          franchiseeTokenRepository
-              .findByFranchiseeEntityId(signInTokenInfo.getFranchiseeIndex())
-              .orElseThrow(() -> new IllegalArgumentException("Invalid Franchisee"));
+            FranchiseeTokenEntity franchiseeTokenEntity =
+                franchiseeTokenRepository
+                    .findByFranchiseeEntityId(signInTokenInfo.getFranchiseeIndex())
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid Franchisee"));
 
-      try {
-        parsedIndex = Long.parseLong(String.valueOf(refreshToken.getData().get("franchiseeIndex")));
-      } catch (Exception exception) {
-        throw new JwtRuntimeException(ExceptionState.FORCE_REFRESH);
-      }
-      franchiseeTokenEntity.validUser(parsedIndex);
-      franchiseeTokenEntity.validToken(refreshToken.getValue());
+            try {
+                parsedIndex = Long.parseLong(String.valueOf(refreshToken.getData().get("franchiseeIndex")));
+            } catch (Exception exception) {
+                throw new JwtRuntimeException(ExceptionState.FORCE_REFRESH);
+            }
+            franchiseeTokenEntity.validUser(parsedIndex);
+            franchiseeTokenEntity.validToken(refreshToken.getValue());
 
-      AuthToken accessToken =
-          authService.createAccessToken(franchiseeTokenEntity.getFranchiseeEntity());
-      return SignInTokenInfo.builder()
-          .signUpDate(signInTokenInfo.getSignUpDate())
-          .franchiseeStatus(signInTokenInfo.getFranchiseeStatus())
-          .franchiseeIndex(signInTokenInfo.getFranchiseeIndex())
-          .businessNumber(signInTokenInfo.getBusinessNumber())
-          .rejectReason(signInTokenInfo.getRejectReason())
-          .popUp(signInTokenInfo.isPopUp())
-          .accessToken(accessToken.getValue())
-          .refreshToken(signInTokenInfo.getRefreshToken())
-          .userSelector(FRANCHISEE)
-          .build();
-    } else if (signInTokenInfo.getUserSelector().equals(EMPLOYEE)) {
-      EmployeeEntity employeeEntity = employeeFindService.findById(signInTokenInfo.getEmployeeIndex())
-          .orElseThrow(() -> new IllegalArgumentException("Invalid Employee"));
-      EmployeeTokenEntity employeeTokenEntity = employeeTokenRepository.findByEmployeeEntity(employeeEntity)
-          .orElseThrow(() -> new IllegalArgumentException("Invalid Employee Entity"));
+            AuthToken accessToken =
+                authService.createAccessToken(franchiseeTokenEntity.getFranchiseeEntity());
+            return SignInTokenInfo.builder()
+                .signUpDate(signInTokenInfo.getSignUpDate())
+                .franchiseeStatus(signInTokenInfo.getFranchiseeStatus())
+                .franchiseeIndex(signInTokenInfo.getFranchiseeIndex())
+                .businessNumber(signInTokenInfo.getBusinessNumber())
+                .rejectReason(signInTokenInfo.getRejectReason())
+                .popUp(signInTokenInfo.isPopUp())
+                .accessToken(accessToken.getValue())
+                .refreshToken(signInTokenInfo.getRefreshToken())
+                .userSelector(FRANCHISEE)
+                .build();
+        } else if (signInTokenInfo.getUserSelector().equals(EMPLOYEE)) {
+            EmployeeEntity employeeEntity = employeeFindService.findById(signInTokenInfo.getEmployeeIndex())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid Employee"));
+            EmployeeTokenEntity employeeTokenEntity = employeeTokenRepository.findByEmployeeEntity(employeeEntity)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid Employee Entity"));
 
-      try {
-        parsedIndex = Long.parseLong(String.valueOf(refreshToken.getData().get("employeeIndexJwt")));
-      } catch (Exception e) {
-        throw new JwtRuntimeException(ExceptionState.FORCE_REFRESH);
-      }
+            try {
+                parsedIndex = Long.parseLong(String.valueOf(refreshToken.getData().get("employeeIndexJwt")));
+            } catch (Exception e) {
+                throw new JwtRuntimeException(ExceptionState.FORCE_REFRESH);
+            }
 
-      employeeTokenEntity.validUser(parsedIndex);
-      employeeTokenEntity.validToken(refreshToken.getValue());
+            employeeTokenEntity.validUser(parsedIndex);
+            employeeTokenEntity.validToken(refreshToken.getValue());
 
-      AuthToken accessToken = authService.createAccessToken(employeeEntity);
-      return SignInTokenInfo.builder()
-          .employeeIndex(signInTokenInfo.getEmployeeIndex())
-          .userId(signInTokenInfo.getUserId())
-          .name(signInTokenInfo.getName())
-          .registeredDate(signInTokenInfo.getRegisteredDate())
-          .accessToken(accessToken.getValue())
-          .refreshToken(signInTokenInfo.getRefreshToken())
-          .userSelector(EMPLOYEE)
-          .build();
+            AuthToken accessToken = authService.createAccessToken(employeeEntity);
+            return SignInTokenInfo.builder()
+                .employeeIndex(signInTokenInfo.getEmployeeIndex())
+                .userId(signInTokenInfo.getUserId())
+                .name(signInTokenInfo.getName())
+                .registeredDate(signInTokenInfo.getRegisteredDate())
+                .accessToken(accessToken.getValue())
+                .refreshToken(signInTokenInfo.getRefreshToken())
+                .userSelector(EMPLOYEE)
+                .build();
+        } else {
+            throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Parse Failed");
+        }
     }
-    else {
-      throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Parse Failed");
-    }
-  }
 }

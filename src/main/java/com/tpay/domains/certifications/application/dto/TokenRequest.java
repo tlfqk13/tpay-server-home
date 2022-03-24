@@ -1,11 +1,6 @@
 package com.tpay.domains.certifications.application.dto;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 @Getter
 @Builder
@@ -13,6 +8,6 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 public class TokenRequest {
-  private String imp_key;
-  private String imp_secret;
+    private String imp_key;
+    private String imp_secret;
 }

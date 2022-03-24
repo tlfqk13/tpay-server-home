@@ -4,6 +4,6 @@ import lombok.Getter;
 
 @Getter
 public class RefundCustomerRequest {
-  RefundCustomerDateRequest refundCustomerDateRequest;
-  RefundCustomerInfoRequest refundCustomerInfoRequest;
+    RefundCustomerDateRequest refundCustomerDateRequest;
+    RefundCustomerInfoRequest refundCustomerInfoRequest;
 }

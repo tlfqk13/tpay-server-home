@@ -9,25 +9,25 @@ import lombok.Getter;
 @Getter
 @Builder
 public class RefundCancelRequest {
-  private String purchaseSequenceNumber;
-  private String takeoutNumber;
-  private String name;
-  private String nationality;
-  private String totalAmount;
-  private String passportNumber;
-  private String saleDate;
+    private String purchaseSequenceNumber;
+    private String takeoutNumber;
+    private String name;
+    private String nationality;
+    private String totalAmount;
+    private String passportNumber;
+    private String saleDate;
 
-  public static RefundCancelRequest of(CustomerEntity customerEntity, RefundEntity refundEntity) {
-    OrderEntity orderEntity = refundEntity.getOrderEntity();
+    public static RefundCancelRequest of(CustomerEntity customerEntity, RefundEntity refundEntity) {
+        OrderEntity orderEntity = refundEntity.getOrderEntity();
 
-    return RefundCancelRequest.builder()
-        .totalAmount(orderEntity.getTotalAmount())
-        .name(customerEntity.getCustomerName())
-        .nationality(customerEntity.getNation())
-        .passportNumber(customerEntity.getPassportNumber())
-        .purchaseSequenceNumber(orderEntity.getOrderNumber())
-        .takeoutNumber(refundEntity.getTakeOutNumber())
-        .saleDate(orderEntity.getSaleDate())
-        .build();
-  }
+        return RefundCancelRequest.builder()
+            .totalAmount(orderEntity.getTotalAmount())
+            .name(customerEntity.getCustomerName())
+            .nationality(customerEntity.getNation())
+            .passportNumber(customerEntity.getPassportNumber())
+            .purchaseSequenceNumber(orderEntity.getOrderNumber())
+            .takeoutNumber(refundEntity.getTakeOutNumber())
+            .saleDate(orderEntity.getSaleDate())
+            .build();
+    }
 }

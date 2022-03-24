@@ -14,23 +14,28 @@ import javax.validation.constraints.NotNull;
 @Entity
 public class ExternalRefundEntity {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @NotNull
-  private Long franchiseeIndex;
+    @NotNull
+    private Long franchiseeIndex;
 
-  @NotNull
-  private Long customerIndex;
+    @NotNull
+    private Long customerIndex;
 
-  @NotNull
-  private ExternalRefundStatus externalRefundStatus;
+    @NotNull
+    private ExternalRefundStatus externalRefundStatus;
 
-  @Builder
-  public ExternalRefundEntity(Long franchiseeIndex, Long customerIndex, ExternalRefundStatus externalRefundStatus) {
-    this.franchiseeIndex = franchiseeIndex;
-    this.customerIndex = customerIndex;
-    this.externalRefundStatus = externalRefundStatus;
-  }
+    @Builder
+    public ExternalRefundEntity(Long franchiseeIndex, Long customerIndex, ExternalRefundStatus externalRefundStatus) {
+        this.franchiseeIndex = franchiseeIndex;
+        this.customerIndex = customerIndex;
+        this.externalRefundStatus = externalRefundStatus;
+    }
+
+    public ExternalRefundEntity changeStatus(ExternalRefundStatus externalRefundStatus) {
+        this.externalRefundStatus = externalRefundStatus;
+        return this;
+    }
 }

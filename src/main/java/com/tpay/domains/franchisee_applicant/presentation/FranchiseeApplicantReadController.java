@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class FranchiseeApplicantReadController {
 
-  private final FranchiseeApplicantReadService franchiseeApplicantReadService;
+    private final FranchiseeApplicantReadService franchiseeApplicantReadService;
 
-  @PatchMapping("/admin/franchisee-applicants/check/{franchiseeApplicantIndex}")
-  public ResponseEntity<Boolean> read(@PathVariable Long franchiseeApplicantIndex){
-    boolean result = franchiseeApplicantReadService.read(franchiseeApplicantIndex);
-    return ResponseEntity.ok(result);
-  }
+    @PatchMapping("/admin/franchisee-applicants/check/{franchiseeApplicantIndex}")
+    public ResponseEntity<Boolean> read(@PathVariable Long franchiseeApplicantIndex) {
+        boolean result = franchiseeApplicantReadService.read(franchiseeApplicantIndex);
+        return ResponseEntity.ok(result);
+    }
 }

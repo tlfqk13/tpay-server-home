@@ -13,41 +13,41 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SaleAnalysisFindService {
 
-  private final RefundRepository refundRepository;
+    private final RefundRepository refundRepository;
 
-  public List<SaleAnalysisFindResponseInterface> findByDateRange(
-      Long franchiseeIndex, DateFilterV2 dateFilterV2, String startDate, String endDate) {
-    String startDateQuery;
-    String endDateQuery;
-    if (dateFilterV2.equals(DateFilterV2.CUSTOM)) {
-      startDateQuery = startDate.replaceAll("-", "");
-      endDateQuery = endDate.replaceAll("-", "");
-    } else {
-      startDateQuery = dateFilterV2.getStartDate().replaceAll("-", "");
-      endDateQuery = dateFilterV2.getEndDate().replaceAll("-", "");
+    public List<SaleAnalysisFindResponseInterface> findByDateRange(
+        Long franchiseeIndex, DateFilterV2 dateFilterV2, String startDate, String endDate) {
+        String startDateQuery;
+        String endDateQuery;
+        if (dateFilterV2.equals(DateFilterV2.CUSTOM)) {
+            startDateQuery = startDate.replaceAll("-", "");
+            endDateQuery = endDate.replaceAll("-", "");
+        } else {
+            startDateQuery = dateFilterV2.getStartDate().replaceAll("-", "");
+            endDateQuery = dateFilterV2.getEndDate().replaceAll("-", "");
+        }
+        System.out.println("=====V2 Printer=====");
+        System.out.println("startDate : " + startDateQuery);
+        System.out.println("endDate   : " + endDateQuery);
+        System.out.println("=====V2 Printer=====");
+        List<SaleAnalysisFindResponseInterface> saleAnalysisFindResponseInterfaceList =
+            refundRepository.findSaleAnalysisV2(franchiseeIndex, startDateQuery, endDateQuery);
+
+        return saleAnalysisFindResponseInterfaceList;
     }
-    System.out.println("=====V2 Printer=====");
-    System.out.println("startDate : "+ startDateQuery);
-    System.out.println("endDate   : "+ endDateQuery);
-    System.out.println("=====V2 Printer=====");
-    List<SaleAnalysisFindResponseInterface> saleAnalysisFindResponseInterfaceList =
-        refundRepository.findSaleAnalysisV2(franchiseeIndex, startDateQuery, endDateQuery);
 
-    return saleAnalysisFindResponseInterfaceList;
-  }
-
-  //테스트용 메서드
-  public List<String> testDateNativeQuery(
-      Long franchiseeIndex, DateFilterV2 dateFilterV2, String startDate, String endDate) {
-    String startDateQueryTest;
-    String endDateQueryTest;
-    if (dateFilterV2.equals(DateFilterV2.CUSTOM)) {
-      startDateQueryTest = startDate.replaceAll("-", "");
-      endDateQueryTest = endDate.replaceAll("-", "");
-    } else {
-      startDateQueryTest = dateFilterV2.getStartDate().replaceAll("-", "");
-      endDateQueryTest = dateFilterV2.getEndDate().replaceAll("-", "");
+    //테스트용 메서드
+    public List<String> testDateNativeQuery(
+        Long franchiseeIndex, DateFilterV2 dateFilterV2, String startDate, String endDate) {
+        String startDateQueryTest;
+        String endDateQueryTest;
+        if (dateFilterV2.equals(DateFilterV2.CUSTOM)) {
+            startDateQueryTest = startDate.replaceAll("-", "");
+            endDateQueryTest = endDate.replaceAll("-", "");
+        } else {
+            startDateQueryTest = dateFilterV2.getStartDate().replaceAll("-", "");
+            endDateQueryTest = dateFilterV2.getEndDate().replaceAll("-", "");
+        }
+        return refundRepository.dateTestNativeQuery(franchiseeIndex, startDateQueryTest, endDateQueryTest);
     }
-    return refundRepository.dateTestNativeQuery(franchiseeIndex, startDateQueryTest, endDateQueryTest);
-  }
 }

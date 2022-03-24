@@ -17,16 +17,16 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SaleAnalysisFindController {
 
-  private final SaleAnalysisFindService saleAnalysisFindServiceV2;
+    private final SaleAnalysisFindService saleAnalysisFindServiceV2;
 
-  @GetMapping("/sales/franchiseeV2/{franchiseeIndex}")
-  public ResponseEntity<List<SaleAnalysisFindResponseInterface>> findByDateRange(
-      @PathVariable Long franchiseeIndex,
-      @RequestParam DateFilterV2 dateFilter,
-      @RequestParam(required = false) String startDate,
-      @RequestParam(required = false) String endDate
-      ) {
-    List<SaleAnalysisFindResponseInterface> result = saleAnalysisFindServiceV2.findByDateRange(franchiseeIndex, dateFilter, startDate, endDate);
-    return ResponseEntity.ok(result);
-  }
+    @GetMapping("/sales/franchiseeV2/{franchiseeIndex}")
+    public ResponseEntity<List<SaleAnalysisFindResponseInterface>> findByDateRange(
+        @PathVariable Long franchiseeIndex,
+        @RequestParam DateFilterV2 dateFilter,
+        @RequestParam(required = false) String startDate,
+        @RequestParam(required = false) String endDate
+    ) {
+        List<SaleAnalysisFindResponseInterface> result = saleAnalysisFindServiceV2.findByDateRange(franchiseeIndex, dateFilter, startDate, endDate);
+        return ResponseEntity.ok(result);
+    }
 }

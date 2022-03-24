@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public class EmployeeUpdateRequest {
 
-  private String name;
-  private String password;
-  private String passwordCheck;
+    private String name;
+    private String password;
+    private String passwordCheck;
 }

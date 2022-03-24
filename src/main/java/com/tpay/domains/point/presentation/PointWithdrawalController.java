@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class PointWithdrawalController {
 
-  private final PointWithdrawalService pointWithdrawalService;
+    private final PointWithdrawalService pointWithdrawalService;
 
-  @PostMapping("/points/franchisee/{franchiseeIndex}")
-  public ResponseEntity<PointWithdrawalResponse> pointWithdrawal(
-      @PathVariable Long franchiseeIndex,
-      @RequestBody PointWithdrawalRequest pointWithdrawalRequest) {
-    PointWithdrawalResponse pointWithdrawalResponse = pointWithdrawalService.pointWithdrawal(franchiseeIndex, pointWithdrawalRequest);
-    return ResponseEntity.ok(pointWithdrawalResponse);
-  }
+    @PostMapping("/points/franchisee/{franchiseeIndex}")
+    public ResponseEntity<PointWithdrawalResponse> pointWithdrawal(
+        @PathVariable Long franchiseeIndex,
+        @RequestBody PointWithdrawalRequest pointWithdrawalRequest) {
+        PointWithdrawalResponse pointWithdrawalResponse = pointWithdrawalService.pointWithdrawal(franchiseeIndex, pointWithdrawalRequest);
+        return ResponseEntity.ok(pointWithdrawalResponse);
+    }
 }

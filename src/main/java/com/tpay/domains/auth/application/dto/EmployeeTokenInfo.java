@@ -11,12 +11,12 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class EmployeeTokenInfo {
-  private Long employeeIndex;
-  private String userId;
-  private String name;
-  private String accessToken;
-  private String refreshToken;
-  private LocalDateTime registeredDate;
-  private Long franchiseeIndex;
-  private FranchiseeStatus franchiseeStatus;
+    private Long employeeIndex;
+    private String userId;
+    private String name;
+    private String accessToken;
+    private String refreshToken;
+    private LocalDateTime registeredDate;
+    private Long franchiseeIndex;
+    private FranchiseeStatus franchiseeStatus;
 }

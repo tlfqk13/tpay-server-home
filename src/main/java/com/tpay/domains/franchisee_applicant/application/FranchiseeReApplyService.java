@@ -19,28 +19,28 @@ import javax.transaction.Transactional;
 @RequiredArgsConstructor
 public class FranchiseeReApplyService {
 
-  private final FranchiseeApplicantFindService franchiseeApplicantFindService;
-  private final FranchiseeBankFindService franchiseeBankFindService;
-  private final FranchiseeUploadFindService franchiseeUploadFindService;
-  private final FranchiseeFindService franchiseeFindService;
+    private final FranchiseeApplicantFindService franchiseeApplicantFindService;
+    private final FranchiseeBankFindService franchiseeBankFindService;
+    private final FranchiseeUploadFindService franchiseeUploadFindService;
+    private final FranchiseeFindService franchiseeFindService;
 
-  @Transactional
-  public FranchiseeApplicantInfo reapply(String businessNumber) {
-    FranchiseeApplicantEntity franchiseeApplicantEntity =
-        franchiseeApplicantFindService.findByBusinessNumber(businessNumber);
-    franchiseeApplicantEntity.reapply();
-    return FranchiseeApplicantInfo.toResponse(franchiseeApplicantEntity);
-  }
+    @Transactional
+    public FranchiseeApplicantInfo reapply(String businessNumber) {
+        FranchiseeApplicantEntity franchiseeApplicantEntity =
+            franchiseeApplicantFindService.findByBusinessNumber(businessNumber);
+        franchiseeApplicantEntity.reapply();
+        return FranchiseeApplicantInfo.toResponse(franchiseeApplicantEntity);
+    }
 
 
-  @Transactional
-  public FranchiseeApplicantReapplyResponse findBaseInfo(Long franchiseeIndex) {
-    FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
-    FranchiseeUploadEntity franchiseeUploadEntity = franchiseeUploadFindService.findByFranchiseeIndex(franchiseeEntity.getId());
-    FranchiseeBankEntity franchiseeBankEntity = franchiseeBankFindService.findByFranchiseeEntity(franchiseeEntity);
-    return FranchiseeApplicantReapplyResponse.builder()
-        .uploadImage(franchiseeUploadEntity.getS3Path())
-        .franchiseeBankInfo(FranchiseeBankInfo.of(franchiseeBankEntity))
-        .build();
-  }
+    @Transactional
+    public FranchiseeApplicantReapplyResponse findBaseInfo(Long franchiseeIndex) {
+        FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
+        FranchiseeUploadEntity franchiseeUploadEntity = franchiseeUploadFindService.findByFranchiseeIndex(franchiseeEntity.getId());
+        FranchiseeBankEntity franchiseeBankEntity = franchiseeBankFindService.findByFranchiseeEntity(franchiseeEntity);
+        return FranchiseeApplicantReapplyResponse.builder()
+            .uploadImage(franchiseeUploadEntity.getS3Path())
+            .franchiseeBankInfo(FranchiseeBankInfo.of(franchiseeBankEntity))
+            .build();
+    }
 }

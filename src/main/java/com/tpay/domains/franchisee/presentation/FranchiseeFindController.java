@@ -15,22 +15,21 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FranchiseeFindController {
 
-  private final FranchiseeFindService franchiseeFindService;
+    private final FranchiseeFindService franchiseeFindService;
 
-  @GetMapping("/franchisee/{franchiseeIndex}")
-  public ResponseEntity<FranchiseeMyPageResponse> findMyPageInfo(
-      @PathVariable Long franchiseeIndex) {
-    FranchiseeMyPageResponse response = franchiseeFindService.findMyPageInfo(franchiseeIndex);
-    return ResponseEntity.ok(response);
-  }
+    @GetMapping("/franchisee/{franchiseeIndex}")
+    public ResponseEntity<FranchiseeMyPageResponse> findMyPageInfo(
+        @PathVariable Long franchiseeIndex) {
+        FranchiseeMyPageResponse response = franchiseeFindService.findMyPageInfo(franchiseeIndex);
+        return ResponseEntity.ok(response);
+    }
 
 
-
-  @GetMapping("/franchisee")
-  public ResponseEntity<List<FranchiseeInfo>> findAll() {
-    List<FranchiseeInfo> response = franchiseeFindService.findAll();
-    return ResponseEntity.ok(response);
-  }
+    @GetMapping("/franchisee")
+    public ResponseEntity<List<FranchiseeInfo>> findAll() {
+        List<FranchiseeInfo> response = franchiseeFindService.findAll();
+        return ResponseEntity.ok(response);
+    }
 
 
 }

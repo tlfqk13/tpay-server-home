@@ -14,19 +14,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class FranchiseeReApplyController {
 
-  private final FranchiseeReApplyService franchiseeReApplyService;
+    private final FranchiseeReApplyService franchiseeReApplyService;
 
 
+    @GetMapping("/franchisee-applicants/reapply/{franchiseeIndex}")
+    public ResponseEntity<FranchiseeApplicantReapplyResponse> findBaseInfo(@PathVariable Long franchiseeIndex) {
+        FranchiseeApplicantReapplyResponse result = franchiseeReApplyService.findBaseInfo(franchiseeIndex);
+        return ResponseEntity.ok(result);
+    }
 
-  @GetMapping("/franchisee-applicants/reapply/{franchiseeIndex}")
-  public ResponseEntity<FranchiseeApplicantReapplyResponse> findBaseInfo(@PathVariable Long franchiseeIndex) {
-    FranchiseeApplicantReapplyResponse result = franchiseeReApplyService.findBaseInfo(franchiseeIndex);
-    return ResponseEntity.ok(result);
-  }
-
-  @PostMapping("/franchisee-applicants/{businessNumber}")
-  public ResponseEntity<FranchiseeApplicantInfo> reapply(@PathVariable String businessNumber) {
-    FranchiseeApplicantInfo response = franchiseeReApplyService.reapply(businessNumber);
-    return ResponseEntity.ok(response);
-  }
+    @PostMapping("/franchisee-applicants/{businessNumber}")
+    public ResponseEntity<FranchiseeApplicantInfo> reapply(@PathVariable String businessNumber) {
+        FranchiseeApplicantInfo response = franchiseeReApplyService.reapply(businessNumber);
+        return ResponseEntity.ok(response);
+    }
 }

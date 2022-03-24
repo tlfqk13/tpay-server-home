@@ -15,14 +15,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class EmployeeRegistrationController {
 
-  private final EmployeeRegistrationService employeeRegistrationService;
+    private final EmployeeRegistrationService employeeRegistrationService;
 
-  @PostMapping("/employee/{franchiseeIndex}")
-  public ResponseEntity<EmployeeEntity> registration(
-      @PathVariable Long franchiseeIndex,
-      @RequestBody EmployeeRegistrationRequest employeeRegistrationRequest
-  ) {
-    EmployeeEntity result = employeeRegistrationService.registration(franchiseeIndex, employeeRegistrationRequest);
-    return ResponseEntity.ok(result);
-  }
+    @PostMapping("/employee/{franchiseeIndex}")
+    public ResponseEntity<EmployeeEntity> registration(
+        @PathVariable Long franchiseeIndex,
+        @RequestBody EmployeeRegistrationRequest employeeRegistrationRequest
+    ) {
+        EmployeeEntity result = employeeRegistrationService.registration(franchiseeIndex, employeeRegistrationRequest);
+        return ResponseEntity.ok(result);
+    }
 }

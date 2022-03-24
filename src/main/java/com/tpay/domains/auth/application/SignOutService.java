@@ -18,20 +18,20 @@ import static com.tpay.commons.util.UserSelector.FRANCHISEE;
 @RequiredArgsConstructor
 public class SignOutService {
 
-  private final FranchiseeTokenRepository franchiseeTokenRepository;
-  private final EmployeeTokenRepository employeeTokenRepository;
+    private final FranchiseeTokenRepository franchiseeTokenRepository;
+    private final EmployeeTokenRepository employeeTokenRepository;
 
-  @Transactional
-  public String signOut(SignOutRequest signOutRequest) {
-    if (signOutRequest.getUserSelector().equals(FRANCHISEE) && signOutRequest.getFranchiseeIndex() != null) {
-      franchiseeTokenRepository.deleteByFranchiseeEntityId(signOutRequest.getFranchiseeIndex());
-      return "FRANCHISEE Log out";
-    } else if (signOutRequest.getUserSelector().equals(EMPLOYEE) && signOutRequest.getEmployeeIndex() != null) {
-      employeeTokenRepository.deleteByEmployeeEntity_Id(signOutRequest.getEmployeeIndex());
-      return "EMPLOYEE Log out";
-    } else {
-      throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid Parameter(FRANCHISEE or EMPLOYEE)");
+    @Transactional
+    public String signOut(SignOutRequest signOutRequest) {
+        if (signOutRequest.getUserSelector().equals(FRANCHISEE) && signOutRequest.getFranchiseeIndex() != null) {
+            franchiseeTokenRepository.deleteByFranchiseeEntityId(signOutRequest.getFranchiseeIndex());
+            return "FRANCHISEE Log out";
+        } else if (signOutRequest.getUserSelector().equals(EMPLOYEE) && signOutRequest.getEmployeeIndex() != null) {
+            employeeTokenRepository.deleteByEmployeeEntity_Id(signOutRequest.getEmployeeIndex());
+            return "EMPLOYEE Log out";
+        } else {
+            throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid Parameter(FRANCHISEE or EMPLOYEE)");
+        }
     }
-  }
 
 }

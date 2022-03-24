@@ -8,13 +8,13 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 public class Data {
-  private String bNo;
-  private String bStt;
-  private String bSttCd;
-  private String taxType;
-  private String taxTypeCd;
-  private String endDt;
-  private String utccYn;
-  private String taxTypeChangeDt;
-  private String invoiceApplyDt;
+    private String bNo;
+    private String bStt;
+    private String bSttCd;
+    private String taxType;
+    private String taxTypeCd;
+    private String endDt;
+    private String utccYn;
+    private String taxTypeChangeDt;
+    private String invoiceApplyDt;
 }

@@ -9,11 +9,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ProductSaveService {
 
-  private final ProductRepository productRepository;
+    private final ProductRepository productRepository;
 
-  public ProductEntity save(String category, String price) {
-    ProductEntity productEntity =
-        ProductEntity.builder().name(category).code("001").lineNumber("001").price(price).build();
-    return productRepository.save(productEntity);
-  }
+    public ProductEntity save(String category, String price) {
+        ProductEntity productEntity =
+            ProductEntity.builder().name(category).code("001").lineNumber("001").price(price).build();
+        return productRepository.save(productEntity);
+    }
 }
