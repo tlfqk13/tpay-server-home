@@ -6,6 +6,7 @@ import com.tpay.commons.exception.ExceptionResponse;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.domains.external.application.dto.ExternalRefundApprovalRequest;
+import com.tpay.domains.external.domain.ExternalRefundEntity;
 import com.tpay.domains.franchisee.application.FranchiseeFindService;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.order.application.OrderSaveService;
@@ -33,11 +34,14 @@ public class ExternalRefundApprovalService {
   private final WebClient.Builder builder;
   private final RefundSaveService refundSaveService;
   private final PointScheduledChangeService pointScheduledChangeService;
+  private final ExternalRefundFindService externalRefundFindService;
 
   @Transactional
   public RefundResponse approve(ExternalRefundApprovalRequest externalRefundApprovalRequest) {
-    OrderEntity orderEntity = orderSaveService.save(externalRefundApprovalRequest);
-    FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(externalRefundApprovalRequest.getFranchiseeIndex());
+    ExternalRefundEntity externalRefundEntity = externalRefundFindService.findById(externalRefundApprovalRequest.getExternalRefundIndex());
+    FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(externalRefundEntity.getFranchiseeIndex());
+    OrderEntity orderEntity = orderSaveService.save(externalRefundEntity, externalRefundApprovalRequest.getAmount());
+
     RefundApproveRequest refundApproveRequest = RefundApproveRequest.of(orderEntity);
 
     WebClient webClient = builder.build();
