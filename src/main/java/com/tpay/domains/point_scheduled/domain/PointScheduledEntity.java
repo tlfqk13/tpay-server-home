@@ -19,33 +19,33 @@ import javax.validation.constraints.NotNull;
 @Entity
 public class PointScheduledEntity extends BaseTimeEntity {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @NotNull
-  private long value;
+    @NotNull
+    private long value;
 
-  @Enumerated(EnumType.STRING)
-  private PointStatus pointStatus;
+    @Enumerated(EnumType.STRING)
+    private PointStatus pointStatus;
 
-  @ManyToOne
-  @JoinColumn(name = "order_id")
-  private OrderEntity orderEntity;
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    private OrderEntity orderEntity;
 
-  @ManyToOne
-  @JoinColumn(name = "franchisee_id")
-  private FranchiseeEntity franchiseeEntity;
+    @ManyToOne
+    @JoinColumn(name = "franchisee_id")
+    private FranchiseeEntity franchiseeEntity;
 
-  @Builder
-  public PointScheduledEntity(long value, PointStatus pointStatus, OrderEntity orderEntity, FranchiseeEntity franchiseeEntity) {
-    this.value = value;
-    this.pointStatus = pointStatus;
-    this.orderEntity = orderEntity;
-    this.franchiseeEntity = franchiseeEntity;
-  }
+    @Builder
+    public PointScheduledEntity(long value, PointStatus pointStatus, OrderEntity orderEntity, FranchiseeEntity franchiseeEntity) {
+        this.value = value;
+        this.pointStatus = pointStatus;
+        this.orderEntity = orderEntity;
+        this.franchiseeEntity = franchiseeEntity;
+    }
 
-  public void updateStatus() {
-    this.pointStatus = PointStatus.SAVE;
-  }
+    public void updateStatus() {
+        this.pointStatus = PointStatus.SAVE;
+    }
 }

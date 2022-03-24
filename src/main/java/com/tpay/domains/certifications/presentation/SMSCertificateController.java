@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class SMSCertificateController {
 
-  private final SMSCertificateService smsCertificateService;
+    private final SMSCertificateService smsCertificateService;
 
-  @GetMapping("/certifications/{imp_uid}")
-  public ResponseEntity<CertificateResponse> certificate(@PathVariable String imp_uid) {
-    CertificateResponse response = smsCertificateService.certificate(imp_uid);
-    return ResponseEntity.ok(response);
-  }
+    @GetMapping("/certifications/{imp_uid}")
+    public ResponseEntity<CertificateResponse> certificate(@PathVariable String imp_uid) {
+        CertificateResponse response = smsCertificateService.certificate(imp_uid);
+        return ResponseEntity.ok(response);
+    }
 }

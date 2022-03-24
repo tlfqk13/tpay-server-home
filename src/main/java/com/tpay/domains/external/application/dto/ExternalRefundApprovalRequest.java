@@ -4,6 +4,6 @@ import lombok.Getter;
 
 @Getter
 public class ExternalRefundApprovalRequest {
-  private Long externalRefundIndex;
-  private String amount;
+    private Long externalRefundIndex;
+    private String amount;
 }

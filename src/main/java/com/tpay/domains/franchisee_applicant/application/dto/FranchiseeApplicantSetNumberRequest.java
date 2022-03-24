@@ -5,5 +5,5 @@ import lombok.Getter;
 
 @Getter
 public class FranchiseeApplicantSetNumberRequest {
-  String taxFreeStoreNumber;
+    String taxFreeStoreNumber;
 }

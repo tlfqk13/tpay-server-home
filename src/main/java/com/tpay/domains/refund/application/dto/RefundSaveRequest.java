@@ -6,13 +6,13 @@ import lombok.Getter;
 
 @Getter
 public class RefundSaveRequest {
-  private Long franchiseeIndex;
-  private Long employeeIndex;
-  private Long customerIndex;
-  private String price;
-  private UserSelector userSelector;
+    private Long franchiseeIndex;
+    private Long employeeIndex;
+    private Long customerIndex;
+    private String price;
+    private UserSelector userSelector;
 
-  public void updateFranchiseeIndex(EmployeeEntity employeeEntity) {
-    this.franchiseeIndex = employeeEntity.getFranchiseeEntity().getId();
-  }
+    public void updateFranchiseeIndex(EmployeeEntity employeeEntity) {
+        this.franchiseeIndex = employeeEntity.getFranchiseeEntity().getId();
+    }
 }

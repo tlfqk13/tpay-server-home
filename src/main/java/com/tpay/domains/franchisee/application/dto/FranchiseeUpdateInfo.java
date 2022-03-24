@@ -7,6 +7,6 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class FranchiseeUpdateInfo {
-  private String email;
-  private String storeNumber;
+    private String email;
+    private String storeNumber;
 }

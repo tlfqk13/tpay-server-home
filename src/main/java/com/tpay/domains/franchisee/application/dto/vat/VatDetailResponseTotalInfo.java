@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class VatDetailResponseTotalInfo {
-  private String totalCount;
-  private String totalAmount;
-  private String totalVat;
+    private String totalCount;
+    private String totalAmount;
+    private String totalVat;
 }

@@ -4,6 +4,6 @@ import lombok.Getter;
 
 @Getter
 public class FranchiseeSignInRequest {
-  private String businessNumber;
-  private String password;
+    private String businessNumber;
+    private String password;
 }

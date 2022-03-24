@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class PointDeleteController {
 
-  private final PointDeleteService pointDeleteService;
+    private final PointDeleteService pointDeleteService;
 
-  @DeleteMapping("/points/delete")
-  public ResponseEntity<String> deletePoint() {
-    String b = pointDeleteService.deletePoint();
-    return ResponseEntity.ok(b);
-  }
+    @DeleteMapping("/points/delete")
+    public ResponseEntity<String> deletePoint() {
+        String b = pointDeleteService.deletePoint();
+        return ResponseEntity.ok(b);
+    }
 }

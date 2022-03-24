@@ -18,61 +18,61 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class FranchiseeFindService {
-  private final FranchiseeRepository franchiseeRepository;
-  private final OrderFindService orderFindService;
-  private final FranchiseeApplicantFindService franchiseeApplicantFindService;
+    private final FranchiseeRepository franchiseeRepository;
+    private final OrderFindService orderFindService;
+    private final FranchiseeApplicantFindService franchiseeApplicantFindService;
 
-  public FranchiseeEntity findByBusinessNumber(String businessNumber) {
-    FranchiseeEntity franchiseeEntity =
-        franchiseeRepository
-            .findByBusinessNumber(businessNumber.replaceAll("-", ""))
-            .orElseThrow(
-                () ->
-                    new InvalidParameterException(
-                        ExceptionState.INVALID_PARAMETER, "Invalid Business Number"));
+    public FranchiseeEntity findByBusinessNumber(String businessNumber) {
+        FranchiseeEntity franchiseeEntity =
+            franchiseeRepository
+                .findByBusinessNumber(businessNumber.replaceAll("-", ""))
+                .orElseThrow(
+                    () ->
+                        new InvalidParameterException(
+                            ExceptionState.INVALID_PARAMETER, "Invalid Business Number"));
 
-    return franchiseeEntity;
-  }
+        return franchiseeEntity;
+    }
 
-  public FranchiseeEntity findByIndex(Long franchiseeIndex) {
-    FranchiseeEntity franchiseeEntity =
-        franchiseeRepository
-            .findById(franchiseeIndex)
-            .orElseThrow(() -> new IllegalArgumentException("Invalid Franchisee Index"));
+    public FranchiseeEntity findByIndex(Long franchiseeIndex) {
+        FranchiseeEntity franchiseeEntity =
+            franchiseeRepository
+                .findById(franchiseeIndex)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid Franchisee Index"));
 
-    return franchiseeEntity;
-  }
+        return franchiseeEntity;
+    }
 
-  public FranchiseeMyPageResponse findMyPageInfo(Long franchiseeIndex) {
-    FranchiseeEntity franchiseeEntity = this.findByIndex(franchiseeIndex);
-    FranchiseeApplicantEntity franchiseeApplicantEntity = franchiseeApplicantFindService.findByFranchiseeEntity(franchiseeEntity);
+    public FranchiseeMyPageResponse findMyPageInfo(Long franchiseeIndex) {
+        FranchiseeEntity franchiseeEntity = this.findByIndex(franchiseeIndex);
+        FranchiseeApplicantEntity franchiseeApplicantEntity = franchiseeApplicantFindService.findByFranchiseeEntity(franchiseeEntity);
 
-    Long sumTotalSaleAmount = orderFindService.sumTotalSaleAmountByFranchiseeIndex(franchiseeIndex);
+        Long sumTotalSaleAmount = orderFindService.sumTotalSaleAmountByFranchiseeIndex(franchiseeIndex);
 
-    return FranchiseeMyPageResponse.builder()
-        .createdDate(franchiseeEntity.getCreatedDate())
-        .businessNumber(franchiseeEntity.getBusinessNumber())
-        .storeName(franchiseeEntity.getStoreName())
-        .storeAddressNumber(franchiseeEntity.getStoreAddressNumber())
-        .storeAddressBasic(franchiseeEntity.getStoreAddressBasic())
-        .storeAddressDetail(franchiseeEntity.getStoreAddressDetail())
-        .totalSalesAmount(sumTotalSaleAmount)
-        .totalPoint(franchiseeEntity.getBalance())
-        .productCategory(franchiseeEntity.getProductCategory())
-        .franchiseeStatus(franchiseeApplicantEntity.getFranchiseeStatus())
-        .sellerName(franchiseeEntity.getSellerName())
-        .storeTel(franchiseeEntity.getStoreTel())
-        .email(franchiseeEntity.getEmail())
-        .signboard(franchiseeEntity.getSignboard())
-        .storeNumber(franchiseeEntity.getStoreNumber())
-        .build();
-  }
+        return FranchiseeMyPageResponse.builder()
+            .createdDate(franchiseeEntity.getCreatedDate())
+            .businessNumber(franchiseeEntity.getBusinessNumber())
+            .storeName(franchiseeEntity.getStoreName())
+            .storeAddressNumber(franchiseeEntity.getStoreAddressNumber())
+            .storeAddressBasic(franchiseeEntity.getStoreAddressBasic())
+            .storeAddressDetail(franchiseeEntity.getStoreAddressDetail())
+            .totalSalesAmount(sumTotalSaleAmount)
+            .totalPoint(franchiseeEntity.getBalance())
+            .productCategory(franchiseeEntity.getProductCategory())
+            .franchiseeStatus(franchiseeApplicantEntity.getFranchiseeStatus())
+            .sellerName(franchiseeEntity.getSellerName())
+            .storeTel(franchiseeEntity.getStoreTel())
+            .email(franchiseeEntity.getEmail())
+            .signboard(franchiseeEntity.getSignboard())
+            .storeNumber(franchiseeEntity.getStoreNumber())
+            .build();
+    }
 
-  public List<FranchiseeInfo> findAll() {
-    List<FranchiseeEntity> franchiseeEntityList = franchiseeRepository.findAll();
+    public List<FranchiseeInfo> findAll() {
+        List<FranchiseeEntity> franchiseeEntityList = franchiseeRepository.findAll();
 
-    return franchiseeEntityList.stream()
-        .map(franchiseeEntity -> FranchiseeInfo.of(franchiseeEntity))
-        .collect(Collectors.toList());
-  }
+        return franchiseeEntityList.stream()
+            .map(franchiseeEntity -> FranchiseeInfo.of(franchiseeEntity))
+            .collect(Collectors.toList());
+    }
 }

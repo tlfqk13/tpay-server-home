@@ -15,38 +15,36 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CustomerFindService {
 
-  private final PassportNumberEncryptService passportNumberEncryptService;
-  private final CustomerRepository customerRepository;
-  private final CustomerSaveService customerSaveService;
+    private final PassportNumberEncryptService passportNumberEncryptService;
+    private final CustomerRepository customerRepository;
+    private final CustomerSaveService customerSaveService;
 
-  public CustomerEntity findByNationAndPassportNumber(String customerName, String passportNumber, String nation) {
-    String encryptedPassportNumber = passportNumberEncryptService.encrypt(passportNumber);
-    Optional<CustomerEntity> optionalCustomerEntity =
-        customerRepository
-            .findByNationAndPassportNumber(nation,encryptedPassportNumber);
-    if (optionalCustomerEntity.isEmpty()) {
-      if(existByPassportNumber(passportNumber)) {
-        throw new InvalidPassportInfoException(ExceptionState.INVALID_PASSPORT_INFO,"passportNumber Already Exists(might incorrect nation)");
-      }
-      else return customerSaveService.saveByCustomerInfo(customerName,encryptedPassportNumber,nation);
+    public CustomerEntity findByNationAndPassportNumber(String customerName, String passportNumber, String nation) {
+        String encryptedPassportNumber = passportNumberEncryptService.encrypt(passportNumber);
+        Optional<CustomerEntity> optionalCustomerEntity =
+            customerRepository
+                .findByNationAndPassportNumber(nation, encryptedPassportNumber);
+        if (optionalCustomerEntity.isEmpty()) {
+            if (existByPassportNumber(passportNumber)) {
+                throw new InvalidPassportInfoException(ExceptionState.INVALID_PASSPORT_INFO, "passportNumber Already Exists(might incorrect nation)");
+            } else return customerSaveService.saveByCustomerInfo(customerName, encryptedPassportNumber, nation);
+        } else return optionalCustomerEntity.get();
     }
-    else return optionalCustomerEntity.get();
-  }
 
-  public CustomerEntity findByIndex(Long customerIndex) {
-    CustomerEntity customerEntity =
-        customerRepository
-            .findById(customerIndex)
-            .orElseThrow(
-                () ->
-                    new InvalidParameterException(
-                        ExceptionState.INVALID_PARAMETER, "Invalid Customer Index"));
+    public CustomerEntity findByIndex(Long customerIndex) {
+        CustomerEntity customerEntity =
+            customerRepository
+                .findById(customerIndex)
+                .orElseThrow(
+                    () ->
+                        new InvalidParameterException(
+                            ExceptionState.INVALID_PARAMETER, "Invalid Customer Index"));
 
-    return customerEntity;
-  }
+        return customerEntity;
+    }
 
-  public boolean existByPassportNumber(String passportNumber) {
-    String encryptPassportNumber = passportNumberEncryptService.encrypt(passportNumber);
-    return customerRepository.existsByPassportNumber(encryptPassportNumber);
-  }
+    public boolean existByPassportNumber(String passportNumber) {
+        String encryptPassportNumber = passportNumberEncryptService.encrypt(passportNumber);
+        return customerRepository.existsByPassportNumber(encryptPassportNumber);
+    }
 }

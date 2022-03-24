@@ -6,6 +6,6 @@ import lombok.Getter;
 
 @Getter
 public class PointUpdateRequest {
-  private Boolean isRead;
-  private PointStatus pointStatus;
+    private Boolean isRead;
+    private PointStatus pointStatus;
 }

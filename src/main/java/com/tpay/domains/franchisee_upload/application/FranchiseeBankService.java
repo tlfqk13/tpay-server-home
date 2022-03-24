@@ -17,37 +17,37 @@ import javax.transaction.Transactional;
 @RequiredArgsConstructor
 public class FranchiseeBankService {
 
-  private final FranchiseeBankRepository franchiseeBankRepository;
-  private final FranchiseeFindService franchiseeFindService;
-  private final FranchiseeBankFindService franchiseeBankFindService;
+    private final FranchiseeBankRepository franchiseeBankRepository;
+    private final FranchiseeFindService franchiseeFindService;
+    private final FranchiseeBankFindService franchiseeBankFindService;
 
-  public FranchiseeBankInfo save(Long franchiseeIndex, FranchiseeBankInfo franchiseeBankInfo) {
+    public FranchiseeBankInfo save(Long franchiseeIndex, FranchiseeBankInfo franchiseeBankInfo) {
 
-    FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
-    FranchiseeBankEntity franchiseeBankEntity = FranchiseeBankEntity.builder()
-        .accountNumber(franchiseeBankInfo.getAccountNumber().replaceAll("-", ""))
-        .bankName(franchiseeBankInfo.getBankName())
-        .withdrawalDate(franchiseeBankInfo.getWithdrawalDate())
-        .franchiseeEntity(franchiseeEntity)
-        .build();
-    FranchiseeBankEntity result = franchiseeBankRepository.save(franchiseeBankEntity);
-    return FranchiseeBankInfo.of(result);
-  }
-
-  public FranchiseeBankInfo findMyAccount(Long franchiseeIndex) {
-    FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
-    FranchiseeBankEntity franchiseeBankEntity = franchiseeBankFindService.findByFranchiseeEntity(franchiseeEntity);
-    return FranchiseeBankInfo.of(franchiseeBankEntity,franchiseeEntity);
-  }
-
-  @Transactional
-  public FranchiseeBankInfo updateMyAccount(Long franchiseeIndex, FranchiseeBankInfo franchiseeBankInfo) {
-    FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
-    FranchiseeBankEntity franchiseeBankEntity = franchiseeBankFindService.findByFranchiseeEntity(franchiseeEntity);
-    if(franchiseeBankEntity.getBankName().isEmpty()){
-      throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER,"Bank account must exist before UPDATE");
+        FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
+        FranchiseeBankEntity franchiseeBankEntity = FranchiseeBankEntity.builder()
+            .accountNumber(franchiseeBankInfo.getAccountNumber().replaceAll("-", ""))
+            .bankName(franchiseeBankInfo.getBankName())
+            .withdrawalDate(franchiseeBankInfo.getWithdrawalDate())
+            .franchiseeEntity(franchiseeEntity)
+            .build();
+        FranchiseeBankEntity result = franchiseeBankRepository.save(franchiseeBankEntity);
+        return FranchiseeBankInfo.of(result);
     }
-    FranchiseeBankEntity franchiseeBankEntity1 = franchiseeBankEntity.updateBankInfo(franchiseeBankInfo);
-    return FranchiseeBankInfo.of(franchiseeBankEntity1);
-  }
+
+    public FranchiseeBankInfo findMyAccount(Long franchiseeIndex) {
+        FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
+        FranchiseeBankEntity franchiseeBankEntity = franchiseeBankFindService.findByFranchiseeEntity(franchiseeEntity);
+        return FranchiseeBankInfo.of(franchiseeBankEntity, franchiseeEntity);
+    }
+
+    @Transactional
+    public FranchiseeBankInfo updateMyAccount(Long franchiseeIndex, FranchiseeBankInfo franchiseeBankInfo) {
+        FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
+        FranchiseeBankEntity franchiseeBankEntity = franchiseeBankFindService.findByFranchiseeEntity(franchiseeEntity);
+        if (franchiseeBankEntity.getBankName().isEmpty()) {
+            throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Bank account must exist before UPDATE");
+        }
+        FranchiseeBankEntity franchiseeBankEntity1 = franchiseeBankEntity.updateBankInfo(franchiseeBankInfo);
+        return FranchiseeBankInfo.of(franchiseeBankEntity1);
+    }
 }

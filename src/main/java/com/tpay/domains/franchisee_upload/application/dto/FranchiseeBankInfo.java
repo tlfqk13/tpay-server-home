@@ -10,27 +10,27 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class FranchiseeBankInfo {
-  private String accountNumber;
-  private String bankName;
-  private String withdrawalDate;
-  private String sellerName;
+    private String accountNumber;
+    private String bankName;
+    private String withdrawalDate;
+    private String sellerName;
 
 
-  public static FranchiseeBankInfo of(FranchiseeBankEntity franchiseeBankEntity) {
-    return FranchiseeBankInfo.builder()
-        .accountNumber(franchiseeBankEntity.getAccountNumber())
-        .bankName(franchiseeBankEntity.getBankName())
-        .withdrawalDate(franchiseeBankEntity.getWithdrawalDate())
-        .build();
-  }
+    public static FranchiseeBankInfo of(FranchiseeBankEntity franchiseeBankEntity) {
+        return FranchiseeBankInfo.builder()
+            .accountNumber(franchiseeBankEntity.getAccountNumber())
+            .bankName(franchiseeBankEntity.getBankName())
+            .withdrawalDate(franchiseeBankEntity.getWithdrawalDate())
+            .build();
+    }
 
-  public static FranchiseeBankInfo of(FranchiseeBankEntity franchiseeBankEntity, FranchiseeEntity franchiseeEntity){
-    return FranchiseeBankInfo.builder()
-        .accountNumber(franchiseeBankEntity.getAccountNumber())
-        .bankName(franchiseeBankEntity.getBankName())
-        .withdrawalDate(franchiseeBankEntity.getWithdrawalDate())
-        .sellerName(franchiseeEntity.getSellerName())
-        .build();
-  }
+    public static FranchiseeBankInfo of(FranchiseeBankEntity franchiseeBankEntity, FranchiseeEntity franchiseeEntity) {
+        return FranchiseeBankInfo.builder()
+            .accountNumber(franchiseeBankEntity.getAccountNumber())
+            .bankName(franchiseeBankEntity.getBankName())
+            .withdrawalDate(franchiseeBankEntity.getWithdrawalDate())
+            .sellerName(franchiseeEntity.getSellerName())
+            .build();
+    }
 
 }

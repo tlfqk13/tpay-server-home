@@ -10,10 +10,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class RefundByCustomerResponse {
-  private Long refundIndex;
-  private String orderNumber;
-  private LocalDateTime createdDate;
-  private String totalAmount;
-  private String totalRefund;
-  private RefundStatus refundStatus;
+    private Long refundIndex;
+    private String orderNumber;
+    private LocalDateTime createdDate;
+    private String totalAmount;
+    private String totalRefund;
+    private RefundStatus refundStatus;
 }

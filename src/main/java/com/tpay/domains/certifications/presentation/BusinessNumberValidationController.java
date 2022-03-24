@@ -13,11 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class BusinessNumberValidationController {
 
 
-  private final BusinessNumberValidationService businessNumberValidationService;
+    private final BusinessNumberValidationService businessNumberValidationService;
 
-  @GetMapping("/validate/{businessNumber}")
-  public ResponseEntity validCheckBusinessNumber(@PathVariable Long businessNumber) {
-    businessNumberValidationService.valid(businessNumber);
-    return ResponseEntity.ok().build();
-  }
+    @GetMapping("/validate/{businessNumber}")
+    public ResponseEntity validCheckBusinessNumber(@PathVariable Long businessNumber) {
+        businessNumberValidationService.valid(businessNumber);
+        return ResponseEntity.ok().build();
+    }
 }

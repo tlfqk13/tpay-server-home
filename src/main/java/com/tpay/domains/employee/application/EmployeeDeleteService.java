@@ -13,15 +13,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EmployeeDeleteService {
 
-  private final EmployeeFindService employeeFindService;
+    private final EmployeeFindService employeeFindService;
 
-  @Transactional
-  public void delete(EmployeeDeleteRequest employeeDeleteRequest) {
+    @Transactional
+    public void delete(EmployeeDeleteRequest employeeDeleteRequest) {
 
-    List<Long> deleteIndexList = employeeDeleteRequest.getEmployeeIndexList();
+        List<Long> deleteIndexList = employeeDeleteRequest.getEmployeeIndexList();
 
-    deleteIndexList.forEach(
-        deleteIndex ->
-            employeeFindService.findById(deleteIndex).orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "EmployeeIndex doesn't exists")).updateDelete());
-  }
+        deleteIndexList.forEach(
+            deleteIndex ->
+                employeeFindService.findById(deleteIndex).orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "EmployeeIndex doesn't exists")).updateDelete());
+    }
 }

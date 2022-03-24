@@ -16,28 +16,28 @@ import javax.transaction.Transactional;
 @RequiredArgsConstructor
 public class EmployeeUpdateService {
 
-  private final PasswordEncoder passwordEncoder;
-  private final EmployeeRepository employeeRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final EmployeeRepository employeeRepository;
 
-  @Transactional
-  public boolean update(Long employeeIndex, EmployeeUpdateRequest employeeUpdateRequest) {
-    EmployeeEntity employeeEntity = employeeRepository.findById(employeeIndex)
-        .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "employee doesn't exists"));
+    @Transactional
+    public boolean update(Long employeeIndex, EmployeeUpdateRequest employeeUpdateRequest) {
+        EmployeeEntity employeeEntity = employeeRepository.findById(employeeIndex)
+            .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "employee doesn't exists"));
 
-    String name = employeeUpdateRequest.getName();
-    String password = employeeUpdateRequest.getPassword();
-    if (password.equals("")) {
-      employeeEntity.updateInfo(name);
-      return true;
-    } else {
-      String passwordCheck = employeeUpdateRequest.getPasswordCheck();
-      String passwordEncoded = passwordEncoder.encode(password);
-      if (!password.equals(passwordCheck)) {
-        throw new InvalidPasswordException(ExceptionState.INVALID_PASSWORD, "Password and passwordCheck Mismatch");
-      }
-      employeeEntity.updateInfo(name, passwordEncoded);
+        String name = employeeUpdateRequest.getName();
+        String password = employeeUpdateRequest.getPassword();
+        if (password.equals("")) {
+            employeeEntity.updateInfo(name);
+            return true;
+        } else {
+            String passwordCheck = employeeUpdateRequest.getPasswordCheck();
+            String passwordEncoded = passwordEncoder.encode(password);
+            if (!password.equals(passwordCheck)) {
+                throw new InvalidPasswordException(ExceptionState.INVALID_PASSWORD, "Password and passwordCheck Mismatch");
+            }
+            employeeEntity.updateInfo(name, passwordEncoded);
+        }
+
+        return true;
     }
-
-    return true;
-  }
 }

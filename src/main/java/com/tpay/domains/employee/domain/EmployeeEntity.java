@@ -16,40 +16,40 @@ import javax.validation.constraints.NotNull;
 @Entity
 public class EmployeeEntity extends BaseTimeEntity {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @NotNull
-  private String name;
+    @NotNull
+    private String name;
 
-  @NotNull
-  private String userId;
+    @NotNull
+    private String userId;
 
-  @NotNull
-  private String password;
+    @NotNull
+    private String password;
 
-  @NotNull
-  private Boolean isDelete;
+    @NotNull
+    private Boolean isDelete;
 
-  @ManyToOne
-  @JoinColumn(name = "franchisee_id", nullable = false)
-  private FranchiseeEntity franchiseeEntity;
+    @ManyToOne
+    @JoinColumn(name = "franchisee_id", nullable = false)
+    private FranchiseeEntity franchiseeEntity;
 
-  public EmployeeEntity updateDelete() {
-    this.isDelete = true;
-    return this;
-  }
+    public EmployeeEntity updateDelete() {
+        this.isDelete = true;
+        return this;
+    }
 
-  public EmployeeEntity updateInfo(String name, String password) {
-    this.name = name;
-    this.password = password;
-    return this;
-  }
+    public EmployeeEntity updateInfo(String name, String password) {
+        this.name = name;
+        this.password = password;
+        return this;
+    }
 
 
-  public EmployeeEntity updateInfo(String name){
-    this.name = name;
-    return this;
-  }
+    public EmployeeEntity updateInfo(String name) {
+        this.name = name;
+        return this;
+    }
 }

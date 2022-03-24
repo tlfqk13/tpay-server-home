@@ -18,72 +18,72 @@ import javax.transaction.Transactional;
 @RequiredArgsConstructor
 public class PasswordResetService {
 
-  private final FranchiseeFindService franchiseeFindService;
-  private final FranchiseeRepository franchiseeRepository;
-  private final PasswordEncoder passwordEncoder;
-  private final RegExUtils regExUtils;
+    private final FranchiseeFindService franchiseeFindService;
+    private final FranchiseeRepository franchiseeRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final RegExUtils regExUtils;
 
 
-  // ========================= 로그인 전 ========================= //
-  public boolean existBusinessNumber(String businessNumber) {
-    boolean result = franchiseeRepository.existsByBusinessNumber(businessNumber);
-    if (!result) {
-      throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid Business Number");
+    // ========================= 로그인 전 ========================= //
+    public boolean existBusinessNumber(String businessNumber) {
+        boolean result = franchiseeRepository.existsByBusinessNumber(businessNumber);
+        if (!result) {
+            throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid Business Number");
+        }
+        return true;
     }
-    return true;
-  }
 
 
-  public boolean selfCertification(String businessNumber, String name, String phoneNumber) {
-    FranchiseeEntity franchiseeEntity = franchiseeFindService.findByBusinessNumber(businessNumber);
-    certificationValid(franchiseeEntity, name, phoneNumber.replaceAll("-", ""));
-    return true;
-  }
-
-  @Transactional
-  public boolean reset(String businessNumber, PasswordChangeRequest passwordChangeRequest) {
-    String newPassword = passwordChangeRequest.getNewPassword();
-    String newPasswordCheck = passwordChangeRequest.getNewPasswordCheck();
-    FranchiseeEntity franchiseeEntity = franchiseeFindService.findByBusinessNumber(businessNumber);
-    passwordValid(newPassword, newPasswordCheck);
-    franchiseeEntity.resetPassword(passwordEncoder.encode(newPassword));
-    return true;
-  }
-
-  // ========================= 로그인 상태 ========================= //
-
-  public boolean correctPassword(Long franchiseeIndex, String password) {
-    FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
-    if (!passwordEncoder.matches(password, franchiseeEntity.getPassword())) {
-      throw new InvalidPasswordException(ExceptionState.INVALID_PASSWORD, "Mismatch between 'input Password' and 'franchisee Password'");
+    public boolean selfCertification(String businessNumber, String name, String phoneNumber) {
+        FranchiseeEntity franchiseeEntity = franchiseeFindService.findByBusinessNumber(businessNumber);
+        certificationValid(franchiseeEntity, name, phoneNumber.replaceAll("-", ""));
+        return true;
     }
-    return true;
-  }
 
-  @Transactional
-  public boolean change(Long franchiseeIndex, PasswordChangeRequest passwordChangeRequest) {
-    String newPassword = passwordChangeRequest.getNewPassword();
-    String newPasswordCheck = passwordChangeRequest.getNewPasswordCheck();
-    FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
-    passwordValid(newPassword, newPasswordCheck);
-    franchiseeEntity.resetPassword(passwordEncoder.encode(newPassword));
-    return true;
-  }
-
-  // ====================내부 메서드==================== //
-
-  private void certificationValid(FranchiseeEntity franchiseeEntity, String name, String phoneNumber) {
-    if (!franchiseeEntity.isValidUser(name, phoneNumber)) {
-      throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Mismatch between BusinessNumber and Certification Info");
+    @Transactional
+    public boolean reset(String businessNumber, PasswordChangeRequest passwordChangeRequest) {
+        String newPassword = passwordChangeRequest.getNewPassword();
+        String newPasswordCheck = passwordChangeRequest.getNewPasswordCheck();
+        FranchiseeEntity franchiseeEntity = franchiseeFindService.findByBusinessNumber(businessNumber);
+        passwordValid(newPassword, newPasswordCheck);
+        franchiseeEntity.resetPassword(passwordEncoder.encode(newPassword));
+        return true;
     }
-  }
 
-  private void passwordValid(String newPassword, String newPasswordCheck) {
-    boolean regExCompile = regExUtils.validate(RegExType.PASSWORD, newPassword);
-    boolean equals = newPassword.equals(newPasswordCheck);
+    // ========================= 로그인 상태 ========================= //
 
-    if (!(regExCompile && equals)) {
-      throw new InvalidPasswordException(ExceptionState.INVALID_PASSWORD, "RegEx Or Equals Error");
+    public boolean correctPassword(Long franchiseeIndex, String password) {
+        FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
+        if (!passwordEncoder.matches(password, franchiseeEntity.getPassword())) {
+            throw new InvalidPasswordException(ExceptionState.INVALID_PASSWORD, "Mismatch between 'input Password' and 'franchisee Password'");
+        }
+        return true;
     }
-  }
+
+    @Transactional
+    public boolean change(Long franchiseeIndex, PasswordChangeRequest passwordChangeRequest) {
+        String newPassword = passwordChangeRequest.getNewPassword();
+        String newPasswordCheck = passwordChangeRequest.getNewPasswordCheck();
+        FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
+        passwordValid(newPassword, newPasswordCheck);
+        franchiseeEntity.resetPassword(passwordEncoder.encode(newPassword));
+        return true;
+    }
+
+    // ====================내부 메서드==================== //
+
+    private void certificationValid(FranchiseeEntity franchiseeEntity, String name, String phoneNumber) {
+        if (!franchiseeEntity.isValidUser(name, phoneNumber)) {
+            throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Mismatch between BusinessNumber and Certification Info");
+        }
+    }
+
+    private void passwordValid(String newPassword, String newPasswordCheck) {
+        boolean regExCompile = regExUtils.validate(RegExType.PASSWORD, newPassword);
+        boolean equals = newPassword.equals(newPasswordCheck);
+
+        if (!(regExCompile && equals)) {
+            throw new InvalidPasswordException(ExceptionState.INVALID_PASSWORD, "RegEx Or Equals Error");
+        }
+    }
 }

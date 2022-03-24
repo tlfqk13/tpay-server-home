@@ -14,24 +14,24 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 public class RefundTestWebflux {
-  private final WebClient.Builder builder;
+    private final WebClient.Builder builder;
 
-  @PostMapping("/testtestktp")
-  @Transactional
-  public ResponseEntity<TestResponse> webfluxTest(@RequestBody TestRequest testRequest) {
-    List<String> b_noList = new ArrayList<>();
-    b_noList.add(testRequest.getTestRequestData());
-    TestListRequest testListRequest = TestListRequest.builder().b_no(b_noList).build();
-    String uri = "localhost:20001/testtestrefund";
-    WebClient webClient = builder.build();
-    TestResponse testResponse =
-        webClient
-            .post()
-            .uri(uri)
-            .bodyValue(testListRequest)
-            .retrieve()
-            .bodyToMono(TestResponse.class)
-            .block();
-    return ResponseEntity.ok(testResponse);
-  }
+    @PostMapping("/testtestktp")
+    @Transactional
+    public ResponseEntity<TestResponse> webfluxTest(@RequestBody TestRequest testRequest) {
+        List<String> b_noList = new ArrayList<>();
+        b_noList.add(testRequest.getTestRequestData());
+        TestListRequest testListRequest = TestListRequest.builder().b_no(b_noList).build();
+        String uri = "localhost:20001/testtestrefund";
+        WebClient webClient = builder.build();
+        TestResponse testResponse =
+            webClient
+                .post()
+                .uri(uri)
+                .bodyValue(testListRequest)
+                .retrieve()
+                .bodyToMono(TestResponse.class)
+                .block();
+        return ResponseEntity.ok(testResponse);
+    }
 }

@@ -16,26 +16,26 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class SaleStatisticsController {
 
-  private final SaleStatisticsService saleStatisticsService;
+    private final SaleStatisticsService saleStatisticsService;
 
-  @GetMapping("/sales/statistics/{franchiseeIndex}")
-  public ResponseEntity<SaleStatisticsResponseInterface> salesStatistics(
-      @PathVariable Long franchiseeIndex,
-      @RequestParam String targetDate,
-      @RequestParam DateSelector dateSelector
-  ) {
-    SaleStatisticsResponseInterface result = saleStatisticsService.saleStatistics(franchiseeIndex, targetDate, dateSelector);
-    return ResponseEntity.ok(result);
-  }
+    @GetMapping("/sales/statistics/{franchiseeIndex}")
+    public ResponseEntity<SaleStatisticsResponseInterface> salesStatistics(
+        @PathVariable Long franchiseeIndex,
+        @RequestParam String targetDate,
+        @RequestParam DateSelector dateSelector
+    ) {
+        SaleStatisticsResponseInterface result = saleStatisticsService.saleStatistics(franchiseeIndex, targetDate, dateSelector);
+        return ResponseEntity.ok(result);
+    }
 
-  @GetMapping("/sales/statistics/detail/{franchiseeIndex}")
-  public ResponseEntity<SaleStatisticsResponse> saleCompare(
-      @PathVariable Long franchiseeIndex,
-      @RequestParam String targetDate,
-      @RequestParam DateSelector dateSelector
-  ) {
-    SaleStatisticsResponse result = saleStatisticsService.saleCompare(franchiseeIndex, targetDate, dateSelector);
-    return ResponseEntity.ok(result);
-  }
+    @GetMapping("/sales/statistics/detail/{franchiseeIndex}")
+    public ResponseEntity<SaleStatisticsResponse> saleCompare(
+        @PathVariable Long franchiseeIndex,
+        @RequestParam String targetDate,
+        @RequestParam DateSelector dateSelector
+    ) {
+        SaleStatisticsResponse result = saleStatisticsService.saleCompare(franchiseeIndex, targetDate, dateSelector);
+        return ResponseEntity.ok(result);
+    }
 
 }

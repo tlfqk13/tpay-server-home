@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class BarcodeCreateController {
 
-  private final BarcodeCreateService barcodeCreateService;
+    private final BarcodeCreateService barcodeCreateService;
 
-  @PostMapping("/pos/refund/limit/{franchiseeIndex}")
-  public ResponseEntity<Resource> barcodeMaker(
-      @PathVariable Long franchiseeIndex,
-      @RequestBody RefundLimitRequest refundLimitRequest) {
-    return barcodeCreateService.createBarCode(franchiseeIndex, refundLimitRequest);
-  }
+    @PostMapping("/pos/refund/limit/{franchiseeIndex}")
+    public ResponseEntity<Resource> barcodeMaker(
+        @PathVariable Long franchiseeIndex,
+        @RequestBody RefundLimitRequest refundLimitRequest) {
+        return barcodeCreateService.createBarCode(franchiseeIndex, refundLimitRequest);
+    }
 }

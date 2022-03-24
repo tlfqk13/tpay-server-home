@@ -1,8 +1,8 @@
 package com.tpay.domains.testAPI.openApi;
 
-import lombok.*;
+import lombok.Getter;
 
 @Getter
 public class TestRequest {
-  private String testRequestData;
+    private String testRequestData;
 }

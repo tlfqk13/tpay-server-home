@@ -10,14 +10,14 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class EmployeeUserIdValidationService {
 
-  private final EmployeeRepository employeeRepository;
+    private final EmployeeRepository employeeRepository;
 
 
-  public boolean valid(Long franchiseeIndex, String userId) {
-    if(employeeRepository.existsByFranchiseeEntityIdAndUserId(franchiseeIndex, userId)){
-      System.out.println("Already Exists!");
-      throw new AlreadyExistsException(ExceptionState.ALREADY_EXISTS,"Employee Id Already Exists");
+    public boolean valid(Long franchiseeIndex, String userId) {
+        if (employeeRepository.existsByFranchiseeEntityIdAndUserId(franchiseeIndex, userId)) {
+            System.out.println("Already Exists!");
+            throw new AlreadyExistsException(ExceptionState.ALREADY_EXISTS, "Employee Id Already Exists");
+        }
+        return false;
     }
-    return false;
-  }
 }

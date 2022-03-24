@@ -1,9 +1,9 @@
 package com.tpay.domains.point.domain;
 
 public enum PointStatus {
-  SAVE,
-  CANCEL,
-  WITHDRAW,
-  SCHEDULED,
-  COMPLETE
+    SAVE,
+    CANCEL,
+    WITHDRAW,
+    SCHEDULED,
+    COMPLETE
 }

@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class LimitFindController {
 
-  private final LimitFindService limitFindService;
+    private final LimitFindService limitFindService;
 
-  @PostMapping("/refund/limit")
-  private ResponseEntity<RefundResponse> find(
-      @RequestBody RefundLimitRequest request) {
-    RefundResponse response = limitFindService.find(request);
-    return ResponseEntity.ok(response);
-  }
+    @PostMapping("/refund/limit")
+    private ResponseEntity<RefundResponse> find(
+        @RequestBody RefundLimitRequest request) {
+        RefundResponse response = limitFindService.find(request);
+        return ResponseEntity.ok(response);
+    }
 }

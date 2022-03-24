@@ -6,5 +6,5 @@ import java.util.List;
 
 @Getter
 public class EmployeeDeleteRequest {
-  private List<Long> employeeIndexList;
+    private List<Long> employeeIndexList;
 }

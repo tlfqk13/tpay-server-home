@@ -8,10 +8,10 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class VatDetailResponsePersonalInfo {
-  private String sellerName;
-  private String businessNumber;
-  private String storeName;
-  private String storeAddress;
-  private String saleTerm;
-  private String taxFreeStoreNumber;
+    private String sellerName;
+    private String businessNumber;
+    private String storeName;
+    private String storeAddress;
+    private String saleTerm;
+    private String taxFreeStoreNumber;
 }
