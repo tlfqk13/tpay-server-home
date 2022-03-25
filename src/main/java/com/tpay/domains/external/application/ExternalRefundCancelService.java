@@ -9,6 +9,7 @@ import com.tpay.domains.customer.application.CustomerFindService;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.external.application.dto.ExternalRefundCancelRequest;
 import com.tpay.domains.external.domain.ExternalRefundEntity;
+import com.tpay.domains.external.domain.ExternalRefundStatus;
 import com.tpay.domains.point.domain.SignType;
 import com.tpay.domains.point_scheduled.application.PointScheduledChangeService;
 import com.tpay.domains.refund.domain.RefundEntity;
@@ -52,6 +53,7 @@ public class ExternalRefundCancelService {
             .block();
 
         refundEntity.updateCancel(refundResponse.getResponseCode());
+        externalRefundEntity.changeStatus(ExternalRefundStatus.CANCEL);
         pointScheduledChangeService.change(refundEntity, SignType.NEGATIVE);
         return refundResponse;
 

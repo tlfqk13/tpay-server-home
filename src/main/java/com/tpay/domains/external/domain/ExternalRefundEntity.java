@@ -1,5 +1,6 @@
 package com.tpay.domains.external.domain;
 
+import com.tpay.domains.refund.domain.RefundEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,6 +27,9 @@ public class ExternalRefundEntity {
 
     @NotNull
     private ExternalRefundStatus externalRefundStatus;
+
+    @OneToOne
+    private RefundEntity refundEntity;
 
     @Builder
     public ExternalRefundEntity(Long franchiseeIndex, Long customerIndex, ExternalRefundStatus externalRefundStatus) {

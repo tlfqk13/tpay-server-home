@@ -68,6 +68,7 @@ public class ExternalRefundApprovalService {
             orderEntity);
 
         pointScheduledChangeService.change(refundEntity, SignType.POSITIVE);
+        externalRefundEntity.changeStatus(ExternalRefundStatus.APPROVE);
         franchiseeEntity.isRefundOnce();
         return refundResponse;
 
