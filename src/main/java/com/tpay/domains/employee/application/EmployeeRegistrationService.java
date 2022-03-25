@@ -28,7 +28,7 @@ public class EmployeeRegistrationService {
         String password = employeeRegistrationRequest.getPassword();
         String passwordCheck = employeeRegistrationRequest.getPasswordCheck();
         if (!validPassword(password, passwordCheck)) {
-            throw new InvalidPasswordException(ExceptionState.INVALID_PASSWORD, "Invalid Password(regEx or passCheck not matched");
+            throw new InvalidPasswordException(ExceptionState.INVALID_PASSWORD, "Invalid Password(regEx or passCheck not matched)");
         }
 
         FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
