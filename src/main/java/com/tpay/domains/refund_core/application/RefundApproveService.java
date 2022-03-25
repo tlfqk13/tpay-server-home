@@ -6,6 +6,10 @@ import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.domains.employee.application.EmployeeFindService;
 import com.tpay.domains.employee.domain.EmployeeEntity;
+import com.tpay.domains.external.application.ExternalRefundFindService;
+import com.tpay.domains.external.domain.ExternalRefundEntity;
+import com.tpay.domains.external.domain.ExternalRefundStatus;
+import com.tpay.domains.external.domain.ExternalRepository;
 import com.tpay.domains.franchisee.application.FranchiseeFindService;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.order.application.OrderSaveService;
@@ -26,6 +30,8 @@ import reactor.core.publisher.Mono;
 
 import javax.transaction.Transactional;
 
+import java.util.Optional;
+
 import static com.tpay.commons.util.UserSelector.EMPLOYEE;
 import static com.tpay.commons.util.UserSelector.FRANCHISEE;
 
@@ -38,6 +44,7 @@ public class RefundApproveService {
     private final PointScheduledChangeService pointScheduledChangeService;
     private final FranchiseeFindService franchiseeFindService;
     private final WebClient.Builder builder;
+    private final ExternalRepository externalRepository;
 
     private final PointRepository pointRepository;
     private final EmployeeFindService employeeFindService;
@@ -89,6 +96,11 @@ public class RefundApproveService {
                 refundResponse.getPurchaseSequenceNumber(),
                 refundResponse.getTakeoutNumber(),
                 orderEntity);
+
+        //2022/03/25 여권 스캔을 바코드모드로하고, 앱으로 승인진행할 때 이 플로우 탐
+        Optional<ExternalRefundEntity> optionalExternalRefundEntity = externalRepository.findByRefundEntity(refundEntity);
+        optionalExternalRefundEntity.ifPresent(externalRefundEntity -> externalRefundEntity.changeStatus(ExternalRefundStatus.APPROVE));
+
 
         pointScheduledChangeService.change(refundEntity, SignType.POSITIVE);
         franchiseeEntity.isRefundOnce();
