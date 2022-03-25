@@ -30,6 +30,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -68,12 +69,13 @@ public class BarcodeCreateService {
 
         try {
             Barcode barcode = BarcodeFactory.createCode128B(idPadding + deductionPadding);
-            File file = new File("/home/ec2-user/barcode/testPNG.png");
+            String filename = LocalDateTime.now()+"_"+save.getId()+".png";
+            File file = new File("/home/ec2-user/barcode/"+ filename);
             BarcodeImageHandler.savePNG(barcode, file);
-            Resource resource = new FileSystemResource("/home/ec2-user/barcode/testPNG.png");
+            Resource resource = new FileSystemResource("/home/ec2-user/barcode/"+ filename);
 
             HttpHeaders headers = new HttpHeaders();
-            Path filePath = Paths.get("/Users/sunba/Desktop/testPNG.png");
+            Path filePath = Paths.get("/home/ec2-user/barcode/"+ filename);
             headers.add("Content-Type", Files.probeContentType(filePath));
             return new ResponseEntity<Resource>(resource, headers, HttpStatus.OK);
 

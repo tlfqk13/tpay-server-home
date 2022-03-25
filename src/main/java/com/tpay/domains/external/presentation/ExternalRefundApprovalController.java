@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-public class ExternalRefundController {
+public class ExternalRefundApprovalController {
 
     private final ExternalRefundApprovalService externalRefundApprovalService;
 
-    @PostMapping("/external/refund")
+    @PostMapping("/external/refund/approval")
     public ResponseEntity<RefundResponse> externalRefundApproval(
         // TODO: 2022/03/18 POS 관련 API 정해지면 작업 진행
         @RequestBody ExternalRefundApprovalRequest externalRefundApprovalRequest) {
