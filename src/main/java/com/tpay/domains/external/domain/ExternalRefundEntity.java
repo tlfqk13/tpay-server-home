@@ -42,4 +42,9 @@ public class ExternalRefundEntity {
         this.externalRefundStatus = externalRefundStatus;
         return this;
     }
+
+    public ExternalRefundEntity refundIndexRegister(RefundEntity refundEntity){
+        this.refundEntity = refundEntity;
+        return this;
+    }
 }
