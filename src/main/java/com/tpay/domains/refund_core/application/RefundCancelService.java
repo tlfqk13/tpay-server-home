@@ -6,6 +6,9 @@ import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.domains.customer.application.CustomerFindService;
 import com.tpay.domains.customer.domain.CustomerEntity;
+import com.tpay.domains.external.domain.ExternalRefundEntity;
+import com.tpay.domains.external.domain.ExternalRefundStatus;
+import com.tpay.domains.external.domain.ExternalRepository;
 import com.tpay.domains.point.domain.SignType;
 import com.tpay.domains.point_scheduled.application.PointScheduledChangeService;
 import com.tpay.domains.refund.application.RefundFindService;
@@ -19,6 +22,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -28,12 +32,20 @@ public class RefundCancelService {
     private final RefundFindService refundFindService;
     private final PointScheduledChangeService pointScheduledChangeService;
     private final WebClient.Builder builder;
+    private final ExternalRepository externalRepository;
 
     @Transactional
     public RefundResponse cancel(Long customerIndex, Long refundIndex) {
         CustomerEntity customerEntity = customerFindService.findByIndex(customerIndex);
         RefundEntity refundEntity = refundFindService.findByIndex(refundIndex);
         RefundCancelRequest refundCancelRequest = RefundCancelRequest.of(customerEntity, refundEntity);
+
+        //2022/03/25 포스기에서 승인한건 포스기에서만 취소 가능
+        Optional<ExternalRefundEntity> optionalExternalRefundEntity = externalRepository.findByRefundEntity(refundEntity);
+        if(optionalExternalRefundEntity.isPresent()){
+            throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER,"POS approval must be canceled by POS");
+        }
+
 
         WebClient webClient = builder.build();
         String uri = CustomValue.REFUND_SERVER + "/refund/cancel";
@@ -53,6 +65,7 @@ public class RefundCancelService {
                 .block();
 
         refundEntity.updateCancel(refundResponse.getResponseCode());
+
         pointScheduledChangeService.change(refundEntity, SignType.NEGATIVE);
 
         return refundResponse;

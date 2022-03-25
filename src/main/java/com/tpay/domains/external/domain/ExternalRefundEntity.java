@@ -1,5 +1,6 @@
 package com.tpay.domains.external.domain;
 
+import com.tpay.domains.refund.domain.RefundEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,6 +28,10 @@ public class ExternalRefundEntity {
     @NotNull
     private ExternalRefundStatus externalRefundStatus;
 
+    @OneToOne
+    @JoinColumn(name = "refund_id")
+    private RefundEntity refundEntity;
+
     @Builder
     public ExternalRefundEntity(Long franchiseeIndex, Long customerIndex, ExternalRefundStatus externalRefundStatus) {
         this.franchiseeIndex = franchiseeIndex;
@@ -36,6 +41,11 @@ public class ExternalRefundEntity {
 
     public ExternalRefundEntity changeStatus(ExternalRefundStatus externalRefundStatus) {
         this.externalRefundStatus = externalRefundStatus;
+        return this;
+    }
+
+    public ExternalRefundEntity refundIndexRegister(RefundEntity refundEntity){
+        this.refundEntity = refundEntity;
         return this;
     }
 }
