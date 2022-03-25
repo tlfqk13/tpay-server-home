@@ -29,6 +29,7 @@ public class ExternalRefundEntity {
     private ExternalRefundStatus externalRefundStatus;
 
     @OneToOne
+    @JoinColumn(name = "refund_id")
     private RefundEntity refundEntity;
 
     @Builder
