@@ -73,8 +73,8 @@ dependencies {
     // https://mvnrepository.com/artifact/net.sourceforge.barbecue/barbecue 바코드
     implementation group: 'net.sourceforge.barbecue', name: 'barbecue', version: '1.5-beta1'
 
-    // QR코드
-
+    // FCM PUSH
+    implementation 'com.google.firebase:firebase-admin:8.1.0'
 
 }
 
