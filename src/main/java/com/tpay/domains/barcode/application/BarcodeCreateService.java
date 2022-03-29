@@ -64,7 +64,7 @@ public class BarcodeCreateService {
             .externalRefundStatus(ExternalRefundStatus.SCAN)
             .build();
         ExternalRefundEntity save = externalRepository.save(externalRefundEntity);
-        String deductionPadding = setWithZero(refundResponse.getBeforeDeduction(), 11);
+        String deductionPadding = setWithZero(refundResponse.getBeforeDeduction(), 10);
         String idPadding = setWithZero(save.getId().toString(), 7);
 
         try {
