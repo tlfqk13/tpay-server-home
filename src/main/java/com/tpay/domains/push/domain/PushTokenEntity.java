@@ -1,6 +1,7 @@
 package com.tpay.domains.push.domain;
 
 
+import com.tpay.domains.BaseTimeEntity;
 import com.tpay.domains.employee.domain.EmployeeEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import lombok.AccessLevel;
@@ -15,7 +16,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "push_token")
 @Entity
-public class PushTokenEntity {
+public class PushTokenEntity extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
