@@ -41,8 +41,7 @@ public class EmployeeRegistrationService {
             .isDelete(false)
             .build();
 
-        EmployeeEntity result = employeeRepository.save(employeeEntity);
-        return result;
+        return employeeRepository.save(employeeEntity);
     }
 
     static boolean validPassword(String password, String passwordCheck) {
@@ -51,8 +50,6 @@ public class EmployeeRegistrationService {
         RegExUtils regExUtils = new RegExUtils();
         boolean validate = regExUtils.validate(RegExType.PASSWORD, password);
 
-        if (equalEach && validate) {
-            return true;
-        } else return false;
+        return equalEach && validate;
     }
 }
