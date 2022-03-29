@@ -9,4 +9,5 @@ public class SignInRequest {
     private String businessNumber;
     private String userId;
     private String password;
+    private String pushToken;
 }

@@ -8,6 +8,8 @@ import com.tpay.domains.employee.application.EmployeeFindService;
 import com.tpay.domains.employee.domain.EmployeeEntity;
 import com.tpay.domains.franchisee_applicant.application.FranchiseeApplicantFindService;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
+import com.tpay.domains.push.domain.PushTokenEntity;
+import com.tpay.domains.push.domain.PushTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,10 +24,11 @@ public class EmployeeSignInService {
     private final FranchiseeApplicantFindService franchiseeApplicantFindService;
     private final PasswordEncoder passwordEncoder;
     private final AuthService authService;
-
+    private final PushTokenRepository pushTokenRepository;
 
     @Transactional
-    public EmployeeTokenInfo signIn(String userId, String password) {
+    public EmployeeTokenInfo
+    signIn(String userId, String password, String pushToken) {
         EmployeeEntity employeeEntity = employeeFindService.findByUserId(userId);
         if (!passwordEncoder.matches(password, employeeEntity.getPassword())) {
             throw new IllegalArgumentException("Invalid Password");
@@ -38,6 +41,11 @@ public class EmployeeSignInService {
         AuthToken accessToken = authService.createAccessToken(employeeEntity);
         AuthToken refreshToken = authService.createRefreshToken(employeeEntity);
         authService.updateOrSave(employeeEntity, refreshToken.getValue());
+        PushTokenEntity pushTokenEntity = PushTokenEntity.builder()
+            .pushToken(pushToken)
+            .employeeEntity(employeeEntity)
+            .build();
+        pushTokenRepository.save(pushTokenEntity);
 
         return EmployeeTokenInfo.builder()
             .employeeIndex(employeeEntity.getId())
