@@ -10,6 +10,8 @@ public class CustomValue {
     public static String IAMPORT_SECRET;
     public static String REFUND_SERVER;
     public static String APPLICATION_CODE;
+    public static String PUSH_API_URI;
+    public static String PUSH_CONFIG_PATH;
 
 
     @Value("${custom.iamport.api-key}")
@@ -31,4 +33,11 @@ public class CustomValue {
     public void setApplicationCode(String applicationCode) {
         APPLICATION_CODE = applicationCode;
     }
+
+    @Value("${custom.push.api-url}")
+    public void setPushApiUri(String apiUri) {PUSH_API_URI = apiUri;}
+
+    @Value("${custom.push.config-path}")
+    public void setConfigPath(String configPath) {PUSH_CONFIG_PATH = configPath;}
+
 }
