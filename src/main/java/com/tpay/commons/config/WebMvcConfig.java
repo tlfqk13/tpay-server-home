@@ -37,6 +37,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 "/franchisee/password/**",
                 "/points/batch",
                 "/external/**",
+                "/push/batch/**",
                 "/error");
         registry.addInterceptor(printRequestInterceptor).addPathPatterns("/**");
     }

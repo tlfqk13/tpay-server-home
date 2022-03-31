@@ -32,6 +32,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 
+import static com.tpay.commons.custom.CustomValue.*;
+
 @Service
 @RequiredArgsConstructor
 public class BarcodeCreateService {
@@ -43,7 +45,7 @@ public class BarcodeCreateService {
     @Transactional
     public ResponseEntity<Resource> createBarCode(Long franchiseeIndex, RefundLimitRequest request) {
         WebClient webClient = builder.build();
-        String uri = CustomValue.REFUND_SERVER + "/refund/limit";
+        String uri = REFUND_SERVER + "/refund/limit";
         CustomerEntity customerEntity = customerFindService.findByNationAndPassportNumber(request.getName(), request.getPassportNumber(), request.getNationality());
 
         RefundResponse refundResponse = webClient
@@ -64,18 +66,18 @@ public class BarcodeCreateService {
             .externalRefundStatus(ExternalRefundStatus.SCAN)
             .build();
         ExternalRefundEntity save = externalRepository.save(externalRefundEntity);
-        String deductionPadding = setWithZero(refundResponse.getBeforeDeduction(), 11);
+        String deductionPadding = setWithZero(refundResponse.getBeforeDeduction(), 10);
         String idPadding = setWithZero(save.getId().toString(), 7);
 
         try {
             Barcode barcode = BarcodeFactory.createCode128B(idPadding + deductionPadding);
             String filename = LocalDateTime.now()+"_"+save.getId()+".png";
-            File file = new File("/home/ec2-user/barcode/"+ filename);
+            File file = new File(BARCODE_SAVE_PATH + filename);
             BarcodeImageHandler.savePNG(barcode, file);
-            Resource resource = new FileSystemResource("/home/ec2-user/barcode/"+ filename);
+            Resource resource = new FileSystemResource(BARCODE_SAVE_PATH+ filename);
 
             HttpHeaders headers = new HttpHeaders();
-            Path filePath = Paths.get("/home/ec2-user/barcode/"+ filename);
+            Path filePath = Paths.get(BARCODE_SAVE_PATH + filename);
             headers.add("Content-Type", Files.probeContentType(filePath));
             return new ResponseEntity<Resource>(resource, headers, HttpStatus.OK);
 

@@ -23,7 +23,11 @@ custom:
     bank:
       client-id: ENC(Yksp5cuMZ9sfTjThjIRxn3bTIuY5JTJOFclCIr8J2jSEgN+EgxnUx7ATv3L15BXj)
       client-secret: ENC(huu6kX1rSeH606lK6OFtbl2GTLS6PTKuHxTvJWlBiTIYeWHcgWom7VWHVAgf1UZe)
-
+  push:
+    api-url: ENC(EK0psBYCIQ1nspH+7y+/oCF/NxRFddm0lEsD6plj4+QVjjcx0aZhQO8HWZVjR6c6KpiByMMBktfQ4FCjuxLGPDA2x1+9X2jn1P2+mmoRrPc=)
+    config-path: ENC(3+P8THcqeMZ9JwZbWonegl0tLhkqrHNC4/ILBBvyH+cOEzEOFJsOkuhX3SAsfPY0ToWU+5ajYhWtbS/dzbinbg==)
+  barcode:
+    save-path: ENC(eYDNkT5cu7xnhdT895ea0Rl9ZSZRpxqT5dpWEmDiE4g=)
 logging:
   config: classpath:log4j2.yml
 cloud:

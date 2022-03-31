@@ -360,3 +360,6 @@ gradle-app.setting
 ### xlsx ###
 *.xlsx
 # End of https://www.toptal.com/developers/gitignore/api/intellij,java,database,visualstudiocode,git,gradle,eclipse,macos,windows,linux
+
+### Push.json ###
+*.json
