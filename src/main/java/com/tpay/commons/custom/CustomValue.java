@@ -12,6 +12,7 @@ public class CustomValue {
     public static String APPLICATION_CODE;
     public static String PUSH_API_URI;
     public static String PUSH_CONFIG_PATH;
+    public static String BARCODE_SAVE_PATH;
 
 
     @Value("${custom.iamport.api-key}")
@@ -39,5 +40,8 @@ public class CustomValue {
 
     @Value("${custom.push.config-path}")
     public void setConfigPath(String configPath) {PUSH_CONFIG_PATH = configPath;}
+
+    @Value("${custom.barcode.save-path}")
+    public void setBarcodeSavePath(String barcodeSavePath) {BARCODE_SAVE_PATH = barcodeSavePath;}
 
 }
