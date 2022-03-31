@@ -39,4 +39,8 @@ public class PushTokenEntity extends BaseTimeEntity {
         this.franchiseeEntity = franchiseeEntity;
         this.employeeEntity = employeeEntity;
     }
+
+    public void updateToken(PushTokenEntity pushTokenEntity){
+        this.pushToken = pushTokenEntity.getPushToken();
+    }
 }

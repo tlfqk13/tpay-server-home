@@ -5,8 +5,8 @@ import com.tpay.domains.auth.application.dto.FranchiseeTokenInfo;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee_applicant.application.FranchiseeApplicantFindService;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
+import com.tpay.domains.push.application.PushUpdateService;
 import com.tpay.domains.push.domain.PushTokenEntity;
-import com.tpay.domains.push.domain.PushTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,8 @@ public class FranchiseeSignInService {
     private final FranchiseeApplicantFindService franchiseeApplicantFindService;
     private final AuthService authService;
     private final PasswordEncoder passwordEncoder;
-    private final PushTokenRepository pushTokenRepository;
+    private final PushUpdateService pushUpdateService;
+
 
 
     @Transactional
@@ -42,7 +43,7 @@ public class FranchiseeSignInService {
             .pushToken(pushToken)
             .franchiseeEntity(franchiseeEntity)
             .build();
-        pushTokenRepository.save(pushTokenEntity);
+        pushUpdateService.updateOrSaveByFranchiseeIndex(pushTokenEntity);
 
         return FranchiseeTokenInfo.builder()
             .franchiseeIndex(franchiseeEntity.getId())
