@@ -1,4 +1,4 @@
-package com.tpay.domains.batch.application;
+package com.tpay.domains.point_batch.application;
 
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
