@@ -11,7 +11,7 @@ import com.tpay.domains.employee.application.EmployeeFindService;
 import com.tpay.domains.employee.domain.EmployeeEntity;
 import com.tpay.domains.franchisee.application.FranchiseeFindService;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
-import com.tpay.domains.push.application.dto.PushMessageBuilder;
+import com.tpay.commons.push.PushMessageBuilder;
 import com.tpay.domains.push.application.dto.PushMessageRequest;
 import com.tpay.domains.push.domain.PushMessageEntity;
 import com.tpay.domains.push.domain.PushMessageRepository;
