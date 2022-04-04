@@ -13,4 +13,5 @@ public interface PushTokenRepository extends JpaRepository<PushTokenEntity, Long
 
     Optional<PushTokenEntity> findByFranchiseeEntity(FranchiseeEntity franchiseeEntity);
     Optional<PushTokenEntity> findByEmployeeEntity(EmployeeEntity employeeEntity);
+
 }

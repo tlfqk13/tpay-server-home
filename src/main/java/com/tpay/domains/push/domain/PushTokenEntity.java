@@ -1,6 +1,7 @@
 package com.tpay.domains.push.domain;
 
 
+import com.tpay.commons.push.detail.PushTopic;
 import com.tpay.domains.BaseTimeEntity;
 import com.tpay.domains.employee.domain.EmployeeEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
@@ -33,10 +34,18 @@ public class PushTokenEntity extends BaseTimeEntity {
     @JoinColumn(name = "employee_id")
     private EmployeeEntity employeeEntity;
 
+    private PushTopic pushTopic;
+
     @Builder
-    public PushTokenEntity(String pushToken, FranchiseeEntity franchiseeEntity, EmployeeEntity employeeEntity) {
+    public PushTokenEntity(String pushToken, FranchiseeEntity franchiseeEntity, EmployeeEntity employeeEntity, PushTopic pushTopic) {
         this.pushToken = pushToken;
         this.franchiseeEntity = franchiseeEntity;
         this.employeeEntity = employeeEntity;
+        this.pushTopic = pushTopic;
+    }
+
+    public void updateToken(PushTokenEntity pushTokenEntity, PushTopic pushTopic){
+        this.pushToken = pushTokenEntity.getPushToken();
+        this.pushTopic =pushTopic;
     }
 }

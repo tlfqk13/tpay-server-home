@@ -1,4 +1,4 @@
-package com.tpay.domains.push.application.dto;
+package com.tpay.commons.push;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
