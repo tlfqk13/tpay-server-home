@@ -1,7 +1,7 @@
-package com.tpay.domains.batch.presentation;
+package com.tpay.domains.point_batch.presentation;
 
 
-import com.tpay.domains.batch.application.PointConfirmedService;
+import com.tpay.domains.point_batch.application.PointConfirmedService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

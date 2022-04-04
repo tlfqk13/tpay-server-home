@@ -1,4 +1,4 @@
-package com.tpay.domains.batch.application;
+package com.tpay.domains.point_batch.application;
 
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
@@ -21,7 +21,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -40,22 +39,16 @@ public class PointConfirmedService {
             return "Nothing to Update Status";
         } else {
 
-            // Scheduled 테이블 상태변경
             List<Long> targetList = new ArrayList<>();
             needUpdateEntity.get().forEach(i -> targetList.add(i.getId()));
-            targetList.stream().map(i -> pointScheduledRepository.findById(i)
-                    .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Point Id Not Exists"))
-                )
-                .forEach(PointScheduledEntity::updateStatus);
+            for (Long aLong : targetList) {
+                System.out.println(aLong);
+                // Scheduled 테이블 상태변경
+                PointScheduledEntity pointScheduledEntity = pointScheduledRepository.findById(aLong).orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Point Id Not Exists"));
+                pointScheduledEntity.updateStatus();
 
-            // 프랜차이즈 balance 변경
-            // TODO: 2022/03/15 기능 추가에 의해 상태변경과 balance 로직이 따로 구현되어있으나, 추후 리팩토링 요망
-            List<Long> saveTargetList = new ArrayList<>();
-            needUpdateEntity.get().forEach(i -> saveTargetList.add(i.getOrderId()));
-            List<OrderEntity> orderEntityList = saveTargetList.stream().map(orderFindService::findById)
-                .collect(Collectors.toList());
-
-            for (OrderEntity orderEntity : orderEntityList) {
+                // 포인트 테이블 Save
+                OrderEntity orderEntity = orderFindService.findById(aLong);
                 FranchiseeEntity franchiseeEntity = orderEntity.getFranchiseeEntity();
                 franchiseeEntity.changeBalance(SignType.POSITIVE, orderEntity.getPoints());
                 PointEntity pointEntity = PointEntity.builder()
@@ -66,7 +59,6 @@ public class PointConfirmedService {
                     .balance(franchiseeEntity.getBalance())
                     .orderEntity(orderEntity)
                     .build();
-
                 pointRepository.save(pointEntity);
 
             }

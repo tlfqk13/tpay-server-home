@@ -1,6 +1,6 @@
 package com.tpay.domains.point.domain;
 
-import com.tpay.domains.batch.application.dto.DeleteTargetList;
+import com.tpay.domains.point_batch.application.dto.DeleteTargetList;
 import com.tpay.domains.point.application.dto.AdminPointFindResponseInterface;
 import com.tpay.domains.point.application.dto.PointTotalResponseInterface;
 import com.tpay.domains.point.application.dto.StatusUpdateResponseInterface;

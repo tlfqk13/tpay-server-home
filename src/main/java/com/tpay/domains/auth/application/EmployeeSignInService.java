@@ -8,8 +8,8 @@ import com.tpay.domains.employee.application.EmployeeFindService;
 import com.tpay.domains.employee.domain.EmployeeEntity;
 import com.tpay.domains.franchisee_applicant.application.FranchiseeApplicantFindService;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
+import com.tpay.domains.push.application.PushUpdateService;
 import com.tpay.domains.push.domain.PushTokenEntity;
-import com.tpay.domains.push.domain.PushTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,7 +24,7 @@ public class EmployeeSignInService {
     private final FranchiseeApplicantFindService franchiseeApplicantFindService;
     private final PasswordEncoder passwordEncoder;
     private final AuthService authService;
-    private final PushTokenRepository pushTokenRepository;
+    private final PushUpdateService pushUpdateService;
 
     @Transactional
     public EmployeeTokenInfo
@@ -45,7 +45,7 @@ public class EmployeeSignInService {
             .pushToken(pushToken)
             .employeeEntity(employeeEntity)
             .build();
-        pushTokenRepository.save(pushTokenEntity);
+        pushUpdateService.updateOrSaveByEmployeeIndex(pushTokenEntity);
 
         return EmployeeTokenInfo.builder()
             .employeeIndex(employeeEntity.getId())
