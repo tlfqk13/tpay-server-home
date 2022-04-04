@@ -6,13 +6,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
+import com.tpay.commons.push.PushMessageBuilder;
+import com.tpay.commons.push.PushMessageRequest;
 import com.tpay.commons.util.UserSelector;
 import com.tpay.domains.employee.application.EmployeeFindService;
 import com.tpay.domains.employee.domain.EmployeeEntity;
 import com.tpay.domains.franchisee.application.FranchiseeFindService;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
-import com.tpay.commons.push.PushMessageBuilder;
-import com.tpay.domains.push.application.dto.PushMessageRequest;
 import com.tpay.domains.push.domain.PushMessageEntity;
 import com.tpay.domains.push.domain.PushMessageRepository;
 import com.tpay.domains.push.domain.PushTokenRepository;
@@ -68,9 +68,10 @@ public class PushSendService {
 
         // 클래스 내의 makeMessage 메서드로 FCM에 보낼 메시지를 만든다. (규격은 FCM 문서 참고)
         String message = makeMessage(pushToken, title, body, pushMessageRequest.getPushMessageIndex());
+
+        //OkHttp 전송
         OkHttpClient okHttpClient = new OkHttpClient();
         RequestBody requestBody = RequestBody.create(message, MediaType.get("application/json; charset=utf-8"));
-
         try {
             System.out.println(PUSH_API_URI);
             Request request = new Request.Builder()
@@ -79,7 +80,6 @@ public class PushSendService {
                 .addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
                 .addHeader(HttpHeaders.CONTENT_TYPE, "application/json; UTF-8")
                 .build();
-
             Response response = okHttpClient.newCall(request)
                 .execute();
             System.out.println(response.body().string());

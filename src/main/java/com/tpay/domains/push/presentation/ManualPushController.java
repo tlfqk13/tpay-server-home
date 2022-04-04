@@ -2,7 +2,7 @@ package com.tpay.domains.push.presentation;
 
 
 import com.tpay.domains.push.application.PushSendService;
-import com.tpay.domains.push.application.dto.PushMessageRequest;
+import com.tpay.commons.push.PushMessageRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

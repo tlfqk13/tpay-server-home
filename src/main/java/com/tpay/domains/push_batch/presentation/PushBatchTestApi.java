@@ -1,9 +1,9 @@
-package com.tpay.domains.batch.presentation;
+package com.tpay.domains.push_batch.presentation;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tpay.domains.push.application.PushSendService;
-import com.tpay.domains.push.application.dto.PushMessageRequest;
+import com.tpay.commons.push.PushMessageRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
