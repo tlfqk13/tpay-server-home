@@ -43,6 +43,9 @@ public class PointConfirmedService {
             // Scheduled 테이블 상태변경
             List<Long> targetList = new ArrayList<>();
             needUpdateEntity.get().forEach(i -> targetList.add(i.getId()));
+            for (Long aLong : targetList) {
+                System.out.println(aLong);
+            }
             targetList.stream().map(i -> pointScheduledRepository.findById(i)
                     .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Point Id Not Exists"))
                 )
