@@ -1,6 +1,7 @@
-package com.tpay.commons.push;
+package com.tpay.commons.push.detail;
 
 
+import com.tpay.commons.push.PushTargetSelector;
 import com.tpay.commons.util.UserSelector;
 import lombok.Getter;
 
@@ -14,8 +15,6 @@ public class PushMessageRequest {
 
     // 대상이 1개 device 경우 아래 필드가 채워짐
     private UserSelector userSelector;
-    private Long franchiseeIndex;
-    private Long employeeIndex;
 
     // 대상이 SEVERAL 인 경우 아래 필드가 채워짐
     private List<Long> franchiseeIndexList;
