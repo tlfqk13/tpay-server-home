@@ -15,6 +15,8 @@ public class CustomValue {
     public static String BARCODE_SAVE_PATH;
 
 
+
+
     @Value("${custom.iamport.api-key}")
     public void setIamportApiKey(String iamportApiKey) {
         IAMPORT_API_KEY = iamportApiKey;
@@ -43,5 +45,7 @@ public class CustomValue {
 
     @Value("${custom.barcode.save-path}")
     public void setBarcodeSavePath(String barcodeSavePath) {BARCODE_SAVE_PATH = barcodeSavePath;}
+
+
 
 }

@@ -54,6 +54,7 @@ public class SignInService {
         } else {
             throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Parse Failed");
         }
+
         return signInTokenInfo;
     }
 
