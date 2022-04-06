@@ -1,4 +1,4 @@
-package com.tpay.domains.push.test;
+package com.tpay.commons.util;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

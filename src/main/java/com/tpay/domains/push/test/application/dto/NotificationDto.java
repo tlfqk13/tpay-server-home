@@ -1,6 +1,6 @@
 package com.tpay.domains.push.test.application.dto;
 
-import com.tpay.domains.push.test.PushType;
+import com.tpay.commons.util.PushType;
 import lombok.*;
 
 public class NotificationDto {

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-public class FcmPushApiController {
+public class PushNotificationController {
 
     private final PushNotificationService pushNotificationService;
 

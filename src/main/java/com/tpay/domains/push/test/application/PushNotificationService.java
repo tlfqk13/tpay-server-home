@@ -4,15 +4,15 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import com.tpay.domains.push.test.PushType;
+import com.tpay.commons.util.PushType;
 import com.tpay.domains.push.test.application.dto.NotificationDto;
 import com.tpay.domains.push.test.domain.PushHistoryEntity;
 import com.tpay.domains.push.test.domain.PushHistoryRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,7 +21,6 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.Scanner;
 
-@Slf4j
 @RequiredArgsConstructor
 @Service
 public class PushNotificationService {
@@ -59,6 +58,7 @@ public class PushNotificationService {
         return stringBuilder.toString();
     }
 
+    @Transactional
     public void sendMessage(JsonObject fcmMessage) throws IOException {
         HttpURLConnection connection = getConnection();
         connection.setDoOutput(true);
@@ -70,9 +70,7 @@ public class PushNotificationService {
         int responseCode = connection.getResponseCode();
         if (responseCode == 200) {
             String response = inputStreamToString(connection.getInputStream());
-
             pushHistoryRepository.save(PushHistoryEntity.fromJsonObjectAndResponse(fcmMessage, response));
-
             System.out.println("Message sent to Firebase for delivery, response:");
             System.out.println(response);
         } else {
@@ -81,6 +79,7 @@ public class PushNotificationService {
             System.out.println(response);
         }
     }
+
 
     private JsonObject buildNotificationMessage(String title, String body, PushType type, String typeValue) {
         JsonObject jNotification = new JsonObject();
@@ -98,6 +97,7 @@ public class PushNotificationService {
         return jsonObject;
     }
 
+    @Transactional
     public void sendMessage(NotificationDto.Request request) throws IOException {
         JsonObject notificationMessage = buildNotificationMessage(request.getTitle(), request.getBody(), request.getType(), request.getTypeValue());
         System.out.println("FCM token request body for message using common notification object:");
