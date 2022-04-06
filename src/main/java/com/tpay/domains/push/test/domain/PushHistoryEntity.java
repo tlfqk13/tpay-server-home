@@ -28,6 +28,9 @@ public class PushHistoryEntity extends BaseTimeEntity {
     private String type;
     private String typeValue;
 
+    private String num;
+    private String linking;
+
     private String response;
 
     public static PushHistoryEntity fromJsonObjectAndResponse(JsonObject jsonObject, String response) {
@@ -40,6 +43,8 @@ public class PushHistoryEntity extends BaseTimeEntity {
                 .type(result.get("type"))
                 .typeValue(result.get("typeValue"))
                 .response(result.get("response"))
+                .num(result.get("num"))
+                .linking(result.get("linking"))
                 .build();
     }
 }

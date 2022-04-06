@@ -11,5 +11,7 @@ public class NotificationDto {
         String body;
         PushType type;
         String typeValue;
+        String num;
+        String linking;
     }
 }

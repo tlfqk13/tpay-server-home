@@ -59,7 +59,7 @@ public class PushNotificationService {
     }
 
     @Transactional
-    public void sendMessage(JsonObject fcmMessage) throws IOException {
+    public void requestMessageToFcmServer(JsonObject fcmMessage) throws IOException {
         HttpURLConnection connection = getConnection();
         connection.setDoOutput(true);
         DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream());
@@ -81,28 +81,42 @@ public class PushNotificationService {
     }
 
 
-    private JsonObject buildNotificationMessage(String title, String body, PushType type, String typeValue) {
+    private JsonObject buildNotificationMessage(NotificationDto.Request request) {
+
+        String title = request.getTitle();
+        String body = request.getBody();
+        PushType type = request.getType();
+        String typeValue = request.getTypeValue();
+        String num = request.getNum();
+        String linking = request.getLinking();
+
         JsonObject jNotification = new JsonObject();
         jNotification.addProperty("title", title);
         jNotification.addProperty("body", body);
 
+        JsonObject jData = new JsonObject();
+        jData.addProperty("num", num);
+        jData.addProperty("linking", linking);
+
         JsonObject jMessage = new JsonObject();
-        jMessage.add("notification", jNotification);
-
         jMessage.addProperty(type.toString(), typeValue);
+        jMessage.add("notification", jNotification);
+        jMessage.add("data", jData);
 
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.add(MESSAGE_KEY, jMessage);
+        JsonObject result = new JsonObject();
+        result.add(MESSAGE_KEY, jMessage);
 
-        return jsonObject;
+        return result;
     }
 
     @Transactional
     public void sendMessage(NotificationDto.Request request) throws IOException {
-        JsonObject notificationMessage = buildNotificationMessage(request.getTitle(), request.getBody(), request.getType(), request.getTypeValue());
+        JsonObject notificationMessage = buildNotificationMessage(request);
         System.out.println("FCM token request body for message using common notification object:");
         prettyPrint(notificationMessage);
-        sendMessage(notificationMessage);
+        requestMessageToFcmServer(notificationMessage);
+
+
     }
 
 
