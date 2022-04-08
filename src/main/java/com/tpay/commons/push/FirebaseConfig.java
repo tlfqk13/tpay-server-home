@@ -5,15 +5,20 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import javax.annotation.PostConstruct;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.ThreadPoolExecutor;
 
 @Slf4j
+@EnableScheduling
 @Configuration
 public class FirebaseConfig {
 
@@ -38,4 +43,5 @@ public class FirebaseConfig {
             log.error("FirebaseOptions IOException" + e.getMessage());
         }
     }
+
 }

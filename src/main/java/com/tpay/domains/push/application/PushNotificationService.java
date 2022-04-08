@@ -1,13 +1,13 @@
-package com.tpay.domains.push.test.application;
+package com.tpay.domains.push.application;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
+import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import com.tpay.commons.util.PushType;
-import com.tpay.domains.push.test.application.dto.NotificationDto;
-import com.tpay.domains.push.test.domain.PushHistoryEntity;
-import com.tpay.domains.push.test.domain.PushHistoryRepository;
+import com.tpay.domains.push.application.dto.NotificationDto;
+import com.tpay.domains.push.domain.PushHistoryEntity;
+import com.tpay.domains.push.domain.PushHistoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
@@ -16,25 +16,21 @@ import javax.transaction.Transactional;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Scanner;
 
 @RequiredArgsConstructor
 @Service
 public class PushNotificationService {
-    private static final String PROJECT_ID = "ktp-app-737ea";
-    private static final String BASE_URL = "https://fcm.googleapis.com";
-    private static final String FCM_SEND_ENDPOINT = "/v1/projects/" + PROJECT_ID + "/messages:send";
-    private static final String MESSAGING_SCOPE = "https://www.googleapis.com/auth/firebase.messaging";
-    private static final String[] SCOPES = {MESSAGING_SCOPE};
-    public static final String MESSAGE_KEY = "message";
 
     private final PushHistoryRepository pushHistoryRepository;
 
     private HttpURLConnection getConnection() throws IOException {
-        URL url = new URL(BASE_URL + FCM_SEND_ENDPOINT);
+        URL url = new URL("https://fcm.googleapis.com/v1/projects/ktp-app-737ea/messages:send");
         HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
         httpURLConnection.setRequestProperty("Authorization", "Bearer " + getAccessToken());
         httpURLConnection.setRequestProperty("Content-Type", "application/json; UTF-8");
@@ -42,9 +38,11 @@ public class PushNotificationService {
     }
 
     private String getAccessToken() throws IOException {
+
+        String[] scope = {"https://www.googleapis.com/auth/firebase.messaging"};
         GoogleCredential googleCredential = GoogleCredential
                 .fromStream(new ClassPathResource("ktp-app-737ea-firebase-adminsdk-nr2ly-18a6c8df40.json").getInputStream())
-                .createScoped(Arrays.asList(SCOPES));
+                .createScoped(Arrays.asList(scope));
         googleCredential.refreshToken();
         return googleCredential.getAccessToken();
     }
@@ -59,7 +57,8 @@ public class PushNotificationService {
     }
 
     @Transactional
-    public void requestMessageToFcmServer(JsonObject fcmMessage) throws IOException {
+    public void requestMessageToFcmServer(JsonObject fcmMessage) throws IOException, FirebaseMessagingException {
+
         HttpURLConnection connection = getConnection();
         connection.setDoOutput(true);
         DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream());
@@ -78,45 +77,50 @@ public class PushNotificationService {
             String response = inputStreamToString(connection.getErrorStream());
             System.out.println(response);
         }
+
     }
 
 
     private JsonObject buildNotificationMessage(NotificationDto.Request request) {
 
-        String title = request.getTitle();
-        String body = request.getBody();
-        PushType type = request.getType();
-        String typeValue = request.getTypeValue();
-        String num = request.getNum();
-        String linking = request.getLinking();
-
-        JsonObject jNotification = new JsonObject();
-        jNotification.addProperty("title", title);
-        jNotification.addProperty("body", body);
-
-        JsonObject jData = new JsonObject();
-        jData.addProperty("num", num);
-        jData.addProperty("linking", linking);
-
-        JsonObject jMessage = new JsonObject();
-        jMessage.addProperty(type.toString(), typeValue);
-        jMessage.add("notification", jNotification);
-        jMessage.add("data", jData);
-
         JsonObject result = new JsonObject();
-        result.add(MESSAGE_KEY, jMessage);
+
+        try {
+            JsonObject jNotification = new JsonObject();
+            jNotification.addProperty("title", URLEncoder.encode(request.getTitle(), "UTF-8"));
+            jNotification.addProperty("body", URLEncoder.encode(request.getBody(), "UTF-8"));
+
+            JsonObject jData = new JsonObject();
+            jData.addProperty("pushIndex", getMaxIndex());
+            jData.addProperty("pushCategory", request.getPushCategory());
+            jData.addProperty("link", request.getLink());
+
+            JsonObject jMessage = new JsonObject();
+            jMessage.addProperty(request.getPushType().toString(), request.getPushTypeValue());
+            jMessage.add("notification", jNotification);
+            jMessage.add("data", jData);
+
+            result.add("message", jMessage);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
 
         return result;
+
     }
 
     @Transactional
-    public void sendMessage(NotificationDto.Request request) throws IOException {
-        JsonObject notificationMessage = buildNotificationMessage(request);
-        System.out.println("FCM token request body for message using common notification object:");
-        prettyPrint(notificationMessage);
-        requestMessageToFcmServer(notificationMessage);
-
-
+    public void sendMessage(NotificationDto.Request request) {
+        try {
+            JsonObject notificationMessage = buildNotificationMessage(request);
+            System.out.println("FCM token request body for message using common notification object:");
+            prettyPrint(notificationMessage);
+            requestMessageToFcmServer(notificationMessage);
+        } catch (IOException e) {
+            e.getStackTrace();
+        } catch (FirebaseMessagingException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -124,6 +128,20 @@ public class PushNotificationService {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         System.out.println(gson.toJson(jsonObject) + "\n");
     }
+
+    private String getMaxIndex() {
+        Long pushIndex = pushHistoryRepository.maxIndex();
+        String pushIndexToString = "";
+        if (pushIndex == null) {
+            pushIndexToString = "1";
+        } else {
+            pushIndex = pushIndex + 1;
+            pushIndexToString = pushIndex.toString();
+        }
+
+        return pushIndexToString;
+    }
+
 
 }
 

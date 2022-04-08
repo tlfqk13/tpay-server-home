@@ -1,4 +1,4 @@
-package com.tpay.domains.push.test.domain;
+package com.tpay.domains.push.domain;
 
 import com.google.gson.JsonObject;
 import com.tpay.domains.BaseTimeEntity;
@@ -6,9 +6,8 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.Map;
-import java.util.Set;
 
-import static com.tpay.commons.push.PushHistoryStringFormat.*;
+import static com.tpay.commons.push.PushHistoryStringFormat.pushHistoryStringFormatter;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -25,11 +24,11 @@ public class PushHistoryEntity extends BaseTimeEntity {
     private String title;
     private String body;
 
-    private String type;
-    private String typeValue;
+    private String pushType;
+    private String pushTypeValue;
 
-    private String num;
-    private String linking;
+    private String pushCategory;
+    private String link;
 
     private String response;
 
@@ -40,11 +39,11 @@ public class PushHistoryEntity extends BaseTimeEntity {
         return PushHistoryEntity.builder()
                 .title(result.get("title"))
                 .body(result.get("body"))
-                .type(result.get("type"))
-                .typeValue(result.get("typeValue"))
+                .pushType(result.get("pushType"))
+                .pushTypeValue(result.get("pushTypeValue"))
                 .response(result.get("response"))
-                .num(result.get("num"))
-                .linking(result.get("linking"))
+                .pushCategory(result.get("pushCategory"))
+                .link(result.get("link"))
                 .build();
     }
 }

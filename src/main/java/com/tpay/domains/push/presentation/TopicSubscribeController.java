@@ -1,7 +1,7 @@
-package com.tpay.domains.push.test.presentation;
+package com.tpay.domains.push.presentation;
 
-import com.tpay.domains.push.test.application.TopicSubscribeService;
-import com.tpay.domains.push.test.application.dto.TopicDto;
+import com.tpay.domains.push.application.dto.TopicDto;
+import com.tpay.domains.push.application.TopicSubscribeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PostMapping;

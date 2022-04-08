@@ -22,35 +22,34 @@ public class PushHistoryStringFormat {
         Map<String, String> result = new HashMap<>();
 
         JsonObject message = jsonObject.getAsJsonObject("message");
-
         JsonObject notification = message.getAsJsonObject("notification");
 
         String title = removeDoubleQuote(notification.get("title").toString());
         String body = removeDoubleQuote(notification.get("body").toString());
 
-        String type = "";
+        String pushType = "";
         if(message.get(PushType.TOPIC.toString()) != null) {
-            type = PushType.TOPIC.toString();
+            pushType = PushType.TOPIC.toString();
         } else if(message.get(PushType.TOKEN.toString()) != null) {
-            type = PushType.TOKEN.toString();
+            pushType = PushType.TOKEN.toString();
         }
-        String typeValue = removeDoubleQuote(message.get(type).toString());
+        String pushTypeValue = removeDoubleQuote(message.get(pushType).toString());
 
         String formattedResponse = removeHeader(response);
 
 
         JsonObject data = message.getAsJsonObject("data");
 
-        String num = removeDoubleQuote(data.get("num").toString());
-        String linking = removeDoubleQuote(data.get("linking").toString());
+        String pushCategory = removeDoubleQuote(data.get("pushCategory").toString());
+        String link = removeDoubleQuote(data.get("link").toString());
 
         result.put("title", title);
         result.put("body", body);
-        result.put("type", type);
-        result.put("typeValue", typeValue);
+        result.put("pushType", pushType);
+        result.put("pushTypeValue", pushTypeValue);
         result.put("response", formattedResponse);
-        result.put("num", num);
-        result.put("linking", linking);
+        result.put("pushCategory", pushCategory);
+        result.put("link", link);
 
         return result;
     }

@@ -1,4 +1,4 @@
-package com.tpay.domains.push.test.application.dto;
+package com.tpay.domains.push.application.dto;
 
 import lombok.*;
 

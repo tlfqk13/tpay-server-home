@@ -1,9 +1,9 @@
-package com.tpay.domains.push.test.application;
+package com.tpay.domains.push.application;
 
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.TopicManagementResponse;
-import com.tpay.domains.push.test.application.dto.TopicDto;
+import com.tpay.domains.push.application.dto.TopicDto;
 import org.springframework.stereotype.Service;
 
 @Service

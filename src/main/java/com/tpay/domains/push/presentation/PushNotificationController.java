@@ -1,7 +1,7 @@
-package com.tpay.domains.push.test.presentation;
+package com.tpay.domains.push.presentation;
 
-import com.tpay.domains.push.test.application.PushNotificationService;
-import com.tpay.domains.push.test.application.dto.NotificationDto;
+import com.tpay.domains.push.application.PushNotificationService;
+import com.tpay.domains.push.application.dto.NotificationDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
