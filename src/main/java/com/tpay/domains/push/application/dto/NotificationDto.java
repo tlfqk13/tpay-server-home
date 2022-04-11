@@ -1,9 +1,7 @@
 package com.tpay.domains.push.application.dto;
 
-import com.tpay.commons.util.PushType;
+import com.tpay.commons.push.PushType;
 import lombok.*;
-
-import java.util.List;
 
 public class NotificationDto {
 

@@ -12,7 +12,7 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
 
-import static com.tpay.commons.util.PushType.TOKEN;
+import static com.tpay.commons.push.PushType.TOKEN;
 import static com.tpay.commons.util.UserSelector.FRANCHISEE;
 import static com.tpay.domains.franchisee_applicant.domain.FranchiseeStatus.INIT;
 import static com.tpay.commons.util.DateConverter.stringToLocalDate;
@@ -28,7 +28,7 @@ public class OnlySignUpPushService {
     private final UserPushTokenService userPushTokenService;
 
 
-    @Scheduled(cron = "0 0 14 * * * ?")
+    @Scheduled(cron = "0 0 14 * * *")
     public void requestPushNotification() {
 
         List<FranchiseeApplicantInfoInterface> franchiseeApplicantInfoInterfaces =
@@ -39,9 +39,9 @@ public class OnlySignUpPushService {
             LocalDate createdDate = stringToLocalDate(franchiseeApplicantInfoInterface.getCreatedDate());
             LocalDate now = LocalDate.now();
 
-            if (Period.between(createdDate, now).getYears() > 1 ||
+            if (Period.between(createdDate, now).getYears() >= 1 ||
                     Period.between(createdDate, now).getMonths() >= 1 ||
-                    Math.abs(Period.between(createdDate, now).getDays()) > 14) {
+                    Math.abs(Period.between(createdDate, now).getDays()) >= 14) {
 
                 UserPushTokenEntity userPushTokenEntity =
                         userPushTokenService.findByUserIdAndUserType(franchiseeApplicantInfoInterface.getFranchiseeApplicantIndex().toString(), FRANCHISEE)

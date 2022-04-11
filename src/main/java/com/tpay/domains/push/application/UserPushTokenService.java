@@ -25,4 +25,11 @@ public class UserPushTokenService {
     public Optional<UserPushTokenEntity> findByUserIdAndUserType(String userId, UserSelector userType) {
         return userPushTokenRepository.findByUserIdAndUserType(userId, userType);
     }
+
+    @Transactional
+    public String findTokenByUserIdAndUserType(String userId, UserSelector userType) {
+        return findByUserIdAndUserType(userId,userType).orElseThrow().getUserToken();
+    }
+
+
 }

@@ -20,6 +20,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -41,7 +42,7 @@ public class PushNotificationService {
 
         String[] scope = {"https://www.googleapis.com/auth/firebase.messaging"};
         GoogleCredential googleCredential = GoogleCredential
-                .fromStream(new ClassPathResource("ktp-app-737ea-firebase-adminsdk-nr2ly-18a6c8df40.json").getInputStream())
+                .fromStream(new ClassPathResource("ktp-app-737ea-firebase-adminsdk-nr2ly-9c6f38aad2.json").getInputStream())
                 .createScoped(Arrays.asList(scope));
         googleCredential.refreshToken();
         return googleCredential.getAccessToken();
@@ -62,7 +63,7 @@ public class PushNotificationService {
         HttpURLConnection connection = getConnection();
         connection.setDoOutput(true);
         DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream());
-        outputStream.writeBytes(fcmMessage.toString());
+        outputStream.write(fcmMessage.toString().getBytes(StandardCharsets.UTF_8));
         outputStream.flush();
         outputStream.close();
 
@@ -85,25 +86,21 @@ public class PushNotificationService {
 
         JsonObject result = new JsonObject();
 
-        try {
-            JsonObject jNotification = new JsonObject();
-            jNotification.addProperty("title", URLEncoder.encode(request.getTitle(), "UTF-8"));
-            jNotification.addProperty("body", URLEncoder.encode(request.getBody(), "UTF-8"));
+        JsonObject jNotification = new JsonObject();
+        jNotification.addProperty("title", request.getTitle());
+        jNotification.addProperty("body", request.getBody());
 
-            JsonObject jData = new JsonObject();
-            jData.addProperty("pushIndex", getMaxIndex());
-            jData.addProperty("pushCategory", request.getPushCategory());
-            jData.addProperty("link", request.getLink());
+        JsonObject jData = new JsonObject();
+        jData.addProperty("pushIndex", getMaxIndex());
+        jData.addProperty("pushCategory", request.getPushCategory());
+        jData.addProperty("link", request.getLink());
 
-            JsonObject jMessage = new JsonObject();
-            jMessage.addProperty(request.getPushType().toString(), request.getPushTypeValue());
-            jMessage.add("notification", jNotification);
-            jMessage.add("data", jData);
+        JsonObject jMessage = new JsonObject();
+        jMessage.addProperty(request.getPushType().toString(), request.getPushTypeValue());
+        jMessage.add("notification", jNotification);
+        jMessage.add("data", jData);
 
-            result.add("message", jMessage);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        result.add("message", jMessage);
 
         return result;
 
@@ -114,7 +111,7 @@ public class PushNotificationService {
         try {
             JsonObject notificationMessage = buildNotificationMessage(request);
             System.out.println("FCM token request body for message using common notification object:");
-            prettyPrint(notificationMessage);
+            new GsonBuilder().setPrettyPrinting().create().toJson(notificationMessage);
             requestMessageToFcmServer(notificationMessage);
         } catch (IOException e) {
             e.getStackTrace();
@@ -123,11 +120,6 @@ public class PushNotificationService {
         }
     }
 
-
-    private void prettyPrint(JsonObject jsonObject) {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        System.out.println(gson.toJson(jsonObject) + "\n");
-    }
 
     private String getMaxIndex() {
         Long pushIndex = pushHistoryRepository.maxIndex();

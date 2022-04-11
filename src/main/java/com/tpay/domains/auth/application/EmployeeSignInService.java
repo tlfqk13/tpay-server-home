@@ -8,8 +8,6 @@ import com.tpay.domains.employee.application.EmployeeFindService;
 import com.tpay.domains.employee.domain.EmployeeEntity;
 import com.tpay.domains.franchisee_applicant.application.FranchiseeApplicantFindService;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
-import com.tpay.domains.push.application.PushUpdateService;
-import com.tpay.domains.push.domain.PushTokenEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,7 +22,6 @@ public class EmployeeSignInService {
     private final FranchiseeApplicantFindService franchiseeApplicantFindService;
     private final PasswordEncoder passwordEncoder;
     private final AuthService authService;
-    private final PushUpdateService pushUpdateService;
 
     @Transactional
     public EmployeeTokenInfo
@@ -41,22 +38,17 @@ public class EmployeeSignInService {
         AuthToken accessToken = authService.createAccessToken(employeeEntity);
         AuthToken refreshToken = authService.createRefreshToken(employeeEntity);
         authService.updateOrSave(employeeEntity, refreshToken.getValue());
-        PushTokenEntity pushTokenEntity = PushTokenEntity.builder()
-            .pushToken(pushToken)
-            .employeeEntity(employeeEntity)
-            .build();
-        pushUpdateService.updateOrSaveByEmployeeIndex(pushTokenEntity);
 
         return EmployeeTokenInfo.builder()
-            .employeeIndex(employeeEntity.getId())
-            .userId(employeeEntity.getUserId())
-            .name(employeeEntity.getName())
-            .accessToken(accessToken.getValue())
-            .refreshToken(refreshToken.getValue())
-            .registeredDate(employeeEntity.getCreatedDate())
-            .franchiseeIndex(employeeEntity.getFranchiseeEntity().getId())
-            .franchiseeStatus(franchiseeApplicantEntity.getFranchiseeStatus())
-            .build();
+                .employeeIndex(employeeEntity.getId())
+                .userId(employeeEntity.getUserId())
+                .name(employeeEntity.getName())
+                .accessToken(accessToken.getValue())
+                .refreshToken(refreshToken.getValue())
+                .registeredDate(employeeEntity.getCreatedDate())
+                .franchiseeIndex(employeeEntity.getFranchiseeEntity().getId())
+                .franchiseeStatus(franchiseeApplicantEntity.getFranchiseeStatus())
+                .build();
 
 
     }

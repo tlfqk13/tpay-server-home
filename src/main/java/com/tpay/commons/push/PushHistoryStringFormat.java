@@ -1,11 +1,9 @@
 package com.tpay.commons.push;
 
 import com.google.gson.JsonObject;
-import com.tpay.commons.util.PushType;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class PushHistoryStringFormat {
 
