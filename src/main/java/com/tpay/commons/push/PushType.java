@@ -1,4 +1,4 @@
-package com.tpay.commons.util;
+package com.tpay.commons.push;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
