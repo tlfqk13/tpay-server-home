@@ -10,4 +10,5 @@ public interface FranchiseeRepository extends JpaRepository<FranchiseeEntity, Lo
     Optional<FranchiseeEntity> findByBusinessNumber(String businessNumber);
 
     Optional<FranchiseeEntity> findBySellerNameAndStoreTel(String sellerName, String storeTel);
+
 }

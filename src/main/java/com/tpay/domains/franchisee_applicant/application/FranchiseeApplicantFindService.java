@@ -59,6 +59,8 @@ public class FranchiseeApplicantFindService {
         return franchiseeApplicantRepository.filterFranchiseeStatusNativeQuery(filter);
     }
 
+
+
     public List<FranchiseeApplicantInfoInterface> filterBoth(FranchiseeStatus value) {
         Integer ordinal = value.ordinal();
         String statusFilter = ordinal.toString();
@@ -79,4 +81,8 @@ public class FranchiseeApplicantFindService {
 
         return franchiseeApplicantEntity;
     }
+
+
+
+
 }

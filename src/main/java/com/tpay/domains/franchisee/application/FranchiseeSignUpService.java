@@ -32,14 +32,14 @@ public class FranchiseeSignUpService {
         String businessNumber = request.getBusinessNumber();
         if (!regExUtils.validate(RegExType.BUSINESS_NUMBER, businessNumber)) {
             throw new InvalidBusinessNumberException(
-                ExceptionState.INVALID_BUSINESS_NUMBER,
-                "Required Business Number Format : (XXX-XX-XXXXX)");
+                    ExceptionState.INVALID_BUSINESS_NUMBER,
+                    "Required Business Number Format : (XXX-XX-XXXXX)");
         }
 
         String password = request.getPassword();
         if (!regExUtils.validate(RegExType.PASSWORD, password)) {
             throw new InvalidPasswordException(
-                ExceptionState.INVALID_PASSWORD, "Invalid Password Format");
+                    ExceptionState.INVALID_PASSWORD, "Invalid Password Format");
         }
 
         if (franchiseeRepository.existsByBusinessNumber(businessNumber.replaceAll("-", ""))) {
@@ -52,21 +52,22 @@ public class FranchiseeSignUpService {
 
         String encodedPassword = passwordEncoder.encode(password);
         FranchiseeEntity franchiseeEntity =
-            FranchiseeEntity.builder()
-                .businessNumber(request.getBusinessNumber())
-                .storeName(request.getStoreName())
-                .storeAddressNumber(request.getStoreAddressNumber())
-                .storeAddressBasic(request.getStoreAddressBasic())
-                .storeAddressDetail(request.getStoreAddressDetail())
-                .sellerName(request.getSellerName())
-                .storeTel(request.getStoreTel().replaceAll("-", ""))
-                .productCategory(request.getProductCategory())
-                .password(encodedPassword)
-                .signboard(request.getSignboard())
-                .storeNumber(request.getStoreNumber().replaceAll("-", ""))
-                .email(request.getEmail())
-                .isTaxRefundShop(request.getIsTaxRefundShop())
-                .build();
+                FranchiseeEntity.builder()
+                        .businessNumber(request.getBusinessNumber())
+                        .storeName(request.getStoreName())
+                        .storeAddressNumber(request.getStoreAddressNumber())
+                        .storeAddressBasic(request.getStoreAddressBasic())
+                        .storeAddressDetail(request.getStoreAddressDetail())
+                        .sellerName(request.getSellerName())
+                        .storeTel(request.getStoreTel().replaceAll("-", ""))
+                        .productCategory(request.getProductCategory())
+                        .password(encodedPassword)
+                        .pushToken(request.getPushToken())
+                        .signboard(request.getSignboard())
+                        .storeNumber(request.getStoreNumber().replaceAll("-", ""))
+                        .email(request.getEmail())
+                        .isTaxRefundShop(request.getIsTaxRefundShop())
+                        .build();
         franchiseeRepository.save(franchiseeEntity);
         franchiseeApplicantSaveService.save(franchiseeEntity);
     }

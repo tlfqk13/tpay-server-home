@@ -38,7 +38,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 "/points/batch",
                 "/external/**",
                 "/push/batch/**",
-                "/error");
+                "/error",
+                    "/fcm/**");
         registry.addInterceptor(printRequestInterceptor).addPathPatterns("/**");
     }
 
