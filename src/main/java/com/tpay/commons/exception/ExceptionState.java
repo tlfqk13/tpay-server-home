@@ -16,7 +16,9 @@ public enum ExceptionState {
     INVALID_TOKEN(401, HttpStatus.UNAUTHORIZED, "A0002", "Invalid Auth Token"),
     FORCE_REFRESH(401, HttpStatus.UNAUTHORIZED, "A0003", "Sign-in Again"),
     REFUND(400, HttpStatus.BAD_REQUEST, "R0001", "Refund Exception"),
-    INVALID_PASSPORT_INFO(400, HttpStatus.BAD_REQUEST, "E0001", "Contact Backend Developer");
+    INVALID_PASSPORT_INFO(400, HttpStatus.BAD_REQUEST, "E0001", "Contact Backend Developer"),
+    INVALID_EXTERNAL_REFUND_INDEX(400,HttpStatus.BAD_REQUEST,"G0001","Invalid External Refund Index"),
+    ALREADY_CANCELLED(409, HttpStatus.BAD_REQUEST, "G0002", "Already Cancelled Index");
 
     private final int value;
     private final HttpStatus httpStatus;

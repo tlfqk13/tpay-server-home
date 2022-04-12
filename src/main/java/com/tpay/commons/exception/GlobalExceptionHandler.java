@@ -78,6 +78,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(response.getValue()).body(response);
     }
 
+    @ExceptionHandler(InvalidExternalRefundIndexException.class)
+    public ResponseEntity<ExceptionResponse> handleInvalidExternalRefundIndexException(
+        HttpServletRequest request, InvalidExternalRefundIndexException exception){
+        System.out.println("handleInvalidExternalRefundIndexException() : "+ exception.getMessage());
+        ExceptionResponse response = ExceptionResponse.of(request, exception);
+        return ResponseEntity.status(response.getValue()).body(response);
+    }
+
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ExceptionResponse> handleException(

@@ -3,6 +3,7 @@ package com.tpay.domains.external.presentation;
 
 import com.tpay.domains.external.application.ExternalRefundCancelService;
 import com.tpay.domains.external.application.dto.ExternalRefundCancelRequest;
+import com.tpay.domains.external.application.dto.ExternalRefundResponse;
 import com.tpay.domains.refund_core.application.dto.RefundResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +18,9 @@ public class ExternalRefundCancelController {
     private final ExternalRefundCancelService externalRefundCancelService;
 
     @PostMapping("/external/refund/cancel")
-    public ResponseEntity<RefundResponse> externalRefundCancel(@RequestBody ExternalRefundCancelRequest externalRefundCancelRequest) {
+    public ResponseEntity<ExternalRefundResponse> externalRefundCancel(@RequestBody ExternalRefundCancelRequest externalRefundCancelRequest) {
 
-        RefundResponse result = externalRefundCancelService.cancel(externalRefundCancelRequest);
+        ExternalRefundResponse result = externalRefundCancelService.cancel(externalRefundCancelRequest);
         return ResponseEntity.ok(result);
 
     }
