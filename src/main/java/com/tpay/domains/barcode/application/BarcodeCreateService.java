@@ -1,6 +1,5 @@
 package com.tpay.domains.barcode.application;
 
-import com.tpay.commons.custom.CustomValue;
 import com.tpay.commons.exception.ExceptionResponse;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
@@ -32,7 +31,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 
-import static com.tpay.commons.custom.CustomValue.*;
+import static com.tpay.commons.custom.CustomValue.BARCODE_SAVE_PATH;
+import static com.tpay.commons.custom.CustomValue.REFUND_SERVER;
 
 @Service
 @RequiredArgsConstructor
@@ -66,15 +66,15 @@ public class BarcodeCreateService {
             .externalRefundStatus(ExternalRefundStatus.SCAN)
             .build();
         ExternalRefundEntity save = externalRepository.save(externalRefundEntity);
-        String deductionPadding = setWithZero(refundResponse.getBeforeDeduction(), 10);
+        String deductionPadding = refundResponse.getBeforeDeduction().substring(3);
         String idPadding = setWithZero(save.getId().toString(), 7);
 
         try {
             Barcode barcode = BarcodeFactory.createCode128B(idPadding + deductionPadding);
-            String filename = LocalDateTime.now()+"_"+save.getId()+".png";
+            String filename = LocalDateTime.now() + "_" + save.getId() + ".png";
             File file = new File(BARCODE_SAVE_PATH + filename);
             BarcodeImageHandler.savePNG(barcode, file);
-            Resource resource = new FileSystemResource(BARCODE_SAVE_PATH+ filename);
+            Resource resource = new FileSystemResource(BARCODE_SAVE_PATH + filename);
 
             HttpHeaders headers = new HttpHeaders();
             Path filePath = Paths.get(BARCODE_SAVE_PATH + filename);
