@@ -4,8 +4,10 @@ package com.tpay.domains.external.application;
 import com.tpay.commons.custom.CustomValue;
 import com.tpay.commons.exception.ExceptionResponse;
 import com.tpay.commons.exception.ExceptionState;
+import com.tpay.commons.exception.detail.InvalidExternalRefundIndexException;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.domains.external.application.dto.ExternalRefundApprovalRequest;
+import com.tpay.domains.external.application.dto.ExternalRefundResponse;
 import com.tpay.domains.external.domain.ExternalRefundEntity;
 import com.tpay.domains.external.domain.ExternalRefundStatus;
 import com.tpay.domains.franchisee.application.FranchiseeFindService;
@@ -38,41 +40,72 @@ public class ExternalRefundApprovalService {
     private final ExternalRefundFindService externalRefundFindService;
 
     @Transactional
-    public RefundResponse approve(ExternalRefundApprovalRequest externalRefundApprovalRequest) {
-        ExternalRefundEntity externalRefundEntity = externalRefundFindService.findById(externalRefundApprovalRequest.getExternalRefundIndex());
-        FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(externalRefundEntity.getFranchiseeIndex());
-        OrderEntity orderEntity = orderSaveService.save(externalRefundEntity, externalRefundApprovalRequest.getAmount());
-        externalRefundEntity.changeStatus(ExternalRefundStatus.APPROVE);
+    public ExternalRefundResponse approve(ExternalRefundApprovalRequest externalRefundApprovalRequest) {
+        int amount = Integer.parseInt(externalRefundApprovalRequest.getAmount());
+        if(amount >= 500000 || amount < 30000){
+            return ExternalRefundResponse.builder().responseCode("8001").message("[User] 환급 금액이 범위 밖입니다. (환급 금액은 3만원 이상 50만원 미만입니다.)").build();
+        }
+        try {
+            ExternalRefundEntity externalRefundEntity = externalRefundFindService.findById(externalRefundApprovalRequest.getExternalRefundIndex());
 
-        RefundApproveRequest refundApproveRequest = RefundApproveRequest.of(orderEntity);
+            if (!externalRefundEntity.getExternalRefundStatus().equals(ExternalRefundStatus.SCAN)){
+                return ExternalRefundResponse.builder().responseCode("8002").message("[User] 이미 종료된 Index입니다.").build();
+            }
 
-        WebClient webClient = builder.build();
-        String uri = CustomValue.REFUND_SERVER + "/refund/approval";
-        RefundResponse refundResponse = webClient
-            .post()
-            .uri(uri)
-            .bodyValue(refundApproveRequest)
-            .retrieve()
-            .onStatus(
-                HttpStatus::isError,
-                response ->
-                    response.bodyToMono(ExceptionResponse.class).flatMap(error -> Mono.error(new InvalidParameterException(
-                        ExceptionState.REFUND, error.getMessage()))))
-            .bodyToMono(RefundResponse.class)
-            .block();
+            FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(externalRefundEntity.getFranchiseeIndex());
 
-        RefundEntity refundEntity = refundSaveService.save(
-            refundResponse.getResponseCode(),
-            refundResponse.getPurchaseSequenceNumber(),
-            refundResponse.getTakeoutNumber(),
-            orderEntity);
+            OrderEntity orderEntity = orderSaveService.save(externalRefundEntity, externalRefundApprovalRequest.getAmount());
+            externalRefundEntity.changeStatus(ExternalRefundStatus.APPROVE);
 
-        pointScheduledChangeService.change(refundEntity, SignType.POSITIVE);
-        externalRefundEntity.refundIndexRegister(refundEntity);
-        externalRefundEntity.changeStatus(ExternalRefundStatus.APPROVE);
-        franchiseeEntity.isRefundOnce();
-        return refundResponse;
+            RefundApproveRequest refundApproveRequest = RefundApproveRequest.of(orderEntity);
 
+            WebClient webClient = builder.build();
+            String uri = CustomValue.REFUND_SERVER + "/refund/approval";
+            RefundResponse refundResponse = webClient
+                .post()
+                .uri(uri)
+                .bodyValue(refundApproveRequest)
+                .retrieve()
+                .onStatus(
+                    HttpStatus::isError,
+                    response ->
+                        response.bodyToMono(ExceptionResponse.class).flatMap(error -> Mono.error(new InvalidParameterException(
+                            ExceptionState.REFUND, error.getMessage()))))
+                .bodyToMono(RefundResponse.class)
+                .block();
+
+            System.out.println();
+            //0000이 아닌경우 에러 발생
+            if(!refundResponse.getResponseCode().equals("0000")) {
+                return ExternalRefundResponse.builder().responseCode("8103").message("응답코드가 0이 아닙니다.").build();
+            }
+
+            RefundEntity refundEntity = refundSaveService.save(
+                refundResponse.getResponseCode(),
+                refundResponse.getPurchaseSequenceNumber(),
+                refundResponse.getTakeoutNumber(),
+                orderEntity);
+
+            pointScheduledChangeService.change(refundEntity, SignType.POSITIVE);
+            externalRefundEntity.refundIndexRegister(refundEntity);
+            externalRefundEntity.changeStatus(ExternalRefundStatus.APPROVE);
+            franchiseeEntity.isRefundOnce();
+
+            ExternalRefundResponse externalRefundResponse = ExternalRefundResponse.builder()
+                .responseCode(refundResponse.getResponseCode())
+                .message(refundResponse.getMessage())
+                .build();
+
+            return externalRefundResponse;
+        } catch (InvalidExternalRefundIndexException e) {
+            return ExternalRefundResponse.builder().responseCode("8000").message("[User] Index 정보를 찾을 수 없습니다.").build();
+        } catch (InvalidParameterException e) {
+            return ExternalRefundResponse.builder().responseCode("8102").message("[successmode] Index 정보를 찾을 수 없습니다.").build();
+        } catch (IllegalArgumentException e) {
+            return ExternalRefundResponse.builder().responseCode("8101").message("[successmode] 내부 에러입니다.").build();
+        } catch (Exception e){
+            return ExternalRefundResponse.builder().responseCode("8100").message("[successmode] Unknown 에러입니다.").build();
+        }
 
     }
 
