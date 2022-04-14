@@ -10,28 +10,27 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.io.IOException;
 
 @Slf4j
-@EnableScheduling
 @Configuration
 public class FirebaseConfig implements ApplicationListener<ContextRefreshedEvent> {
 
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
-        try {
-            initFirebaseApp();
-        } catch (IOException e) {
-            throw new IllegalArgumentException("firebase Init Failed");
-        }
+        initFirebaseApp();
     }
 
     @Bean
-    public FirebaseApp initFirebaseApp() throws IOException {
-        FirebaseOptions options = FirebaseOptions.builder().setCredentials(GoogleCredentials.fromStream(new ClassPathResource(CustomValue.FIREBASE_SDK_PATH).getInputStream())).build();
-        return FirebaseApp.initializeApp(options);
+    public FirebaseApp initFirebaseApp() {
+        try {
+            FirebaseOptions options = FirebaseOptions.builder().setCredentials(GoogleCredentials.fromStream(new ClassPathResource(CustomValue.FIREBASE_SDK_PATH).getInputStream())).build();
+            return FirebaseApp.initializeApp(options);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new IllegalArgumentException("Project Init Failed");
+        }
     }
 }

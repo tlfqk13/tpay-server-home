@@ -1,11 +1,11 @@
-package com.tpay.domains.point_batch.application;
+package com.tpay.domains.batch.point_batch.application;
 
 
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.util.DisappearDate;
-import com.tpay.domains.point_batch.application.dto.DeleteTargetList;
-import com.tpay.domains.point_batch.domain.PointDeletedRepository;
+import com.tpay.domains.batch.point_batch.application.dto.DeleteTargetList;
+import com.tpay.domains.batch.point_batch.domain.PointDeletedRepository;
 import com.tpay.domains.point.domain.PointRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
