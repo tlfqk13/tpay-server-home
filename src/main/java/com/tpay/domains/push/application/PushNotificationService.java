@@ -2,9 +2,9 @@ package com.tpay.domains.push.application;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.firebase.messaging.FirebaseMessagingException;
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import com.tpay.commons.custom.CustomValue;
 import com.tpay.domains.push.application.dto.NotificationDto;
 import com.tpay.domains.push.domain.PushHistoryEntity;
 import com.tpay.domains.push.domain.PushHistoryRepository;
@@ -16,10 +16,8 @@ import javax.transaction.Transactional;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -42,8 +40,8 @@ public class PushNotificationService {
 
         String[] scope = {"https://www.googleapis.com/auth/firebase.messaging"};
         GoogleCredential googleCredential = GoogleCredential
-                .fromStream(new ClassPathResource("ktp-app-737ea-firebase-adminsdk-nr2ly-9c6f38aad2.json").getInputStream())
-                .createScoped(Arrays.asList(scope));
+            .fromStream(new ClassPathResource(CustomValue.FIREBASE_SDK_PATH).getInputStream())
+            .createScoped(Arrays.asList(scope));
         googleCredential.refreshToken();
         return googleCredential.getAccessToken();
     }
@@ -111,6 +109,7 @@ public class PushNotificationService {
         try {
             JsonObject notificationMessage = buildNotificationMessage(request);
             System.out.println("FCM token request body for message using common notification object:");
+            // TODO: 2022/04/14 new ?
             new GsonBuilder().setPrettyPrinting().create().toJson(notificationMessage);
             requestMessageToFcmServer(notificationMessage);
         } catch (IOException e) {

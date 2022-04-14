@@ -13,9 +13,11 @@ public class CustomValue {
     public static String PUSH_API_URI;
     public static String PUSH_CONFIG_PATH;
     public static String BARCODE_SAVE_PATH;
+    public static String FIREBASE_SDK_PATH;
 
 
-
+    @Value("${custom.push.sdk-path}")
+    public void setFirebaseSdkPath(String firebaseSdkPath) {FIREBASE_SDK_PATH = firebaseSdkPath;}
 
     @Value("${custom.iamport.api-key}")
     public void setIamportApiKey(String iamportApiKey) {

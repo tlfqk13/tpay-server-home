@@ -62,7 +62,6 @@ public class FranchiseeSignUpService {
                         .storeTel(request.getStoreTel().replaceAll("-", ""))
                         .productCategory(request.getProductCategory())
                         .password(encodedPassword)
-                        .pushToken(request.getPushToken())
                         .signboard(request.getSignboard())
                         .storeNumber(request.getStoreNumber().replaceAll("-", ""))
                         .email(request.getEmail())
