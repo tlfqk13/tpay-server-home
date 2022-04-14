@@ -1,5 +1,7 @@
 package com.tpay.domains.push.application;
 
+import com.tpay.commons.exception.ExceptionState;
+import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.util.UserSelector;
 import com.tpay.domains.push.domain.UserPushTokenEntity;
 import com.tpay.domains.push.domain.UserPushTokenRepository;
@@ -19,10 +21,9 @@ public class UserPushTokenService {
     public void save(UserPushTokenEntity userPushTokenEntity) {
 
         Optional<UserPushTokenEntity> optionalUserPushTokenEntity = userPushTokenRepository.findByUserIdAndUserType(userPushTokenEntity.getUserId(), userPushTokenEntity.getUserType());
-        if(optionalUserPushTokenEntity.isEmpty()){
+        if (optionalUserPushTokenEntity.isEmpty()) {
             userPushTokenRepository.save(userPushTokenEntity);
-        }
-        else {
+        } else {
             optionalUserPushTokenEntity.get().updateToken(userPushTokenEntity.getUserToken());
 
         }
@@ -35,7 +36,12 @@ public class UserPushTokenService {
 
     @Transactional
     public String findTokenByUserIdAndUserType(String userId, UserSelector userType) {
-        return findByUserIdAndUserType(userId,userType).orElseThrow().getUserToken();
+        return findByUserIdAndUserType(userId, userType).orElseThrow().getUserToken();
     }
 
+    @Transactional
+    public UserPushTokenEntity findByFranchiseeIndex(Long franchiseeIndex) {
+        return userPushTokenRepository.findByUserIdAndUserType(franchiseeIndex.toString(), UserSelector.FRANCHISEE)
+            .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "findByFranchiseeIndex Error"));
+    }
 }
