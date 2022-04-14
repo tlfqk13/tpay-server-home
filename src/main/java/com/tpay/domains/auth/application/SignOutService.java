@@ -6,6 +6,7 @@ import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.domains.auth.application.dto.SignOutRequest;
 import com.tpay.domains.auth.domain.EmployeeTokenRepository;
 import com.tpay.domains.auth.domain.FranchiseeTokenRepository;
+import com.tpay.domains.push.domain.UserPushTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,14 +21,17 @@ public class SignOutService {
 
     private final FranchiseeTokenRepository franchiseeTokenRepository;
     private final EmployeeTokenRepository employeeTokenRepository;
+    private final UserPushTokenRepository userPushTokenRepository;
 
     @Transactional
     public String signOut(SignOutRequest signOutRequest) {
         if (signOutRequest.getUserSelector().equals(FRANCHISEE) && signOutRequest.getFranchiseeIndex() != null) {
             franchiseeTokenRepository.deleteByFranchiseeEntityId(signOutRequest.getFranchiseeIndex());
+            userPushTokenRepository.deleteByUserIdAndUserType(signOutRequest.getFranchiseeIndex().toString(), FRANCHISEE);
             return "FRANCHISEE Log out";
         } else if (signOutRequest.getUserSelector().equals(EMPLOYEE) && signOutRequest.getEmployeeIndex() != null) {
             employeeTokenRepository.deleteByEmployeeEntity_Id(signOutRequest.getEmployeeIndex());
+            userPushTokenRepository.deleteByUserIdAndUserType(signOutRequest.getFranchiseeIndex().toString(), EMPLOYEE);
             return "EMPLOYEE Log out";
         } else {
             throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid Parameter(FRANCHISEE or EMPLOYEE)");
