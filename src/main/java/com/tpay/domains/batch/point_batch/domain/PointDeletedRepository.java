@@ -1,4 +1,4 @@
-package com.tpay.domains.point_batch.domain;
+package com.tpay.domains.batch.point_batch.domain;
 
 import com.tpay.domains.point.domain.PointEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

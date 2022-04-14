@@ -19,10 +19,9 @@ public class PushNotificationController {
     public void requestFcmPush(@RequestBody NotificationDto.Request request) {
 
         try {
-            pushNotificationService.sendMessage(request);
+            pushNotificationService.sendMessageByToken(request);
         } catch (Exception e) {
             log.error(e.getMessage());
-
         }
     }
 

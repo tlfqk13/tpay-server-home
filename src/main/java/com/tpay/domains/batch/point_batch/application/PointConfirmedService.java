@@ -1,4 +1,4 @@
-package com.tpay.domains.point_batch.application;
+package com.tpay.domains.batch.point_batch.application;
 
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
@@ -13,6 +13,7 @@ import com.tpay.domains.point.domain.SignType;
 import com.tpay.domains.point_scheduled.domain.PointScheduledEntity;
 import com.tpay.domains.point_scheduled.domain.PointScheduledRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -31,6 +32,7 @@ public class PointConfirmedService {
     private final OrderFindService orderFindService;
 
     @Transactional
+    @Scheduled(cron = "0 1 * * * *")
     public String updateStatus() {
         LocalDate scheduledDate = LocalDate.now().minusWeeks(2);
         Optional<List<StatusUpdateResponseInterface>> needUpdateEntity = pointScheduledRepository.findNeedUpdateEntity(scheduledDate);

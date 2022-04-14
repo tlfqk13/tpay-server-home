@@ -19,19 +19,18 @@ public class UserPushTokenEntity {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "USER_TYPE")
+    @Column(name = "user_type")
     private UserSelector userType;
 
-    @Column(name = "USER_ID")
+    @Column(name = "user_id")
     private String userId;
 
-    @Column(name = "USER_TOKEN")
+    @Column(name = "user_token")
     private String userToken;
 
-/*
-    @Column(name = "BIZ_NO")
-    private String businessNumber;
-*/
+    public void updateToken(String userToken) {
+        this.userToken = userToken;
+    }
 
 
 }

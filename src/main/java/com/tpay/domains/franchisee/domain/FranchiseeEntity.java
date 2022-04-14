@@ -84,9 +84,6 @@ public class FranchiseeEntity extends BaseTimeEntity {
     @Column(name = "popUp", length = 1)
     private boolean popUp;
 
-    @Column(name = "pushToken")
-    private String pushToken;
-
     @Builder
     public FranchiseeEntity(
         String businessNumber,
@@ -102,9 +99,7 @@ public class FranchiseeEntity extends BaseTimeEntity {
         String signboard,
         String storeNumber,
         String email,
-        String isTaxRefundShop,
-
-        String pushToken
+        String isTaxRefundShop
     ) {
         this.memberName = "";
         this.memberNumber = "";
@@ -126,7 +121,6 @@ public class FranchiseeEntity extends BaseTimeEntity {
         this.isRefundOnce = "false";
         this.popUp = true;
 
-        this.pushToken = pushToken;
     }
 
     public FranchiseeEntity changeBalance(SignType signType, long change) {
