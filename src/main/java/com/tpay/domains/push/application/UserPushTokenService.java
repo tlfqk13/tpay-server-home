@@ -17,8 +17,15 @@ public class UserPushTokenService {
 
     @Transactional
     public void save(UserPushTokenEntity userPushTokenEntity) {
-        userPushTokenRepository.findByUserIdAndUserType(userPushTokenEntity.getUserId(), userPushTokenEntity.getUserType())
-                .orElseGet(() -> userPushTokenRepository.save(userPushTokenEntity));
+
+        Optional<UserPushTokenEntity> optionalUserPushTokenEntity = userPushTokenRepository.findByUserIdAndUserType(userPushTokenEntity.getUserId(), userPushTokenEntity.getUserType());
+        if(optionalUserPushTokenEntity.isEmpty()){
+            userPushTokenRepository.save(userPushTokenEntity);
+        }
+        else {
+            optionalUserPushTokenEntity.get().updateToken(userPushTokenEntity.getUserToken());
+
+        }
     }
 
     @Transactional
@@ -30,6 +37,5 @@ public class UserPushTokenService {
     public String findTokenByUserIdAndUserType(String userId, UserSelector userType) {
         return findByUserIdAndUserType(userId,userType).orElseThrow().getUserToken();
     }
-
 
 }
