@@ -11,10 +11,10 @@ import java.util.List;
 
 @Service
 public class TopicSubscribeService {
+
     public void subscribe(TopicDto.Request request) {
         this.subscribeRequest(request.getTokens(), request.getPushTopic());
     }
-
 
     public void subscribe(List<String> token, PushTopic pushTopic) {
         this.subscribeRequest(token, pushTopic);

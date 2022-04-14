@@ -28,7 +28,7 @@ public class FranchiseeApplicantRejectService {
 
         UserPushTokenEntity userPushTokenEntity = userPushTokenService.findByFranchiseeIndex(franchiseeApplicantEntity.getFranchiseeEntity().getId());
         NotificationDto.Request request = new NotificationDto.Request(PushCategoryType.CASE_THREE, TOKEN, userPushTokenEntity.getUserToken(), franchiseeApplicantEntity.getFranchiseeEntity().getStoreName());
-        pushNotificationService.sendMessage(request);
+        pushNotificationService.sendMessageByToken(request);
         franchiseeApplicantEntity.reject(rejectReason);
     }
 }

@@ -53,7 +53,7 @@ public class FranchiseeApplicantAcceptService {
 
         //푸시 전송
         NotificationDto.Request request = new NotificationDto.Request(CASE_TWO, TOKEN, userPushTokenEntity.getUserToken());
-        pushNotificationService.sendMessage(request);
+        pushNotificationService.sendMessageByToken(request);
 
         return response;
     }
