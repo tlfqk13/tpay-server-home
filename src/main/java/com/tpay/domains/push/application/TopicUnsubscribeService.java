@@ -11,11 +11,10 @@ public class TopicUnsubscribeService {
 
     public void unsubscribe(TopicDto.Request request) {
         try {
-            TopicManagementResponse response = FirebaseMessaging.getInstance().unsubscribeFromTopic(request.getTokens(), request.getTopic());
+            TopicManagementResponse response = FirebaseMessaging.getInstance().unsubscribeFromTopic(request.getTokens(), request.getPushTopic().toString());
             System.out.println(response.getSuccessCount() + "token were unsubscribed successfully");
         } catch (FirebaseMessagingException e) {
             e.printStackTrace();
         }
     }
-
 }

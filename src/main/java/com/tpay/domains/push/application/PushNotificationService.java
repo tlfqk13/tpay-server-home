@@ -109,7 +109,6 @@ public class PushNotificationService {
         try {
             JsonObject notificationMessage = buildNotificationMessage(request);
             System.out.println("FCM token request body for message using common notification object:");
-            // TODO: 2022/04/14 new ?
             new GsonBuilder().setPrettyPrinting().create().toJson(notificationMessage);
             requestMessageToFcmServer(notificationMessage);
         } catch (IOException e) {
