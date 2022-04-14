@@ -32,11 +32,5 @@ public class UserPushTokenEntity {
         this.userToken = userToken;
     }
 
-/*
-    @Column(name = "BIZ_NO")
-    private String businessNumber;
-*/
-
-
 
 }

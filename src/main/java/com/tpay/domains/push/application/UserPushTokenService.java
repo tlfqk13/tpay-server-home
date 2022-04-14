@@ -35,11 +35,6 @@ public class UserPushTokenService {
     }
 
     @Transactional
-    public String findTokenByUserIdAndUserType(String userId, UserSelector userType) {
-        return findByUserIdAndUserType(userId, userType).orElseThrow().getUserToken();
-    }
-
-    @Transactional
     public UserPushTokenEntity findByFranchiseeIndex(Long franchiseeIndex) {
         return userPushTokenRepository.findByUserIdAndUserType(franchiseeIndex.toString(), UserSelector.FRANCHISEE)
             .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "findByFranchiseeIndex Error"));
