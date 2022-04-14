@@ -8,6 +8,7 @@ import com.tpay.domains.batch.point_batch.application.dto.DeleteTargetList;
 import com.tpay.domains.batch.point_batch.domain.PointDeletedRepository;
 import com.tpay.domains.point.domain.PointRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -23,6 +24,7 @@ public class PointDeleteService {
     private final PointDeletedRepository pointDeletedRepository;
 
     @Transactional
+    @Scheduled(cron = "0 1 * * * *")
     public String deletePoint() {
         LocalDate disappearDate = DisappearDate.DISAPPEAR_DATE.getDisappearDate();
         List<DeleteTargetList> targetIdList = pointRepository.findTargetIdList(disappearDate);
