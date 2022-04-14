@@ -1,7 +1,11 @@
 package com.tpay.domains.push.application.dto;
 
+import com.tpay.commons.push.PushCategoryType;
 import com.tpay.commons.push.PushType;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 public class NotificationDto {
 
@@ -16,5 +20,15 @@ public class NotificationDto {
         String pushTypeValue;
         String pushCategory;
         String link;
+
+        public Request(PushCategoryType pushCategoryType, PushType pushType, String pushTypeValue) {
+            this.title = pushCategoryType.getTitle();
+            this.body = pushCategoryType.getBody();
+            this.pushType = pushType;
+            this.pushTypeValue = pushTypeValue;
+            this.pushCategory = pushCategoryType.getPushCategory();
+            this.link = pushCategoryType.getLink();
+        }
     }
+
 }
