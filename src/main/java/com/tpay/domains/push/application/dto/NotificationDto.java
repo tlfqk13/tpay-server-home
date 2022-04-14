@@ -29,6 +29,15 @@ public class NotificationDto {
             this.pushCategory = pushCategoryType.getPushCategory();
             this.link = pushCategoryType.getLink();
         }
+
+        public Request(PushCategoryType pushCategoryType, PushType pushType, String pushTypeValue, String franchiseeStoreName) {
+            this.title = franchiseeStoreName + pushCategoryType.getTitle();
+            this.body = pushCategoryType.getBody();
+            this.pushType = pushType;
+            this.pushTypeValue = pushTypeValue;
+            this.pushCategory = pushCategoryType.getPushCategory();
+            this.link = pushCategoryType.getLink();
+        }
     }
 
 }
