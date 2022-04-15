@@ -1,7 +1,7 @@
 package com.tpay.domains.franchisee.application;
 
 
-import com.tpay.commons.converter.NumberFormatConverter;
+import com.tpay.commons.util.converter.NumberFormatConverter;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.domains.franchisee.application.dto.vat.*;
@@ -24,7 +24,6 @@ public class FranchiseeVatService {
     private final OrderRepository orderRepository;
     private final FranchiseeFindService franchiseeFindService;
     private final FranchiseeUploadFindService franchiseeUploadFindService;
-    private final NumberFormatConverter numberFormatConverter;
 
     public FranchiseeVatResponse vatReport(Long franchiseeIndex, String requestDate) {
         List<Object> localDates = setUpDate(requestDate);
@@ -62,7 +61,7 @@ public class FranchiseeVatService {
         //1-1. 제출자 인적사항 리스트변환 (추가 요청에 의함)
         List<Object> vatDetailResponsePersonalInfoList = new ArrayList<>();
         vatDetailResponsePersonalInfoList.add(vatDetailResponsePersonalInfo.getSellerName());
-        String businessNumberBar = numberFormatConverter.addBarToBusinessNumber(vatDetailResponsePersonalInfo.getBusinessNumber());
+        String businessNumberBar = NumberFormatConverter.addBarToBusinessNumber(vatDetailResponsePersonalInfo.getBusinessNumber());
         vatDetailResponsePersonalInfoList.add(businessNumberBar);
         vatDetailResponsePersonalInfoList.add(vatDetailResponsePersonalInfo.getStoreName());
         vatDetailResponsePersonalInfoList.add(vatDetailResponsePersonalInfo.getStoreAddress());
@@ -80,9 +79,9 @@ public class FranchiseeVatService {
 
         //2-1 리스트 변환
         List<Object> vatDetailResponseTotalInfoList = new ArrayList<>();
-        vatDetailResponseTotalInfoList.add(numberFormatConverter.addCommaToNumber(vatDetailResponseTotalInfo.getTotalCount()));
-        vatDetailResponseTotalInfoList.add(numberFormatConverter.addCommaToNumber(vatDetailResponseTotalInfo.getTotalAmount()));
-        vatDetailResponseTotalInfoList.add(numberFormatConverter.addCommaToNumber(vatDetailResponseTotalInfo.getTotalVat()));
+        vatDetailResponseTotalInfoList.add(NumberFormatConverter.addCommaToNumber(vatDetailResponseTotalInfo.getTotalCount()));
+        vatDetailResponseTotalInfoList.add(NumberFormatConverter.addCommaToNumber(vatDetailResponseTotalInfo.getTotalAmount()));
+        vatDetailResponseTotalInfoList.add(NumberFormatConverter.addCommaToNumber(vatDetailResponseTotalInfo.getTotalVat()));
 
 
         //3. 물품판매 명세
@@ -106,9 +105,9 @@ public class FranchiseeVatService {
             baseList.add(vatDetailResponseDetailInfo.getPurchaseSerialNumber());
             baseList.add(vatDetailResponseDetailInfo.getSaleDate());
             baseList.add(vatDetailResponseDetailInfo.getTakeoutConfirmNumber());
-            baseList.add(numberFormatConverter.addCommaToNumber(vatDetailResponseDetailInfo.getRefundAmount()));
-            baseList.add(numberFormatConverter.addCommaToNumber(vatDetailResponseDetailInfo.getAmount()));
-            baseList.add(numberFormatConverter.addCommaToNumber(vatDetailResponseDetailInfo.getVat()));
+            baseList.add(NumberFormatConverter.addCommaToNumber(vatDetailResponseDetailInfo.getRefundAmount()));
+            baseList.add(NumberFormatConverter.addCommaToNumber(vatDetailResponseDetailInfo.getAmount()));
+            baseList.add(NumberFormatConverter.addCommaToNumber(vatDetailResponseDetailInfo.getVat()));
             detailList.add(baseList);
         }
 

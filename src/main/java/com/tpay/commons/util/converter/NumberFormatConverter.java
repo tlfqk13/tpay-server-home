@@ -1,4 +1,4 @@
-package com.tpay.commons.converter;
+package com.tpay.commons.util.converter;
 
 
 import org.springframework.stereotype.Component;
@@ -6,11 +6,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class NumberFormatConverter {
 
-    public String addBarToBusinessNumber(String businessNumber) {
+    public static String addBarToBusinessNumber(String businessNumber) {
         return businessNumber.substring(0, 3) + "-" + businessNumber.substring(3, 5) + "-" + businessNumber.substring(5);
     }
 
-    public String addCommaToNumber(String targetNumber) {
+    public static String addCommaToNumber(String targetNumber) {
         try {
             targetNumber = targetNumber.replaceAll("\\B(?=(\\d{3})+(?!\\d))", ",");
         } catch (NullPointerException e) {

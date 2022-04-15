@@ -14,7 +14,7 @@ import java.util.List;
 
 import static com.tpay.commons.push.PushCategoryType.CASE_ONE;
 import static com.tpay.commons.push.PushType.TOKEN;
-import static com.tpay.commons.util.DateConverter.stringToLocalDate;
+import static com.tpay.commons.util.converter.DateConverter.stringToLocalDate;
 import static com.tpay.commons.util.UserSelector.FRANCHISEE;
 import static com.tpay.domains.franchisee_applicant.domain.FranchiseeStatus.INIT;
 

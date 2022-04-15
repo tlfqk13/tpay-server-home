@@ -1,4 +1,4 @@
-package com.tpay.commons.util;
+package com.tpay.domains.point.application.dto;
 
 public enum WithdrawalStatus {
     WITHDRAW,
