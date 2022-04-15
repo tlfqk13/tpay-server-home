@@ -1,8 +1,8 @@
 package com.tpay.domains.sale.application;
 
 
-import com.tpay.commons.converter.NumberFormatConverter;
-import com.tpay.commons.converter.StringToLocalDateConverter;
+import com.tpay.commons.util.converter.NumberFormatConverter;
+import com.tpay.commons.util.converter.StringToLocalDateConverter;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.util.DateSelector;
@@ -24,7 +24,6 @@ public class SaleStatisticsService {
 
     private final RefundRepository refundRepository;
     private final StringToLocalDateConverter stringToLocalDateConverter;
-    private final NumberFormatConverter numberFormatConverter;
 
     public SaleStatisticsResponseInterface saleStatistics(Long franchiseeIndex, String targetDate, DateSelector dateSelector) {
         if (dateSelector.equals(MONTH)) {
@@ -58,19 +57,19 @@ public class SaleStatisticsService {
         }
 
         SaleStatisticsCurrentResponse saleStatisticsCurrentResponse = SaleStatisticsCurrentResponse.builder()
-            .totalAmount(numberFormatConverter.addCommaToNumber(curr.getTotalAmount()) + "원")
-            .totalActualAmount(numberFormatConverter.addCommaToNumber(curr.getTotalActualAmount()) + "원")
-            .totalRefund(numberFormatConverter.addCommaToNumber(curr.getTotalRefund()) + "원")
-            .totalCount(numberFormatConverter.addCommaToNumber(curr.getTotalCount()) + "건")
-            .totalCancel(numberFormatConverter.addCommaToNumber(curr.getTotalCancel()) + "건")
+            .totalAmount(NumberFormatConverter.addCommaToNumber(curr.getTotalAmount()) + "원")
+            .totalActualAmount(NumberFormatConverter.addCommaToNumber(curr.getTotalActualAmount()) + "원")
+            .totalRefund(NumberFormatConverter.addCommaToNumber(curr.getTotalRefund()) + "원")
+            .totalCount(NumberFormatConverter.addCommaToNumber(curr.getTotalCount()) + "건")
+            .totalCancel(NumberFormatConverter.addCommaToNumber(curr.getTotalCancel()) + "건")
             .build();
 
         SaleStatisticsPreviousResponse saleStatisticsPreviousResponse = SaleStatisticsPreviousResponse.builder()
-            .totalAmount(numberFormatConverter.addCommaToNumber(prev.getTotalAmount()) + "원")
-            .totalActualAmount(numberFormatConverter.addCommaToNumber(prev.getTotalActualAmount()) + "원")
-            .totalRefund(numberFormatConverter.addCommaToNumber(prev.getTotalRefund()) + "원")
-            .totalCount(numberFormatConverter.addCommaToNumber(prev.getTotalCount()) + "건")
-            .totalCancel(numberFormatConverter.addCommaToNumber(prev.getTotalCancel()) + "건")
+            .totalAmount(NumberFormatConverter.addCommaToNumber(prev.getTotalAmount()) + "원")
+            .totalActualAmount(NumberFormatConverter.addCommaToNumber(prev.getTotalActualAmount()) + "원")
+            .totalRefund(NumberFormatConverter.addCommaToNumber(prev.getTotalRefund()) + "원")
+            .totalCount(NumberFormatConverter.addCommaToNumber(prev.getTotalCount()) + "건")
+            .totalCancel(NumberFormatConverter.addCommaToNumber(prev.getTotalCancel()) + "건")
             .build();
 
         return SaleStatisticsResponse.builder()

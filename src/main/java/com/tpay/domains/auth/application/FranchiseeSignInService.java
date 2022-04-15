@@ -21,14 +21,14 @@ public class FranchiseeSignInService {
 
 
     @Transactional
-    public FranchiseeTokenInfo signIn(String businessNumber, String password, String pushToken) {
+    public FranchiseeTokenInfo signIn(String businessNumber, String password) {
         FranchiseeApplicantEntity franchiseeApplicantEntity =
-                franchiseeApplicantFindService.findByBusinessNumber(businessNumber);
+            franchiseeApplicantFindService.findByBusinessNumber(businessNumber);
 
         FranchiseeEntity franchiseeEntity = franchiseeApplicantEntity.getFranchiseeEntity();
 
         if (!passwordEncoder.matches(
-                password, franchiseeEntity.getPassword())) {
+            password, franchiseeEntity.getPassword())) {
             throw new IllegalArgumentException("Invalid Password");
         }
 
@@ -37,14 +37,14 @@ public class FranchiseeSignInService {
         authService.updateOrSave(franchiseeEntity, refreshToken.getValue());
 
         return FranchiseeTokenInfo.builder()
-                .franchiseeIndex(franchiseeEntity.getId())
-                .businessNumber(franchiseeEntity.getBusinessNumber())
-                .franchiseeStatus(franchiseeApplicantEntity.getFranchiseeStatus())
-                .rejectReason(franchiseeApplicantEntity.getRejectReason())
-                .accessToken(accessToken.getValue())
-                .refreshToken(refreshToken.getValue())
-                .popUp(franchiseeEntity.isPopUp())
-                .signUpDate(franchiseeEntity.getCreatedDate())
-                .build();
+            .franchiseeIndex(franchiseeEntity.getId())
+            .businessNumber(franchiseeEntity.getBusinessNumber())
+            .franchiseeStatus(franchiseeApplicantEntity.getFranchiseeStatus())
+            .rejectReason(franchiseeApplicantEntity.getRejectReason())
+            .accessToken(accessToken.getValue())
+            .refreshToken(refreshToken.getValue())
+            .popUp(franchiseeEntity.isPopUp())
+            .signUpDate(franchiseeEntity.getCreatedDate())
+            .build();
     }
 }

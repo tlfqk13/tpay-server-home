@@ -31,7 +31,7 @@ public class SignOutService {
             return "FRANCHISEE Log out";
         } else if (signOutRequest.getUserSelector().equals(EMPLOYEE) && signOutRequest.getEmployeeIndex() != null) {
             employeeTokenRepository.deleteByEmployeeEntity_Id(signOutRequest.getEmployeeIndex());
-            userPushTokenRepository.deleteByUserIdAndUserType(signOutRequest.getFranchiseeIndex().toString(), EMPLOYEE);
+            userPushTokenRepository.deleteByUserIdAndUserType(signOutRequest.getEmployeeIndex().toString(), EMPLOYEE);
             return "EMPLOYEE Log out";
         } else {
             throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid Parameter(FRANCHISEE or EMPLOYEE)");

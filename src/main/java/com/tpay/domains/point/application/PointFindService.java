@@ -3,7 +3,7 @@ package com.tpay.domains.point.application;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.util.DisappearDate;
-import com.tpay.commons.util.WithdrawalStatus;
+import com.tpay.domains.point.application.dto.WithdrawalStatus;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee_applicant.application.FranchiseeApplicantFindService;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
@@ -25,7 +25,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.tpay.commons.util.WithdrawalStatus.*;
+import static com.tpay.domains.point.application.dto.WithdrawalStatus.*;
 
 @Service
 @RequiredArgsConstructor

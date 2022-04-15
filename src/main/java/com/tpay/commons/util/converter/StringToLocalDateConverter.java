@@ -1,4 +1,4 @@
-package com.tpay.commons.converter;
+package com.tpay.commons.util.converter;
 
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;

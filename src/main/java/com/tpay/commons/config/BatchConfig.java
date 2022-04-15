@@ -1,9 +1,12 @@
-package com.tpay.commons.push;
+package com.tpay.commons.config;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.tpay.commons.custom.CustomValue;
+import com.tpay.domains.batch.point_batch.application.PointConfirmedService;
+import com.tpay.domains.batch.point_batch.application.PointDeleteService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
@@ -15,12 +18,22 @@ import java.io.IOException;
 
 @Slf4j
 @Configuration
-public class FirebaseConfig implements ApplicationListener<ContextRefreshedEvent> {
+@RequiredArgsConstructor
+public class BatchConfig implements ApplicationListener<ContextRefreshedEvent> {
 
+    private final PointConfirmedService pointConfirmedService;
+    private final PointDeleteService pointDeleteService;
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
+        //파이어베이스 init
         initFirebaseApp();
+
+        //포인트 관련 init
+        pointConfirmedService.updateStatus();
+        pointDeleteService.deletePoint();
+
+        //푸시 관련 init
     }
 
     @Bean

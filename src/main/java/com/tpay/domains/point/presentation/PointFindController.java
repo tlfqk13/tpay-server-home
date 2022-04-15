@@ -1,6 +1,6 @@
 package com.tpay.domains.point.presentation;
 
-import com.tpay.commons.util.WithdrawalStatus;
+import com.tpay.domains.point.application.dto.WithdrawalStatus;
 import com.tpay.domains.point.application.PointFindService;
 import com.tpay.domains.point.application.dto.AdminPointFindResponseInterface;
 import com.tpay.domains.point.application.dto.PointFindDetailResponse;
