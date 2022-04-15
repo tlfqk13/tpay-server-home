@@ -50,7 +50,7 @@ public class EmployeeSignInService {
         //직원 로그인시 푸쉬
         UserPushTokenEntity userPushTokenEntity = userPushTokenService.findByFranchiseeIndex(franchiseeApplicantEntity.getFranchiseeEntity().getId());
         NotificationDto.Request request = new NotificationDto.Request(PushCategoryType.CASE_FOURTEEN, PushType.TOKEN, userPushTokenEntity.getUserToken());
-        NotificationDto.Request requestSetName = request.setFrontTitle(employeeEntity.getName());
+        NotificationDto.Request requestSetName = request.setFrontBody(employeeEntity.getName());
         pushNotificationService.sendMessageByToken(requestSetName);
 
         return EmployeeTokenInfo.builder()

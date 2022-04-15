@@ -49,8 +49,13 @@ public class NotificationDto {
             this.link = pushCategoryType.getLink();
         }
 
-        public Request setFrontTitle(String employeeName) {
-            this.title = employeeName + title;
+        public Request setFrontTitle(String message) {
+            this.title = message + title;
+            return this;
+        }
+
+        public Request setFrontBody(String message){
+            this.body = message + body;
             return this;
         }
     }
