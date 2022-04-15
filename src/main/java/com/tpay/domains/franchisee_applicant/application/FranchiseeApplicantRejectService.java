@@ -27,8 +27,9 @@ public class FranchiseeApplicantRejectService {
             franchiseeApplicantFindService.findByIndex(franchiseeApplicantIndex);
 
         UserPushTokenEntity userPushTokenEntity = userPushTokenService.findByFranchiseeIndex(franchiseeApplicantEntity.getFranchiseeEntity().getId());
-        NotificationDto.Request request = new NotificationDto.Request(PushCategoryType.CASE_THREE, TOKEN, userPushTokenEntity.getUserToken(), franchiseeApplicantEntity.getFranchiseeEntity().getStoreName());
-        pushNotificationService.sendMessageByToken(request);
+        NotificationDto.Request request = new NotificationDto.Request(PushCategoryType.CASE_THREE, TOKEN, userPushTokenEntity.getUserToken());
+        NotificationDto.Request requestSetFront = request.setFrontTitle(franchiseeApplicantEntity.getFranchiseeEntity().getStoreName());
+        pushNotificationService.sendMessageByToken(requestSetFront);
         franchiseeApplicantEntity.reject(rejectReason);
     }
 }

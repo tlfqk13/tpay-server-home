@@ -2,7 +2,7 @@ package com.tpay.domains.franchisee.application;
 
 
 import com.tpay.commons.aws.S3FileUploader;
-import com.tpay.commons.converter.NumberFormatConverter;
+import com.tpay.commons.util.converter.NumberFormatConverter;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.domains.franchisee.application.dto.cms.FranchiseeCmsDetailResponse;
@@ -32,7 +32,6 @@ public class FranchiseeCmsService {
 
     private final OrderRepository orderRepository;
     private final S3FileUploader s3FileUploader;
-    private final NumberFormatConverter numberFormatConverter;
 
     public FranchiseeCmsResponse cmsReport(Long franchiseeIndex, String requestDate) {
         List<String> date = setUpDate(requestDate);
@@ -64,16 +63,16 @@ public class FranchiseeCmsService {
         }
         List<String> commissionInfoList = new ArrayList<>();
         List<String> customerInfoList = new ArrayList<>();
-        commissionInfoList.add(numberFormatConverter.addCommaToNumber(queryResult.getTotalCount()) + "건");
-        commissionInfoList.add(numberFormatConverter.addCommaToNumber(queryResult.getTotalAmount()));
-        commissionInfoList.add(numberFormatConverter.addCommaToNumber(queryResult.getTotalVat()));
-        commissionInfoList.add(numberFormatConverter.addCommaToNumber(queryResult.getTotalCommission()));
+        commissionInfoList.add(NumberFormatConverter.addCommaToNumber(queryResult.getTotalCount()) + "건");
+        commissionInfoList.add(NumberFormatConverter.addCommaToNumber(queryResult.getTotalAmount()));
+        commissionInfoList.add(NumberFormatConverter.addCommaToNumber(queryResult.getTotalVat()));
+        commissionInfoList.add(NumberFormatConverter.addCommaToNumber(queryResult.getTotalCommission()));
 
         customerInfoList.add(queryResult.getSellerName());
         customerInfoList.add(queryResult.getBankName());
         customerInfoList.add(queryResult.getAccountNumber());
         customerInfoList.add(queryResult.getWithdrawalDate() + "일");
-        customerInfoList.add(numberFormatConverter.addCommaToNumber(queryResult.getTotalBill()));
+        customerInfoList.add(NumberFormatConverter.addCommaToNumber(queryResult.getTotalBill()));
         return FranchiseeCmsDetailResponse.builder().commissionInfoList(commissionInfoList).customerInfoList(customerInfoList).build();
     }
 

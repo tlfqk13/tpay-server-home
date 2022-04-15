@@ -17,7 +17,7 @@ public class FranchiseeApplicantInfo {
     private String storeName;
     private String sellerName;
     private String createdDate;
-    private String isRefundOnce;
+    private Boolean isRefundOnce;
 
     public static FranchiseeApplicantInfo toResponse(FranchiseeApplicantEntity franchiseeApplicantEntity) {
         FranchiseeEntity franchiseeEntity = franchiseeApplicantEntity.getFranchiseeEntity();
