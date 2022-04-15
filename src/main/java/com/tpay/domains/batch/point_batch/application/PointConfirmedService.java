@@ -50,7 +50,7 @@ public class PointConfirmedService {
                 pointScheduledEntity.updateStatus();
 
                 // 포인트 테이블 Save
-                OrderEntity orderEntity = orderFindService.findById(aLong);
+                OrderEntity orderEntity = orderFindService.findById(pointScheduledEntity.getOrderEntity().getId());
                 FranchiseeEntity franchiseeEntity = orderEntity.getFranchiseeEntity();
                 franchiseeEntity.changeBalance(SignType.POSITIVE, orderEntity.getPoints());
                 PointEntity pointEntity = PointEntity.builder()
@@ -59,6 +59,7 @@ public class PointConfirmedService {
                     .change(orderEntity.getPoints())
                     .pointStatus(PointStatus.SAVE)
                     .balance(franchiseeEntity.getBalance())
+                    .franchiseeEntity(franchiseeEntity)
                     .orderEntity(orderEntity)
                     .build();
                 pointRepository.save(pointEntity);

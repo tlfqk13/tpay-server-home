@@ -9,6 +9,7 @@ import com.tpay.domains.point.application.dto.PointUpdateRequest;
 import com.tpay.domains.point.domain.PointEntity;
 import com.tpay.domains.point.domain.PointRepository;
 import com.tpay.domains.point.domain.PointStatus;
+import com.tpay.domains.push.application.PushNotificationService;
 import com.tpay.domains.push.application.UserPushTokenService;
 import com.tpay.domains.push.application.dto.NotificationDto;
 import com.tpay.domains.push.domain.UserPushTokenEntity;
@@ -23,6 +24,8 @@ public class PointUpdateService {
 
     private final PointRepository pointRepository;
     private final UserPushTokenService userPushTokenService;
+    private final PushNotificationService pushNotificationService;
+
 
     @Transactional
     public String updateStatus(Long pointsIndex, PointUpdateRequest pointUpdateRequest) {
@@ -34,12 +37,12 @@ public class PointUpdateService {
             PointStatus result = pointEntity.updateStatus(pointStatus);
 
             // 변경 요청한 포인트 상태가 COMPLETE일 경우 푸쉬
-            if(pointUpdateRequest.getPointStatus().equals(PointStatus.COMPLETE)){
+            if (pointUpdateRequest.getPointStatus().equals(PointStatus.COMPLETE)) {
                 UserPushTokenEntity userPushTokenEntity = userPushTokenService.findByFranchiseeIndex(pointEntity.getFranchiseeEntity().getId());
 
-                Long change = pointEntity.getChange();
-                int changeInt = Integer.parseInt(change.toString());
-                new NotificationDto.Request(PushCategoryType.CASE_SEVEN, PushType.TOKEN,userPushTokenEntity.getUserToken(),changeInt);
+                NotificationDto.Request request = new NotificationDto.Request(PushCategoryType.CASE_SEVEN, PushType.TOKEN, userPushTokenEntity.getUserToken());
+                NotificationDto.Request requestBehind = request.setBehindBodyPoint(pointEntity.getChange());
+                pushNotificationService.sendMessageByToken(requestBehind);
             }
             return "pointStatus가 " + result + "로 변경되었습니다.";
         } else {

@@ -31,31 +31,18 @@ public class NotificationDto {
             this.link = pushCategoryType.getLink();
         }
 
-        public Request(PushCategoryType pushCategoryType, PushType pushType, String pushTypeValue, String franchiseeStoreName) {
-            this.title = franchiseeStoreName + pushCategoryType.getTitle();
-            this.body = pushCategoryType.getBody();
-            this.pushType = pushType;
-            this.pushTypeValue = pushTypeValue;
-            this.pushCategory = pushCategoryType.getPushCategory();
-            this.link = pushCategoryType.getLink();
-        }
-
-        public Request(PushCategoryType pushCategoryType, PushType pushType, String pushTypeValue, Integer amount) {
-            this.title = pushCategoryType.getTitle();
-            this.body = pushCategoryType.getBody() + NumberFormatConverter.addCommaToNumber(amount.toString()) + "P";
-            this.pushType = pushType;
-            this.pushTypeValue = pushTypeValue;
-            this.pushCategory = pushCategoryType.getPushCategory();
-            this.link = pushCategoryType.getLink();
-        }
-
         public Request setFrontTitle(String message) {
             this.title = message + title;
             return this;
         }
 
-        public Request setFrontBody(String message){
+        public Request setFrontBody(String message) {
             this.body = message + body;
+            return this;
+        }
+
+        public Request setBehindBodyPoint(Long amount) {
+            this.body = body + NumberFormatConverter.addCommaToNumber(amount.toString()) + "P";
             return this;
         }
     }
