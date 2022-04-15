@@ -17,7 +17,7 @@ public interface FranchiseeApplicantInfoInterface {
 
     String getCreatedDate();
 
-    String getIsRefundOnce();
+    Boolean getIsRefundOnce();
 
     Boolean getIsRead();
 }
