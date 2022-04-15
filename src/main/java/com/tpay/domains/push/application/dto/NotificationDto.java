@@ -2,6 +2,7 @@ package com.tpay.domains.push.application.dto;
 
 import com.tpay.commons.push.PushCategoryType;
 import com.tpay.commons.push.PushType;
+import com.tpay.commons.util.converter.NumberFormatConverter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,6 +34,15 @@ public class NotificationDto {
         public Request(PushCategoryType pushCategoryType, PushType pushType, String pushTypeValue, String franchiseeStoreName) {
             this.title = franchiseeStoreName + pushCategoryType.getTitle();
             this.body = pushCategoryType.getBody();
+            this.pushType = pushType;
+            this.pushTypeValue = pushTypeValue;
+            this.pushCategory = pushCategoryType.getPushCategory();
+            this.link = pushCategoryType.getLink();
+        }
+
+        public Request(PushCategoryType pushCategoryType, PushType pushType, String pushTypeValue, Integer amount) {
+            this.title = pushCategoryType.getTitle();
+            this.body = pushCategoryType.getBody() + NumberFormatConverter.addCommaToNumber(amount.toString()) + "P";
             this.pushType = pushType;
             this.pushTypeValue = pushTypeValue;
             this.pushCategory = pushCategoryType.getPushCategory();
