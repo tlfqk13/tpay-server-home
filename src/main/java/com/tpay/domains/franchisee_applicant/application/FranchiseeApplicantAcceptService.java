@@ -1,7 +1,6 @@
 package com.tpay.domains.franchisee_applicant.application;
 
 import com.tpay.commons.custom.CustomValue;
-import com.tpay.commons.push.detail.PushTopic;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeFindRequest;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import javax.transaction.Transactional;
-import java.util.List;
 
 import static com.tpay.commons.push.PushCategoryType.CASE_TWO;
 import static com.tpay.commons.push.PushType.TOKEN;
@@ -46,12 +44,8 @@ public class FranchiseeApplicantAcceptService {
 
         franchiseeEntity.memberInfo(response.getFranchiseeName(), response.getFranchiseeNumber());
 
-        //토픽 구독
-        UserPushTokenEntity userPushTokenEntity = userPushTokenService.findByFranchiseeIndex(franchiseeEntity.getId());
-        List<String> tokenList = List.of(userPushTokenEntity.getUserToken());
-        topicSubscribeService.subscribe(tokenList, PushTopic.FRANCHISEE);
-
         //푸시 전송
+        UserPushTokenEntity userPushTokenEntity = userPushTokenService.findByFranchiseeIndex(franchiseeEntity.getId());
         NotificationDto.Request request = new NotificationDto.Request(CASE_TWO, TOKEN, userPushTokenEntity.getUserToken());
         pushNotificationService.sendMessageByToken(request);
 

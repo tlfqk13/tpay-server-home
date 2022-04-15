@@ -31,7 +31,7 @@ public class SignInService {
         SignInTokenInfo signInTokenInfo;
 
         if (signInRequest.getUserSelector().equals(FRANCHISEE)) {
-            FranchiseeTokenInfo franchiseeTokenInfo = franchiseeSignInService.signIn(signInRequest.getBusinessNumber(), signInRequest.getPassword(), signInRequest.getPushToken());
+            FranchiseeTokenInfo franchiseeTokenInfo = franchiseeSignInService.signIn(signInRequest.getBusinessNumber(), signInRequest.getPassword());
             signInTokenInfo = SignInTokenInfo.builder()
                 .signUpDate(franchiseeTokenInfo.getSignUpDate())
                 .franchiseeStatus(franchiseeTokenInfo.getFranchiseeStatus())
@@ -44,7 +44,7 @@ public class SignInService {
                 .userSelector(FRANCHISEE)
                 .build();
         } else if (signInRequest.getUserSelector().equals(EMPLOYEE)) {
-            EmployeeTokenInfo employeeTokenInfo = employeeSignInService.signIn(signInRequest.getUserId(), signInRequest.getPassword(), signInRequest.getPushToken());
+            EmployeeTokenInfo employeeTokenInfo = employeeSignInService.signIn(signInRequest.getUserId(), signInRequest.getPassword());
             signInTokenInfo = SignInTokenInfo.builder()
                 .employeeIndex(employeeTokenInfo.getEmployeeIndex())
                 .userId(employeeTokenInfo.getUserId())
@@ -64,13 +64,12 @@ public class SignInService {
         Long userId = signInRequest.getUserSelector() == FRANCHISEE ? signInTokenInfo.getFranchiseeIndex() : signInTokenInfo.getEmployeeIndex();
 
         UserPushTokenEntity userPushTokenEntity = UserPushTokenEntity.builder()
-                .userType(signInRequest.getUserSelector())
-                .userId(userId.toString())
-                .userToken(signInRequest.getPushToken())
-                .build();
+            .userType(signInRequest.getUserSelector())
+            .userId(userId.toString())
+            .userToken(signInRequest.getPushToken())
+            .build();
 
         userPushTokenService.save(userPushTokenEntity);
-
 
 
         return signInTokenInfo;

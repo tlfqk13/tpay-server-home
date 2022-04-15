@@ -25,7 +25,7 @@ public class EmployeeSignInService {
 
     @Transactional
     public EmployeeTokenInfo
-    signIn(String userId, String password, String pushToken) {
+    signIn(String userId, String password) {
         EmployeeEntity employeeEntity = employeeFindService.findByUserId(userId);
         if (!passwordEncoder.matches(password, employeeEntity.getPassword())) {
             throw new IllegalArgumentException("Invalid Password");
