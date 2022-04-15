@@ -4,9 +4,10 @@ import com.tpay.commons.custom.CustomValue;
 import com.tpay.commons.exception.ExceptionResponse;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
+import com.tpay.commons.push.PushCategoryType;
+import com.tpay.commons.push.PushType;
 import com.tpay.domains.employee.application.EmployeeFindService;
 import com.tpay.domains.employee.domain.EmployeeEntity;
-import com.tpay.domains.external.application.ExternalRefundFindService;
 import com.tpay.domains.external.domain.ExternalRefundEntity;
 import com.tpay.domains.external.domain.ExternalRefundStatus;
 import com.tpay.domains.external.domain.ExternalRepository;
@@ -14,9 +15,12 @@ import com.tpay.domains.franchisee.application.FranchiseeFindService;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.order.application.OrderSaveService;
 import com.tpay.domains.order.domain.OrderEntity;
-import com.tpay.domains.point.domain.PointRepository;
 import com.tpay.domains.point.domain.SignType;
 import com.tpay.domains.point_scheduled.application.PointScheduledChangeService;
+import com.tpay.domains.push.application.PushNotificationService;
+import com.tpay.domains.push.application.UserPushTokenService;
+import com.tpay.domains.push.application.dto.NotificationDto;
+import com.tpay.domains.push.domain.UserPushTokenEntity;
 import com.tpay.domains.refund.application.RefundSaveService;
 import com.tpay.domains.refund.application.dto.RefundSaveRequest;
 import com.tpay.domains.refund.domain.RefundEntity;
@@ -29,7 +33,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import javax.transaction.Transactional;
-
 import java.util.Optional;
 
 import static com.tpay.commons.util.UserSelector.EMPLOYEE;
@@ -46,8 +49,9 @@ public class RefundApproveService {
     private final WebClient.Builder builder;
     private final ExternalRepository externalRepository;
 
-    private final PointRepository pointRepository;
     private final EmployeeFindService employeeFindService;
+    private final UserPushTokenService userPushTokenService;
+    private final PushNotificationService pushNotificationService;
 
     @Transactional
     public RefundResponse approve(RefundSaveRequest request) {
@@ -103,7 +107,14 @@ public class RefundApproveService {
 
 
         pointScheduledChangeService.change(refundEntity, SignType.POSITIVE);
-        franchiseeEntity.isRefundOnce();
+
+        if (!franchiseeEntity.getIsRefundOnce()) {
+            UserPushTokenEntity userPushTokenEntity = userPushTokenService.findByFranchiseeIndex(franchiseeEntity.getId());
+            NotificationDto.Request notification = new NotificationDto.Request(PushCategoryType.CASE_FIVE, PushType.TOKEN, userPushTokenEntity.getUserToken());
+            pushNotificationService.sendMessageByToken(notification);
+            franchiseeEntity.isRefundOnce();
+        }
+
         return refundResponse;
     }
 }
