@@ -54,6 +54,11 @@ public class NotificationDto {
             this.body = body + NumberFormatConverter.addCommaToNumber(amount.toString()) + "P";
             return this;
         }
+
+        public Request setBehindLink(String addLink) {
+            this.link = link + "/" + addLink;
+            return this;
+        }
     }
 
 }

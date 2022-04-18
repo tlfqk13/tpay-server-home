@@ -32,4 +32,7 @@ public class PushHistoryEntity extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private UserSelector userSelector;
     private Long userId;
+
+    private Boolean isRead;
+
 }

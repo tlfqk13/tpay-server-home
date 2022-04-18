@@ -18,6 +18,7 @@ public class PushHistorySaveService {
 
     @Transactional
     public void saveHistory(NotificationDto.Request request, String send, UserPushTokenEntity userPushTokenEntity) {
+        //요청 정보, 응답정보, 유저정보로 history SAVE
         PushHistoryEntity pushHistoryEntity = PushHistoryEntity.builder()
             .title(request.getTitle())
             .body(request.getBody())
@@ -28,6 +29,7 @@ public class PushHistorySaveService {
             .response(send)
             .userSelector(userPushTokenEntity.getUserSelector())
             .userId(userPushTokenEntity.getUserId())
+            .isRead(false)
             .build();
         pushHistoryRepository.save(pushHistoryEntity);
     }
