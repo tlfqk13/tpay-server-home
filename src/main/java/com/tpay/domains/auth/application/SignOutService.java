@@ -27,11 +27,11 @@ public class SignOutService {
     public String signOut(SignOutRequest signOutRequest) {
         if (signOutRequest.getUserSelector().equals(FRANCHISEE) && signOutRequest.getFranchiseeIndex() != null) {
             franchiseeTokenRepository.deleteByFranchiseeEntityId(signOutRequest.getFranchiseeIndex());
-            userPushTokenRepository.deleteByUserIdAndUserType(signOutRequest.getFranchiseeIndex().toString(), FRANCHISEE);
+            userPushTokenRepository.deleteByUserIdAndUserSelector(signOutRequest.getFranchiseeIndex().toString(), FRANCHISEE);
             return "FRANCHISEE Log out";
         } else if (signOutRequest.getUserSelector().equals(EMPLOYEE) && signOutRequest.getEmployeeIndex() != null) {
             employeeTokenRepository.deleteByEmployeeEntity_Id(signOutRequest.getEmployeeIndex());
-            userPushTokenRepository.deleteByUserIdAndUserType(signOutRequest.getEmployeeIndex().toString(), EMPLOYEE);
+            userPushTokenRepository.deleteByUserIdAndUserSelector(signOutRequest.getEmployeeIndex().toString(), EMPLOYEE);
             return "EMPLOYEE Log out";
         } else {
             throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid Parameter(FRANCHISEE or EMPLOYEE)");

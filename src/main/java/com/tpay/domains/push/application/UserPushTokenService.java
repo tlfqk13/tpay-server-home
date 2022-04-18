@@ -13,8 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@RequiredArgsConstructor
+import static com.tpay.commons.util.UserSelector.*;
+
+
 @Service
+@RequiredArgsConstructor
 public class UserPushTokenService {
 
     private final UserPushTokenRepository userPushTokenRepository;
@@ -22,7 +25,7 @@ public class UserPushTokenService {
     @Transactional
     public void save(UserPushTokenEntity userPushTokenEntity) {
 
-        Optional<UserPushTokenEntity> optionalUserPushTokenEntity = userPushTokenRepository.findByUserIdAndUserType(userPushTokenEntity.getUserId(), userPushTokenEntity.getUserSelector());
+        Optional<UserPushTokenEntity> optionalUserPushTokenEntity = userPushTokenRepository.findByUserIdAndUserSelector(userPushTokenEntity.getUserId(), userPushTokenEntity.getUserSelector());
         if (optionalUserPushTokenEntity.isEmpty()) {
             userPushTokenRepository.save(userPushTokenEntity);
         } else {
@@ -33,19 +36,19 @@ public class UserPushTokenService {
 
     @Transactional
     public Optional<UserPushTokenEntity> findByUserIdAndUserType(Long userId, UserSelector userType) {
-        return userPushTokenRepository.findByUserIdAndUserType(userId, userType);
+        return userPushTokenRepository.findByUserIdAndUserSelector(userId, userType);
     }
 
     @Transactional
     public UserPushTokenEntity findByFranchiseeIndex(Long franchiseeIndex) {
-        return userPushTokenRepository.findByUserIdAndUserType(franchiseeIndex, UserSelector.FRANCHISEE)
+        return userPushTokenRepository.findByUserIdAndUserSelector(franchiseeIndex, FRANCHISEE)
             .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "findByFranchiseeIndex Error"));
     }
 
     public List<String> findToken(String topic) {
         List<String> tokenList = new ArrayList<>();
         if (topic.equals("FRANCHISEE")) {
-            List<UserPushTokenEntity> franchisee = userPushTokenRepository.findByUserType("FRANCHISEE");
+            List<UserPushTokenEntity> franchisee = userPushTokenRepository.findByUserSelector(FRANCHISEE);
             franchisee.forEach(entity -> tokenList.add(entity.getUserToken()));
         } else if (topic.equals("ALL")) {
             List<UserPushTokenEntity> all = userPushTokenRepository.findAll();

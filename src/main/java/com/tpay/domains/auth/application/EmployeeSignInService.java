@@ -32,7 +32,6 @@ public class EmployeeSignInService {
 
     private final PushNotificationService pushNotificationService;
     private final UserPushTokenService userPushTokenService;
-    private final PushHistorySaveService pushHistorySaveService;
 
     @Transactional
     public EmployeeTokenInfo signIn(String userId, String password) {
