@@ -4,6 +4,8 @@ import com.tpay.commons.push.PushCategoryType;
 import com.tpay.commons.push.PushType;
 import com.tpay.domains.push.application.dto.AdminNotificationDto;
 import com.tpay.domains.push.application.dto.NotificationDto;
+import com.tpay.domains.push.domain.SubscribeType;
+import com.tpay.domains.push.domain.TopicType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,11 +24,11 @@ public class AdminPushService {
 
     @Transactional
     public AdminNotificationDto.Response sendMessageByAdmin(AdminNotificationDto.Request adminRequest) {
-        String topic = "ALL";
-        List<String> subscribeList = topicSubscribeService.subscribe(topic);
-        NotificationDto.Request request = new NotificationDto.Request(PushCategoryType.CASE_FIFTEEN, PushType.TOPIC, topic, adminRequest.getTitle(), adminRequest.getBody());
+        TopicType topic = TopicType.ALL;
+        List<String> subscribeList = topicSubscribeService.subscribeByTopic(topic, SubscribeType.SUBSCRIBE);
+        NotificationDto.Request request = new NotificationDto.Request(PushCategoryType.CASE_FIFTEEN, PushType.TOPIC, topic.toString(), adminRequest.getTitle(), adminRequest.getBody());
         String send = pushNotificationService.sendMessageByTopic(request);
-        topicSubscribeService.unsubscribe(topic);
+        topicSubscribeService.subscribeByTopic(topic, SubscribeType.UNSUBSCRIBE);
         subscribeList.stream().map(userPushTokenService::findByToken).forEach(entity -> pushHistorySaveService.saveHistory(request, send, entity));
         return AdminNotificationDto.Response.builder()
             .message(send)

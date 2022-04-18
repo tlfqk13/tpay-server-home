@@ -29,10 +29,16 @@ public class PointDeleteService {
     public String deletePoint() {
         LocalDate disappearDate = DisappearDate.DISAPPEAR_DATE.getDisappearDate();
         List<DeleteTargetList> targetIdList = pointRepository.findTargetIdList(disappearDate);
-        List<Long> collect = targetIdList.stream().map(DeleteTargetList::getId).collect(Collectors.toList());
-        collect.stream().map(id -> pointRepository.findById(id).orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid Point Id")))
+        if(targetIdList.isEmpty()) {
+            System.out.println("Nothing to Update - Point Deleted");
+            return "Nothing to Update - Point Deleted";
+        }
+        else {
+            List<Long> collect = targetIdList.stream().map(DeleteTargetList::getId).collect(Collectors.toList());
+            collect.stream().map(id -> pointRepository.findById(id).orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid Point Id")))
                 .map(PointDeletedEntity::new).forEach(pointDeletedRepository::save);
-        pointRepository.deleteByIdList(collect);
-        return targetIdList.size() + "건의 데이터가 삭제되었습니다.";
+            pointRepository.deleteByIdList(collect);
+            return targetIdList.size() + "건의 데이터가 삭제되었습니다.";
+        }
     }
 }

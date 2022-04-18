@@ -33,12 +33,11 @@ public class PointConfirmedService {
 
     @Transactional
     @Scheduled(cron = "0 0 16 * * *")
-    public String updateStatus() {
+    public void updateStatus() {
         LocalDate scheduledDate = LocalDate.now().minusWeeks(2);
         Optional<List<StatusUpdateResponseInterface>> needUpdateEntity = pointScheduledRepository.findNeedUpdateEntity(scheduledDate);
         if (needUpdateEntity.get().isEmpty()) {
-            System.out.println("Nothing to Update Status");
-            return "Nothing to Update Status";
+            System.out.println("Nothing to Update - Point Status");
         } else {
 
             List<Long> targetList = new ArrayList<>();
@@ -66,7 +65,6 @@ public class PointConfirmedService {
 
             }
             System.out.println(targetList.size() + "Entity was Updated");
-            return targetList.size() + "Entity was Updated";
         }
     }
 }

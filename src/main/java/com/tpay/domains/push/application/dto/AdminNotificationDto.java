@@ -14,6 +14,7 @@ public class AdminNotificationDto {
 
     @Builder
     @AllArgsConstructor
+    @Getter
     public static class Response {
         private String message;
     }

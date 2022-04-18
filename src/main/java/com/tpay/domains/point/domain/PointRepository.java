@@ -162,7 +162,7 @@ public interface PointRepository extends JpaRepository<PointEntity, Long> {
 
     @Query(value = "select id from points\n" +
         "where created_date <= :disappearDate", nativeQuery = true)
-    List<DeleteTargetList> findTargetIdList(LocalDate disappearDate);
+    List<DeleteTargetList> findTargetIdList(@Param("disappearDate") LocalDate disappearDate);
 
     @Query(value = "delete from points\n" +
         "where id in :idList", nativeQuery = true)

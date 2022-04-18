@@ -3,6 +3,7 @@ package com.tpay.domains.push.application;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.util.UserSelector;
+import com.tpay.domains.push.domain.TopicType;
 import com.tpay.domains.push.domain.UserPushTokenEntity;
 import com.tpay.domains.push.domain.UserPushTokenRepository;
 import lombok.RequiredArgsConstructor;
@@ -45,12 +46,16 @@ public class UserPushTokenService {
             .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "findByFranchiseeIndex Error"));
     }
 
-    public List<String> findToken(String topic) {
+    public Optional<UserPushTokenEntity> findOptionalByFranchiseeIndex(Long franchiseeIndex){
+        return userPushTokenRepository.findByUserIdAndUserSelector(franchiseeIndex, FRANCHISEE);
+    }
+
+    public List<String> findTokenByTopic(TopicType topic) {
         List<String> tokenList = new ArrayList<>();
-        if (topic.equals("FRANCHISEE")) {
+        if (topic.equals(TopicType.FRANCHISEE)) {
             List<UserPushTokenEntity> franchisee = userPushTokenRepository.findByUserSelector(FRANCHISEE);
             franchisee.forEach(entity -> tokenList.add(entity.getUserToken()));
-        } else if (topic.equals("ALL")) {
+        } else if (topic.equals(TopicType.ALL)) {
             List<UserPushTokenEntity> all = userPushTokenRepository.findAll();
             all.forEach(entity -> tokenList.add(entity.getUserToken()));
         } else {
