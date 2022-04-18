@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -20,7 +22,7 @@ public class UserPushTokenService {
     @Transactional
     public void save(UserPushTokenEntity userPushTokenEntity) {
 
-        Optional<UserPushTokenEntity> optionalUserPushTokenEntity = userPushTokenRepository.findByUserIdAndUserType(userPushTokenEntity.getUserId(), userPushTokenEntity.getUserType());
+        Optional<UserPushTokenEntity> optionalUserPushTokenEntity = userPushTokenRepository.findByUserIdAndUserType(userPushTokenEntity.getUserId(), userPushTokenEntity.getUserSelector());
         if (optionalUserPushTokenEntity.isEmpty()) {
             userPushTokenRepository.save(userPushTokenEntity);
         } else {
@@ -30,13 +32,37 @@ public class UserPushTokenService {
     }
 
     @Transactional
-    public Optional<UserPushTokenEntity> findByUserIdAndUserType(String userId, UserSelector userType) {
+    public Optional<UserPushTokenEntity> findByUserIdAndUserType(Long userId, UserSelector userType) {
         return userPushTokenRepository.findByUserIdAndUserType(userId, userType);
     }
 
     @Transactional
     public UserPushTokenEntity findByFranchiseeIndex(Long franchiseeIndex) {
-        return userPushTokenRepository.findByUserIdAndUserType(franchiseeIndex.toString(), UserSelector.FRANCHISEE)
+        return userPushTokenRepository.findByUserIdAndUserType(franchiseeIndex, UserSelector.FRANCHISEE)
             .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "findByFranchiseeIndex Error"));
+    }
+
+    public List<String> findToken(String topic) {
+        List<String> tokenList = new ArrayList<>();
+        if (topic.equals("FRANCHISEE")) {
+            List<UserPushTokenEntity> franchisee = userPushTokenRepository.findByUserType("FRANCHISEE");
+            franchisee.forEach(entity -> tokenList.add(entity.getUserToken()));
+        } else if (topic.equals("ALL")) {
+            List<UserPushTokenEntity> all = userPushTokenRepository.findAll();
+            all.forEach(entity -> tokenList.add(entity.getUserToken()));
+        } else {
+            throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "topic must FRANCHISEE or ALL");
+        }
+        return tokenList;
+
+    }
+
+    public UserPushTokenEntity findByToken(String token) {
+        Optional<UserPushTokenEntity> byUserToken = userPushTokenRepository.findByUserToken(token);
+        if (byUserToken.isEmpty()) {
+            System.out.println("User Not exists in token table. token : " + token);
+        }
+
+        return byUserToken.get();
     }
 }

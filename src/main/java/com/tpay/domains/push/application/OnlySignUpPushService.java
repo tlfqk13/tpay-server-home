@@ -14,8 +14,8 @@ import java.util.List;
 
 import static com.tpay.commons.push.PushCategoryType.CASE_ONE;
 import static com.tpay.commons.push.PushType.TOKEN;
-import static com.tpay.commons.util.converter.DateConverter.stringToLocalDate;
 import static com.tpay.commons.util.UserSelector.FRANCHISEE;
+import static com.tpay.commons.util.converter.DateConverter.stringToLocalDate;
 import static com.tpay.domains.franchisee_applicant.domain.FranchiseeStatus.INIT;
 
 
@@ -44,7 +44,7 @@ public class OnlySignUpPushService {
                 Math.abs(Period.between(createdDate, now).getDays()) >= 14) {
 
                 UserPushTokenEntity userPushTokenEntity =
-                    userPushTokenService.findByUserIdAndUserType(franchiseeApplicantInfoInterface.getFranchiseeApplicantIndex().toString(), FRANCHISEE)
+                    userPushTokenService.findByUserIdAndUserType(franchiseeApplicantInfoInterface.getFranchiseeApplicantIndex(), FRANCHISEE)
                         .orElseThrow();
 
                 NotificationDto.Request request = NotificationDto.Request.builder()

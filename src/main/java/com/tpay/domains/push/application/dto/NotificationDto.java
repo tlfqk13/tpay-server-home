@@ -31,6 +31,15 @@ public class NotificationDto {
             this.link = pushCategoryType.getLink();
         }
 
+        public Request(PushCategoryType pushCategoryType, PushType pushType, String pushTypeValue, String title, String body) {
+            this.title = title;
+            this.body = body;
+            this.pushType = pushType;
+            this.pushTypeValue = pushTypeValue;
+            this.pushCategory = pushCategoryType.getPushCategory();
+            this.link = pushCategoryType.getLink();
+        }
+
         public Request setFrontTitle(String message) {
             this.title = message + title;
             return this;
