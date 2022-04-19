@@ -3,6 +3,7 @@ package com.tpay.domains.push.application;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.TopicManagementResponse;
+import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
 import com.tpay.domains.push.domain.SubscribeType;
 import com.tpay.domains.push.domain.TopicType;
@@ -36,10 +37,10 @@ public class TopicSubscribeService {
         return token;
     }
 
-    public List<String> subscribeByFranchiseeApplicant(List<FranchiseeApplicantEntity> franchiseeApplicantEntityList, TopicType topic, SubscribeType subscribeType) {
+    public List<String> subscribeByFranchisee(List<FranchiseeEntity> franchiseeEntityList, TopicType topic, SubscribeType subscribeType) {
         List<String> token = new ArrayList<>();
-        for (FranchiseeApplicantEntity franchiseeApplicantEntity : franchiseeApplicantEntityList) {
-            Optional<UserPushTokenEntity> optionalByFranchiseeIndex = userPushTokenService.findOptionalByFranchiseeIndex(franchiseeApplicantEntity.getFranchiseeEntity().getId());
+        for (FranchiseeEntity franchiseeEntity : franchiseeEntityList) {
+            Optional<UserPushTokenEntity> optionalByFranchiseeIndex = userPushTokenService.findOptionalByFranchiseeIndex(franchiseeEntity.getId());
             optionalByFranchiseeIndex.ifPresent(userPushTokenEntity -> token.add(userPushTokenEntity.getUserToken()));
         }
 

@@ -4,5 +4,7 @@ public enum TopicType {
     FRANCHISEE,
     EMPLOYEE,
     ALL,
-    REJECTED
+    REJECTED,
+    INIT,
+    DISAPPEAR
 }
