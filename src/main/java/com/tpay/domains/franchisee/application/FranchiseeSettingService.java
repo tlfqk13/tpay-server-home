@@ -2,7 +2,7 @@ package com.tpay.domains.franchisee.application;
 
 import com.tpay.domains.franchisee.application.dto.FranchiseeSettingDto;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
-import com.tpay.domains.franchisee.domain.SettingSelector;
+import com.tpay.commons.util.SettingSelector;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

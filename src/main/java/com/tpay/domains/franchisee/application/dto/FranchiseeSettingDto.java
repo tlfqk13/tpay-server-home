@@ -1,6 +1,6 @@
 package com.tpay.domains.franchisee.application.dto;
 
-import com.tpay.domains.franchisee.domain.SettingSelector;
+import com.tpay.commons.util.SettingSelector;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
