@@ -22,7 +22,7 @@ public class PointDeleteService {
     private final PointDeletedRepository pointDeletedRepository;
 
     @Transactional
-    @Scheduled(cron = "0 0 16 * * *")
+    @Scheduled(cron = "0 0 23 * * *")
     public String deletePoint() {
         LocalDateTime disappearDate = DisappearDate.DISAPPEAR_DATE.getDisappearDate();
         List<PointEntity> pointEntityList = pointRepository.findByCreatedDateBefore(disappearDate);
