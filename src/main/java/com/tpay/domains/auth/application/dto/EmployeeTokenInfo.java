@@ -19,4 +19,6 @@ public class EmployeeTokenInfo {
     private LocalDateTime registeredDate;
     private Long franchiseeIndex;
     private FranchiseeStatus franchiseeStatus;
+    private boolean isActiveSound;
+    private boolean isActiveVibration;
 }

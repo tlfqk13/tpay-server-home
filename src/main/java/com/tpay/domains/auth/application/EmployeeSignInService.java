@@ -63,6 +63,8 @@ public class EmployeeSignInService {
             .registeredDate(employeeEntity.getCreatedDate())
             .franchiseeIndex(employeeEntity.getFranchiseeEntity().getId())
             .franchiseeStatus(franchiseeApplicantEntity.getFranchiseeStatus())
+            .isActiveSound(employeeEntity.isActiveSound())
+            .isActiveVibration(employeeEntity.isActiveVibration())
             .build();
 
 
