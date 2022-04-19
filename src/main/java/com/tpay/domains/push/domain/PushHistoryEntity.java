@@ -1,5 +1,6 @@
 package com.tpay.domains.push.domain;
 
+import com.tpay.commons.util.UserSelector;
 import com.tpay.domains.BaseTimeEntity;
 import lombok.*;
 
@@ -27,5 +28,11 @@ public class PushHistoryEntity extends BaseTimeEntity {
     private String link;
 
     private String response;
+
+    @Enumerated(EnumType.STRING)
+    private UserSelector userSelector;
+    private Long userId;
+
+    private Boolean isRead;
 
 }

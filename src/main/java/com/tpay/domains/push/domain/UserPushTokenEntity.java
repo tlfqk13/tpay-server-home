@@ -19,11 +19,11 @@ public class UserPushTokenEntity {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "user_type")
-    private UserSelector userType;
+    @Column(name = "user_selector")
+    private UserSelector userSelector;
 
     @Column(name = "user_id")
-    private String userId;
+    private Long userId;
 
     @Column(name = "user_token")
     private String userToken;

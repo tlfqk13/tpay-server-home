@@ -21,6 +21,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -87,10 +88,9 @@ public class PointFindService {
     }
 
     public PointTotalResponseInterface findPointsTotal(Long franchiseeIndex) {
-        LocalDate disappearDate = DisappearDate.DISAPPEAR_DATE.getDisappearDate();
+        LocalDateTime disappearDate = DisappearDate.DISAPPEAR_DATE.getDisappearDate();
         return pointRepository.findPointsTotal(franchiseeIndex, disappearDate);
     }
-
 
     public List<AdminPointFindResponseInterface> findPointsAdmin(Boolean isAll, WithdrawalStatus withdrawalStatus) {
         List<AdminPointFindResponseInterface> pointFindResponseInterfaceList;
