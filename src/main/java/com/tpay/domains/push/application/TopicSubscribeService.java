@@ -4,7 +4,6 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.TopicManagementResponse;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
-import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
 import com.tpay.domains.push.domain.SubscribeType;
 import com.tpay.domains.push.domain.TopicType;
 import com.tpay.domains.push.domain.UserPushTokenEntity;
@@ -44,17 +43,23 @@ public class TopicSubscribeService {
             optionalByFranchiseeIndex.ifPresent(userPushTokenEntity -> token.add(userPushTokenEntity.getUserToken()));
         }
 
-        try {
-            if (subscribeType.equals(SubscribeType.SUBSCRIBE)) {
-                TopicManagementResponse response = FirebaseMessaging.getInstance().subscribeToTopic(token, topic.toString());
-                System.out.println(response.getSuccessCount() + "token were subscribed successfully(Applicant Entity)");
-            } else if (subscribeType.equals(SubscribeType.UNSUBSCRIBE)) {
-                TopicManagementResponse response = FirebaseMessaging.getInstance().unsubscribeFromTopic(token, topic.toString());
-                System.out.println(response.getSuccessCount() + "token were subscribed successfully(Applicant Entity)");
+        if (token.isEmpty()) {
+            // FranchiseeEntity 목록이 user_push_token 테이블에 하나도 맵핑되지 않았을 때.
+            System.out.println("any PushToken added");
+            return List.of("any PushToken added");
+        } else {
+            try {
+                if (subscribeType.equals(SubscribeType.SUBSCRIBE)) {
+                    TopicManagementResponse response = FirebaseMessaging.getInstance().subscribeToTopic(token, topic.toString());
+                    System.out.println(response.getSuccessCount() + "token were subscribed successfully(Applicant Entity)");
+                } else if (subscribeType.equals(SubscribeType.UNSUBSCRIBE)) {
+                    TopicManagementResponse response = FirebaseMessaging.getInstance().unsubscribeFromTopic(token, topic.toString());
+                    System.out.println(response.getSuccessCount() + "token were unsubscribed successfully(Applicant Entity)");
+                }
+            } catch (FirebaseMessagingException e) {
+                e.printStackTrace();
             }
-        } catch (FirebaseMessagingException e) {
-            e.printStackTrace();
+            return token;
         }
-        return token;
     }
 }

@@ -3,6 +3,7 @@ package com.tpay.domains.refund.domain;
 import com.tpay.domains.refund.application.dto.RefundFindResponseInterface;
 import com.tpay.domains.sale.application.dto.SaleAnalysisFindResponseInterface;
 import com.tpay.domains.sale.application.dto.SaleStatisticsResponseInterface;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -235,4 +236,8 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
         @Param("franchiseeIndex") Long franchiseeIndex,
         @Param("startDate") String startDateQueryTest,
         @Param("endDate") String endDateQueryTest);
+
+
+    @EntityGraph(attributePaths = {"orderEntity"})
+    List<RefundEntity> findByCreatedDateBetween(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 }

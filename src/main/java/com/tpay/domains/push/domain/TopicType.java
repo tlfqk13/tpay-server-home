@@ -6,5 +6,8 @@ public enum TopicType {
     ALL,
     REJECTED,
     INIT,
-    DISAPPEAR
+    DISAPPEAR,
+    STAT_MONTH,
+    STAT_YEAR,
+    VAT
 }
