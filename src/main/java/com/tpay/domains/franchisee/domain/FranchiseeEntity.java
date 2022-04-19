@@ -84,6 +84,12 @@ public class FranchiseeEntity extends BaseTimeEntity {
     @Column(name = "popUp", length = 1)
     private boolean popUp;
 
+    @Column
+    private boolean isActiveSound;
+
+    @Column
+    private boolean isActiveVibration;
+
     @Builder
     public FranchiseeEntity(
         String businessNumber,
@@ -120,7 +126,8 @@ public class FranchiseeEntity extends BaseTimeEntity {
         this.isTaxRefundShop = isTaxRefundShop;
         this.isRefundOnce = false;
         this.popUp = true;
-
+        this.isActiveSound = true;
+        this.isActiveVibration = true;
     }
 
     public FranchiseeEntity changeBalance(SignType signType, long change) {
@@ -164,5 +171,12 @@ public class FranchiseeEntity extends BaseTimeEntity {
 
     public void popUpFalse() {
         this.popUp = false;
+    }
+
+    public void updateSound(boolean isActiveSound){
+        this.isActiveSound = isActiveSound;
+    }
+    public void updateVibration(boolean isActiveVibration){
+        this.isActiveVibration = isActiveVibration;
     }
 }
