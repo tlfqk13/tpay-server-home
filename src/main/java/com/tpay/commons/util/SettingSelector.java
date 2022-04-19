@@ -1,4 +1,4 @@
-package com.tpay.domains.franchisee.domain;
+package com.tpay.commons.util;
 
 public enum SettingSelector {
     SOUND,

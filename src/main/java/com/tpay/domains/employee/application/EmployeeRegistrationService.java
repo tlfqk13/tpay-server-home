@@ -39,6 +39,8 @@ public class EmployeeRegistrationService {
             .password(passwordEncoder.encode(password))
             .franchiseeEntity(franchiseeEntity)
             .isDelete(false)
+            .isActiveSound(true)
+            .isActiveVibration(true)
             .build();
 
         return employeeRepository.save(employeeEntity);
