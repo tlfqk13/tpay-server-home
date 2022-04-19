@@ -12,7 +12,7 @@ public interface UserPushTokenRepository extends JpaRepository<UserPushTokenEnti
 
     Optional<UserPushTokenEntity> findByUserIdAndUserSelector(Long userId, UserSelector userSelector);
 
-    void deleteByUserIdAndUserSelector(String userId, UserSelector userSelector);
+    void deleteByUserIdAndUserSelector(Long userId, UserSelector userSelector);
 
     List<UserPushTokenEntity> findByUserSelector(UserSelector userSelector);
 
