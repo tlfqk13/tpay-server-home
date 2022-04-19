@@ -75,8 +75,8 @@ public class FranchiseeSignUpService {
         franchiseeApplicantSaveService.save(franchiseeEntity);
 
         UserPushTokenEntity userPushTokenEntity = UserPushTokenEntity.builder()
-            .userType(UserSelector.FRANCHISEE)
-            .userId(save.getId().toString())
+            .userSelector(UserSelector.FRANCHISEE)
+            .userId(save.getId())
             .userToken(request.getPushToken())
             .build();
         userPushTokenService.save(userPushTokenEntity);

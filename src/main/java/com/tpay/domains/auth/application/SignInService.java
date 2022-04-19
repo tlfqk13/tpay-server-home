@@ -64,8 +64,8 @@ public class SignInService {
         Long userId = signInRequest.getUserSelector() == FRANCHISEE ? signInTokenInfo.getFranchiseeIndex() : signInTokenInfo.getEmployeeIndex();
 
         UserPushTokenEntity userPushTokenEntity = UserPushTokenEntity.builder()
-            .userType(signInRequest.getUserSelector())
-            .userId(userId.toString())
+            .userSelector(signInRequest.getUserSelector())
+            .userId(userId)
             .userToken(signInRequest.getPushToken())
             .build();
 

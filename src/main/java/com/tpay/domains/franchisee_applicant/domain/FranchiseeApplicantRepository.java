@@ -74,5 +74,6 @@ public interface FranchiseeApplicantRepository
         "      order by franchiseeApplicantIndex desc;", nativeQuery = true)
     List<FranchiseeApplicantInfoInterface> filterBothNativeQuery(String statusFilter);
 
+    List<FranchiseeApplicantEntity> findByFranchiseeStatus(FranchiseeStatus franchiseeStatus);
 
 }

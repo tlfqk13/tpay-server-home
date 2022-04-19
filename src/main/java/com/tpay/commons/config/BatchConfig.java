@@ -6,6 +6,7 @@ import com.google.firebase.FirebaseOptions;
 import com.tpay.commons.custom.CustomValue;
 import com.tpay.domains.batch.point_batch.application.PointConfirmedService;
 import com.tpay.domains.batch.point_batch.application.PointDeleteService;
+import com.tpay.domains.batch.push_batch.application.PushBatchService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
@@ -24,6 +25,8 @@ public class BatchConfig implements ApplicationListener<ContextRefreshedEvent> {
     private final PointConfirmedService pointConfirmedService;
     private final PointDeleteService pointDeleteService;
 
+    private final PushBatchService pushBatchService;
+
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         //파이어베이스 init
@@ -34,6 +37,7 @@ public class BatchConfig implements ApplicationListener<ContextRefreshedEvent> {
         pointDeleteService.deletePoint();
 
         //푸시 관련 init
+        pushBatchService.batchPush();
     }
 
     @Bean

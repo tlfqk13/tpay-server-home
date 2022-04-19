@@ -83,6 +83,9 @@ public class FranchiseeApplicantFindService {
     }
 
 
+    public List<FranchiseeApplicantEntity> findByFranchiseeStatus(FranchiseeStatus franchiseeStatus){
+        return franchiseeApplicantRepository.findByFranchiseeStatus(franchiseeStatus);
+    }
 
 
 }

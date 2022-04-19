@@ -10,6 +10,7 @@ import com.tpay.domains.employee.application.EmployeeFindService;
 import com.tpay.domains.employee.domain.EmployeeEntity;
 import com.tpay.domains.franchisee_applicant.application.FranchiseeApplicantFindService;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
+import com.tpay.domains.push.application.PushHistorySaveService;
 import com.tpay.domains.push.application.PushNotificationService;
 import com.tpay.domains.push.application.UserPushTokenService;
 import com.tpay.domains.push.application.dto.NotificationDto;

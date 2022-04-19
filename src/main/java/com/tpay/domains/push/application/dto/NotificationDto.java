@@ -31,6 +31,15 @@ public class NotificationDto {
             this.link = pushCategoryType.getLink();
         }
 
+        public Request(PushCategoryType pushCategoryType, PushType pushType, String pushTypeValue, String title, String body) {
+            this.title = title;
+            this.body = body;
+            this.pushType = pushType;
+            this.pushTypeValue = pushTypeValue;
+            this.pushCategory = pushCategoryType.getPushCategory();
+            this.link = pushCategoryType.getLink();
+        }
+
         public Request setFrontTitle(String message) {
             this.title = message + title;
             return this;
@@ -43,6 +52,11 @@ public class NotificationDto {
 
         public Request setBehindBodyPoint(Long amount) {
             this.body = body + NumberFormatConverter.addCommaToNumber(amount.toString()) + "P";
+            return this;
+        }
+
+        public Request setBehindLink(String addLink) {
+            this.link = link + "/" + addLink;
             return this;
         }
     }
