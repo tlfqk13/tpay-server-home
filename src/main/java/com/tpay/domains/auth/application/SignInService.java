@@ -41,6 +41,8 @@ public class SignInService {
                 .popUp(franchiseeTokenInfo.isPopUp())
                 .accessToken(franchiseeTokenInfo.getAccessToken())
                 .refreshToken(franchiseeTokenInfo.getRefreshToken())
+                .isActiveSound(franchiseeTokenInfo.isActiveSound())
+                .isActiveVibration(franchiseeTokenInfo.isActiveVibration())
                 .userSelector(FRANCHISEE)
                 .build();
         } else if (signInRequest.getUserSelector().equals(EMPLOYEE)) {
@@ -54,6 +56,8 @@ public class SignInService {
                 .refreshToken(employeeTokenInfo.getRefreshToken())
                 .franchiseeIndex(employeeTokenInfo.getFranchiseeIndex())
                 .franchiseeStatus(employeeTokenInfo.getFranchiseeStatus())
+                .isActiveSound(employeeTokenInfo.isActiveSound())
+                .isActiveVibration(employeeTokenInfo.isActiveVibration())
                 .userSelector(EMPLOYEE)
                 .build();
         } else {

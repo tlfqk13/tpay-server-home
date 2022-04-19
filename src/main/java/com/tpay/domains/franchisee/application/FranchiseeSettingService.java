@@ -21,11 +21,11 @@ public class FranchiseeSettingService {
 
         String s;
         if (request.getSettingSelector().equals(SettingSelector.SOUND)){
-            franchiseeEntity.updateSound(request.isActiveSound());
-            s = "SOUND : " + request.isActiveSound();
+            franchiseeEntity.updateSound(request.getIsActiveSound());
+            s = "SOUND : " + request.getIsActiveSound();
         } else if (request.getSettingSelector().equals(SettingSelector.VIBRATION)){
-            franchiseeEntity.updateVibration(request.isActiveVibration());
-            s = "VIBRATION : " + request.isActiveVibration();
+            franchiseeEntity.updateVibration(request.getIsActiveVibration());
+            s = "VIBRATION : " + request.getIsActiveVibration();
         } else {
             s = "Nothing to Update";
         }

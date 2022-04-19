@@ -20,11 +20,11 @@ public class EmployeeSettingService {
 
         String s;
         if (request.getSettingSelector().equals(SettingSelector.SOUND)) {
-            employeeEntity.updateSound(request.isActiveSound());
-            s = "SOUND : " + request.isActiveSound();
+            employeeEntity.updateSound(request.getIsActiveSound());
+            s = "SOUND : " + request.getIsActiveSound();
         } else if (request.getSettingSelector().equals(SettingSelector.VIBRATION)) {
-            employeeEntity.updateVibration(request.isActiveVibration());
-            s = "VIBRATION : " + request.isActiveVibration();
+            employeeEntity.updateVibration(request.getIsActiveVibration());
+            s = "VIBRATION : " + request.getIsActiveVibration();
         } else {
             s = "Nothing to Update";
         }

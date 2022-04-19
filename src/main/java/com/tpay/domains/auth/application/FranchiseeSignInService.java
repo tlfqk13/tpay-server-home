@@ -45,8 +45,8 @@ public class FranchiseeSignInService {
             .refreshToken(refreshToken.getValue())
             .popUp(franchiseeEntity.isPopUp())
             .signUpDate(franchiseeEntity.getCreatedDate())
-            .isActiveSound(franchiseeEntity.isActiveSound())
-            .isActiveVibration(franchiseeEntity.isActiveVibration())
+            .isActiveSound(franchiseeEntity.getIsActiveSound())
+            .isActiveVibration(franchiseeEntity.getIsActiveVibration())
             .build();
     }
 }

@@ -32,4 +32,6 @@ public class SignInTokenInfo {
     private String accessToken;
     private String refreshToken;
     private UserSelector userSelector;
+    private Boolean isActiveSound;
+    private Boolean isActiveVibration;
 }

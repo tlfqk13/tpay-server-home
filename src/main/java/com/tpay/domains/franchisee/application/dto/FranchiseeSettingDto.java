@@ -10,8 +10,8 @@ public class FranchiseeSettingDto {
     @Getter
     public static class Request {
         private SettingSelector settingSelector;
-        private boolean isActiveSound;
-        private boolean isActiveVibration;
+        private Boolean isActiveSound;
+        private Boolean isActiveVibration;
     }
 
     @Builder

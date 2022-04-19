@@ -30,7 +30,9 @@ public class PushHistorySaveService {
             .userSelector(userPushTokenEntity.getUserSelector())
             .userId(userPushTokenEntity.getUserId())
             .isRead(false)
+            .isDetail(false)
             .build();
+        pushHistoryEntity.updateIsDetail();
         pushHistoryRepository.save(pushHistoryEntity);
     }
 }

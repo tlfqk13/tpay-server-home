@@ -85,10 +85,10 @@ public class FranchiseeEntity extends BaseTimeEntity {
     private boolean popUp;
 
     @Column
-    private boolean isActiveSound;
+    private Boolean isActiveSound;
 
     @Column
-    private boolean isActiveVibration;
+    private Boolean isActiveVibration;
 
     @Builder
     public FranchiseeEntity(
@@ -173,10 +173,10 @@ public class FranchiseeEntity extends BaseTimeEntity {
         this.popUp = false;
     }
 
-    public void updateSound(boolean isActiveSound){
+    public void updateSound(Boolean isActiveSound){
         this.isActiveSound = isActiveSound;
     }
-    public void updateVibration(boolean isActiveVibration){
+    public void updateVibration(Boolean isActiveVibration){
         this.isActiveVibration = isActiveVibration;
     }
 }
