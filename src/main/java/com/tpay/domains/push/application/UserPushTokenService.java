@@ -2,7 +2,6 @@ package com.tpay.domains.push.application;
 
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
-import com.tpay.commons.util.UserSelector;
 import com.tpay.domains.push.domain.TopicType;
 import com.tpay.domains.push.domain.UserPushTokenEntity;
 import com.tpay.domains.push.domain.UserPushTokenRepository;
@@ -14,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.tpay.commons.util.UserSelector.*;
+import static com.tpay.commons.util.UserSelector.FRANCHISEE;
 
 
 @Service
@@ -41,7 +40,13 @@ public class UserPushTokenService {
             .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "findByFranchiseeIndex Error"));
     }
 
-    public Optional<UserPushTokenEntity> findOptionalByFranchiseeIndex(Long franchiseeIndex){
+
+    @Transactional
+    public Optional<UserPushTokenEntity> optionalFindByFranchiseeIndex(Long franchiseeIndex) {
+        return userPushTokenRepository.findByUserIdAndUserSelector(franchiseeIndex, FRANCHISEE);
+    }
+
+    public Optional<UserPushTokenEntity> findOptionalByFranchiseeIndex(Long franchiseeIndex) {
         return userPushTokenRepository.findByUserIdAndUserSelector(franchiseeIndex, FRANCHISEE);
     }
 

@@ -19,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -48,10 +49,13 @@ public class EmployeeSignInService {
         authService.updateOrSave(employeeEntity, refreshToken.getValue());
 
         //직원 로그인시 푸쉬
-        UserPushTokenEntity userPushTokenEntity = userPushTokenService.findByFranchiseeIndex(franchiseeApplicantEntity.getFranchiseeEntity().getId());
-        NotificationDto.Request request = new NotificationDto.Request(PushCategoryType.CASE_FOURTEEN, PushType.TOKEN, userPushTokenEntity.getUserToken());
-        NotificationDto.Request requestSetName = request.setFrontBody(employeeEntity.getName());
-        pushNotificationService.sendMessageByToken(requestSetName);
+        Optional<UserPushTokenEntity> optionalUserPushTokenEntity = userPushTokenService.optionalFindByFranchiseeIndex(franchiseeApplicantEntity.getFranchiseeEntity().getId());
+        if (optionalUserPushTokenEntity.isPresent()) {
+            UserPushTokenEntity userPushTokenEntity = optionalUserPushTokenEntity.get();
+            NotificationDto.Request request = new NotificationDto.Request(PushCategoryType.CASE_FOURTEEN, PushType.TOKEN, userPushTokenEntity.getUserToken());
+            NotificationDto.Request requestSetName = request.setFrontBody(employeeEntity.getName());
+            pushNotificationService.sendMessageByToken(requestSetName);
+        }
 
         return EmployeeTokenInfo.builder()
             .employeeIndex(employeeEntity.getId())
@@ -65,7 +69,5 @@ public class EmployeeSignInService {
             .isActiveSound(employeeEntity.getIsActiveSound())
             .isActiveVibration(employeeEntity.getIsActiveVibration())
             .build();
-
-
     }
 }
