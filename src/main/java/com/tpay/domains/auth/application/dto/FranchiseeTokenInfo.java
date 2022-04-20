@@ -18,4 +18,6 @@ public class FranchiseeTokenInfo {
     private String refreshToken;
     private LocalDateTime signUpDate;
     private boolean popUp;
+    private boolean isActiveSound;
+    private boolean isActiveVibration;
 }

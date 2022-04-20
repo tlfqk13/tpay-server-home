@@ -9,5 +9,6 @@ public enum TopicType {
     DISAPPEAR,
     STAT_MONTH,
     STAT_YEAR,
-    VAT
+    VAT,
+    CMS_BEFORE
 }

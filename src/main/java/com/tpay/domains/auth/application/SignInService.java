@@ -7,8 +7,6 @@ import com.tpay.domains.auth.application.dto.EmployeeTokenInfo;
 import com.tpay.domains.auth.application.dto.FranchiseeTokenInfo;
 import com.tpay.domains.auth.application.dto.SignInRequest;
 import com.tpay.domains.auth.application.dto.SignInTokenInfo;
-import com.tpay.domains.push.application.UserPushTokenService;
-import com.tpay.domains.push.domain.UserPushTokenEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,14 +22,12 @@ public class SignInService {
     private final FranchiseeSignInService franchiseeSignInService;
     private final EmployeeSignInService employeeSignInService;
 
-    private final UserPushTokenService userPushTokenService;
-
     @Transactional
     public SignInTokenInfo signIn(SignInRequest signInRequest) {
         SignInTokenInfo signInTokenInfo;
 
         if (signInRequest.getUserSelector().equals(FRANCHISEE)) {
-            FranchiseeTokenInfo franchiseeTokenInfo = franchiseeSignInService.signIn(signInRequest.getBusinessNumber(), signInRequest.getPassword());
+            FranchiseeTokenInfo franchiseeTokenInfo = franchiseeSignInService.signIn(signInRequest.getBusinessNumber(), signInRequest.getPassword(), signInRequest.getPushToken());
             signInTokenInfo = SignInTokenInfo.builder()
                 .signUpDate(franchiseeTokenInfo.getSignUpDate())
                 .franchiseeStatus(franchiseeTokenInfo.getFranchiseeStatus())
@@ -41,6 +37,8 @@ public class SignInService {
                 .popUp(franchiseeTokenInfo.isPopUp())
                 .accessToken(franchiseeTokenInfo.getAccessToken())
                 .refreshToken(franchiseeTokenInfo.getRefreshToken())
+                .isActiveSound(franchiseeTokenInfo.isActiveSound())
+                .isActiveVibration(franchiseeTokenInfo.isActiveVibration())
                 .userSelector(FRANCHISEE)
                 .build();
         } else if (signInRequest.getUserSelector().equals(EMPLOYEE)) {
@@ -54,23 +52,13 @@ public class SignInService {
                 .refreshToken(employeeTokenInfo.getRefreshToken())
                 .franchiseeIndex(employeeTokenInfo.getFranchiseeIndex())
                 .franchiseeStatus(employeeTokenInfo.getFranchiseeStatus())
+                .isActiveSound(employeeTokenInfo.isActiveSound())
+                .isActiveVibration(employeeTokenInfo.isActiveVibration())
                 .userSelector(EMPLOYEE)
                 .build();
         } else {
             throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Parse Failed");
         }
-
-
-        Long userId = signInRequest.getUserSelector() == FRANCHISEE ? signInTokenInfo.getFranchiseeIndex() : signInTokenInfo.getEmployeeIndex();
-
-        UserPushTokenEntity userPushTokenEntity = UserPushTokenEntity.builder()
-            .userSelector(signInRequest.getUserSelector())
-            .userId(userId)
-            .userToken(signInRequest.getPushToken())
-            .build();
-
-        userPushTokenService.save(userPushTokenEntity);
-
 
         return signInTokenInfo;
     }

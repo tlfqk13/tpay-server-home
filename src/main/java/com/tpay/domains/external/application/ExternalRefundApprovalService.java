@@ -7,7 +7,6 @@ import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidExternalRefundIndexException;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.push.PushCategoryType;
-import com.tpay.commons.push.PushType;
 import com.tpay.domains.external.application.dto.ExternalRefundApprovalRequest;
 import com.tpay.domains.external.application.dto.ExternalRefundResponse;
 import com.tpay.domains.external.domain.ExternalRefundEntity;
@@ -18,10 +17,7 @@ import com.tpay.domains.order.application.OrderSaveService;
 import com.tpay.domains.order.domain.OrderEntity;
 import com.tpay.domains.point.domain.SignType;
 import com.tpay.domains.point_scheduled.application.PointScheduledChangeService;
-import com.tpay.domains.push.application.PushNotificationService;
-import com.tpay.domains.push.application.UserPushTokenService;
-import com.tpay.domains.push.application.dto.NotificationDto;
-import com.tpay.domains.push.domain.UserPushTokenEntity;
+import com.tpay.domains.push.application.NonBatchPushService;
 import com.tpay.domains.refund.application.RefundSaveService;
 import com.tpay.domains.refund.domain.RefundEntity;
 import com.tpay.domains.refund_core.application.dto.RefundApproveRequest;
@@ -44,8 +40,7 @@ public class ExternalRefundApprovalService {
     private final RefundSaveService refundSaveService;
     private final PointScheduledChangeService pointScheduledChangeService;
     private final ExternalRefundFindService externalRefundFindService;
-    private final PushNotificationService pushNotificationService;
-    private final UserPushTokenService userPushTokenService;
+    private final NonBatchPushService nonBatchPushService;
 
     @Transactional
     public ExternalRefundResponse approve(ExternalRefundApprovalRequest externalRefundApprovalRequest) {
@@ -98,9 +93,7 @@ public class ExternalRefundApprovalService {
             externalRefundEntity.changeStatus(ExternalRefundStatus.APPROVE);
 
             if (!franchiseeEntity.getIsRefundOnce()) {
-                UserPushTokenEntity userPushTokenEntity = userPushTokenService.findByFranchiseeIndex(franchiseeEntity.getId());
-                NotificationDto.Request request = new NotificationDto.Request(PushCategoryType.CASE_FIVE, PushType.TOKEN, userPushTokenEntity.getUserToken());
-                pushNotificationService.sendMessageByToken(request);
+                nonBatchPushService.nonBatchPushNSave(PushCategoryType.CASE_FIVE, franchiseeEntity.getId());
                 franchiseeEntity.isRefundOnce();
             }
 

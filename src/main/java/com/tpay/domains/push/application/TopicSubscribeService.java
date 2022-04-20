@@ -39,7 +39,7 @@ public class TopicSubscribeService {
     public List<String> subscribeByFranchisee(List<FranchiseeEntity> franchiseeEntityList, TopicType topic, SubscribeType subscribeType) {
         List<String> token = new ArrayList<>();
         for (FranchiseeEntity franchiseeEntity : franchiseeEntityList) {
-            Optional<UserPushTokenEntity> optionalByFranchiseeIndex = userPushTokenService.findOptionalByFranchiseeIndex(franchiseeEntity.getId());
+            Optional<UserPushTokenEntity> optionalByFranchiseeIndex = userPushTokenService.optionalFindByFranchiseeIndex(franchiseeEntity.getId());
             optionalByFranchiseeIndex.ifPresent(userPushTokenEntity -> token.add(userPushTokenEntity.getUserToken()));
         }
 

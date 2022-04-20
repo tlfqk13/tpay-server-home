@@ -2,6 +2,7 @@ package com.tpay.domains.employee.application;
 
 
 import com.tpay.commons.exception.ExceptionState;
+import com.tpay.commons.exception.detail.AlreadyExistsException;
 import com.tpay.commons.exception.detail.InvalidPasswordException;
 import com.tpay.commons.regex.RegExType;
 import com.tpay.commons.regex.RegExUtils;
@@ -21,9 +22,13 @@ public class EmployeeRegistrationService {
     private final EmployeeRepository employeeRepository;
     private final FranchiseeFindService franchiseeFindService;
     private final PasswordEncoder passwordEncoder;
+    private final EmployeeFindService employeeFindService;
 
     public EmployeeEntity registration(Long franchiseeIndex, EmployeeRegistrationRequest employeeRegistrationRequest) {
 
+        if (employeeFindService.existsByUserId(employeeRegistrationRequest.getUserId())) {
+            throw new AlreadyExistsException(ExceptionState.ALREADY_EXISTS, "Already Exists UserID!");
+        }
 
         String password = employeeRegistrationRequest.getPassword();
         String passwordCheck = employeeRegistrationRequest.getPasswordCheck();
@@ -39,6 +44,8 @@ public class EmployeeRegistrationService {
             .password(passwordEncoder.encode(password))
             .franchiseeEntity(franchiseeEntity)
             .isDelete(false)
+            .isActiveSound(true)
+            .isActiveVibration(true)
             .build();
 
         return employeeRepository.save(employeeEntity);
