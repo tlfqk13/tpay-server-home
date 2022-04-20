@@ -86,7 +86,7 @@ public class PushBatchService {
         }
     }
 
-    @Scheduled(cron = "0 1 * * * *")
+    @Scheduled(cron = "0 1 15 * * *")
     private void caseEight() {
         TopicType topic = TopicType.DISAPPEAR;
         List<PointEntity> pointEntityList = pointRepository.findByCreatedDateBefore(DisappearDate.DISAPPEAR_ALERT_DATE.getDisappearDate());

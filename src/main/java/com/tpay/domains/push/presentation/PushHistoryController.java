@@ -17,7 +17,7 @@ public class PushHistoryController {
 
     private final PushHistoryService pushHistoryService;
 
-    @GetMapping("/push/{franchiseeIndex")
+    @GetMapping("/push/{franchiseeIndex}")
     public ResponseEntity<List<PushHistoryEntity>> findByFranchiseeIndex(@PathVariable Long franchiseeIndex) {
         List<PushHistoryEntity> byFranchiseeIndex = pushHistoryService.findByFranchiseeIndex(franchiseeIndex);
         return ResponseEntity.ok(byFranchiseeIndex);
