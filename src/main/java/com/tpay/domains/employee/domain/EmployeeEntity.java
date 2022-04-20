@@ -32,6 +32,9 @@ public class EmployeeEntity extends BaseTimeEntity {
     @NotNull
     private Boolean isDelete;
 
+    private Boolean isActiveSound;
+    private Boolean isActiveVibration;
+
     @ManyToOne
     @JoinColumn(name = "franchisee_id", nullable = false)
     private FranchiseeEntity franchiseeEntity;
@@ -47,9 +50,15 @@ public class EmployeeEntity extends BaseTimeEntity {
         return this;
     }
 
-
     public EmployeeEntity updateInfo(String name) {
         this.name = name;
         return this;
+    }
+
+    public void updateSound(Boolean isActiveSound){
+        this.isActiveSound = isActiveSound;
+    }
+    public void updateVibration(Boolean isActiveVibration){
+        this.isActiveVibration = isActiveVibration;
     }
 }

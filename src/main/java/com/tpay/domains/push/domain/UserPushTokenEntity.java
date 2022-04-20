@@ -1,6 +1,7 @@
 package com.tpay.domains.push.domain;
 
 import com.tpay.commons.util.UserSelector;
+import com.tpay.domains.BaseTimeEntity;
 import lombok.*;
 
 import javax.persistence.*;
@@ -12,7 +13,7 @@ import javax.persistence.*;
 @Builder
 @Table(name = "user_push_token")
 @Entity
-public class UserPushTokenEntity {
+public class UserPushTokenEntity extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
