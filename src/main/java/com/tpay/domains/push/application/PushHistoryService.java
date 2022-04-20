@@ -2,6 +2,7 @@ package com.tpay.domains.push.application;
 
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
+import com.tpay.domains.push.application.dto.CountIsReadDto;
 import com.tpay.domains.push.application.dto.UpdateIsReadDto;
 import com.tpay.domains.push.domain.PushHistoryEntity;
 import com.tpay.domains.push.domain.PushHistoryRepository;
@@ -30,5 +31,10 @@ public class PushHistoryService {
     public void updateIsRead(Long pushIndex, UpdateIsReadDto updateIsReadDto) {
         PushHistoryEntity pushHistoryEntity = pushHistoryRepository.findById(pushIndex).orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid PushIndex"));
         pushHistoryEntity.updateIsRead(updateIsReadDto.getIsRead());
+    }
+
+    public CountIsReadDto countIsRead(Long franchiseeIndex) {
+        long count = pushHistoryRepository.countByUserIdAndIsRead(franchiseeIndex, false);
+        return CountIsReadDto.builder().count(count).build();
     }
 }

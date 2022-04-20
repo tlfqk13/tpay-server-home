@@ -2,6 +2,7 @@ package com.tpay.domains.push.presentation;
 
 
 import com.tpay.domains.push.application.PushHistoryService;
+import com.tpay.domains.push.application.dto.CountIsReadDto;
 import com.tpay.domains.push.application.dto.UpdateIsReadDto;
 import com.tpay.domains.push.domain.PushHistoryEntity;
 import lombok.RequiredArgsConstructor;
@@ -33,5 +34,13 @@ public class PushHistoryController {
         @PathVariable Long pushIndex,
         @RequestBody UpdateIsReadDto updateIsReadDto) {
         pushHistoryService.updateIsRead(pushIndex, updateIsReadDto);
+    }
+
+    @GetMapping("/push/{franchiseeIndex}/count")
+    public ResponseEntity<CountIsReadDto> countIsRead(
+        @PathVariable Long franchiseeIndex
+    ) {
+        CountIsReadDto countIsReadDto = pushHistoryService.countIsRead(franchiseeIndex);
+        return ResponseEntity.ok(countIsReadDto);
     }
 }
