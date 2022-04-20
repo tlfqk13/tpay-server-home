@@ -12,6 +12,7 @@ import com.tpay.domains.push.domain.PushHistoryRepository;
 import com.tpay.domains.push.domain.SubscribeType;
 import com.tpay.domains.push.domain.TopicType;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -43,7 +44,7 @@ public class AdminPushService {
     }
 
     public PushFindDto.FindAllResponse findAll() {
-        List<PushHistoryEntity> pushHistoryEntityList = pushHistoryRepository.findAll();
+        List<PushHistoryEntity> pushHistoryEntityList = pushHistoryRepository.findAll(Sort.by(Sort.Direction.DESC,"id"));
         List<PushFindDto.Response> responseList = new ArrayList<>();
         for (PushHistoryEntity pushHistoryEntity : pushHistoryEntityList) {
             PushFindDto.Response response = PushFindDto.Response.builder()

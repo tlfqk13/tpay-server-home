@@ -54,6 +54,7 @@ public class PushBatchService {
         caseNine();
         caseTen();
         caseEleven();
+//        caseTwelve();
     }
 
 
@@ -152,6 +153,12 @@ public class PushBatchService {
     }
 
     // TODO: 2022/04/19 CASE 12랑 13 만들어야함
+    @Scheduled(cron = "0 0 0 4,9,14,19,24,29 * *")
+    private void caseTwelve() {
+        TopicType topic = TopicType.CMS_BEFORE;
+        int targetDay = LocalDate.now().plusDays(1).getDayOfMonth();
+
+    }
 
 
     private void pushNSave(TopicType topic, List<FranchiseeEntity> dateFilter, PushCategoryType pushCategoryType) {
