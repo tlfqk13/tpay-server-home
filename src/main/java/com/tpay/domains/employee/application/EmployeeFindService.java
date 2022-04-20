@@ -30,4 +30,9 @@ public class EmployeeFindService {
     public List<EmployeeFindResponseInterface> findAllByFranchiseeId(Long franchiseeIndex) {
         return employeeRepository.findAllByFranchiseeId(franchiseeIndex);
     }
+
+    public Boolean existsByUserId(String userId) {
+        return employeeRepository.existsByUserId(userId);
+    }
+
 }

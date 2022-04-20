@@ -19,4 +19,6 @@ public interface EmployeeRepository extends JpaRepository<EmployeeEntity, Long> 
 
 
     boolean existsByFranchiseeEntityIdAndUserId(Long franchiseeIndex, String userId);
+
+    boolean existsByUserId(String userId);
 }
