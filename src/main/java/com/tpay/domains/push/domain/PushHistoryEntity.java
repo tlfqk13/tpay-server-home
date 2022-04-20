@@ -36,9 +36,13 @@ public class PushHistoryEntity extends BaseTimeEntity {
     private Boolean isRead;
     private Boolean isDetail;
 
-    public void updateIsDetail(){
-        if (this.pushCategory.equals("3")|| this.pushCategory.equals("6")) {
+    public void updateIsDetail() {
+        if (this.pushCategory.equals("3") || this.pushCategory.equals("6")) {
             this.isDetail = true;
         }
+    }
+
+    public void updateIsRead(Boolean isRead) {
+        this.isRead = isRead;
     }
 }
