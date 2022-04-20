@@ -19,7 +19,7 @@ public enum PushCategoryType {
     CASE_ELEVEN("11", "ktp://notification", " 점주님, 부가세 신고기간이에요!\uD83D\uDE00", "지금 부가세 신고자료를 다운로드 받아보세요."),
     CASE_TWELVE("12", "ktp://notification", "\uD83D\uDC49내일은 환급수수료가 이체되는 날이에요", "마이페이지에서 ‘CMS 청구내역’을 확인해보세요!"),
     CASE_THIRTY("13", "ktp://notification", "환급수수료가 정상적으로 이체되었어요\uD83D\uDE00", "출금된 금액 : "),
-    CASE_FOURTEEN("14", "ktp://notification", "직원이 로그인했어요\uD83D\uDC4B", " 님이 직원 계정으로 로그인을 했어요."),
+    CASE_FOURTEEN("14", "ktp://notification", "직원이 로그인했어요\uD83D\uDC4B", "님이 직원 계정으로 로그인을 했어요."),
     CASE_FIFTEEN("15", "ktp://notification", "", "");
 
 
