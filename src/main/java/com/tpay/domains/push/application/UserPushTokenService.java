@@ -29,8 +29,8 @@ public class UserPushTokenService {
         if (optionalUserPushTokenEntity.isEmpty()) {
             userPushTokenRepository.save(userPushTokenEntity);
         } else {
+            userPushTokenRepository.findByUserToken(userPushTokenEntity.getUserToken()).ifPresent(entity -> userPushTokenRepository.deleteById(entity.getId()));
             optionalUserPushTokenEntity.get().updateToken(userPushTokenEntity.getUserToken());
-
         }
     }
 
