@@ -35,18 +35,7 @@ public class UserPushTokenService {
     }
 
     @Transactional
-    public UserPushTokenEntity findByFranchiseeIndex(Long franchiseeIndex) {
-        return userPushTokenRepository.findByUserIdAndUserSelector(franchiseeIndex, FRANCHISEE)
-            .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "findByFranchiseeIndex Error"));
-    }
-
-
-    @Transactional
     public Optional<UserPushTokenEntity> optionalFindByFranchiseeIndex(Long franchiseeIndex) {
-        return userPushTokenRepository.findByUserIdAndUserSelector(franchiseeIndex, FRANCHISEE);
-    }
-
-    public Optional<UserPushTokenEntity> findOptionalByFranchiseeIndex(Long franchiseeIndex) {
         return userPushTokenRepository.findByUserIdAndUserSelector(franchiseeIndex, FRANCHISEE);
     }
 
