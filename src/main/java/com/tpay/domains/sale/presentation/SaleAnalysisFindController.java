@@ -19,6 +19,7 @@ public class SaleAnalysisFindController {
 
     private final SaleAnalysisFindService saleAnalysisFindService;
 
+    // TODO: 2022/04/21 URI 변경
     @GetMapping("/sales/franchiseeV2/{franchiseeIndex}")
     public ResponseEntity<List<SaleAnalysisFindResponse>> findByDateRange(
         @PathVariable Long franchiseeIndex,
