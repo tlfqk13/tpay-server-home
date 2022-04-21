@@ -1,13 +1,15 @@
 package com.tpay.domains.sale.application;
 
 
-import com.tpay.commons.util.DateFilterV2;
+import com.tpay.commons.util.DateFilter;
 import com.tpay.domains.refund.domain.RefundRepository;
+import com.tpay.domains.sale.application.dto.SaleAnalysisFindResponse;
 import com.tpay.domains.sale.application.dto.SaleAnalysisFindResponseInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -15,39 +17,13 @@ public class SaleAnalysisFindService {
 
     private final RefundRepository refundRepository;
 
-    public List<SaleAnalysisFindResponseInterface> findByDateRange(
-        Long franchiseeIndex, DateFilterV2 dateFilterV2, String startDate, String endDate) {
-        String startDateQuery;
-        String endDateQuery;
-        if (dateFilterV2.equals(DateFilterV2.CUSTOM)) {
-            startDateQuery = startDate.replaceAll("-", "");
-            endDateQuery = endDate.replaceAll("-", "");
-        } else {
-            startDateQuery = dateFilterV2.getStartDate().replaceAll("-", "");
-            endDateQuery = dateFilterV2.getEndDate().replaceAll("-", "");
-        }
-        System.out.println("=====V2 Printer=====");
-        System.out.println("startDate : " + startDateQuery);
-        System.out.println("endDate   : " + endDateQuery);
-        System.out.println("=====V2 Printer=====");
-        List<SaleAnalysisFindResponseInterface> saleAnalysisFindResponseInterfaceList =
-            refundRepository.findSaleAnalysisV2(franchiseeIndex, startDateQuery, endDateQuery);
+    public List<SaleAnalysisFindResponse> findByDateRange(
+        Long franchiseeIndex, DateFilter dateFilter, String startDate, String endDate) {
 
-        return saleAnalysisFindResponseInterfaceList;
-    }
 
-    //테스트용 메서드
-    public List<String> testDateNativeQuery(
-        Long franchiseeIndex, DateFilterV2 dateFilterV2, String startDate, String endDate) {
-        String startDateQueryTest;
-        String endDateQueryTest;
-        if (dateFilterV2.equals(DateFilterV2.CUSTOM)) {
-            startDateQueryTest = startDate.replaceAll("-", "");
-            endDateQueryTest = endDate.replaceAll("-", "");
-        } else {
-            startDateQueryTest = dateFilterV2.getStartDate().replaceAll("-", "");
-            endDateQueryTest = dateFilterV2.getEndDate().replaceAll("-", "");
-        }
-        return refundRepository.dateTestNativeQuery(franchiseeIndex, startDateQueryTest, endDateQueryTest);
+        // Custom 구현시 Custom처리해야함
+        List<SaleAnalysisFindResponseInterface> saleAnalysis = refundRepository.findSaleAnalysis(franchiseeIndex, dateFilter.getStartDate(), dateFilter.getEndDate());
+        return saleAnalysis.stream().map(SaleAnalysisFindResponse::new).collect(Collectors.toList());
+
     }
 }

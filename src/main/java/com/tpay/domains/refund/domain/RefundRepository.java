@@ -92,68 +92,23 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
 
     @Query(
         value =
-            "select *,\n" +
-                "       (results.totalAmount - results.totalRefund) as actualAmount\n" +
-                "from (select date(o.created_date)                                                      as date,\n" +
-                "             cast(sum(if(r.refund_status = 'APPROVAL', o.tot_amt, 0)) as integer)      as totalAmount,\n" +
-                "             cast(sum(if(r.refund_status = 'APPROVAL', o.tot_vat, 0)) as integer)      as totalVat,\n" +
-                "             cast(sum(if(r.refund_status = 'APPROVAL', r.tot_refund, 0)) as integer)   as totalRefund,\n" +
-                "             cast(sum(if(r.refund_status = 'APPROVAL', p.change_value, 0)) as integer) as totalPoint,\n" +
-                "             sum(if(r.refund_status = 'APPROVAL', 1, 0))                               as saleCount,\n" +
-                "             sum(if(r.refund_status = 'CANCEL', 1, 0))                                 as cancelCount\n" +
-                "      from orders o\n" +
-                "               left join refund r\n" +
-                "                         on o.id = r.order_id\n" +
-                "               left join points p on o.id = p.order_id\n" +
-                "      where o.franchisee_id = :franchiseeIndex\n" +
-                "        and p.point_status = 'SAVE'\n" +
-                "        and o.created_date between :startDate\n" +
-                "          and :endDate\n" +
-                "      group by date(o.sale_datm)) as results\n" +
-                "order by date desc;",
+            "select date(o.created_date)                                                                   as date\n" +
+                "     , sum(if(r.refund_status = 0, tot_amt, 0))                                               as totalAmount\n" +
+                "     , sum(if(r.refund_status = 0, tot_refund, 0))                                            as totalRefund\n" +
+                "     , sum(if(r.refund_status = 0, tot_amt, 0)) - sum(if(r.refund_status = 0, tot_refund, 0)) as actualAmount\n" +
+                "     , sum(if(r.refund_status = 0, 1, 0))                                                     as saleCount\n" +
+                "     , sum(if(r.refund_status = 2, 1, 0))                                                     as cancelCount\n" +
+                "from orders o\n" +
+                "         left join refund r on o.id = r.order_id\n" +
+                "where o.franchisee_id = :franchiseeIndex\n" +
+                "  and o.created_date between :startDate and :endDate\n" +
+                "group by date(o.created_date)\n" +
+                "order by 1 desc",
         nativeQuery = true)
     List<SaleAnalysisFindResponseInterface> findSaleAnalysis(
         @Param("franchiseeIndex") Long franchiseeIndex,
-        @Param("startDate") LocalDateTime startDateTime,
-        @Param("endDate") LocalDateTime endDateTime);
-
-
-    @Query(
-        value =
-            "select *, (results.totalAmount - results.totalRefund) as actualAmount\n" +
-                "              from (select date(o.created_date)                                                      as date,\n" +
-                "                           cast(sum(if(r.refund_status = 'APPROVAL', o.tot_amt, 0)) as integer)      as totalAmount,\n" +
-                "                           cast(sum(if(r.refund_status = 'APPROVAL', o.tot_vat, 0)) as integer)      as totalVat,\n" +
-                "                           cast(sum(if(r.refund_status = 'APPROVAL', r.tot_refund, 0)) as integer)   as totalRefund,\n" +
-                "                           cast(sum(if(r.refund_status = 'APPROVAL', p.change_value, 0)) as integer) as totalPoint,\n" +
-                "                           sum(if(r.refund_status = 'APPROVAL', 1, 0))                               as saleCount,\n" +
-                "                           sum(if(r.refund_status = 'CANCEL', 1, 0))                                 as cancelCount\n" +
-                "                    from orders o\n" +
-                "                             left join refund r\n" +
-                "                                       on o.id = r.order_id\n" +
-                "                             left join points p on o.id = p.order_id\n" +
-                "                    where o.franchisee_id = :franchiseeIndex\n" +
-                "                      and p.point_status = 'SAVE'\n" +
-                "                      and replace(date(o.created_date),'-','') between :startDate and :endDate\n" +
-                "                    group by date(o.sale_datm)) as results\n" +
-                "              order by date desc;", nativeQuery = true)
-    List<SaleAnalysisFindResponseInterface> findSaleAnalysisV2(
-        @Param("franchiseeIndex") Long franchiseeIndex,
-        @Param("startDate") String startDate,
-        @Param("endDate") String endDate);
-
-
-    @Query(value = "select distinct substr(o.created_date, 1, 10) as date\n" +
-        "from orders o\n" +
-        "         left join refund r\n" +
-        "                   on o.id = r.order_id\n" +
-        "         left join points p on o.id = p.order_id\n" +
-        "where o.franchisee_id = :franchiseeIndex\n" +
-        "  and replace(substr(o.created_date,1,10), '-', '') between :startDate and :endDate", nativeQuery = true)
-    List<Object> dateReturnTest(
-        @Param("franchiseeIndex") Long franchiseeIndex,
-        @Param("startDate") String startDate,
-        @Param("endDate") String endDate);
+        @Param("startDate") LocalDate startDate,
+        @Param("endDate") LocalDate endDate);
 
     @Query(value = "select r.id           as refundIndex,\n" +
         "       purchs_sn      as orderNumber,\n" +
