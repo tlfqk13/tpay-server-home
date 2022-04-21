@@ -8,6 +8,8 @@ import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
 import com.tpay.domains.push.application.UserPushTokenService;
 import com.tpay.domains.push.domain.UserPushTokenEntity;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,7 @@ import static com.tpay.commons.util.UserSelector.FRANCHISEE;
 @RequiredArgsConstructor
 public class FranchiseeSignInService {
 
+    private final static Logger log = LoggerFactory.getLogger(FranchiseeSignInService.class);
     private final FranchiseeApplicantFindService franchiseeApplicantFindService;
     private final AuthService authService;
     private final PasswordEncoder passwordEncoder;
@@ -49,6 +52,7 @@ public class FranchiseeSignInService {
             .build();
 
         userPushTokenService.save(userPushTokenEntity);
+        log.debug("signIn UserToken [{}] : [{}] Save Successful", userPushTokenEntity.getUserId(), userPushTokenEntity.getUserToken());
 
         return FranchiseeTokenInfo.builder()
             .franchiseeIndex(franchiseeEntity.getId())
