@@ -14,11 +14,10 @@ public class EmployeeUserIdValidationController {
 
     private final EmployeeUserIdValidationService employeeUserIdValidationService;
 
-    @GetMapping("/validate/employee/{franchiseeIndex}/{userId}")
+    @GetMapping("/validate/employee/{userId}")
     public ResponseEntity<Boolean> validCheckUserId(
-        @PathVariable Long franchiseeIndex,
         @PathVariable String userId) {
-        boolean result = employeeUserIdValidationService.valid(franchiseeIndex, userId);
+        boolean result = employeeUserIdValidationService.valid(userId);
         return ResponseEntity.ok(result);
     }
 }
