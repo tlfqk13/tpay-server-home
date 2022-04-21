@@ -10,10 +10,7 @@ import com.tpay.domains.franchisee_applicant.domain.FranchiseeStatus;
 import com.tpay.domains.order.domain.OrderEntity;
 import com.tpay.domains.point.domain.PointEntity;
 import com.tpay.domains.point.domain.PointRepository;
-import com.tpay.domains.push.application.PushHistorySaveService;
-import com.tpay.domains.push.application.PushNotificationService;
-import com.tpay.domains.push.application.TopicSubscribeService;
-import com.tpay.domains.push.application.UserPushTokenService;
+import com.tpay.domains.push.application.*;
 import com.tpay.domains.push.application.dto.NotificationDto;
 import com.tpay.domains.push.domain.SubscribeType;
 import com.tpay.domains.push.domain.TopicType;
@@ -43,7 +40,7 @@ public class PushBatchService {
     private final PushNotificationService pushNotificationService;
     private final TopicSubscribeService topicSubscribeService;
     private final UserPushTokenService userPushTokenService;
-    private final PushHistorySaveService pushHistorySaveService;
+    private final PushHistoryService pushHistoryService;
     private final PointRepository pointRepository;
     private final RefundRepository refundRepository;
 
@@ -166,7 +163,7 @@ public class PushBatchService {
         NotificationDto.Request request = new NotificationDto.Request(pushCategoryType, PushType.TOPIC, topic.toString());
         String send = pushNotificationService.sendMessageByTopic(request);
         topicSubscribeService.subscribeByFranchisee(dateFilter, topic, SubscribeType.UNSUBSCRIBE);
-        subscribeList.stream().map(userPushTokenService::findByToken).forEach(entity -> pushHistorySaveService.saveHistory(request, send, entity));
+        subscribeList.stream().map(userPushTokenService::findByToken).forEach(entity -> pushHistoryService.saveHistory(request, send, entity));
         System.out.println("[" + LocalDateTime.now() + "] Pushed - " + pushCategoryType);
     }
 
