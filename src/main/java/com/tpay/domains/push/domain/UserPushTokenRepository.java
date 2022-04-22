@@ -1,20 +1,23 @@
 package com.tpay.domains.push.domain;
 
-import com.tpay.commons.util.UserSelector;
+import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface UserPushTokenRepository extends JpaRepository<UserPushTokenEntity, Long> {
 
-    Optional<UserPushTokenEntity> findByUserIdAndUserSelector(Long userId, UserSelector userSelector);
+    Optional<UserPushTokenEntity> findByFranchiseeEntityId(Long userId);
 
-    void deleteByUserIdAndUserSelector(Long userId, UserSelector userSelector);
+    Optional<UserPushTokenEntity> findByPushTokenEntity(PushTokenEntity pushTokenEntity);
 
-    List<UserPushTokenEntity> findByUserSelector(UserSelector userSelector);
+    boolean existsByFranchiseeEntity(FranchiseeEntity franchiseeEntity);
 
-    Optional<UserPushTokenEntity> findByUserToken(String userToken);
+    void deleteByFranchiseeEntity(FranchiseeEntity franchiseeEntity);
+
+    boolean existsByPushTokenEntity(PushTokenEntity pushTokenEntity);
+
+    void deleteByPushTokenEntity(PushTokenEntity pushTokenEntity);
 }

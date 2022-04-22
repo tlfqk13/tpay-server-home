@@ -3,17 +3,13 @@ package com.tpay.domains.sale.application.dto;
 public interface SaleAnalysisFindResponseInterface {
     String getDate();
 
-    String getTotalAmount();
+    Long getTotalAmount();
 
-    String getTotalVat();
+    Long getTotalRefund();
 
-    String getTotalRefund();
+    Long getActualAmount();
 
-    String getTotalPoint();
+    Long getSaleCount();
 
-    String getActualAmount();
-
-    long getSaleCount();
-
-    long getCancelCount();
+    Long getCancelCount();
 }

@@ -8,7 +8,7 @@ import java.util.Optional;
 
 @Repository
 public interface PushHistoryRepository extends JpaRepository<PushHistoryEntity, Long> {
-    Optional<List<PushHistoryEntity>> findByUserId(Long userId);
+    Optional<List<PushHistoryEntity>> findByUserIdOrderByIdDesc(Long userId);
 
     long countByUserIdAndIsRead(Long userId, Boolean isRead);
 }

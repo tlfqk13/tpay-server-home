@@ -21,7 +21,7 @@ public class TopicSubscribeService {
     private final UserPushTokenService userPushTokenService;
 
     public List<String> subscribeByTopic(TopicType topic, SubscribeType subscribeType) {
-        List<String> token = userPushTokenService.findTokenByTopic(topic);
+        List<String> token = userPushTokenService.findAllToken();
         try {
             if (subscribeType.equals(SubscribeType.SUBSCRIBE)) {
                 TopicManagementResponse response = FirebaseMessaging.getInstance().subscribeToTopic(token, topic.toString());
@@ -40,7 +40,7 @@ public class TopicSubscribeService {
         List<String> token = new ArrayList<>();
         for (FranchiseeEntity franchiseeEntity : franchiseeEntityList) {
             Optional<UserPushTokenEntity> optionalByFranchiseeIndex = userPushTokenService.optionalFindByFranchiseeIndex(franchiseeEntity.getId());
-            optionalByFranchiseeIndex.ifPresent(userPushTokenEntity -> token.add(userPushTokenEntity.getUserToken()));
+            optionalByFranchiseeIndex.ifPresent(userPushTokenEntity -> token.add(userPushTokenEntity.getPushTokenEntity().getToken()));
         }
 
         if (token.isEmpty()) {

@@ -10,16 +10,15 @@ import com.tpay.domains.franchisee_applicant.domain.FranchiseeStatus;
 import com.tpay.domains.order.domain.OrderEntity;
 import com.tpay.domains.point.domain.PointEntity;
 import com.tpay.domains.point.domain.PointRepository;
-import com.tpay.domains.push.application.PushHistorySaveService;
-import com.tpay.domains.push.application.PushNotificationService;
-import com.tpay.domains.push.application.TopicSubscribeService;
-import com.tpay.domains.push.application.UserPushTokenService;
+import com.tpay.domains.push.application.*;
 import com.tpay.domains.push.application.dto.NotificationDto;
 import com.tpay.domains.push.domain.SubscribeType;
 import com.tpay.domains.push.domain.TopicType;
 import com.tpay.domains.refund.domain.RefundEntity;
 import com.tpay.domains.refund.domain.RefundRepository;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -36,14 +35,14 @@ import static com.tpay.commons.push.PushCategoryType.*;
 @RequiredArgsConstructor
 public class PushBatchService {
 
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     //초기화시 자동으로 한 번 메서드가 실행됨. 방지용 검증
     private static final String firstCallTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmm"));
-
     private final FranchiseeApplicantFindService franchiseeApplicantFindService;
     private final PushNotificationService pushNotificationService;
     private final TopicSubscribeService topicSubscribeService;
     private final UserPushTokenService userPushTokenService;
-    private final PushHistorySaveService pushHistorySaveService;
+    private final PushHistoryService pushHistoryService;
     private final PointRepository pointRepository;
     private final RefundRepository refundRepository;
 
@@ -166,7 +165,7 @@ public class PushBatchService {
         NotificationDto.Request request = new NotificationDto.Request(pushCategoryType, PushType.TOPIC, topic.toString());
         String send = pushNotificationService.sendMessageByTopic(request);
         topicSubscribeService.subscribeByFranchisee(dateFilter, topic, SubscribeType.UNSUBSCRIBE);
-        subscribeList.stream().map(userPushTokenService::findByToken).forEach(entity -> pushHistorySaveService.saveHistory(request, send, entity));
+        subscribeList.stream().map(userPushTokenService::findByToken).forEach(entity -> pushHistoryService.saveHistory(request, send, entity));
         System.out.println("[" + LocalDateTime.now() + "] Pushed - " + pushCategoryType);
     }
 

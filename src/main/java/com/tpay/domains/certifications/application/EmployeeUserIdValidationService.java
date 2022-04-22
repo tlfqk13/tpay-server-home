@@ -13,8 +13,8 @@ public class EmployeeUserIdValidationService {
     private final EmployeeRepository employeeRepository;
 
 
-    public boolean valid(Long franchiseeIndex, String userId) {
-        if (employeeRepository.existsByFranchiseeEntityIdAndUserId(franchiseeIndex, userId)) {
+    public boolean valid(String userId) {
+        if (employeeRepository.existsByUserId(userId)) {
             System.out.println("Already Exists!");
             throw new AlreadyExistsException(ExceptionState.ALREADY_EXISTS, "Employee Id Already Exists");
         }

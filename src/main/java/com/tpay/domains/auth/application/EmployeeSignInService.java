@@ -52,7 +52,7 @@ public class EmployeeSignInService {
         Optional<UserPushTokenEntity> optionalUserPushTokenEntity = userPushTokenService.optionalFindByFranchiseeIndex(franchiseeApplicantEntity.getFranchiseeEntity().getId());
         if (optionalUserPushTokenEntity.isPresent()) {
             UserPushTokenEntity userPushTokenEntity = optionalUserPushTokenEntity.get();
-            NotificationDto.Request request = new NotificationDto.Request(PushCategoryType.CASE_FOURTEEN, PushType.TOKEN, userPushTokenEntity.getUserToken());
+            NotificationDto.Request request = new NotificationDto.Request(PushCategoryType.CASE_FOURTEEN, PushType.TOKEN, userPushTokenEntity.getPushTokenEntity().getToken());
             NotificationDto.Request requestSetName = request.setFrontBody(employeeEntity.getName());
             pushNotificationService.sendMessageByToken(requestSetName);
         }

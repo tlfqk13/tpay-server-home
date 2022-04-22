@@ -15,7 +15,7 @@ import javax.transaction.Transactional;
 @RequiredArgsConstructor
 public class PushNotificationService {
 
-    private final PushHistorySaveService pushHistorySaveService;
+    private final PushHistoryService pushHistoryService;
     private final UserPushTokenService userPushTokenService;
 
     @Transactional
@@ -36,7 +36,7 @@ public class PushNotificationService {
             UserPushTokenEntity userPushTokenEntity = userPushTokenService.findByToken(request.getPushTypeValue());
 
             String send = FirebaseMessaging.getInstance().send(message);
-            pushHistorySaveService.saveHistory(request,send,userPushTokenEntity);
+            pushHistoryService.saveHistory(request, send, userPushTokenEntity);
             return send;
 
         } catch (FirebaseMessagingException e) {
