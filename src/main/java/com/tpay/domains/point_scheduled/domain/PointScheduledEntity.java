@@ -45,7 +45,10 @@ public class PointScheduledEntity extends BaseTimeEntity {
         this.franchiseeEntity = franchiseeEntity;
     }
 
-    public void updateStatus() {
+    public void updateStatusSave() {
         this.pointStatus = PointStatus.SAVE;
+    }
+    public void updateStatusScheduledCancel() {
+        this.pointStatus = PointStatus.SCHEDULED_CANCEL;
     }
 }
