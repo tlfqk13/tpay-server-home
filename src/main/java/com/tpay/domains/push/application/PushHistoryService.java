@@ -21,7 +21,7 @@ public class PushHistoryService {
     private final PushHistoryRepository pushHistoryRepository;
 
     public List<PushHistoryEntity> findByFranchiseeIndex(Long franchiseeIndex) {
-        return pushHistoryRepository.findByUserId(franchiseeIndex).get();
+        return pushHistoryRepository.findByUserIdOrderByIdDesc(franchiseeIndex).get();
     }
 
     public PushHistoryEntity findByPushIndex(Long pushIndex) {
@@ -42,6 +42,7 @@ public class PushHistoryService {
 
     @Transactional
     public void saveHistory(NotificationDto.Request request, String send, UserPushTokenEntity userPushTokenEntity) {
+
         //요청 정보, 응답정보, 유저정보로 history SAVE
         PushHistoryEntity pushHistoryEntity = PushHistoryEntity.builder()
             .title(request.getTitle())
@@ -56,6 +57,9 @@ public class PushHistoryService {
             .isRead(false)
             .isDetail(false)
             .build();
+
+
+        pushHistoryEntity.updateIsReadInit();
         pushHistoryEntity.updateIsDetail();
         pushHistoryRepository.save(pushHistoryEntity);
     }

@@ -17,6 +17,8 @@ import com.tpay.domains.push.domain.TopicType;
 import com.tpay.domains.refund.domain.RefundEntity;
 import com.tpay.domains.refund.domain.RefundRepository;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -33,9 +35,9 @@ import static com.tpay.commons.push.PushCategoryType.*;
 @RequiredArgsConstructor
 public class PushBatchService {
 
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     //초기화시 자동으로 한 번 메서드가 실행됨. 방지용 검증
     private static final String firstCallTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmm"));
-
     private final FranchiseeApplicantFindService franchiseeApplicantFindService;
     private final PushNotificationService pushNotificationService;
     private final TopicSubscribeService topicSubscribeService;

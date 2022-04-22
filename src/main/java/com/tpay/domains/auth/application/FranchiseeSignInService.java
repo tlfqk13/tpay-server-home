@@ -21,14 +21,13 @@ import static com.tpay.commons.util.UserSelector.FRANCHISEE;
 @RequiredArgsConstructor
 public class FranchiseeSignInService {
 
-    private final static Logger log = LoggerFactory.getLogger(FranchiseeSignInService.class);
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final FranchiseeApplicantFindService franchiseeApplicantFindService;
     private final AuthService authService;
     private final PasswordEncoder passwordEncoder;
 
     private final UserPushTokenService userPushTokenService;
 
-    // TODO: 2022/04/20 현재 franchisee만 PUSH 받기위해 여기에만 토큰 받았으나 추후 리팩토링 필요
     @Transactional
     public FranchiseeTokenInfo signIn(String businessNumber, String password, String pushToken) {
         FranchiseeApplicantEntity franchiseeApplicantEntity =
@@ -52,7 +51,7 @@ public class FranchiseeSignInService {
             .build();
 
         userPushTokenService.save(userPushTokenEntity);
-        log.debug("signIn UserToken [{}] : [{}] Save Successful", userPushTokenEntity.getUserId(), userPushTokenEntity.getUserToken());
+        log.trace("[bizNo - {}] : [{} Save Successful] [UserToken - {}]", franchiseeEntity.getBusinessNumber(),userPushTokenEntity.getUserId(), userPushTokenEntity.getUserToken());
 
         return FranchiseeTokenInfo.builder()
             .franchiseeIndex(franchiseeEntity.getId())
