@@ -4,7 +4,6 @@ package com.tpay.domains.external.presentation;
 import com.tpay.domains.external.application.ExternalRefundCancelService;
 import com.tpay.domains.external.application.dto.ExternalRefundCancelRequest;
 import com.tpay.domains.external.application.dto.ExternalRefundResponse;
-import com.tpay.domains.refund_core.application.dto.RefundResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
