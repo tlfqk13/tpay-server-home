@@ -26,6 +26,8 @@ public class PointScheduledChangeService {
             pointStatus = PointStatus.SCHEDULED;
         } else {
             pointStatus = PointStatus.CANCEL;
+            PointScheduledEntity entity = pointScheduledRepository.findByOrderEntity(orderEntity).get();
+            entity.updateStatusScheduledCancel();
         }
 
         PointScheduledEntity entity = PointScheduledEntity.builder()

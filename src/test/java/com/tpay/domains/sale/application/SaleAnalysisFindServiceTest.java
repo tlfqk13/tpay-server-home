@@ -1,14 +1,12 @@
 package com.tpay.domains.sale.application;
 
 
-import com.tpay.commons.util.DateFilterV2;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.order.domain.OrderEntity;
 import com.tpay.domains.refund.domain.RefundEntity;
 import com.tpay.domains.refund.domain.RefundRepository;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -42,19 +40,19 @@ class SaleAnalysisFindServiceTest {
             .build();
   }
 
-  @Test
-  public void 매출분석날짜테스트() {
-    //given
-    Long franchiseeIndex = 1L;
-    DateFilterV2 dateFilterV2 = DateFilterV2.TODAY;
-    String startDate = dateFilterV2.getStartDate().replaceAll("-", "");
-    String endDate = dateFilterV2.getEndDate().replaceAll("-", "");
-//    when
-//    List<SaleAnalysisFindResponse> saleAnalysisV2 = refundRepository.findSaleAnalysisV2(franchiseeIndex, startDate, endDate);
-
-    // TODO: 2022/02/08 매출분석 날짜테스트 이어서 계속 할 것
-
-  }
+//  @Test
+//  public void 매출분석날짜테스트() {
+//    //given
+//    Long franchiseeIndex = 1L;
+//    DateFilterV2 dateFilterV2 = DateFilterV2.TODAY;
+//    String startDate = dateFilterV2.getStartDate().replaceAll("-", "");
+//    String endDate = dateFilterV2.getEndDate().replaceAll("-", "");
+////    when
+////    List<SaleAnalysisFindResponse> saleAnalysisV2 = refundRepository.findSaleAnalysisV2(franchiseeIndex, startDate, endDate);
+//
+//    // TODO: 2022/02/08 매출분석 날짜테스트 이어서 계속 할 것
+//
+//  }
 
 
 }

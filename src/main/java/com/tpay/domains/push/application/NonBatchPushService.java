@@ -27,7 +27,7 @@ public class NonBatchPushService {
     public void nonBatchPushNSave(PushCategoryType pushCategoryType, Long franchiseeIndex){
         Optional<UserPushTokenEntity> optionalUserPushTokenEntity = userPushTokenService.optionalFindByFranchiseeIndex(franchiseeIndex);
         if (optionalUserPushTokenEntity.isEmpty()) {return;}
-        NotificationDto.Request request = new NotificationDto.Request(pushCategoryType, PushType.TOKEN, optionalUserPushTokenEntity.get().getUserToken());
+        NotificationDto.Request request = new NotificationDto.Request(pushCategoryType, PushType.TOKEN, optionalUserPushTokenEntity.get().getPushTokenEntity().getToken());
         pushNotificationService.sendMessageByToken(request);
     }
 

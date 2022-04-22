@@ -5,5 +5,6 @@ public enum PointStatus {
     CANCEL,
     WITHDRAW,
     SCHEDULED,
-    COMPLETE
+    COMPLETE,
+    SCHEDULED_CANCEL
 }

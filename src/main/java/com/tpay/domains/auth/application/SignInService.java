@@ -8,6 +8,8 @@ import com.tpay.domains.auth.application.dto.FranchiseeTokenInfo;
 import com.tpay.domains.auth.application.dto.SignInRequest;
 import com.tpay.domains.auth.application.dto.SignInTokenInfo;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -19,6 +21,7 @@ import static com.tpay.commons.util.UserSelector.FRANCHISEE;
 @RequiredArgsConstructor
 public class SignInService {
 
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final FranchiseeSignInService franchiseeSignInService;
     private final EmployeeSignInService employeeSignInService;
 
@@ -60,6 +63,7 @@ public class SignInService {
             throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Parse Failed");
         }
 
+//        logger.trace();
         return signInTokenInfo;
     }
 

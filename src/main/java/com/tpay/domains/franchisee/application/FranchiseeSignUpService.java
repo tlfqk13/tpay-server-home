@@ -7,13 +7,13 @@ import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.exception.detail.InvalidPasswordException;
 import com.tpay.commons.regex.RegExType;
 import com.tpay.commons.regex.RegExUtils;
-import com.tpay.commons.util.UserSelector;
 import com.tpay.domains.franchisee.application.dto.FranchiseeSignUpRequest;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeRepository;
 import com.tpay.domains.franchisee_applicant.application.FranchiseeApplicantSaveService;
+import com.tpay.domains.push.application.PushTokenService;
 import com.tpay.domains.push.application.UserPushTokenService;
-import com.tpay.domains.push.domain.UserPushTokenEntity;
+import com.tpay.domains.push.domain.PushTokenEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,6 +29,7 @@ public class FranchiseeSignUpService {
     private final RegExUtils regExUtils;
     private final FranchiseeApplicantSaveService franchiseeApplicantSaveService;
     private final UserPushTokenService userPushTokenService;
+    private final PushTokenService pushTokenService;
 
     @Transactional
     public void signUp(FranchiseeSignUpRequest request) {
@@ -71,14 +72,14 @@ public class FranchiseeSignUpService {
                 .email(request.getEmail())
                 .isTaxRefundShop(request.getIsTaxRefundShop())
                 .build();
-        FranchiseeEntity save = franchiseeRepository.save(franchiseeEntity);
+        franchiseeRepository.save(franchiseeEntity);
         franchiseeApplicantSaveService.save(franchiseeEntity);
 
-        UserPushTokenEntity userPushTokenEntity = UserPushTokenEntity.builder()
-            .userSelector(UserSelector.FRANCHISEE)
-            .userId(save.getId())
-            .userToken(request.getPushToken())
-            .build();
-        userPushTokenService.save(userPushTokenEntity);
+        // 토큰 테이블에 토큰 저장
+        PushTokenEntity pushTokenEntity = new PushTokenEntity(request.getPushToken());
+        PushTokenEntity findPushTokenEntity = pushTokenService.saveIfNotExists(pushTokenEntity);
+
+        // 유저-토큰 테이블 세이브 (기존 데이터는 삭제)
+        userPushTokenService.deleteIfExistsAndSave(franchiseeEntity, findPushTokenEntity);
     }
 }

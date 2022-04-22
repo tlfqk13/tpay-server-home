@@ -13,7 +13,6 @@ public enum DisappearDate {
 
     private LocalDateTime disappearDate;
 
-    // TODO: 2022/03/18 -5y+1m-1d 기준보다 작거나 같은 데이터 모두 날려야합니다.
     DisappearDate(LocalDateTime disappearDate) {
         this.disappearDate = disappearDate;
     }
