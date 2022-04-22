@@ -29,8 +29,6 @@ custom:
     sdk-path: ENC(0m0F9EX+lh13N6+ZF8Y8n91G0REtGQQ768jdolj9J41rPDcrVbFPz2oLBhe5F4vOmyDWzftP+FcsgnOZ9rH74Q==)
   barcode:
     save-path: ENC(eYDNkT5cu7xnhdT895ea0Rl9ZSZRpxqT5dpWEmDiE4g=)
-logging:
-  config: classpath:log4j2.yml
 cloud:
   aws:
     credentials:
@@ -100,6 +98,8 @@ custom:
     server: ENC(1G1Em0TfqKIRa78TPL1+wmAhlykscw4z7FmXUHFKlXmovCBJ/yQdMQ==)
 server:
   port: 50921
+logging:
+  config: classpath:log4j2.yml
 
 ---
 ### Operation ###
@@ -125,3 +125,5 @@ custom:
     server: ENC(1G1Em0TfqKIRa78TPL1+wmAhlykscw4z7FmXUHFKlXmovCBJ/yQdMQ==)
 server:
   port: 50921
+logging:
+  config: classpath:log4j2.yml

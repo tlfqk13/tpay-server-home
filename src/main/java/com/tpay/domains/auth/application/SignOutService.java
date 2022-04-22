@@ -6,6 +6,8 @@ import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.domains.auth.application.dto.SignOutRequest;
 import com.tpay.domains.auth.domain.EmployeeTokenRepository;
 import com.tpay.domains.auth.domain.FranchiseeTokenRepository;
+import com.tpay.domains.franchisee.application.FranchiseeFindService;
+import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.push.domain.UserPushTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,16 +24,20 @@ public class SignOutService {
     private final FranchiseeTokenRepository franchiseeTokenRepository;
     private final EmployeeTokenRepository employeeTokenRepository;
     private final UserPushTokenRepository userPushTokenRepository;
+    private final FranchiseeFindService franchiseeFindService;
 
     @Transactional
     public String signOut(SignOutRequest signOutRequest) {
         if (signOutRequest.getUserSelector().equals(FRANCHISEE) && signOutRequest.getFranchiseeIndex() != null) {
             franchiseeTokenRepository.deleteByFranchiseeEntityId(signOutRequest.getFranchiseeIndex());
-            userPushTokenRepository.deleteByUserIdAndUserSelector(signOutRequest.getFranchiseeIndex(), FRANCHISEE);
+
+            //푸시토큰 삭제
+            FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(signOutRequest.getFranchiseeIndex());
+            userPushTokenRepository.deleteByFranchiseeEntity(franchiseeEntity);
+
             return "FRANCHISEE Log out";
         } else if (signOutRequest.getUserSelector().equals(EMPLOYEE) && signOutRequest.getEmployeeIndex() != null) {
             employeeTokenRepository.deleteByEmployeeEntity_Id(signOutRequest.getEmployeeIndex());
-//            userPushTokenRepository.deleteByUserIdAndUserSelector(signOutRequest.getEmployeeIndex(), EMPLOYEE);
             return "EMPLOYEE Log out";
         } else {
             throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid Parameter(FRANCHISEE or EMPLOYEE)");

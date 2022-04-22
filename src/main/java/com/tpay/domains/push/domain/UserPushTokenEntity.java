@@ -1,16 +1,13 @@
 package com.tpay.domains.push.domain;
 
-import com.tpay.commons.util.UserSelector;
 import com.tpay.domains.BaseTimeEntity;
+import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import lombok.*;
 
 import javax.persistence.*;
 
 @Getter
-@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
 @Table(name = "user_push_token")
 @Entity
 public class UserPushTokenEntity extends BaseTimeEntity {
@@ -19,19 +16,17 @@ public class UserPushTokenEntity extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "user_selector")
-    private UserSelector userSelector;
+    @ManyToOne
+    @JoinColumn(name = "franchisee_id")
+    private FranchiseeEntity franchiseeEntity;
 
-    @Column(name = "user_id")
-    private Long userId;
+    @ManyToOne
+    @JoinColumn(name = "token_id")
+    private PushTokenEntity pushTokenEntity;
 
-    @Column(name = "user_token")
-    private String userToken;
-
-    public void updateToken(String userToken) {
-        this.userToken = userToken;
+    @Builder
+    public UserPushTokenEntity(FranchiseeEntity franchiseeEntity, PushTokenEntity pushTokenEntity) {
+        this.franchiseeEntity = franchiseeEntity;
+        this.pushTokenEntity = pushTokenEntity;
     }
-
-
 }

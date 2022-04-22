@@ -36,7 +36,7 @@ public class PushNotificationService {
             UserPushTokenEntity userPushTokenEntity = userPushTokenService.findByToken(request.getPushTypeValue());
 
             String send = FirebaseMessaging.getInstance().send(message);
-            pushHistoryService.saveHistory(request,send,userPushTokenEntity);
+            pushHistoryService.saveHistory(request, send, userPushTokenEntity);
             return send;
 
         } catch (FirebaseMessagingException e) {

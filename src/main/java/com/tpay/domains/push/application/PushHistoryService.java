@@ -50,10 +50,9 @@ public class PushHistoryService {
             .pushCategory(request.getPushCategory())
             .link(request.getLink())
             .pushType(request.getPushType().toString())
-            .pushTypeValue(userPushTokenEntity.getUserToken())
+            .pushTypeValue(userPushTokenEntity.getPushTokenEntity().getToken())
             .response(send)
-            .userSelector(userPushTokenEntity.getUserSelector())
-            .userId(userPushTokenEntity.getUserId())
+            .userId(userPushTokenEntity.getFranchiseeEntity().getId())
             .isRead(false)
             .isDetail(false)
             .build();
