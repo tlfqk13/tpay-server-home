@@ -20,4 +20,6 @@ public interface UserPushTokenRepository extends JpaRepository<UserPushTokenEnti
     boolean existsByPushTokenEntity(PushTokenEntity pushTokenEntity);
 
     void deleteByPushTokenEntity(PushTokenEntity pushTokenEntity);
+
+    Optional<UserPushTokenEntity> findByFranchiseeEntity(FranchiseeEntity franchiseeEntity);
 }
