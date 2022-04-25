@@ -65,7 +65,7 @@ public class PointFindService {
                             .build();
                     })
                 .collect(Collectors.toList());
-// TODO: 2022/03/16 속도 개선을 위해서는 JPA 말고 네이티브 쿼리로
+
         List<PointEntity> pointEntityList = pointRepository.findAllByFranchiseeEntityIdAndCreatedDateBetweenAndPointStatus(franchiseeIndex, startDate.atStartOfDay(), endDate.atStartOfDay(), pageRequest, PointStatus.WITHDRAW);
         List<PointInfo> pointInfoList1 = pointEntityList.stream()
             .map(pointEntity -> {
@@ -95,9 +95,8 @@ public class PointFindService {
     public List<AdminPointResponse> findPointsAdmin(Boolean isAll, WithdrawalStatus withdrawalStatus) {
         List<PointEntity> result;
         List<Boolean> booleanList = new ArrayList<>(List.of(false));
-        if (isAll) {
-            booleanList.add(true);
-        }
+
+        if (isAll) {booleanList.add(true);}
 
         result = pointRepository.findByPointStatusInAndIsReadInOrderByIdDesc(withdrawalStatus.getPointStatusList(), booleanList);
 
