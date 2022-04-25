@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,12 +24,12 @@ public class SaleAnalysisFindService {
     public List<SaleAnalysisFindResponse> findByDateRange(
         Long franchiseeIndex, DateFilter dateFilter, LocalDate startDate, LocalDate endDate) {
 
-
-        log.trace("매출분석 sttDate : {}, endDate : {}",dateFilter.getStartDate(),dateFilter.getEndDate());
-        // Custom 구현시 Custom처리해야함
-        List<SaleAnalysisFindResponseInterface> saleAnalysis = refundRepository.findSaleAnalysis(franchiseeIndex, dateFilter.getStartDate(), dateFilter.getEndDate());
-        log.trace("매출분석 rtnDate : {}",saleAnalysis.get(0).getFormatDate());
-        return saleAnalysis.stream().map(SaleAnalysisFindResponse::new).collect(Collectors.toList());
+        try {
+            List<SaleAnalysisFindResponseInterface> saleAnalysis = refundRepository.findSaleAnalysis(franchiseeIndex, dateFilter.getStartDate(), dateFilter.getEndDate());
+            return saleAnalysis.stream().map(SaleAnalysisFindResponse::new).collect(Collectors.toList());
+        } catch (IndexOutOfBoundsException e) {
+            return new ArrayList<>();
+        }
 
     }
 }

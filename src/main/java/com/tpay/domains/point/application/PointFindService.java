@@ -3,7 +3,6 @@ package com.tpay.domains.point.application;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.util.DisappearDate;
-import com.tpay.domains.point.application.dto.WithdrawalStatus;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee_applicant.application.FranchiseeApplicantFindService;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
@@ -81,8 +80,8 @@ public class PointFindService {
         pointInfoList.addAll(pointInfoList1);
         pointInfoList.sort(new PointComparator());
         return PointFindResponse.builder()
-            .startDate(startDate)
-            .endDate(endDate)
+            .startDate(startDate.format(DateTimeFormatter.ofPattern("yyyy. MM. dd")))
+            .endDate(endDate.minusDays(1).format(DateTimeFormatter.ofPattern("yyyy. MM. dd")))
             .pointInfoList(pointInfoList)
             .build();
     }
