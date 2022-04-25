@@ -109,8 +109,8 @@ public class RefundFindService {
         RefundCustomerInfoRequest refundCustomerInfoRequest = refundCustomerRequest.getRefundCustomerInfoRequest();
         RefundCustomerDateRequest refundCustomerDateRequest = refundCustomerRequest.getRefundCustomerDateRequest();
 
-        String startDate = refundCustomerDateRequest.getStartDate().toString();
-        String endDate = refundCustomerDateRequest.getEndDate().plusDays(1).toString();
+        LocalDate startDate = refundCustomerDateRequest.getStartDate();
+        LocalDate endDate = refundCustomerDateRequest.getEndDate().plusDays(1);
         String orderCheck = refundCustomerDateRequest.getOrderCheck();
 
         String name = refundCustomerInfoRequest.getName();

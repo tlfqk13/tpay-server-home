@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,7 +21,7 @@ public class SaleAnalysisFindService {
     private final RefundRepository refundRepository;
 
     public List<SaleAnalysisFindResponse> findByDateRange(
-        Long franchiseeIndex, DateFilter dateFilter, String startDate, String endDate) {
+        Long franchiseeIndex, DateFilter dateFilter, LocalDate startDate, LocalDate endDate) {
 
 
         log.trace("매출분석 sttDate : {}, endDate : {}",dateFilter.getStartDate(),dateFilter.getEndDate());
