@@ -23,6 +23,7 @@ public class FranchiseeApplicantFindController {
         return ResponseEntity.ok(responseList);
     }
 
+    // TODO: 2022/04/25 이 필터...리팩토링 해야함
     @GetMapping("/admin/franchisee-applicants/isRead/{value}")
     public ResponseEntity<List<FranchiseeApplicantInfoInterface>> filterIsRead(@PathVariable String value) {
         List<FranchiseeApplicantInfoInterface> responseList = franchiseeApplicantFindService.filterIsRead(value);

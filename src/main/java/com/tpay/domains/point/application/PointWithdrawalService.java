@@ -60,6 +60,7 @@ public class PointWithdrawalService {
             .signType(SignType.NEGATIVE)
             .change(amount)
             .balance(franchiseeEntity.getBalance())
+            .withdrawalCheck(0L)
             .build();
         pointRepository.save(pointEntity);
 

@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,7 +20,7 @@ public class PushNotificationService {
     private final UserPushTokenService userPushTokenService;
 
     @Transactional
-    public String sendMessageByToken(NotificationDto.Request request) {
+    public void sendMessageByToken(NotificationDto.Request request) {
         try {
             Notification notification = Notification.builder()
                 .setTitle(request.getTitle())
@@ -33,15 +34,14 @@ public class PushNotificationService {
                 .setToken(request.getPushTypeValue())
                 .build();
 
-            UserPushTokenEntity userPushTokenEntity = userPushTokenService.findByToken(request.getPushTypeValue());
+            Optional<UserPushTokenEntity> optionalUserPushTokenEntity = userPushTokenService.findByToken(request.getPushTypeValue());
 
-            String send = FirebaseMessaging.getInstance().send(message);
-            pushHistoryService.saveHistory(request, send, userPushTokenEntity);
-            return send;
-
+            if (optionalUserPushTokenEntity.isPresent()) {
+                String send = FirebaseMessaging.getInstance().send(message);
+                pushHistoryService.saveHistory(request, send, optionalUserPushTokenEntity.get());
+            }
         } catch (FirebaseMessagingException e) {
             e.printStackTrace();
-            return e.toString();
         }
     }
 

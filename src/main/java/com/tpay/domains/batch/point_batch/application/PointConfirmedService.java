@@ -48,6 +48,7 @@ public class PointConfirmedService {
                 .balance(franchiseeEntity.getBalance())
                 .franchiseeEntity(franchiseeEntity)
                 .orderEntity(orderEntity)
+                .withdrawalCheck(orderEntity.getPoints())
                 .build();
             pointRepository.save(pointEntity);
             pointScheduledEntity.updateStatusSave();

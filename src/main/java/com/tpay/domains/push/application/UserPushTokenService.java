@@ -44,7 +44,6 @@ public class UserPushTokenService {
         return userPushTokenRepository.save(userPushTokenEntity);
     }
 
-    @Transactional
     public Optional<UserPushTokenEntity> optionalFindByFranchiseeIndex(Long franchiseeIndex) {
         return userPushTokenRepository.findByFranchiseeEntityId(franchiseeIndex);
     }
@@ -54,15 +53,19 @@ public class UserPushTokenService {
         List<UserPushTokenEntity> franchisee = userPushTokenRepository.findAll();
         franchisee.forEach(entity -> tokenList.add(entity.getPushTokenEntity().getToken()));
         return tokenList;
-
     }
 
-    public UserPushTokenEntity findByToken(String token) {
+    public Optional<UserPushTokenEntity> findByToken(String token) {
         PushTokenEntity pushTokenEntity = pushTokenService.findByToken(token).orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Token Not Exists"));
         Optional<UserPushTokenEntity> byUserToken = userPushTokenRepository.findByPushTokenEntity(pushTokenEntity);
-        if (byUserToken.isEmpty()) {
-            System.out.println("User Not exists in token table. token : " + token);
+        return byUserToken;
+    }
+
+    public List<String> findTokenByFranchiseeEntityList(List<FranchiseeEntity> franchiseeEntityList) {
+        List<String> result = new ArrayList<>();
+        for(FranchiseeEntity franchiseeEntity : franchiseeEntityList) {
+            userPushTokenRepository.findByFranchiseeEntity(franchiseeEntity).ifPresent(entity -> result.add(entity.getPushTokenEntity().getToken()));
         }
-        return byUserToken.get();
+        return result;
     }
 }

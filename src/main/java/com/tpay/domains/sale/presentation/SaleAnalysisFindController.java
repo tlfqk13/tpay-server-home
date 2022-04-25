@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -23,8 +24,8 @@ public class SaleAnalysisFindController {
     public ResponseEntity<List<SaleAnalysisFindResponse>> findByDateRange(
         @PathVariable Long franchiseeIndex,
         @RequestParam DateFilter dateFilter,
-        @RequestParam(required = false) String startDate,
-        @RequestParam(required = false) String endDate
+        @RequestParam(required = false) LocalDate startDate,
+        @RequestParam(required = false) LocalDate endDate
     ) {
         List<SaleAnalysisFindResponse> result = saleAnalysisFindService.findByDateRange(franchiseeIndex, dateFilter, startDate, endDate);
         return ResponseEntity.ok(result);

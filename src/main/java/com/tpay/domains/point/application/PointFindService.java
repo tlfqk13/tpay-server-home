@@ -3,7 +3,6 @@ package com.tpay.domains.point.application;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.util.DisappearDate;
-import com.tpay.domains.point.application.dto.WithdrawalStatus;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee_applicant.application.FranchiseeApplicantFindService;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
@@ -16,6 +15,7 @@ import com.tpay.domains.point.domain.PointStatus;
 import com.tpay.domains.point_scheduled.domain.PointScheduledEntity;
 import com.tpay.domains.point_scheduled.domain.PointScheduledRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -23,11 +23,11 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.tpay.domains.point.application.dto.WithdrawalStatus.*;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PointFindService {
@@ -65,7 +65,7 @@ public class PointFindService {
                             .build();
                     })
                 .collect(Collectors.toList());
-// TODO: 2022/03/16 속도 개선을 위해서는 JPA 말고 네이티브 쿼리로
+
         List<PointEntity> pointEntityList = pointRepository.findAllByFranchiseeEntityIdAndCreatedDateBetweenAndPointStatus(franchiseeIndex, startDate.atStartOfDay(), endDate.atStartOfDay(), pageRequest, PointStatus.WITHDRAW);
         List<PointInfo> pointInfoList1 = pointEntityList.stream()
             .map(pointEntity -> {
@@ -81,8 +81,8 @@ public class PointFindService {
         pointInfoList.addAll(pointInfoList1);
         pointInfoList.sort(new PointComparator());
         return PointFindResponse.builder()
-            .startDate(startDate)
-            .endDate(endDate)
+            .startDate(startDate.format(DateTimeFormatter.ofPattern("yyyy. MM. dd")))
+            .endDate(endDate.minusDays(1).format(DateTimeFormatter.ofPattern("yyyy. MM. dd")))
             .pointInfoList(pointInfoList)
             .build();
     }
@@ -92,30 +92,19 @@ public class PointFindService {
         return pointRepository.findPointsTotal(franchiseeIndex, disappearDate);
     }
 
-    public List<AdminPointFindResponseInterface> findPointsAdmin(Boolean isAll, WithdrawalStatus withdrawalStatus) {
-        List<AdminPointFindResponseInterface> pointFindResponseInterfaceList;
-        if (isAll) {
-            if (withdrawalStatus.equals(ALL)) {
-                pointFindResponseInterfaceList = pointRepository.findPointsAdminAll();
-            } else if (withdrawalStatus.equals(WITHDRAW)) {
-                pointFindResponseInterfaceList = pointRepository.findPointsAdminWithdraw();
-            } else if (withdrawalStatus.equals(COMPLETE)) {
-                pointFindResponseInterfaceList = pointRepository.findPointsAdminComplete();
-            } else {
-                throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid Withdrawal Status");
-            }
-        } else {
-            if (withdrawalStatus.equals(ALL)) {
-                pointFindResponseInterfaceList = pointRepository.findPointsAdminIsReadFalse();
-            } else if (withdrawalStatus.equals(WITHDRAW)) {
-                pointFindResponseInterfaceList = pointRepository.findPointsAdminWithdrawIsReadFalse();
-            } else if (withdrawalStatus.equals(COMPLETE)) {
-                pointFindResponseInterfaceList = pointRepository.findPointsAdminCompleteIsReadFalse();
-            } else {
-                throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid Withdrawal Status");
-            }
+    public List<AdminPointResponse> findPointsAdmin(Boolean isAll, WithdrawalStatus withdrawalStatus) {
+        List<PointEntity> result;
+        List<Boolean> booleanList = new ArrayList<>(List.of(false));
+
+        if (isAll) {booleanList.add(true);}
+
+        result = pointRepository.findByPointStatusInAndIsReadInOrderByIdDesc(withdrawalStatus.getPointStatusList(), booleanList);
+
+        if (result.isEmpty()) {
+            return new ArrayList<>();
         }
-        return pointFindResponseInterfaceList;
+
+        return result.stream().map(AdminPointResponse::new).collect(Collectors.toList());
     }
 
     public PointFindDetailResponse findDetailByIndex(Long pointsIndex) {
