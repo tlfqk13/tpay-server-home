@@ -52,7 +52,9 @@ public class PointEntity {
         PointStatus pointStatus,
         long balance,
         OrderEntity orderEntity,
-        FranchiseeEntity franchiseeEntity) {
+        FranchiseeEntity franchiseeEntity,
+        long withdrawalCheck
+    ) {
         this.createdDate = createdDate;
         this.signType = signType;
         this.change = change;
@@ -60,7 +62,7 @@ public class PointEntity {
         this.balance = balance;
         this.orderEntity = orderEntity;
         this.franchiseeEntity = franchiseeEntity;
-        this.withdrawalCheck = change;
+        this.withdrawalCheck = withdrawalCheck;
         this.isRead = false;
     }
 

@@ -34,13 +34,21 @@ public class AdminPushService {
     public AdminNotificationDto.Response sendMessageByAdmin(AdminNotificationDto.Request adminRequest) {
         TopicType topic = TopicType.ALL;
         List<String> subscribeList = topicSubscribeService.subscribeByTopic(topic, SubscribeType.SUBSCRIBE);
-        NotificationDto.Request request = new NotificationDto.Request(PushCategoryType.CASE_FIFTEEN, PushType.TOPIC, topic.toString(), adminRequest.getTitle(), adminRequest.getBody());
-        String send = pushNotificationService.sendMessageByTopic(request);
-        topicSubscribeService.subscribeByTopic(topic, SubscribeType.UNSUBSCRIBE);
-        subscribeList.stream().map(userPushTokenService::findByToken).forEach(entity -> pushHistoryService.saveHistory(request, send, entity));
-        return AdminNotificationDto.Response.builder()
-            .message(send)
-            .build();
+        if(!subscribeList.isEmpty()){
+            NotificationDto.Request request = new NotificationDto.Request(PushCategoryType.CASE_FIFTEEN, PushType.TOPIC, topic.toString(), adminRequest.getTitle(), adminRequest.getBody());
+            String send = pushNotificationService.sendMessageByTopic(request);
+            topicSubscribeService.subscribeByTopic(topic, SubscribeType.UNSUBSCRIBE);
+            subscribeList.stream().map(userPushTokenService::findByToken).forEach(entity -> pushHistoryService.saveHistory(request, send, entity.get()));
+            return AdminNotificationDto.Response.builder()
+                .message(send)
+                .build();
+        } else {
+            return AdminNotificationDto.Response.builder()
+                .message("No Records in user_push_token table")
+                .build();
+        }
+
+
     }
 
     public PushFindDto.FindAllResponse findAll() {

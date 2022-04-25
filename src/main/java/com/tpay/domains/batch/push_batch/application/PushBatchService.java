@@ -10,7 +10,10 @@ import com.tpay.domains.franchisee_applicant.domain.FranchiseeStatus;
 import com.tpay.domains.order.domain.OrderEntity;
 import com.tpay.domains.point.domain.PointEntity;
 import com.tpay.domains.point.domain.PointRepository;
-import com.tpay.domains.push.application.*;
+import com.tpay.domains.push.application.PushHistoryService;
+import com.tpay.domains.push.application.PushNotificationService;
+import com.tpay.domains.push.application.TopicSubscribeService;
+import com.tpay.domains.push.application.UserPushTokenService;
 import com.tpay.domains.push.application.dto.NotificationDto;
 import com.tpay.domains.push.domain.SubscribeType;
 import com.tpay.domains.push.domain.TopicType;
@@ -36,7 +39,6 @@ import static com.tpay.commons.push.PushCategoryType.*;
 public class PushBatchService {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    //초기화시 자동으로 한 번 메서드가 실행됨. 방지용 검증
     private static final String firstCallTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmm"));
     private final FranchiseeApplicantFindService franchiseeApplicantFindService;
     private final PushNotificationService pushNotificationService;
@@ -141,13 +143,13 @@ public class PushBatchService {
         Month nowMonth = LocalDate.now().getMonth();
         if (isFirstCall()) {
             System.out.println("First Call");
-        } else if(!(nowMonth.equals(Month.JANUARY)||nowMonth.equals(Month.JULY))) {
-            System.out.println(nowMonth +" is NOT JAN OR JULY");
+        } else if (!(nowMonth.equals(Month.JANUARY) || nowMonth.equals(Month.JULY))) {
+            System.out.println(nowMonth + " is NOT JAN OR JULY");
         } else if (refundEntityList.isEmpty()) {
             System.out.println("[" + LocalDateTime.now() + "]Nothing to PUSH - CASE_ELEVEN");
         } else {
             List<FranchiseeEntity> dateFilter = refundEntityList.stream().map(RefundEntity::getOrderEntity).map(OrderEntity::getFranchiseeEntity).distinct().collect(Collectors.toList());
-            pushNSave(topic,dateFilter,CASE_ELEVEN);
+            pushNSave(topic, dateFilter, CASE_ELEVEN);
         }
     }
 
@@ -162,11 +164,13 @@ public class PushBatchService {
 
     private void pushNSave(TopicType topic, List<FranchiseeEntity> dateFilter, PushCategoryType pushCategoryType) {
         List<String> subscribeList = topicSubscribeService.subscribeByFranchisee(dateFilter, topic, SubscribeType.SUBSCRIBE);
-        NotificationDto.Request request = new NotificationDto.Request(pushCategoryType, PushType.TOPIC, topic.toString());
-        String send = pushNotificationService.sendMessageByTopic(request);
-        topicSubscribeService.subscribeByFranchisee(dateFilter, topic, SubscribeType.UNSUBSCRIBE);
-        subscribeList.stream().map(userPushTokenService::findByToken).forEach(entity -> pushHistoryService.saveHistory(request, send, entity));
-        System.out.println("[" + LocalDateTime.now() + "] Pushed - " + pushCategoryType);
+        if (!subscribeList.isEmpty()) {
+            NotificationDto.Request request = new NotificationDto.Request(pushCategoryType, PushType.TOPIC, topic.toString());
+            String send = pushNotificationService.sendMessageByTopic(request);
+            topicSubscribeService.subscribeByFranchisee(dateFilter, topic, SubscribeType.UNSUBSCRIBE);
+            subscribeList.stream().map(userPushTokenService::findByToken).forEach(entity -> pushHistoryService.saveHistory(request, send, entity.get()));
+            System.out.println("[" + LocalDateTime.now() + "] Pushed - " + pushCategoryType);
+        }
     }
 
     private boolean isAfterOneDay(FranchiseeApplicantEntity franchiseeApplicantEntity) {

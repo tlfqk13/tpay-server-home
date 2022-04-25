@@ -11,5 +11,5 @@ public interface EmployeeTokenRepository extends JpaRepository<EmployeeTokenEnti
 
     Optional<EmployeeTokenEntity> findByEmployeeEntity(EmployeeEntity employeeEntity);
 
-    void deleteByEmployeeEntity_Id(Long employeeIndex);
+    void deleteByEmployeeEntityId(Long employeeIndex);
 }

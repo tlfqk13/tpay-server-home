@@ -92,7 +92,7 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
 
     @Query(
         value =
-            "select date(o.created_date)                                                                   as date\n" +
+            "select date(o.created_date)                                                                   as formatDate\n" +
                 "     , sum(if(r.refund_status = 0, tot_amt, 0))                                               as totalAmount\n" +
                 "     , sum(if(r.refund_status = 0, tot_refund, 0))                                            as totalRefund\n" +
                 "     , sum(if(r.refund_status = 0, tot_amt, 0)) - sum(if(r.refund_status = 0, tot_refund, 0)) as actualAmount\n" +
@@ -101,7 +101,7 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
                 "from orders o\n" +
                 "         left join refund r on o.id = r.order_id\n" +
                 "where o.franchisee_id = :franchiseeIndex\n" +
-                "  and o.created_date between :startDate and :endDate\n" +
+                "  and r.created_date between :startDate and :endDate\n" +
                 "group by date(o.created_date)\n" +
                 "order by 1 desc",
         nativeQuery = true)
@@ -126,8 +126,8 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
         "order by 3", nativeQuery = true)
     List<RefundFindResponseInterface> findRefundsByCustomerInfo(
         @Param("franchiseeIndex") Long franchiseeIndex,
-        @Param("startDate") String startDate,
-        @Param("endDate") String endDate,
+        @Param("startDate") LocalDate startDate,
+        @Param("endDate") LocalDate endDate,
         @Param("customerIndex") Long customerIndex);
 
     @Query(value =
@@ -176,21 +176,6 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
     SaleStatisticsResponseInterface findAllStatistics(
         @Param("franchiseeIndex") Long franchiseeIndex
     );
-
-
-    @Query(value = "select substr(o.created_date, 1, 10) as dateFormat\n" +
-        "from orders o\n" +
-        "         left join refund r\n" +
-        "                   on o.id = r.order_id\n" +
-        "         left join points p on o.id = p.order_id\n" +
-        "where o.franchisee_id = :franchiseeIndex\n" +
-        "  and replace(substr(o.created_date, 1, 10), '-', '') between :startDate and :endDate\n" +
-        "group by substr(o.created_date, 1, 10)\n" +
-        "order by dateFormat desc", nativeQuery = true)
-    List<String> dateTestNativeQuery(
-        @Param("franchiseeIndex") Long franchiseeIndex,
-        @Param("startDate") String startDateQueryTest,
-        @Param("endDate") String endDateQueryTest);
 
 
     @EntityGraph(attributePaths = {"orderEntity"})
