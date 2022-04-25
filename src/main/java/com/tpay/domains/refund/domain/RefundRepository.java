@@ -92,7 +92,7 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
 
     @Query(
         value =
-            "select date(o.created_date)                                                                   as date\n" +
+            "select date(o.created_date)                                                                   as formatDate\n" +
                 "     , sum(if(r.refund_status = 0, tot_amt, 0))                                               as totalAmount\n" +
                 "     , sum(if(r.refund_status = 0, tot_refund, 0))                                            as totalRefund\n" +
                 "     , sum(if(r.refund_status = 0, tot_amt, 0)) - sum(if(r.refund_status = 0, tot_refund, 0)) as actualAmount\n" +
@@ -101,7 +101,7 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
                 "from orders o\n" +
                 "         left join refund r on o.id = r.order_id\n" +
                 "where o.franchisee_id = :franchiseeIndex\n" +
-                "  and o.created_date between :startDate and :endDate\n" +
+                "  and r.created_date between :startDate and :endDate\n" +
                 "group by date(o.created_date)\n" +
                 "order by 1 desc",
         nativeQuery = true)

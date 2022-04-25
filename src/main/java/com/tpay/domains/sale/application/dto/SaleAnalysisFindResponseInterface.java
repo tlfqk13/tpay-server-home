@@ -1,7 +1,9 @@
 package com.tpay.domains.sale.application.dto;
 
+import java.time.LocalDate;
+
 public interface SaleAnalysisFindResponseInterface {
-    String getDate();
+    LocalDate getFormatDate();
 
     Long getTotalAmount();
 
