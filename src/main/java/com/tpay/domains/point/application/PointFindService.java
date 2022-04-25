@@ -15,6 +15,7 @@ import com.tpay.domains.point.domain.PointStatus;
 import com.tpay.domains.point_scheduled.domain.PointScheduledEntity;
 import com.tpay.domains.point_scheduled.domain.PointScheduledRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -22,11 +23,11 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.tpay.domains.point.application.dto.WithdrawalStatus.*;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PointFindService {
@@ -91,30 +92,20 @@ public class PointFindService {
         return pointRepository.findPointsTotal(franchiseeIndex, disappearDate);
     }
 
-    public List<AdminPointFindResponseInterface> findPointsAdmin(Boolean isAll, WithdrawalStatus withdrawalStatus) {
-        List<AdminPointFindResponseInterface> pointFindResponseInterfaceList;
+    public List<AdminPointResponse> findPointsAdmin(Boolean isAll, WithdrawalStatus withdrawalStatus) {
+        List<PointEntity> result;
+        List<Boolean> booleanList = new ArrayList<>(List.of(false));
         if (isAll) {
-            if (withdrawalStatus.equals(ALL)) {
-                pointFindResponseInterfaceList = pointRepository.findPointsAdminAll();
-            } else if (withdrawalStatus.equals(WITHDRAW)) {
-                pointFindResponseInterfaceList = pointRepository.findPointsAdminWithdraw();
-            } else if (withdrawalStatus.equals(COMPLETE)) {
-                pointFindResponseInterfaceList = pointRepository.findPointsAdminComplete();
-            } else {
-                throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid Withdrawal Status");
-            }
-        } else {
-            if (withdrawalStatus.equals(ALL)) {
-                pointFindResponseInterfaceList = pointRepository.findPointsAdminIsReadFalse();
-            } else if (withdrawalStatus.equals(WITHDRAW)) {
-                pointFindResponseInterfaceList = pointRepository.findPointsAdminWithdrawIsReadFalse();
-            } else if (withdrawalStatus.equals(COMPLETE)) {
-                pointFindResponseInterfaceList = pointRepository.findPointsAdminCompleteIsReadFalse();
-            } else {
-                throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid Withdrawal Status");
-            }
+            booleanList.add(true);
         }
-        return pointFindResponseInterfaceList;
+
+        result = pointRepository.findByPointStatusInAndIsReadInOrderByIdDesc(withdrawalStatus.getPointStatusList(), booleanList);
+
+        if (result.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return result.stream().map(AdminPointResponse::new).collect(Collectors.toList());
     }
 
     public PointFindDetailResponse findDetailByIndex(Long pointsIndex) {
