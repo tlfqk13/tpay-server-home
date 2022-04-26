@@ -19,8 +19,8 @@ public class FranchiseeApplicantFindController {
     private final FranchiseeApplicantFindService franchiseeApplicantFindService;
 
     @GetMapping("/admin/franchisee-applicants")
-    public ResponseEntity<List<FranchiseeApplicantInfoInterface>> findAll() {
-        List<FranchiseeApplicantInfoInterface> responseList = franchiseeApplicantFindService.findAll();
+    public ResponseEntity<List<FranchiseeApplicantInfo>> findAll() {
+        List<FranchiseeApplicantInfo> responseList = franchiseeApplicantFindService.findAll();
         return ResponseEntity.ok(responseList);
     }
 

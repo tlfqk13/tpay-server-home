@@ -40,8 +40,9 @@ public class FranchiseeApplicantFindService {
         return franchiseeApplicantEntity;
     }
 
-    public List<FranchiseeApplicantInfoInterface> findAll() {
-        return franchiseeApplicantRepository.findAllNativeQuery();
+    public List<FranchiseeApplicantInfo> findAll() {
+        List<FranchiseeApplicantEntity> franchiseeApplicantEntityList = franchiseeApplicantRepository.findAllByOrderByIdDesc();
+        return franchiseeApplicantEntityList.stream().map(FranchiseeApplicantInfo::toResponse).collect(Collectors.toList());
     }
 
     public FranchiseeApplicantEntity findByBusinessNumber(String businessNumber) {

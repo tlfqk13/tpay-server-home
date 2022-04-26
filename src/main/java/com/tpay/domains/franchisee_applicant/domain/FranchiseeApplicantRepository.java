@@ -31,6 +31,9 @@ public interface FranchiseeApplicantRepository
     List<FranchiseeApplicantInfoInterface> findAllNativeQuery();
 
     @EntityGraph(attributePaths = {"franchiseeEntity"})
+    List<FranchiseeApplicantEntity> findAllByOrderByIdDesc();
+
+    @EntityGraph(attributePaths = {"franchiseeEntity"})
     List<FranchiseeApplicantEntity> findByFranchiseeStatus(FranchiseeStatus franchiseeStatus);
 
     @EntityGraph(attributePaths = {"franchiseeEntity"})
