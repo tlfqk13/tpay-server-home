@@ -4,22 +4,17 @@ import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.jwt.AuthToken;
 import com.tpay.commons.push.PushCategoryType;
-import com.tpay.commons.push.PushType;
 import com.tpay.domains.auth.application.dto.EmployeeTokenInfo;
 import com.tpay.domains.employee.application.EmployeeFindService;
 import com.tpay.domains.employee.domain.EmployeeEntity;
 import com.tpay.domains.franchisee_applicant.application.FranchiseeApplicantFindService;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
-import com.tpay.domains.push.application.PushNotificationService;
-import com.tpay.domains.push.application.UserPushTokenService;
-import com.tpay.domains.push.application.dto.NotificationDto;
-import com.tpay.domains.push.domain.UserPushTokenEntity;
+import com.tpay.domains.push.application.NonBatchPushService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -30,8 +25,7 @@ public class EmployeeSignInService {
     private final PasswordEncoder passwordEncoder;
     private final AuthService authService;
 
-    private final PushNotificationService pushNotificationService;
-    private final UserPushTokenService userPushTokenService;
+    private final NonBatchPushService nonBatchPushService;
 
     @Transactional
     public EmployeeTokenInfo signIn(String userId, String password) {
@@ -49,13 +43,7 @@ public class EmployeeSignInService {
         authService.updateOrSave(employeeEntity, refreshToken.getValue());
 
         //직원 로그인시 푸쉬
-        Optional<UserPushTokenEntity> optionalUserPushTokenEntity = userPushTokenService.optionalFindByFranchiseeIndex(franchiseeApplicantEntity.getFranchiseeEntity().getId());
-        if (optionalUserPushTokenEntity.isPresent()) {
-            UserPushTokenEntity userPushTokenEntity = optionalUserPushTokenEntity.get();
-            NotificationDto.Request request = new NotificationDto.Request(PushCategoryType.CASE_FOURTEEN, PushType.TOKEN, userPushTokenEntity.getPushTokenEntity().getToken());
-            NotificationDto.Request requestSetName = request.setFrontBody(employeeEntity.getName());
-            pushNotificationService.sendMessageByToken(requestSetName);
-        }
+        nonBatchPushService.nonBatchPushNSave(PushCategoryType.CASE_FOURTEEN,franchiseeApplicantEntity.getFranchiseeEntity().getId(),employeeEntity.getName());
 
         return EmployeeTokenInfo.builder()
             .employeeIndex(employeeEntity.getId())
