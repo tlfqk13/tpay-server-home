@@ -42,6 +42,7 @@ public class SignInService {
                 .refreshToken(franchiseeTokenInfo.getRefreshToken())
                 .isActiveSound(franchiseeTokenInfo.isActiveSound())
                 .isActiveVibration(franchiseeTokenInfo.isActiveVibration())
+                .storeName(franchiseeTokenInfo.getStoreName())
                 .userSelector(FRANCHISEE)
                 .build();
         } else if (signInRequest.getUserSelector().equals(EMPLOYEE)) {

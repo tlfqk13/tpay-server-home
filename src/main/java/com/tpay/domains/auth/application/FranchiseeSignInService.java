@@ -60,6 +60,7 @@ public class FranchiseeSignInService {
             .signUpDate(franchiseeEntity.getCreatedDate())
             .isActiveSound(franchiseeEntity.getIsActiveSound())
             .isActiveVibration(franchiseeEntity.getIsActiveVibration())
+            .storeName(franchiseeEntity.getStoreName())
             .build();
     }
 }
