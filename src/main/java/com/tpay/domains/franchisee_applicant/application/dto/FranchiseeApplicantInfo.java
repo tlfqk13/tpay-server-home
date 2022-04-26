@@ -18,6 +18,7 @@ public class FranchiseeApplicantInfo {
     private String sellerName;
     private String createdDate;
     private Boolean isRefundOnce;
+    private Boolean isRead;
 
     public static FranchiseeApplicantInfo toResponse(FranchiseeApplicantEntity franchiseeApplicantEntity) {
         FranchiseeEntity franchiseeEntity = franchiseeApplicantEntity.getFranchiseeEntity();
@@ -31,6 +32,7 @@ public class FranchiseeApplicantInfo {
             .sellerName(franchiseeEntity.getSellerName())
             .createdDate(franchiseeEntity.getCreatedDate().toString())
             .isRefundOnce(franchiseeEntity.getIsRefundOnce())
+            .isRead(franchiseeApplicantEntity.getIsRead())
             .build();
     }
 }

@@ -30,52 +30,13 @@ public interface FranchiseeApplicantRepository
         "        inner join franchisee f on fa.franchisee_id = f.id order by franchiseeApplicantIndex desc ", nativeQuery = true)
     List<FranchiseeApplicantInfoInterface> findAllNativeQuery();
 
-    @Query(value = "select fa.id                as franchiseeApplicantIndex,\n" +
-        "      fa.franchisee_status as franchiseeStatus,\n" +
-        "      f.mem_nm             as memberName,\n" +
-        "      f.biz_no             as businessNumber,\n" +
-        "      f.store_nm           as storeName,\n" +
-        "      f.sel_nm             as sellerName,\n" +
-        "      f.created_date       as createdDate,\n" +
-        "      f.is_refund_once     as isRefundOnce,\n" +
-        "      fa.is_read     as isRead\n" +
-        "      from franchisee_applicant fa\n" +
-        "      inner join franchisee f on fa.franchisee_id = f.id\n" +
-        "      where is_read = :filter\n" +
-        "      order by franchiseeApplicantIndex desc", nativeQuery = true)
-    List<FranchiseeApplicantInfoInterface> filterIsReadNativeQuery(@Param("filter") String filter);
-
-    @Query(value = "select fa.id                as franchiseeApplicantIndex,\n" +
-        "      fa.franchisee_status as franchiseeStatus,\n" +
-        "      f.mem_nm             as memberName,\n" +
-        "      f.biz_no             as businessNumber,\n" +
-        "      f.store_nm           as storeName,\n" +
-        "      f.sel_nm             as sellerName,\n" +
-        "      f.created_date       as createdDate,\n" +
-        "      f.is_refund_once     as isRefundOnce,\n" +
-        "      fa.is_read     as isRead\n" +
-        "      from franchisee_applicant fa\n" +
-        "      inner join franchisee f on fa.franchisee_id = f.id\n" +
-        "      where franchisee_status = :filter\n" +
-        "      order by franchiseeApplicantIndex desc", nativeQuery = true)
-    List<FranchiseeApplicantInfoInterface> filterFranchiseeStatusNativeQuery(@Param("filter") String filter);
-
-    @Query(value = "select fa.id                as franchiseeApplicantIndex,\n" +
-        "      fa.franchisee_status as franchiseeStatus,\n" +
-        "      f.mem_nm             as memberName,\n" +
-        "      f.biz_no             as businessNumber,\n" +
-        "      f.store_nm           as storeName,\n" +
-        "      f.sel_nm             as sellerName,\n" +
-        "      f.created_date       as createdDate,\n" +
-        "      f.is_refund_once     as isRefundOnce,\n" +
-        "      fa.is_read     as isRead\n" +
-        "      from franchisee_applicant fa\n" +
-        "      inner join franchisee f on fa.franchisee_id = f.id\n" +
-        "      where franchisee_status = :statusFilter and is_read = 0\n" +
-        "      order by franchiseeApplicantIndex desc;", nativeQuery = true)
-    List<FranchiseeApplicantInfoInterface> filterBothNativeQuery(String statusFilter);
-
     @EntityGraph(attributePaths = {"franchiseeEntity"})
     List<FranchiseeApplicantEntity> findByFranchiseeStatus(FranchiseeStatus franchiseeStatus);
+
+    @EntityGraph(attributePaths = {"franchiseeEntity"})
+    List<FranchiseeApplicantEntity> findByIsReadInAndFranchiseeStatusInOrderByIdDesc(@Param("isRead") List<Boolean> isRead,@Param("franchiseeStatus") List<FranchiseeStatus> franchiseeStatus);
+
+    @EntityGraph(attributePaths = {"franchiseeEntity"})
+    List<FranchiseeApplicantEntity> findByIsReadOrderByIdDesc(@Param("isRead") Boolean isRead);
 
 }
