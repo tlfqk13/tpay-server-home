@@ -5,7 +5,6 @@ import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee_applicant.application.dto.FilterSelector;
 import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeApplicantInfo;
-import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeApplicantInfoInterface;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantRepository;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeStatus;

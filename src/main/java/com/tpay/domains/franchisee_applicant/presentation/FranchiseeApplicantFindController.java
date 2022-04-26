@@ -3,7 +3,6 @@ package com.tpay.domains.franchisee_applicant.presentation;
 import com.tpay.domains.franchisee_applicant.application.FranchiseeApplicantFindService;
 import com.tpay.domains.franchisee_applicant.application.dto.FilterSelector;
 import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeApplicantInfo;
-import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeApplicantInfoInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
