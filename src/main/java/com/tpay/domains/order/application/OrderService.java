@@ -9,9 +9,11 @@ import com.tpay.domains.vat.application.dto.VatTotalResponseInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -58,5 +60,13 @@ public class OrderService {
             detailResult.add(baseList);
         }
         return detailResult;
+    }
+
+    @Transactional
+    public Long sumTotalSaleAmountByFranchiseeIndex(Long franchiseeIndex) {
+        Optional<Long> optionalResult = orderRepository.sumTotalSaleAmountByFranchiseeIndex(franchiseeIndex);
+        if (optionalResult.isEmpty()) {
+            return 0L;
+        } else return optionalResult.get();
     }
 }

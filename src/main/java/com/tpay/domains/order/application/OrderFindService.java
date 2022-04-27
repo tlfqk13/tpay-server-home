@@ -16,14 +16,6 @@ public class OrderFindService {
 
     private final OrderRepository orderRepository;
 
-    @Transactional
-    public Long sumTotalSaleAmountByFranchiseeIndex(Long franchiseeIndex) {
-        Optional<Long> optionalResult = orderRepository.sumTotalSaleAmountByFranchiseeIndex(franchiseeIndex);
-        if (optionalResult.isEmpty()) {
-            return 0L;
-        } else return optionalResult.get();
-    }
-
     public OrderEntity findById(Long orderIndex) {
         return orderRepository.findById(orderIndex)
             .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "OrderId not exists"));
