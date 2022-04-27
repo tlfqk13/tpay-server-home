@@ -1,4 +1,4 @@
-package com.tpay.domains.franchisee.application.dto.vat;
+package com.tpay.domains.vat.application.dto;
 
 
 import lombok.*;
@@ -14,4 +14,5 @@ public class VatDetailResponsePersonalInfo {
     private String storeAddress;
     private String saleTerm;
     private String taxFreeStoreNumber;
+
 }

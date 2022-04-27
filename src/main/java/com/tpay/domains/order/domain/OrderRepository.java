@@ -2,9 +2,9 @@ package com.tpay.domains.order.domain;
 
 import com.tpay.domains.order.application.dto.CmsResponseDetailInterface;
 import com.tpay.domains.order.application.dto.CmsResponseInterface;
-import com.tpay.domains.franchisee.application.dto.vat.FranchiseeVatDetailResponseInterface;
-import com.tpay.domains.franchisee.application.dto.vat.FranchiseeVatReportResponseInterface;
-import com.tpay.domains.franchisee.application.dto.vat.FranchiseeVatTotalResponseInterface;
+import com.tpay.domains.vat.application.dto.VatDetailResponseInterface;
+import com.tpay.domains.vat.application.dto.VatReportResponseInterface;
+import com.tpay.domains.vat.application.dto.VatTotalResponseInterface;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,8 +14,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
-    Optional<List<OrderEntity>> findAllByFranchiseeEntityId(Long franchiseeId);
-
     @Query(value = "select franchisee_id                           as franchiseeIndex\n" +
         "     , sum(cast(tot_amt as INTEGER))           as totalAmount\n" +
 //      "     , cast(sum(tot_amt - tot_vat) as INTEGER) as totalSupply\n" +
@@ -28,7 +26,7 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
         "  and o.created_date between :startDate and :endDate\n" +
         "  and franchisee_id = :franchiseeIndex\n" +
         "group by franchisee_id", nativeQuery = true)
-    FranchiseeVatReportResponseInterface findQuarterlyVatReport(@Param("franchiseeIndex") Long franchiseeIndex, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+    VatReportResponseInterface findQuarterlyVatReport(@Param("franchiseeIndex") Long franchiseeIndex, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
 
     @Query(value = "select sum(cast(tot_amt as INTEGER)) as totalAmount\n" +
@@ -45,7 +43,7 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
         "      from orders o inner join refund r on o.id = r.order_id\n" +
         "      where franchisee_id = :franchiseeIndex\n" +
         "      and refund_status = 'APPROVAL' and o.created_date between :startDate and :endDate", nativeQuery = true)
-    FranchiseeVatTotalResponseInterface findQuarterlyTotal(@Param("franchiseeIndex") Long franchiseeIndex, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+    VatTotalResponseInterface findQuarterlyTotal(@Param("franchiseeIndex") Long franchiseeIndex, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
 
     @Query(value = "select\n" +
@@ -59,7 +57,7 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
         "    where franchisee_id = :franchiseeIndex\n" +
         "    and refund_status = 'APPROVAL' and o.created_date between :startDate and :endDate\n" +
         "    order by 3 desc", nativeQuery = true)
-    List<FranchiseeVatDetailResponseInterface> findQuarterlyVatDetail(@Param("franchiseeIndex") Long franchiseeIndex, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+    List<VatDetailResponseInterface> findQuarterlyVatDetail(@Param("franchiseeIndex") Long franchiseeIndex, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
     @Query(value = "select\n" +
         "    franchisee_id as franchiseeIndex,\n" +

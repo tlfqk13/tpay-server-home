@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.customer.domain.CustomerRepository;
-import com.tpay.domains.franchisee.application.dto.vat.FranchiseeVatReportResponseInterface;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeRepository;
 import com.tpay.domains.franchisee_applicant.application.FranchiseeApplicantSaveService;
@@ -12,6 +11,8 @@ import com.tpay.domains.order.application.OrderSaveService;
 import com.tpay.domains.order.domain.OrderEntity;
 import com.tpay.domains.order.domain.OrderRepository;
 import com.tpay.domains.refund.application.RefundSaveService;
+import com.tpay.domains.vat.application.VatService;
+import com.tpay.domains.vat.application.dto.VatReportResponseInterface;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +25,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 
 @SpringBootTest
-public class FranchiseeVatServiceTest {
+public class VatServiceTest {
 
   FranchiseeEntity franchiseeEntity;
   CustomerEntity customerEntity;
   OrderEntity orderEntity;
   @Autowired
-  FranchiseeVatService franchiseeVatService;
+  VatService vatService;
   @Autowired
   OrderRepository orderRepository;
   @Autowired
@@ -89,17 +90,17 @@ public class FranchiseeVatServiceTest {
     LocalDate endDate = LocalDate.now();
 
     //when
-    FranchiseeVatReportResponseInterface result = orderRepository.findQuarterlyVatReport(franchiseeIndex, startDate, endDate);
+    VatReportResponseInterface result = orderRepository.findQuarterlyVatReport(franchiseeIndex, startDate, endDate);
     assertThat(result).isEqualTo(null);
   }
 
-  @Test
-  public void 날짜셋업_에러() {
-    //given
-    String requestDate = "220";
-    //when
-    Throwable throwable = catchThrowable(() -> franchiseeVatService.setUpDate(requestDate));
-    //then
-    assertThat(throwable).isInstanceOf(InvalidParameterException.class);
-  }
+//  @Test
+//  public void 날짜셋업_에러() {
+//    //given
+//    String requestDate = "220";
+//    //when
+//    Throwable throwable = catchThrowable(() -> vatService.setUpDate(requestDate));
+//    //then
+//    assertThat(throwable).isInstanceOf(InvalidParameterException.class);
+//  }
 }

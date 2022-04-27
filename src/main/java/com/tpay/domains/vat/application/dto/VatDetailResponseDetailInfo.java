@@ -1,4 +1,4 @@
-package com.tpay.domains.franchisee.application.dto.vat;
+package com.tpay.domains.vat.application.dto;
 
 
 import lombok.*;

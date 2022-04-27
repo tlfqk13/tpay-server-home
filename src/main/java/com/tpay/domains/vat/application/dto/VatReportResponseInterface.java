@@ -1,7 +1,7 @@
-package com.tpay.domains.franchisee.application.dto.vat;
+package com.tpay.domains.vat.application.dto;
 
 
-public interface FranchiseeVatReportResponseInterface {
+public interface VatReportResponseInterface {
     Long getFranchiseeIndex();
 
     String getTotalAmount();

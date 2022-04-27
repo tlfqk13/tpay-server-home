@@ -1,4 +1,5 @@
-package com.tpay.domains.franchisee.application.dto.vat;
+package com.tpay.domains.vat.application.dto;
+
 
 import lombok.*;
 
@@ -6,9 +7,9 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class FranchiseeVatResponse {
-    private String totalAmount;
+public class VatDetailResponseTotalInfo {
     private String totalCount;
+    private String totalAmount;
     private String totalVat;
-    private String totalSupply;
+
 }

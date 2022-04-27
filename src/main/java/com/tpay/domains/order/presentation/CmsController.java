@@ -28,6 +28,7 @@ public class CmsController {
         return ResponseEntity.ok(result);
     }
 
+    // TODO: 2022/04/27 URI 변경할 것 franchisee -> order
     @GetMapping("/franchisee/{franchiseeIndex}/cms/detail")
     public ResponseEntity<CmsDetailResponse> cmsDetail(
         @PathVariable Long franchiseeIndex,
@@ -37,6 +38,7 @@ public class CmsController {
         return ResponseEntity.ok(result);
     }
 
+    // TODO: 2022/04/27 URI 변경할 것 franchisee -> order
     @GetMapping("/franchisee/{franchiseeIndex}/cms/downloads")
     public ResponseEntity<String> cmsDownloads(
         @PathVariable Long franchiseeIndex,

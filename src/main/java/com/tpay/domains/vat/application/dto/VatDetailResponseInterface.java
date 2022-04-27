@@ -1,7 +1,7 @@
-package com.tpay.domains.franchisee.application.dto.vat;
+package com.tpay.domains.vat.application.dto;
 
 
-public interface FranchiseeVatDetailResponseInterface {
+public interface VatDetailResponseInterface {
     String getPurchaseSerialNumber();
 
     String getSaleDate();
