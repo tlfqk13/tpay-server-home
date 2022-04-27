@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-public class VatReportController {
+public class VatController {
 
     private final VatService vatService;
 

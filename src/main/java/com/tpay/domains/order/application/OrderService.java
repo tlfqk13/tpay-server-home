@@ -2,14 +2,16 @@ package com.tpay.domains.order.application;
 
 import com.tpay.commons.util.converter.NumberFormatConverter;
 import com.tpay.domains.order.domain.OrderRepository;
-import com.tpay.domains.vat.application.dto.*;
+import com.tpay.domains.vat.application.dto.VatDetailResponseInterface;
+import com.tpay.domains.vat.application.dto.VatReportResponseInterface;
+import com.tpay.domains.vat.application.dto.VatResponse;
+import com.tpay.domains.vat.application.dto.VatTotalResponseInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -45,7 +47,7 @@ public class OrderService {
     public List<List<String>> findQuarterlyDetail(Long franchiseeIndex, LocalDate startDate, LocalDate endDate) {
         List<VatDetailResponseInterface> vatDetailResponseInterfaceList = orderRepository.findQuarterlyVatDetail(franchiseeIndex, startDate, endDate);
         List<List<String>> detailResult = new ArrayList<>();
-        for(VatDetailResponseInterface vatDetailResponseInterface : vatDetailResponseInterfaceList) {
+        for (VatDetailResponseInterface vatDetailResponseInterface : vatDetailResponseInterfaceList) {
             List<String> baseList = new ArrayList<>();
             baseList.add(vatDetailResponseInterface.getPurchaseSerialNumber());
             baseList.add(vatDetailResponseInterface.getSaleDate());
