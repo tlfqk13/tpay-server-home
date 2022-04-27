@@ -1,6 +1,6 @@
-package com.tpay.domains.franchisee.application.dto.cms;
+package com.tpay.domains.order.application.dto;
 
-public interface FranchiseeCmsResponseInterface {
+public interface CmsResponseInterface {
     Long getFranchiseeIndex();
 
     String getTotalCount();

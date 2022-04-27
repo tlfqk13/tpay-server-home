@@ -1,14 +1,14 @@
-package com.tpay.domains.franchisee.application;
+package com.tpay.domains.order.application;
 
 
 import com.tpay.commons.aws.S3FileUploader;
 import com.tpay.commons.util.converter.NumberFormatConverter;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
-import com.tpay.domains.franchisee.application.dto.cms.FranchiseeCmsDetailResponse;
-import com.tpay.domains.franchisee.application.dto.cms.FranchiseeCmsResponse;
-import com.tpay.domains.franchisee.application.dto.cms.FranchiseeCmsResponseDetailInterface;
-import com.tpay.domains.franchisee.application.dto.cms.FranchiseeCmsResponseInterface;
+import com.tpay.domains.order.application.dto.CmsDetailResponse;
+import com.tpay.domains.order.application.dto.CmsResponse;
+import com.tpay.domains.order.application.dto.CmsResponseDetailInterface;
+import com.tpay.domains.order.application.dto.CmsResponseInterface;
 import com.tpay.domains.order.domain.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -28,21 +28,21 @@ import static org.apache.poi.ss.usermodel.CellType.STRING;
 
 @Service
 @RequiredArgsConstructor
-public class FranchiseeCmsService {
+public class CmsService {
 
     private final OrderRepository orderRepository;
     private final S3FileUploader s3FileUploader;
 
-    public FranchiseeCmsResponse cmsReport(Long franchiseeIndex, String requestDate) {
+    public CmsResponse cmsReport(Long franchiseeIndex, String requestDate) {
         List<String> date = setUpDate(requestDate);
         String year = date.get(0);
         String month = date.get(1);
-        FranchiseeCmsResponseInterface queryResult = orderRepository.findMonthlyCmsReport(franchiseeIndex, year, month);
+        CmsResponseInterface queryResult = orderRepository.findMonthlyCmsReport(franchiseeIndex, year, month);
         if (queryResult == null) {
-            return FranchiseeCmsResponse.builder().totalAmount("0").totalCount("0").totalVat("0").totalCommission("0").build();
+            return CmsResponse.builder().totalAmount("0").totalCount("0").totalVat("0").totalCommission("0").build();
         }
 
-        return FranchiseeCmsResponse.builder()
+        return CmsResponse.builder()
             .totalCount(queryResult.getTotalCount())
             .totalAmount(queryResult.getTotalAmount())
             .totalCommission(queryResult.getTotalCommission())
@@ -51,13 +51,13 @@ public class FranchiseeCmsService {
 
     }
 
-    public FranchiseeCmsDetailResponse cmsDetail(Long franchiseeIndex, String requestDate) {
+    public CmsDetailResponse cmsDetail(Long franchiseeIndex, String requestDate) {
         List<String> date = setUpDate(requestDate);
         String year = date.get(0);
         String month = date.get(1);
-        FranchiseeCmsResponseDetailInterface queryResult = orderRepository.findMonthlyCmsDetail(franchiseeIndex, year, month);
+        CmsResponseDetailInterface queryResult = orderRepository.findMonthlyCmsDetail(franchiseeIndex, year, month);
         if (queryResult == null) {
-            return FranchiseeCmsDetailResponse.builder()
+            return CmsDetailResponse.builder()
                 .commissionInfoList(Arrays.asList("0", "0", "0", "0"))
                 .customerInfoList(Arrays.asList("", "", "", "", "0")).build();
         }
@@ -73,7 +73,7 @@ public class FranchiseeCmsService {
         customerInfoList.add(queryResult.getAccountNumber());
         customerInfoList.add(queryResult.getWithdrawalDate() + "일");
         customerInfoList.add(NumberFormatConverter.addCommaToNumber(queryResult.getTotalBill()));
-        return FranchiseeCmsDetailResponse.builder().commissionInfoList(commissionInfoList).customerInfoList(customerInfoList).build();
+        return CmsDetailResponse.builder().commissionInfoList(commissionInfoList).customerInfoList(customerInfoList).build();
     }
 
     public String cmsDownloads(Long franchiseeIndex, String requestDate) {

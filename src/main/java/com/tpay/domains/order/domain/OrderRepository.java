@@ -1,7 +1,7 @@
 package com.tpay.domains.order.domain;
 
-import com.tpay.domains.franchisee.application.dto.cms.FranchiseeCmsResponseDetailInterface;
-import com.tpay.domains.franchisee.application.dto.cms.FranchiseeCmsResponseInterface;
+import com.tpay.domains.order.application.dto.CmsResponseDetailInterface;
+import com.tpay.domains.order.application.dto.CmsResponseInterface;
 import com.tpay.domains.franchisee.application.dto.vat.FranchiseeVatDetailResponseInterface;
 import com.tpay.domains.franchisee.application.dto.vat.FranchiseeVatReportResponseInterface;
 import com.tpay.domains.franchisee.application.dto.vat.FranchiseeVatTotalResponseInterface;
@@ -72,7 +72,7 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
         "and substr(o.created_date,1,4) = :year\n" +
         "and substr(o.created_date,6,2) = :month and refund_status = 'APPROVAL'\n" +
         "group by franchisee_id", nativeQuery = true)
-    FranchiseeCmsResponseInterface findMonthlyCmsReport(@Param("franchiseeIndex") Long franchiseeIndex, @Param("year") String year, @Param("month") String month);
+    CmsResponseInterface findMonthlyCmsReport(@Param("franchiseeIndex") Long franchiseeIndex, @Param("year") String year, @Param("month") String month);
 
     @Query(value = "select franchiseeIndex,\n" +
         "       totalCount,\n" +
@@ -99,6 +99,6 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
         "                   on ro.franchiseeIndex = b.franchisee_id\n" +
         "         left join (select id, sel_nm as sellerName from franchisee) f\n" +
         "                   on ro.franchiseeIndex = f.id", nativeQuery = true)
-    FranchiseeCmsResponseDetailInterface findMonthlyCmsDetail(@Param("franchiseeIndex") Long franchiseeIndex, @Param("year") String year, @Param("month") String month);
+    CmsResponseDetailInterface findMonthlyCmsDetail(@Param("franchiseeIndex") Long franchiseeIndex, @Param("year") String year, @Param("month") String month);
 
 }
