@@ -1,9 +1,6 @@
 package com.tpay.commons.util.converter;
 
 
-import org.springframework.stereotype.Component;
-
-@Component
 public class NumberFormatConverter {
 
     public static String addBarToBusinessNumber(String businessNumber) {

@@ -28,9 +28,7 @@ public class FranchiseeSignInService {
 
     @Transactional
     public FranchiseeTokenInfo signIn(String businessNumber, String password, String pushToken) {
-        FranchiseeApplicantEntity franchiseeApplicantEntity =
-            franchiseeApplicantFindService.findByBusinessNumber(businessNumber);
-
+        FranchiseeApplicantEntity franchiseeApplicantEntity = franchiseeApplicantFindService.findByBusinessNumber(businessNumber);
         FranchiseeEntity franchiseeEntity = franchiseeApplicantEntity.getFranchiseeEntity();
 
         if (!passwordEncoder.matches(

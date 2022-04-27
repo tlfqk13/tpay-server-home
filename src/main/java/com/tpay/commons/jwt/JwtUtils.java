@@ -32,6 +32,14 @@ public class JwtUtils {
         return new AuthToken(payload, key);
     }
 
+    public void addCommonPayload(Map<String, Object> payload, TokenType tokenType) {
+
+        Date expiredDate = createExpiredDate(tokenType.getExpiredMinutes());
+        payload.put("sub", tokenType == TokenType.ACCESS_TOKEN ? payload.get("email") : payload.get("userIndex"));
+        payload.put("iat", new Date());
+        payload.put("exp", expiredDate);
+    }
+
     public AuthToken convertAuthToken(String token) {
         return new AuthToken(token, key);
     }
@@ -39,14 +47,5 @@ public class JwtUtils {
     public Date createExpiredDate(long minutes) {
         return Date.from(
             LocalDateTime.now().plusMinutes(minutes).atZone(ZoneId.systemDefault()).toInstant());
-    }
-
-    public void addCommonPayload(Map<String, Object> payload, TokenType tokenType) {
-        Date expiredDate = createExpiredDate(TokenType.getExpiredMinutes(tokenType.getName()));
-        payload.put(
-            "sub",
-            tokenType == TokenType.ACCESS_TOKEN ? payload.get("email") : payload.get("userIndex"));
-        payload.put("iat", new Date());
-        payload.put("exp", expiredDate);
     }
 }
