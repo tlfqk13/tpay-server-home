@@ -15,4 +15,8 @@ public class NumberFormatConverter {
         }
         return targetNumber;
     }
+
+    public static String businessNumberReplace(String businessNumber){
+        return businessNumber.replaceAll("-","");
+    }
 }

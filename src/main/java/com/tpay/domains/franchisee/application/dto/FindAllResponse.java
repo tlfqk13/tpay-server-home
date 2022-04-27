@@ -7,7 +7,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class FranchiseeInfo {
+public class FindAllResponse {
     private Long franchiseeIndex;
     private String memberName;
     private String memberNumber;
@@ -17,8 +17,8 @@ public class FranchiseeInfo {
     private String sellerTel;
     private String productCategory;
 
-    public static FranchiseeInfo of(FranchiseeEntity franchiseeEntity) {
-        return FranchiseeInfo.builder()
+    public static FindAllResponse of(FranchiseeEntity franchiseeEntity) {
+        return FindAllResponse.builder()
             .franchiseeIndex(franchiseeEntity.getId())
             .memberName(franchiseeEntity.getMemberName())
             .memberNumber(franchiseeEntity.getMemberNumber())
