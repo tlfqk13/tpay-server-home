@@ -1,7 +1,6 @@
 package com.tpay.domains.franchisee.application;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.customer.domain.CustomerRepository;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
@@ -10,7 +9,7 @@ import com.tpay.domains.franchisee_applicant.application.FranchiseeApplicantSave
 import com.tpay.domains.order.application.OrderSaveService;
 import com.tpay.domains.order.domain.OrderEntity;
 import com.tpay.domains.order.domain.OrderRepository;
-import com.tpay.domains.refund.application.RefundSaveService;
+import com.tpay.domains.refund.application.RefundService;
 import com.tpay.domains.vat.application.VatService;
 import com.tpay.domains.vat.application.dto.VatReportResponseInterface;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,7 +21,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowable;
 
 @SpringBootTest
 public class VatServiceTest {
@@ -43,7 +41,7 @@ public class VatServiceTest {
   @Autowired
   OrderSaveService orderSaveService;
   @Autowired
-  RefundSaveService refundSaveService;
+  RefundService refundService;
   @Autowired
   FranchiseeApplicantSaveService franchiseeApplicantSaveService;
   @Autowired

@@ -10,7 +10,7 @@ import javax.transaction.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class RefundSaveService {
+public class RefundService {
 
     private final RefundRepository refundRepository;
 

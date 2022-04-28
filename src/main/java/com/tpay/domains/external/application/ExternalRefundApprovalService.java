@@ -18,7 +18,7 @@ import com.tpay.domains.order.domain.OrderEntity;
 import com.tpay.domains.point.domain.SignType;
 import com.tpay.domains.point_scheduled.application.PointScheduledChangeService;
 import com.tpay.domains.push.application.NonBatchPushService;
-import com.tpay.domains.refund.application.RefundSaveService;
+import com.tpay.domains.refund.application.RefundService;
 import com.tpay.domains.refund.domain.RefundEntity;
 import com.tpay.domains.refund_core.application.dto.RefundApproveRequest;
 import com.tpay.domains.refund_core.application.dto.RefundResponse;
@@ -37,7 +37,7 @@ public class ExternalRefundApprovalService {
     private final OrderSaveService orderSaveService;
     private final FranchiseeFindService franchiseeFindService;
     private final WebClient.Builder builder;
-    private final RefundSaveService refundSaveService;
+    private final RefundService refundService;
     private final PointScheduledChangeService pointScheduledChangeService;
     private final ExternalRefundFindService externalRefundFindService;
     private final NonBatchPushService nonBatchPushService;
@@ -82,7 +82,7 @@ public class ExternalRefundApprovalService {
                 return ExternalRefundResponse.builder().responseCode("8103").message("[successmode] 관세청 에러입니다.").build();
             }
 
-            RefundEntity refundEntity = refundSaveService.save(
+            RefundEntity refundEntity = refundService.save(
                 refundResponse.getResponseCode(),
                 refundResponse.getPurchaseSequenceNumber(),
                 refundResponse.getTakeoutNumber(),
