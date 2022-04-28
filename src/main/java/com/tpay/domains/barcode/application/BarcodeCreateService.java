@@ -1,9 +1,7 @@
 package com.tpay.domains.barcode.application;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tpay.commons.exception.ExceptionResponse;
 import com.tpay.commons.exception.ExceptionState;
-import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.exception.detail.InvalidPassportInfoException;
 import com.tpay.commons.webClient.WebRequestToRefund;
 import com.tpay.domains.customer.application.CustomerFindService;
@@ -23,8 +21,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
 import javax.transaction.Transactional;
 import java.io.File;
