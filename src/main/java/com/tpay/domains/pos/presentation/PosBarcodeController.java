@@ -1,7 +1,7 @@
-package com.tpay.domains.barcode.presentation;
+package com.tpay.domains.pos.presentation;
 
 
-import com.tpay.domains.barcode.application.BarcodeCreateService;
+import com.tpay.domains.pos.application.PosBarcodeService;
 import com.tpay.domains.refund_core.application.dto.RefundLimitRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
@@ -13,14 +13,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-public class BarcodeCreateController {
+public class PosBarcodeController {
 
-    private final BarcodeCreateService barcodeCreateService;
+    private final PosBarcodeService posBarcodeService;
 
     @PostMapping("/pos/refund/limit/{franchiseeIndex}")
     public ResponseEntity<Resource> barcodeMaker(
         @PathVariable Long franchiseeIndex,
         @RequestBody RefundLimitRequest refundLimitRequest) {
-        return barcodeCreateService.createBarCode(franchiseeIndex, refundLimitRequest);
+        return posBarcodeService.createBarCode(franchiseeIndex, refundLimitRequest);
     }
 }

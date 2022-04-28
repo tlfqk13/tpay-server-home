@@ -1,4 +1,4 @@
-package com.tpay.domains.barcode.application;
+package com.tpay.domains.pos.application;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tpay.commons.exception.ExceptionState;
@@ -34,7 +34,7 @@ import static com.tpay.commons.custom.CustomValue.REFUND_SERVER;
 
 @Service
 @RequiredArgsConstructor
-public class BarcodeCreateService {
+public class PosBarcodeService {
 
     private final CustomerFindService customerFindService;
     private final ExternalRepository externalRepository;
