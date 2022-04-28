@@ -15,7 +15,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 @Component
 @Slf4j
-public class WebRequestToRefund {
+public class WebRequestUtil {
 
     private final WebClient.Builder builder;
 

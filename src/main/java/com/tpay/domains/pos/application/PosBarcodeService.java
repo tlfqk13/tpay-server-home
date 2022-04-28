@@ -3,7 +3,7 @@ package com.tpay.domains.pos.application;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidPassportInfoException;
-import com.tpay.commons.webClient.WebRequestToRefund;
+import com.tpay.commons.webClient.WebRequestUtil;
 import com.tpay.domains.customer.application.CustomerFindService;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.external.application.ExternalService;
@@ -25,7 +25,7 @@ public class PosBarcodeService {
 
     private final CustomerFindService customerFindService;
     private final ExternalService externalService;
-    private final WebRequestToRefund webRequestToRefund;
+    private final WebRequestUtil webRequestUtil;
     private final BarcodeService barcodeService;
 
     @Transactional
@@ -34,7 +34,7 @@ public class PosBarcodeService {
         //API
         ObjectMapper objectMapper = new ObjectMapper();
         String uri = REFUND_SERVER + "/refund/limit";
-        Object post = webRequestToRefund.post(uri, request);
+        Object post = webRequestUtil.post(uri, request);
         RefundResponse refundResponse = objectMapper.convertValue(post, RefundResponse.class);
 
         //외국인 정보 업데이트
