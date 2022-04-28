@@ -51,7 +51,7 @@ public class PointFindService {
         List<PointInfo> pointInfoList = pointScheduledEntityList.stream().map(PointInfo::new).collect(Collectors.toList());
 
         //points
-        List<PointEntity> pointEntityList = pointRepository.findAllByFranchiseeEntityIdAndCreatedDateBetweenAndPointStatus(franchiseeIndex, startDate.atStartOfDay(), endDate.atStartOfDay(), pageRequest, PointStatus.WITHDRAW);
+        List<PointEntity> pointEntityList = pointRepository.findAllByPointStatusInAndFranchiseeEntityIdAndCreatedDateBetween(new ArrayList<>(List.of(PointStatus.WITHDRAW, PointStatus.COMPLETE)), franchiseeIndex, startDate.atStartOfDay(), endDate.atStartOfDay(), pageRequest);
         List<PointInfo> pointInfoList1 = pointEntityList.stream().map(PointInfo::new).collect(Collectors.toList());
 
         //merge - sort - return
