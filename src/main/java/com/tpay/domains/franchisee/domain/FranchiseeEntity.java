@@ -2,6 +2,7 @@ package com.tpay.domains.franchisee.domain;
 
 import com.tpay.domains.BaseTimeEntity;
 import com.tpay.domains.point.domain.SignType;
+import com.tpay.domains.pos.domain.PosType;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -90,6 +91,13 @@ public class FranchiseeEntity extends BaseTimeEntity {
     @Column
     private Boolean isActiveVibration;
 
+    @Column
+    private Boolean isConnected;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private PosType posType;
+
     @Builder
     public FranchiseeEntity(
         String businessNumber,
@@ -128,6 +136,8 @@ public class FranchiseeEntity extends BaseTimeEntity {
         this.popUp = true;
         this.isActiveSound = true;
         this.isActiveVibration = true;
+        this.isConnected = false;
+        this.posType = PosType.INIT;
     }
 
     public FranchiseeEntity changeBalance(SignType signType, long change) {
@@ -178,5 +188,9 @@ public class FranchiseeEntity extends BaseTimeEntity {
     }
     public void updateVibration(Boolean isActiveVibration){
         this.isActiveVibration = isActiveVibration;
+    }
+    public void updatePosInfo(Boolean isConnected, PosType posType){
+        this.isConnected = isConnected;
+        this.posType = posType;
     }
 }
