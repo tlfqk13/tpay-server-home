@@ -6,30 +6,17 @@ import com.tpay.commons.exception.detail.InvalidPassportInfoException;
 import com.tpay.commons.webClient.WebRequestToRefund;
 import com.tpay.domains.customer.application.CustomerFindService;
 import com.tpay.domains.customer.domain.CustomerEntity;
+import com.tpay.domains.external.application.ExternalService;
 import com.tpay.domains.external.domain.ExternalRefundEntity;
-import com.tpay.domains.external.domain.ExternalRefundStatus;
-import com.tpay.domains.external.domain.ExternalRepository;
 import com.tpay.domains.refund_core.application.dto.RefundLimitRequest;
 import com.tpay.domains.refund_core.application.dto.RefundResponse;
 import lombok.RequiredArgsConstructor;
-import net.sourceforge.barbecue.Barcode;
-import net.sourceforge.barbecue.BarcodeFactory;
-import net.sourceforge.barbecue.BarcodeImageHandler;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.LocalDateTime;
 
-import static com.tpay.commons.custom.CustomValue.BARCODE_SAVE_PATH;
 import static com.tpay.commons.custom.CustomValue.REFUND_SERVER;
 
 @Service
@@ -37,44 +24,34 @@ import static com.tpay.commons.custom.CustomValue.REFUND_SERVER;
 public class PosBarcodeService {
 
     private final CustomerFindService customerFindService;
-    private final ExternalRepository externalRepository;
+    private final ExternalService externalService;
     private final WebRequestToRefund webRequestToRefund;
+    private final BarcodeService barcodeService;
 
     @Transactional
     public ResponseEntity<Resource> createBarCode(Long franchiseeIndex, RefundLimitRequest request) {
 
-        String uri = REFUND_SERVER + "/refund/limit";
-        CustomerEntity customerEntity = customerFindService.findByNationAndPassportNumber(request.getName(), request.getPassportNumber(), request.getNationality());
-
+        //API
         ObjectMapper objectMapper = new ObjectMapper();
+        String uri = REFUND_SERVER + "/refund/limit";
         Object post = webRequestToRefund.post(uri, request);
         RefundResponse refundResponse = objectMapper.convertValue(post, RefundResponse.class);
 
+        //외국인 정보 업데이트
+        CustomerEntity customerEntity = customerFindService.findByNationAndPassportNumber(request.getName(), request.getPassportNumber(), request.getNationality());
         refundResponse.addCustomerInfo(customerEntity.getId());
-        ExternalRefundEntity externalRefundEntity = ExternalRefundEntity.builder()
-            .customerIndex(refundResponse.getCustomerIndex())
-            .franchiseeIndex(franchiseeIndex)
-            .externalRefundStatus(ExternalRefundStatus.SCAN)
-            .build();
-        ExternalRefundEntity save = externalRepository.save(externalRefundEntity);
+
+        // ExternalRepository 등록
+        ExternalRefundEntity save = externalService.save(franchiseeIndex, customerEntity.getId());
+
+        //바코드 패딩설정
         String deductionPadding = refundResponse.getBeforeDeduction().substring(3);
-        String idPadding = setWithZero(save.getId().toString(), 7);
+        String idString = save.getId().toString();
+        String idPadding = setWithZero(idString, 7);
 
-        try {
-            Barcode barcode = BarcodeFactory.createCode128B(idPadding + deductionPadding);
-            String filename = LocalDateTime.now() + "_" + save.getId() + ".png";
-            File file = new File(BARCODE_SAVE_PATH + filename);
-            BarcodeImageHandler.savePNG(barcode, file);
-            Resource resource = new FileSystemResource(BARCODE_SAVE_PATH + filename);
+        //바코드 생성 및 리턴
+        return barcodeService.createResource(deductionPadding,idPadding,idString);
 
-            HttpHeaders headers = new HttpHeaders();
-            Path filePath = Paths.get(BARCODE_SAVE_PATH + filename);
-            headers.add("Content-Type", Files.probeContentType(filePath));
-            return new ResponseEntity<Resource>(resource, headers, HttpStatus.OK);
-
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Barcode Create Fail");
-        }
     }
 
     static String setWithZero(String target, Integer size) {

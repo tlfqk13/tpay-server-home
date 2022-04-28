@@ -32,7 +32,6 @@ public class ExternalRefundEntity {
     @JoinColumn(name = "refund_id")
     private RefundEntity refundEntity;
 
-    @Builder
     public ExternalRefundEntity(Long franchiseeIndex, Long customerIndex, ExternalRefundStatus externalRefundStatus) {
         this.franchiseeIndex = franchiseeIndex;
         this.customerIndex = customerIndex;
