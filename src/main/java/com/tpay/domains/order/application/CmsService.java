@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -110,14 +111,19 @@ public class CmsService {
     }
 
     public List<String> setUpDate(String requestDatePart) {
-        String requestDate = "20" + requestDatePart;
-        List<String> dateList = new ArrayList<>();
-        String year = requestDate.substring(0, 4);
-        String month = requestDate.substring(4);
-        int monthInt = Integer.parseInt(month);
-        if (!(requestDate.length() == 6 && monthInt <= 12 && monthInt >= 1)) {
-            throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid Date format");
+
+        int yearInt = Integer.parseInt("20" + requestDatePart.substring(0, 2));
+        int monthInt = Integer.parseInt(requestDatePart.substring(2).replaceAll("0", ""));
+
+        LocalDate localDate = LocalDate.of(yearInt,monthInt,1);
+        LocalDate localDate1 = localDate.minusMonths(1);
+        String year = String.valueOf(localDate1.getYear());
+        String month = String.valueOf(localDate1.getMonthValue());
+        if(month.length() == 1) {
+            month = "0" + month;
         }
+
+        List<String> dateList = new ArrayList<>();
         dateList.add(year);
         dateList.add(month);
         return dateList;
