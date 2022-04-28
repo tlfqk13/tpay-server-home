@@ -20,10 +20,7 @@ import com.tpay.domains.push.domain.TopicType;
 import com.tpay.domains.refund.domain.RefundEntity;
 import com.tpay.domains.refund.domain.RefundRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -146,7 +143,7 @@ public class PushBatchService {
         if (isFirstCall()) {
             log.trace("First Call - CASE_ELEVEN");
         } else if (!(nowMonth.equals(Month.JANUARY) || nowMonth.equals(Month.JULY))) {
-            log.trace("{} NOT JAN OR JULY - CASE_ELEVEN",nowMonth);
+            log.trace("{} NOT JAN OR JULY - CASE_ELEVEN", nowMonth);
         } else if (refundEntityList.isEmpty()) {
             log.trace("Nothing to PUSH - CASE_ELEVEN");
         } else {

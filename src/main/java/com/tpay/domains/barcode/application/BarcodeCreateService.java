@@ -1,9 +1,11 @@
 package com.tpay.domains.barcode.application;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tpay.commons.exception.ExceptionResponse;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.exception.detail.InvalidPassportInfoException;
+import com.tpay.commons.webClient.WebRequestToRefund;
 import com.tpay.domains.customer.application.CustomerFindService;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.external.domain.ExternalRefundEntity;
@@ -38,26 +40,19 @@ import static com.tpay.commons.custom.CustomValue.REFUND_SERVER;
 @RequiredArgsConstructor
 public class BarcodeCreateService {
 
-    private final WebClient.Builder builder;
     private final CustomerFindService customerFindService;
     private final ExternalRepository externalRepository;
+    private final WebRequestToRefund webRequestToRefund;
 
     @Transactional
     public ResponseEntity<Resource> createBarCode(Long franchiseeIndex, RefundLimitRequest request) {
-        WebClient webClient = builder.build();
+
         String uri = REFUND_SERVER + "/refund/limit";
         CustomerEntity customerEntity = customerFindService.findByNationAndPassportNumber(request.getName(), request.getPassportNumber(), request.getNationality());
 
-        RefundResponse refundResponse = webClient
-            .post()
-            .uri(uri)
-            .bodyValue(request)
-            .retrieve()
-            .onStatus(
-                HttpStatus::isError, response -> response.bodyToMono(ExceptionResponse.class)
-                    .flatMap(error -> Mono.error(new InvalidParameterException(ExceptionState.REFUND, error.getMessage()))))
-            .bodyToMono(RefundResponse.class)
-            .block();
+        ObjectMapper objectMapper = new ObjectMapper();
+        Object post = webRequestToRefund.post(uri, request);
+        RefundResponse refundResponse = objectMapper.convertValue(post, RefundResponse.class);
 
         refundResponse.addCustomerInfo(customerEntity.getId());
         ExternalRefundEntity externalRefundEntity = ExternalRefundEntity.builder()
