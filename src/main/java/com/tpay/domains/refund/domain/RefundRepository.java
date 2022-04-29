@@ -1,5 +1,6 @@
 package com.tpay.domains.refund.domain;
 
+import com.tpay.domains.order.domain.OrderEntity;
 import com.tpay.domains.refund.application.dto.RefundFindResponseInterface;
 import com.tpay.domains.sale.application.dto.SaleAnalysisFindResponseInterface;
 import com.tpay.domains.sale.application.dto.SaleStatisticsResponseInterface;
@@ -11,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
     @Query(
@@ -29,6 +31,11 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
         @Param("franchiseeIndex") Long franchiseeIndex,
         @Param("startDate") LocalDateTime startDate,
         @Param("endDate") LocalDateTime endDate);
+
+
+    List<RefundEntity> findAllByIdAndCreatedDateBetween(Long refundIndex, LocalDateTime startDate, LocalDateTime endDate);
+
+    Optional<RefundEntity> findByOrderEntity(OrderEntity orderEntity);
 
     @Query(
         value =

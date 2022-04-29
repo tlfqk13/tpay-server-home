@@ -99,4 +99,5 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
         "                   on ro.franchiseeIndex = f.id", nativeQuery = true)
     CmsResponseDetailInterface findMonthlyCmsDetail(@Param("franchiseeIndex") Long franchiseeIndex, @Param("year") String year, @Param("month") String month);
 
+    Optional<OrderEntity> findByFranchiseeEntityId(Long franchiseeIndex);
 }

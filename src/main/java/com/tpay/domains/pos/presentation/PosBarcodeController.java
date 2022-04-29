@@ -23,4 +23,5 @@ public class PosBarcodeController {
         @RequestBody RefundLimitRequest refundLimitRequest) {
         return posBarcodeService.createBarCode(franchiseeIndex, refundLimitRequest);
     }
+
 }

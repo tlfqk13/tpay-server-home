@@ -7,7 +7,6 @@ import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.domains.customer.application.CustomerFindService;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.external.domain.ExternalRefundEntity;
-import com.tpay.domains.external.domain.ExternalRefundStatus;
 import com.tpay.domains.external.domain.ExternalRepository;
 import com.tpay.domains.point.domain.SignType;
 import com.tpay.domains.point_scheduled.application.PointScheduledChangeService;
@@ -37,13 +36,13 @@ public class RefundCancelService {
     @Transactional
     public RefundResponse cancel(Long customerIndex, Long refundIndex) {
         CustomerEntity customerEntity = customerFindService.findByIndex(customerIndex);
-        RefundEntity refundEntity = refundFindService.findByIndex(refundIndex);
+        RefundEntity refundEntity = refundFindService.findById(refundIndex);
         RefundCancelRequest refundCancelRequest = RefundCancelRequest.of(customerEntity, refundEntity);
 
         //2022/03/25 포스기에서 승인한건 포스기에서만 취소 가능
         Optional<ExternalRefundEntity> optionalExternalRefundEntity = externalRepository.findByRefundEntity(refundEntity);
-        if(optionalExternalRefundEntity.isPresent()){
-            throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER,"POS approval must be canceled by POS");
+        if (optionalExternalRefundEntity.isPresent()) {
+            throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "POS approval must be canceled by POS");
         }
 
 

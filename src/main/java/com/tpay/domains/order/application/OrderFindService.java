@@ -7,9 +7,6 @@ import com.tpay.domains.order.domain.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
-import java.util.Optional;
-
 @RequiredArgsConstructor
 @Service
 public class OrderFindService {
@@ -19,5 +16,9 @@ public class OrderFindService {
     public OrderEntity findById(Long orderIndex) {
         return orderRepository.findById(orderIndex)
             .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "OrderId not exists"));
+    }
+
+    public OrderEntity findByFranchiseeId(Long franchiseeIndex) throws NullPointerException {
+        return orderRepository.findByFranchiseeEntityId(franchiseeIndex).get();
     }
 }

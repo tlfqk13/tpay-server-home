@@ -15,23 +15,20 @@ public class FranchiseeFindService {
     private final FranchiseeRepository franchiseeRepository;
 
     public FranchiseeEntity findByBusinessNumber(String businessNumber) {
-        FranchiseeEntity franchiseeEntity = franchiseeRepository
+
+        return franchiseeRepository
             .findByBusinessNumber(businessNumber.replaceAll("-", ""))
             .orElseThrow(
                 () ->
                     new InvalidParameterException(
                         ExceptionState.INVALID_PARAMETER, "Invalid Business Number"));
-
-        return franchiseeEntity;
     }
 
     public FranchiseeEntity findByIndex(Long franchiseeIndex) {
-        FranchiseeEntity franchiseeEntity =
-            franchiseeRepository
-                .findById(franchiseeIndex)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid Franchisee Index"));
 
-        return franchiseeEntity;
+        return franchiseeRepository
+            .findById(franchiseeIndex)
+            .orElseThrow(() -> new IllegalArgumentException("Invalid Franchisee Index"));
     }
 
     public List<FranchiseeEntity> findAll() {

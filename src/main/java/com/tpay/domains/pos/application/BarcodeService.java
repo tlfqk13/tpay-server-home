@@ -26,11 +26,12 @@ import static com.tpay.commons.custom.CustomValue.BARCODE_SAVE_PATH;
 @Slf4j
 public class BarcodeService {
 
-    public ResponseEntity<Resource> createResource(String deductionPadding,String idPadding,String filename){
+    public ResponseEntity<Resource> createResource(String deductionPadding, String idPadding, String filename) {
         Resource resource = new FileSystemResource(BARCODE_SAVE_PATH);
         HttpHeaders headers = new HttpHeaders();
         try {
-            Barcode barcode = BarcodeFactory.createCode128B(idPadding + deductionPadding);
+            Barcode barcode = BarcodeFactory.createCode128A(idPadding + deductionPadding);
+            barcode.setBarHeight(100);
             filename = LocalDateTime.now() + "_" + filename + ".png";
             File file = new File(BARCODE_SAVE_PATH + filename);
             BarcodeImageHandler.savePNG(barcode, file);
@@ -38,9 +39,10 @@ public class BarcodeService {
             Path filePath = Paths.get(BARCODE_SAVE_PATH + filename);
             headers.add("Content-Type", Files.probeContentType(filePath));
         } catch (OutputException | BarcodeException | IOException e) {
-            log.error("Barcode Create Error : {}", e.getMessage() );
+            log.error("Barcode Create Error : {}", e.getMessage());
         }
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);
 
     }
+
 }

@@ -31,7 +31,7 @@ public class PosBarcodeService {
     @Transactional
     public ResponseEntity<Resource> createBarCode(Long franchiseeIndex, RefundLimitRequest request) {
 
-        //API
+        //WebFlux - API
         ObjectMapper objectMapper = new ObjectMapper();
         String uri = REFUND_SERVER + "/refund/limit";
         Object post = webRequestUtil.post(uri, request);
@@ -50,7 +50,7 @@ public class PosBarcodeService {
         String idPadding = setWithZero(idString, 7);
 
         //바코드 생성 및 리턴
-        return barcodeService.createResource(deductionPadding,idPadding,idString);
+        return barcodeService.createResource(deductionPadding, idPadding, idString);
 
     }
 
