@@ -21,4 +21,6 @@ public class FranchiseeTokenInfo {
     private boolean popUp;
     private boolean isActiveSound;
     private boolean isActiveVibration;
+    private boolean isConnectedPos;
+    private String posType;
 }

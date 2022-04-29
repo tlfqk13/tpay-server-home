@@ -92,7 +92,7 @@ public class FranchiseeEntity extends BaseTimeEntity {
     private Boolean isActiveVibration;
 
     @Column
-    private Boolean isConnected;
+    private Boolean isConnectedPos;
 
     @Column
     @Enumerated(EnumType.STRING)
@@ -136,7 +136,7 @@ public class FranchiseeEntity extends BaseTimeEntity {
         this.popUp = true;
         this.isActiveSound = true;
         this.isActiveVibration = true;
-        this.isConnected = false;
+        this.isConnectedPos = false;
         this.posType = PosType.INIT;
     }
 
@@ -189,8 +189,8 @@ public class FranchiseeEntity extends BaseTimeEntity {
     public void updateVibration(Boolean isActiveVibration){
         this.isActiveVibration = isActiveVibration;
     }
-    public void updatePosInfo(Boolean isConnected, PosType posType){
-        this.isConnected = isConnected;
+    public void updatePosInfo(Boolean isConnectedPos, PosType posType){
+        this.isConnectedPos = isConnectedPos;
         this.posType = posType;
     }
 }

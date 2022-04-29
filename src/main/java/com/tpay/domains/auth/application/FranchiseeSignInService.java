@@ -59,6 +59,8 @@ public class FranchiseeSignInService {
             .isActiveSound(franchiseeEntity.getIsActiveSound())
             .isActiveVibration(franchiseeEntity.getIsActiveVibration())
             .storeName(franchiseeEntity.getStoreName())
+            .isConnectedPos(franchiseeEntity.getIsConnectedPos())
+            .posType(franchiseeEntity.getPosType().getPosName())
             .build();
     }
 }

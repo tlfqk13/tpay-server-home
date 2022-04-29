@@ -21,12 +21,12 @@ public class PosService {
 
         FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
         PosType posType = posNameToPosType(request);
-        franchiseeEntity.updatePosInfo(request.getIsConnected(),posType);
+        franchiseeEntity.updatePosInfo(request.getIsConnectedPos(), posType);
         return true;
     }
 
 
-    private static PosType posNameToPosType(UpdatePosTypeDto.Request request){
+    private static PosType posNameToPosType(UpdatePosTypeDto.Request request) {
         String posType = request.getPosType();
         PosType posTypeEnum = PosType.INIT;
         switch (posType) {

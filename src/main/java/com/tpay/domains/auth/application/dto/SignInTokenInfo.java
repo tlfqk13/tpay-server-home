@@ -20,6 +20,8 @@ public class SignInTokenInfo {
     private LocalDateTime signUpDate;
     private boolean popUp;
     private String storeName;
+    private Boolean isConnectedPos;
+    private String posType;
 
     //2. EmployeeTokenInfo
     private Long employeeIndex;

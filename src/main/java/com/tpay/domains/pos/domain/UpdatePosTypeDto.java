@@ -7,7 +7,7 @@ public class UpdatePosTypeDto {
 
     @Getter
     public static class Request {
-        private Boolean isConnected;
+        private Boolean isConnectedPos;
         private String posType;
     }
 }
