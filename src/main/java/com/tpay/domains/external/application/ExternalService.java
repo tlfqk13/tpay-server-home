@@ -15,8 +15,8 @@ public class ExternalService {
     private final ExternalRepository externalRepository;
 
     @Transactional
-    public ExternalRefundEntity save(Long franchiseeIndex, Long customerIndex){
-        ExternalRefundEntity externalRefundEntity = new ExternalRefundEntity(franchiseeIndex,customerIndex, ExternalRefundStatus.SCAN);
+    public ExternalRefundEntity save(Long franchiseeIndex, Long customerIndex,String deduction){
+        ExternalRefundEntity externalRefundEntity = new ExternalRefundEntity(franchiseeIndex,customerIndex, ExternalRefundStatus.SCAN,deduction);
         return externalRepository.save(externalRefundEntity);
     }
 }

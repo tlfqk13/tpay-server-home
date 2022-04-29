@@ -6,9 +6,11 @@ import com.tpay.commons.exception.detail.InvalidPassportInfoException;
 import com.tpay.commons.webClient.WebRequestUtil;
 import com.tpay.domains.customer.application.CustomerFindService;
 import com.tpay.domains.customer.domain.CustomerEntity;
+import com.tpay.domains.external.application.ExternalRefundFindService;
 import com.tpay.domains.external.application.ExternalService;
 import com.tpay.domains.external.domain.ExternalRefundEntity;
 import com.tpay.domains.refund_core.application.dto.RefundLimitRequest;
+import com.tpay.domains.refund_core.application.dto.RefundLimitResponse;
 import com.tpay.domains.refund_core.application.dto.RefundResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
@@ -24,12 +26,13 @@ import static com.tpay.commons.custom.CustomValue.REFUND_SERVER;
 public class PosBarcodeService {
 
     private final CustomerFindService customerFindService;
+    private final ExternalRefundFindService externalRefundFindService;
     private final ExternalService externalService;
     private final WebRequestUtil webRequestUtil;
     private final BarcodeService barcodeService;
 
     @Transactional
-    public ResponseEntity<Resource> createBarCode(Long franchiseeIndex, RefundLimitRequest request) {
+    public RefundLimitResponse save(Long franchiseeIndex, RefundLimitRequest request) {
 
         //WebFlux - API
         ObjectMapper objectMapper = new ObjectMapper();
@@ -42,16 +45,23 @@ public class PosBarcodeService {
         refundResponse.addCustomerInfo(customerEntity.getId());
 
         // ExternalRepository 등록
-        ExternalRefundEntity save = externalService.save(franchiseeIndex, customerEntity.getId());
+        ExternalRefundEntity save = externalService.save(franchiseeIndex, customerEntity.getId(), refundResponse.getBeforeDeduction());
+
+        return new RefundLimitResponse(save.getId());
+
+
+    }
+
+    public ResponseEntity<Resource> createBarcode(Long externalRefundIndex) {
+        ExternalRefundEntity externalRefundEntity = externalRefundFindService.findById(externalRefundIndex);
 
         //바코드 패딩설정
-        String deductionPadding = refundResponse.getBeforeDeduction().substring(3);
-        String idString = save.getId().toString();
-        String idPadding = setWithZero(idString, 7);
+        String deduction = externalRefundEntity.getDeduction().substring(3);
+        String fileName = externalRefundEntity.getId().toString();
+        String idPadding = setWithZero(fileName, 7);
 
         //바코드 생성 및 리턴
-        return barcodeService.createResource(deductionPadding, idPadding, idString);
-
+        return barcodeService.createResource(deduction, idPadding, fileName);
     }
 
     static String setWithZero(String target, Integer size) {

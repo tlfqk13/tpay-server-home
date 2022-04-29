@@ -26,16 +26,20 @@ public class ExternalRefundEntity extends BaseTimeEntity {
     private Long customerIndex;
 
     @NotNull
+    private String deduction;
+
+    @NotNull
     private ExternalRefundStatus externalRefundStatus;
 
     @OneToOne
     @JoinColumn(name = "refund_id")
     private RefundEntity refundEntity;
 
-    public ExternalRefundEntity(Long franchiseeIndex, Long customerIndex, ExternalRefundStatus externalRefundStatus) {
+    public ExternalRefundEntity(Long franchiseeIndex, Long customerIndex, ExternalRefundStatus externalRefundStatus, String deduction) {
         this.franchiseeIndex = franchiseeIndex;
         this.customerIndex = customerIndex;
         this.externalRefundStatus = externalRefundStatus;
+        this.deduction = deduction;
     }
 
     public ExternalRefundEntity changeStatus(ExternalRefundStatus externalRefundStatus) {
