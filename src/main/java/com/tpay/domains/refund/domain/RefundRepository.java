@@ -88,6 +88,7 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
         "       r.created_date   as createdDate,\n" +
         "       o.tot_amt        as totalAmount,\n" +
         "       r.tot_refund     as totalRefund,\n" +
+        "       o.tot_amt - r.tot_refund    as actualAmount,\n" +
         "       r.refund_status  as refundStatus,\n" +
         "       f.biz_no         as businessNumber,\n" +
         "       f.store_nm       as storeName\n" +

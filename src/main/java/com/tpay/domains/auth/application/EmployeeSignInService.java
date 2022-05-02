@@ -56,6 +56,7 @@ public class EmployeeSignInService {
             .franchiseeStatus(franchiseeApplicantEntity.getFranchiseeStatus())
             .isActiveSound(employeeEntity.getIsActiveSound())
             .isActiveVibration(employeeEntity.getIsActiveVibration())
+            .isConnectedPos(employeeEntity.getFranchiseeEntity().getIsConnectedPos())
             .build();
     }
 }
