@@ -35,7 +35,7 @@ public class JwtUtils {
     public void addCommonPayload(Map<String, Object> payload, TokenType tokenType) {
 
         Date expiredDate = createExpiredDate(tokenType.getExpiredMinutes());
-        payload.put("sub", tokenType == TokenType.ACCESS_TOKEN ? payload.get("email") : payload.get("userIndex"));
+        payload.put("sub", tokenType == TokenType.ACCESS_TOKEN ? payload.get("access") : payload.get("refresh"));
         payload.put("iat", new Date());
         payload.put("exp", expiredDate);
     }
