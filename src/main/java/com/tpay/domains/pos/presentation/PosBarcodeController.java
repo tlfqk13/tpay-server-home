@@ -23,7 +23,7 @@ public class PosBarcodeController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/pos/refund/limit/{externalRefundIndex}")
+    @GetMapping("/pos/barcode/{externalRefundIndex}")
     public ResponseEntity<Resource> barcodeMaker(@PathVariable Long externalRefundIndex) {
         return posBarcodeService.createBarcode(externalRefundIndex);
     }
