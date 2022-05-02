@@ -19,6 +19,9 @@ public class SignInTokenInfo {
     private String rejectReason;
     private LocalDateTime signUpDate;
     private boolean popUp;
+    private String storeName;
+    private Boolean isConnectedPos;
+    private String posType;
 
     //2. EmployeeTokenInfo
     private Long employeeIndex;

@@ -9,7 +9,7 @@ import com.tpay.domains.franchisee.domain.FranchiseeRepository;
 import com.tpay.domains.franchisee_applicant.application.FranchiseeApplicantSaveService;
 import com.tpay.domains.order.application.OrderSaveService;
 import com.tpay.domains.order.domain.OrderEntity;
-import com.tpay.domains.refund.application.RefundSaveService;
+import com.tpay.domains.refund.application.RefundService;
 import com.tpay.domains.refund.application.dto.RefundSaveRequest;
 import com.tpay.domains.refund.domain.RefundEntity;
 import org.assertj.core.api.Assertions;
@@ -56,7 +56,7 @@ public class SaleStatisticsServiceTest {
   @Autowired
   OrderSaveService orderSaveService;
   @Autowired
-  RefundSaveService refundSaveService;
+  RefundService refundService;
   @Autowired
   FranchiseeApplicantSaveService franchiseeApplicantSaveService;
   @Autowired
@@ -97,7 +97,7 @@ public class SaleStatisticsServiceTest {
         "}";
     RefundSaveRequest refundSaveRequest = objectMapper.readValue(json, RefundSaveRequest.class);
     orderEntity = orderSaveService.save(refundSaveRequest);
-    refundEntity = refundSaveService.save("0000", "123412341234", "99999999999", orderEntity);
+    refundEntity = refundService.save("0000", "123412341234", "99999999999", orderEntity);
 
     String signInData = "{\"userSelector\": \"FRANCHISEE\",\"businessNumber\": \"123-33-12345\",\"password\": \"qq123456!!\"}";
 

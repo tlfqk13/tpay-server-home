@@ -19,7 +19,7 @@ public class FranchiseeApplicantRejectService {
     public void reject(Long franchiseeApplicantIndex, String rejectReason) {
         FranchiseeApplicantEntity franchiseeApplicantEntity =
             franchiseeApplicantFindService.findByIndex(franchiseeApplicantIndex);
-        nonBatchPushService.nonBatchPushNSave(PushCategoryType.CASE_THREE, franchiseeApplicantEntity.getFranchiseeEntity().getId());
+        nonBatchPushService.nonBatchPushNSave(PushCategoryType.CASE_THREE, franchiseeApplicantEntity.getFranchiseeEntity().getId(), franchiseeApplicantEntity.getFranchiseeEntity().getStoreName());
         franchiseeApplicantEntity.reject(rejectReason);
     }
 }

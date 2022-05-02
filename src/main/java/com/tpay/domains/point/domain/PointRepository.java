@@ -17,8 +17,9 @@ import java.util.Optional;
 @Repository
 public interface PointRepository extends JpaRepository<PointEntity, Long> {
 
-    List<PointEntity> findAllByFranchiseeEntityIdAndCreatedDateBetweenAndPointStatus(
-        Long franchiseeId, LocalDateTime startDate, LocalDateTime endDate, Pageable pageable, PointStatus pointStatus);
+    @EntityGraph(attributePaths = {"orderEntity", "franchiseeEntity"})
+    List<PointEntity> findAllByPointStatusInAndFranchiseeEntityIdAndCreatedDateBetween(
+        List<PointStatus> pointStatus, Long franchiseeId, LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
 
     @Query(value = "select psf.*, ifNull(dis.disappearPoint, 0) as disappearPoint\n" +
         "from (\n" +

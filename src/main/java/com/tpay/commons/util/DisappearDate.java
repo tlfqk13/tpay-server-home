@@ -8,8 +8,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 public enum DisappearDate {
-    DISAPPEAR_DATE(LocalDateTime.now().minusYears(5).plusMonths(1).minusDays(1)),
-    DISAPPEAR_ALERT_DATE(LocalDateTime.now().minusYears(5).minusDays(1));
+    DISAPPEAR_DATE(LocalDateTime.now().minusYears(5).plusMonths(1).minusDays(1));
 
     private LocalDateTime disappearDate;
 

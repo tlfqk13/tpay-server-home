@@ -24,10 +24,34 @@ public class NonBatchPushService {
 
     // 토큰기반 Non-Batch 푸시 알람
     @Transactional
-    public void nonBatchPushNSave(PushCategoryType pushCategoryType, Long franchiseeIndex){
+    public void nonBatchPushNSave(PushCategoryType pushCategoryType, Long franchiseeIndex) {
         Optional<UserPushTokenEntity> optionalUserPushTokenEntity = userPushTokenService.optionalFindByFranchiseeIndex(franchiseeIndex);
-        if (optionalUserPushTokenEntity.isEmpty()) {return;}
+        if (optionalUserPushTokenEntity.isEmpty()) {
+            return;
+        }
         NotificationDto.Request request = new NotificationDto.Request(pushCategoryType, PushType.TOKEN, optionalUserPushTokenEntity.get().getPushTokenEntity().getToken());
+        pushNotificationService.sendMessageByToken(request);
+    }
+
+    //Non-Batch 이면서 동적 메시지인 케이스 : 3, 7, 14
+    @Transactional
+    public void nonBatchPushNSave(PushCategoryType pushCategoryType, Long franchiseeIndex, String message) {
+        Optional<UserPushTokenEntity> optionalUserPushTokenEntity = userPushTokenService.optionalFindByFranchiseeIndex(franchiseeIndex);
+        if (optionalUserPushTokenEntity.isEmpty()) {
+            return;
+        }
+        NotificationDto.Request request = new NotificationDto.Request(pushCategoryType, PushType.TOKEN, optionalUserPushTokenEntity.get().getPushTokenEntity().getToken());
+        ;
+        switch (pushCategoryType) {
+            case CASE_THREE:
+                request = request.setFrontTitle(message);
+                break;
+            case CASE_SEVEN:
+                request = request.setBehindBodyPoint(message);
+                break;
+            case CASE_FOURTEEN:
+                request = request.setFrontBody(message);
+        }
         pushNotificationService.sendMessageByToken(request);
     }
 

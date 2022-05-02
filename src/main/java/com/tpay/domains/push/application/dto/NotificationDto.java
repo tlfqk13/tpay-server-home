@@ -50,8 +50,8 @@ public class NotificationDto {
             return this;
         }
 
-        public Request setBehindBodyPoint(Long amount) {
-            this.body = body + NumberFormatConverter.addCommaToNumber(amount.toString()) + "P";
+        public Request setBehindBodyPoint(String amount) {
+            this.body = body + NumberFormatConverter.addCommaToNumber(amount) + "P";
             return this;
         }
 

@@ -24,6 +24,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,44 +41,20 @@ public class PointFindService {
     public PointFindResponse findPoints(
         Long franchiseeIndex, Integer week, Integer month, Integer page, Integer size) {
 
+        //common
         LocalDate endDate = LocalDate.now().plusDays(1);
         LocalDate startDate = week > 0 ? endDate.minusWeeks(week) : endDate.minusMonths(month);
-
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by("createdDate").descending());
 
-        List<PointScheduledEntity> pointScheduledEntityList =
-            pointScheduledRepository.findAllByFranchiseeEntityIdAndCreatedDateBetween(
-                franchiseeIndex, startDate.atStartOfDay(), endDate.atStartOfDay(), pageRequest);
+        //pointScheduled
+        List<PointScheduledEntity> pointScheduledEntityList = pointScheduledRepository.findAllByFranchiseeEntityIdAndCreatedDateBetween(franchiseeIndex, startDate.atStartOfDay(), endDate.atStartOfDay(), pageRequest);
+        List<PointInfo> pointInfoList = pointScheduledEntityList.stream().map(PointInfo::new).collect(Collectors.toList());
 
-        List<PointInfo> pointInfoList =
-            pointScheduledEntityList.stream()
-                .map(
-                    pointScheduledEntity -> {
-                        String createdDateAsString =
-                            pointScheduledEntity
-                                .getCreatedDate()
-                                .format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH.mm.ss"));
-                        return PointInfo.builder()
-                            .datetime(createdDateAsString)
-                            .pointStatus(pointScheduledEntity.getPointStatus())
-                            .totalAmount(pointScheduledEntity.getOrderEntity().getTotalAmount())
-                            .value(pointScheduledEntity.getValue())
-                            .build();
-                    })
-                .collect(Collectors.toList());
+        //points
+        List<PointEntity> pointEntityList = pointRepository.findAllByPointStatusInAndFranchiseeEntityIdAndCreatedDateBetween(new ArrayList<>(List.of(PointStatus.WITHDRAW, PointStatus.COMPLETE)), franchiseeIndex, startDate.atStartOfDay(), endDate.atStartOfDay(), pageRequest);
+        List<PointInfo> pointInfoList1 = pointEntityList.stream().map(PointInfo::new).collect(Collectors.toList());
 
-        List<PointEntity> pointEntityList = pointRepository.findAllByFranchiseeEntityIdAndCreatedDateBetweenAndPointStatus(franchiseeIndex, startDate.atStartOfDay(), endDate.atStartOfDay(), pageRequest, PointStatus.WITHDRAW);
-        List<PointInfo> pointInfoList1 = pointEntityList.stream()
-            .map(pointEntity -> {
-                String createdDateAsString = pointEntity.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH.mm.ss"));
-                return PointInfo.builder()
-                    .datetime(createdDateAsString)
-                    .pointStatus(pointEntity.getPointStatus())
-                    .value(pointEntity.getChange())
-                    .build();
-            })
-            .collect(Collectors.toList());
-
+        //merge - sort - return
         pointInfoList.addAll(pointInfoList1);
         pointInfoList.sort(new PointComparator());
         return PointFindResponse.builder()
@@ -87,6 +64,7 @@ public class PointFindService {
             .build();
     }
 
+    // 전체 포인트 / 적립예정포인트 / 소멸예정포인트 한방 Native Query. 순수 Jpa로 Group By 구현이 어렵고 성능이슈에 따라 Native로 남겨둠
     public PointTotalResponseInterface findPointsTotal(Long franchiseeIndex) {
         LocalDateTime disappearDate = DisappearDate.DISAPPEAR_DATE.getDisappearDate();
         return pointRepository.findPointsTotal(franchiseeIndex, disappearDate);
@@ -96,7 +74,9 @@ public class PointFindService {
         List<PointEntity> result;
         List<Boolean> booleanList = new ArrayList<>(List.of(false));
 
-        if (isAll) {booleanList.add(true);}
+        if (isAll) {
+            booleanList.add(true);
+        }
 
         result = pointRepository.findByPointStatusInAndIsReadInOrderByIdDesc(withdrawalStatus.getPointStatusList(), booleanList);
 
@@ -131,7 +111,6 @@ public class PointFindService {
 
             .requestedDate(pointEntity.getCreatedDate())
             .pointStatus(pointEntity.getPointStatus())
-            //역산해서 추출하는 것임
             .currentPoint(pointEntity.getBalance() + pointEntity.getChange())
             .amount(pointEntity.getChange())
             .afterPayment(pointEntity.getBalance())
@@ -143,4 +122,13 @@ public class PointFindService {
 
     }
 
+    private static class PointComparator implements Comparator<PointInfo> {
+        @Override
+        public int compare(PointInfo o1, PointInfo o2) {
+            Long o2Long = Long.parseLong(o2.getDatetime().replaceAll("\\.", "").replaceAll(" ", ""));
+            Long o1Long = Long.parseLong(o1.getDatetime().replaceAll("\\.", "").replaceAll(" ", ""));
+            Long l = o2Long - o1Long;
+            return l.intValue();
+        }
+    }
 }

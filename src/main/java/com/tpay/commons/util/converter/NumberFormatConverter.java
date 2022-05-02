@@ -1,9 +1,6 @@
 package com.tpay.commons.util.converter;
 
 
-import org.springframework.stereotype.Component;
-
-@Component
 public class NumberFormatConverter {
 
     public static String addBarToBusinessNumber(String businessNumber) {
@@ -17,5 +14,9 @@ public class NumberFormatConverter {
             targetNumber = "0";
         }
         return targetNumber;
+    }
+
+    public static String businessNumberReplace(String businessNumber){
+        return businessNumber.replaceAll("-","");
     }
 }
