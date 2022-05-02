@@ -7,7 +7,6 @@ import com.tpay.commons.util.DateFilter;
 import com.tpay.domains.customer.application.CustomerFindService;
 import com.tpay.domains.customer.application.dto.CustomerInfo;
 import com.tpay.domains.order.application.OrderFindService;
-import com.tpay.domains.order.domain.OrderEntity;
 import com.tpay.domains.refund.application.dto.*;
 import com.tpay.domains.refund.domain.RefundEntity;
 import com.tpay.domains.refund.domain.RefundRepository;
@@ -16,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
@@ -34,15 +32,16 @@ public class RefundDetailFindService {
 
     public List<RefundFindResponseInterface> findList(Long franchiseeIndex, LocalDate startDate, LocalDate endDate) {
 
-        // TODO: 2022/04/28 refundEntityList로 바꾸기 진행 중
-        OrderEntity orderEntity = orderFindService.findByFranchiseeId(franchiseeIndex);
-        RefundEntity refundEntity = refundFindService.findByOrderEntity(orderEntity);
-        LocalDateTime startTime = startDate.atStartOfDay();
-        LocalDateTime endTime = startDate.plusDays(1).atStartOfDay();
-        List<RefundEntity> refundEntityList = refundRepository.findAllByIdAndCreatedDateBetween(refundEntity.getId(), startTime, endTime);
+//        // TODO: 2022/04/28 refundEntityList로 바꾸기 진행 중
+//        OrderEntity orderEntity = orderFindService.findByFranchiseeId(franchiseeIndex);
+//        RefundEntity refundEntity = refundFindService.findByOrderEntity(orderEntity);
+//        LocalDateTime startTime = startDate.atStartOfDay();
+//        LocalDateTime endTime = startDate.plusDays(1).atStartOfDay();
+//        List<RefundEntity> refundEntityList = refundRepository.findAllByIdAndCreatedDateBetween(refundEntity.getId(), startTime, endTime);
 
 
-        return refundRepository.findAllByFranchiseeIndex(franchiseeIndex, startDate.atTime(0, 0), endDate.atTime(0, 0));
+        LocalDate newEnd = endDate.plusDays(1);
+        return refundRepository.findAllByFranchiseeIndex(franchiseeIndex, startDate.atTime(0, 0), newEnd.atTime(0, 0));
 
 
     }

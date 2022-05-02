@@ -1,12 +1,13 @@
 package com.tpay.domains.external.application;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tpay.commons.custom.CustomValue;
-import com.tpay.commons.exception.ExceptionResponse;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.AlreadyCancelledException;
 import com.tpay.commons.exception.detail.InvalidExternalRefundIndexException;
 import com.tpay.commons.exception.detail.InvalidParameterException;
+import com.tpay.commons.webClient.WebRequestUtil;
 import com.tpay.domains.customer.application.CustomerFindService;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.external.application.dto.ExternalRefundCancelRequest;
@@ -19,10 +20,7 @@ import com.tpay.domains.refund.domain.RefundEntity;
 import com.tpay.domains.refund_core.application.dto.RefundCancelRequest;
 import com.tpay.domains.refund_core.application.dto.RefundResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
@@ -31,37 +29,27 @@ public class ExternalRefundCancelService {
     private final ExternalRefundFindService externalRefundFindService;
     private final CustomerFindService customerFindService;
     private final PointScheduledChangeService pointScheduledChangeService;
-    private final WebClient.Builder builder;
+    private final WebRequestUtil webRequestUtil;
+    private final ObjectMapper objectMapper;
 
     public ExternalRefundResponse cancel(ExternalRefundCancelRequest externalRefundCancelRequest) {
         try {
             ExternalRefundEntity externalRefundEntity = externalRefundFindService.findById(externalRefundCancelRequest.getExternalRefundIndex());
 
             if (!externalRefundEntity.getExternalRefundStatus().equals(ExternalRefundStatus.APPROVE)) {
-                throw new AlreadyCancelledException(ExceptionState.ALREADY_CANCELLED,"already cancelled or Illegal request");
+                throw new AlreadyCancelledException(ExceptionState.ALREADY_CANCELLED, "already cancelled or Illegal request");
             }
 
             CustomerEntity customerEntity = customerFindService.findByIndex(externalRefundEntity.getCustomerIndex());
             RefundEntity refundEntity = externalRefundEntity.getRefundEntity();
             RefundCancelRequest refundCancelRequest = RefundCancelRequest.of(customerEntity, refundEntity);
 
-            WebClient webClient = builder.build();
             String uri = CustomValue.REFUND_SERVER + "/refund/cancel";
-            RefundResponse refundResponse = webClient
-                .post()
-                .uri(uri)
-                .bodyValue(refundCancelRequest)
-                .retrieve()
-                .onStatus(
-                    HttpStatus::isError,
-                    response ->
-                        response.bodyToMono(ExceptionResponse.class).flatMap(error -> Mono.error(new InvalidParameterException(
-                            ExceptionState.REFUND, error.getMessage()))))
-                .bodyToMono(RefundResponse.class)
-                .block();
+            Object post = webRequestUtil.post(uri, refundCancelRequest);
+            RefundResponse refundResponse = objectMapper.convertValue(post, RefundResponse.class);
 
             //0000이 아닌경우 에러 발생
-            if(!refundResponse.getResponseCode().equals("0000")) {
+            if (!refundResponse.getResponseCode().equals("0000")) {
                 throw new Exception("Refund-Server Error");
             }
 
@@ -83,7 +71,7 @@ public class ExternalRefundCancelService {
             return ExternalRefundResponse.builder().responseCode("9102").message("[successmode] Index 정보를 찾을 수 없습니다.").build();
         } catch (IllegalArgumentException e) {
             return ExternalRefundResponse.builder().responseCode("9101").message("[successmode] 내부 에러입니다.").build();
-        } catch (Exception e){
+        } catch (Exception e) {
             return ExternalRefundResponse.builder().responseCode("9100").message("[successmode] Unknown 에러입니다.").build();
         }
     }
