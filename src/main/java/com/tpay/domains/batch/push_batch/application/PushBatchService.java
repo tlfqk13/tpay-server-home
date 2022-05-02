@@ -20,8 +20,7 @@ import com.tpay.domains.push.domain.TopicType;
 import com.tpay.domains.refund.domain.RefundEntity;
 import com.tpay.domains.refund.domain.RefundRepository;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -34,11 +33,11 @@ import java.util.stream.Collectors;
 
 import static com.tpay.commons.push.PushCategoryType.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PushBatchService {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private static final String firstCallTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmm"));
     private final FranchiseeApplicantFindService franchiseeApplicantFindService;
     private final PushNotificationService pushNotificationService;
@@ -64,9 +63,9 @@ public class PushBatchService {
         TopicType topic = TopicType.INIT;
         List<FranchiseeApplicantEntity> franchiseeApplicantEntityList = franchiseeApplicantFindService.findByFranchiseeStatus(FranchiseeStatus.INIT);
         if (isFirstCall()) {
-            System.out.println("First Call");
+            log.trace("First Call - CASE_ONE");
         } else if (franchiseeApplicantEntityList.isEmpty()) {
-            System.out.println("[" + LocalDateTime.now() + "] Nothing to PUSH - CASE_ONE");
+            log.trace("Nothing to PUSH - CASE_ONE");
         } else {
             List<FranchiseeEntity> dateFilter = franchiseeApplicantEntityList.stream().filter(this::isAfterTwoWeek).map(FranchiseeApplicantEntity::getFranchiseeEntity).collect(Collectors.toList());
             pushNSave(topic, dateFilter, CASE_ONE);
@@ -79,9 +78,9 @@ public class PushBatchService {
         List<FranchiseeApplicantEntity> franchiseeApplicantEntityList = franchiseeApplicantFindService.findByFranchiseeStatus(FranchiseeStatus.REJECTED);
 
         if (isFirstCall()) {
-            System.out.println("First Call");
+            log.trace("First Call - CASE_FOUR");
         } else if (franchiseeApplicantEntityList.isEmpty()) {
-            System.out.println("[" + LocalDateTime.now() + "]Nothing to PUSH - CASE_FOUR");
+            log.trace("Nothing to PUSH - CASE_FOUR");
         } else {
             List<FranchiseeEntity> dateFilter = franchiseeApplicantEntityList.stream().filter(this::isAfterOneDay).map(FranchiseeApplicantEntity::getFranchiseeEntity).collect(Collectors.toList());
             pushNSave(topic, dateFilter, CASE_FOUR);
@@ -91,11 +90,11 @@ public class PushBatchService {
     @Scheduled(cron = "0 1 15 * * *")
     private void caseEight() {
         TopicType topic = TopicType.DISAPPEAR;
-        List<PointEntity> pointEntityList = pointRepository.findByCreatedDateBefore(DisappearDate.DISAPPEAR_ALERT_DATE.getDisappearDate());
+        List<PointEntity> pointEntityList = pointRepository.findByCreatedDateBefore(DisappearDate.DISAPPEAR_DATE.getDisappearDate());
         if (isFirstCall()) {
-            System.out.println("First Call");
+            log.trace("First Call - CASE_EIGHT");
         } else if (pointEntityList.isEmpty()) {
-            System.out.println("[" + LocalDateTime.now() + "]Nothing to PUSH - CASE_EIGHT");
+            log.trace("Nothing to PUSH - CASE_EIGHT");
         } else {
             List<FranchiseeEntity> dateFilter = pointEntityList.stream().map(PointEntity::getFranchiseeEntity).collect(Collectors.toList());
             pushNSave(topic, dateFilter, CASE_EIGHT);
@@ -109,9 +108,9 @@ public class PushBatchService {
         LocalDateTime endDate = LocalDate.now().withDayOfMonth(1).atStartOfDay();
         List<RefundEntity> refundEntityList = refundRepository.findByCreatedDateBetween(startDate, endDate);
         if (isFirstCall()) {
-            System.out.println("First Call");
+            log.trace("First Call - CASE_NINE");
         } else if (refundEntityList.isEmpty()) {
-            System.out.println("[" + LocalDateTime.now() + "]Nothing to PUSH - CASE_NINE");
+            log.trace("Nothing to PUSH - CASE_NINE");
         } else {
             List<FranchiseeEntity> dateFilter = refundEntityList.stream().map(RefundEntity::getOrderEntity).map(OrderEntity::getFranchiseeEntity).distinct().collect(Collectors.toList());
             pushNSave(topic, dateFilter, CASE_NINE);
@@ -125,9 +124,9 @@ public class PushBatchService {
         LocalDateTime endDate = LocalDate.now().withDayOfYear(1).atStartOfDay();
         List<RefundEntity> refundEntityList = refundRepository.findByCreatedDateBetween(startDate, endDate);
         if (isFirstCall()) {
-            System.out.println("First Call");
+            log.trace("First Call - CASE_TEN");
         } else if (refundEntityList.isEmpty()) {
-            System.out.println("[" + LocalDateTime.now() + "]Nothing to PUSH - CASE_TEN");
+            log.trace("Nothing to PUSH - CASE_TEN");
         } else {
             List<FranchiseeEntity> dateFilter = refundEntityList.stream().map(RefundEntity::getOrderEntity).map(OrderEntity::getFranchiseeEntity).distinct().collect(Collectors.toList());
             pushNSave(topic, dateFilter, CASE_TEN);
@@ -142,11 +141,11 @@ public class PushBatchService {
         List<RefundEntity> refundEntityList = refundRepository.findByCreatedDateBetween(startDate, endDate);
         Month nowMonth = LocalDate.now().getMonth();
         if (isFirstCall()) {
-            System.out.println("First Call");
+            log.trace("First Call - CASE_ELEVEN");
         } else if (!(nowMonth.equals(Month.JANUARY) || nowMonth.equals(Month.JULY))) {
-            System.out.println(nowMonth + " is NOT JAN OR JULY");
+            log.trace("{} NOT JAN OR JULY - CASE_ELEVEN", nowMonth);
         } else if (refundEntityList.isEmpty()) {
-            System.out.println("[" + LocalDateTime.now() + "]Nothing to PUSH - CASE_ELEVEN");
+            log.trace("Nothing to PUSH - CASE_ELEVEN");
         } else {
             List<FranchiseeEntity> dateFilter = refundEntityList.stream().map(RefundEntity::getOrderEntity).map(OrderEntity::getFranchiseeEntity).distinct().collect(Collectors.toList());
             pushNSave(topic, dateFilter, CASE_ELEVEN);

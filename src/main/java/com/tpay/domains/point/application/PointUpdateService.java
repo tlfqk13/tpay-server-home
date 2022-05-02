@@ -32,7 +32,7 @@ public class PointUpdateService {
 
             // 변경 요청한 포인트 상태가 COMPLETE일 경우 푸쉬
             if (pointUpdateRequest.getPointStatus().equals(PointStatus.COMPLETE)) {
-                nonBatchPushService.nonBatchPushNSave(PushCategoryType.CASE_SEVEN, pointEntity.getFranchiseeEntity().getId());
+                nonBatchPushService.nonBatchPushNSave(PushCategoryType.CASE_SEVEN, pointEntity.getFranchiseeEntity().getId(), String.valueOf(pointEntity.getChange()));
             }
             return "pointStatus가 " + result + "로 변경되었습니다.";
         } else {

@@ -9,7 +9,7 @@ import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeRepository;
 import com.tpay.domains.order.application.OrderSaveService;
 import com.tpay.domains.order.domain.OrderEntity;
-import com.tpay.domains.refund.application.RefundSaveService;
+import com.tpay.domains.refund.application.RefundService;
 import com.tpay.domains.refund.application.dto.RefundSaveRequest;
 import com.tpay.domains.refund.domain.RefundEntity;
 import com.tpay.domains.sale.application.SaleAnalysisFindService;
@@ -23,7 +23,7 @@ public class SaleAnalysisFindControllerTest {
     @Autowired
     SaleAnalysisFindService saleAnalysisFindServiceV2;
     @Autowired
-    RefundSaveService refundSaveService;
+    RefundService refundService;
     @Autowired
     OrderSaveService orderSaveService;
     @Autowired
@@ -74,7 +74,7 @@ public class SaleAnalysisFindControllerTest {
             "}";
         RefundSaveRequest refundSaveRequest = objectMapper.readValue(json, RefundSaveRequest.class);
         orderEntity = orderSaveService.save(refundSaveRequest);
-        refundEntity = refundSaveService.save("0000", "123412341234", "99999999999", orderEntity);
+        refundEntity = refundService.save("0000", "123412341234", "99999999999", orderEntity);
 
     }
 

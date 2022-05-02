@@ -16,8 +16,11 @@ public class FranchiseeTokenInfo {
     private String rejectReason;
     private String accessToken;
     private String refreshToken;
+    private String storeName;
     private LocalDateTime signUpDate;
     private boolean popUp;
     private boolean isActiveSound;
     private boolean isActiveVibration;
+    private boolean isConnectedPos;
+    private String posType;
 }

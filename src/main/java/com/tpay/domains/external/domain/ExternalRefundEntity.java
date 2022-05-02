@@ -1,8 +1,8 @@
 package com.tpay.domains.external.domain;
 
+import com.tpay.domains.BaseTimeEntity;
 import com.tpay.domains.refund.domain.RefundEntity;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "external_refund")
 @Entity
-public class ExternalRefundEntity {
+public class ExternalRefundEntity extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,17 +26,20 @@ public class ExternalRefundEntity {
     private Long customerIndex;
 
     @NotNull
+    private String deduction;
+
+    @NotNull
     private ExternalRefundStatus externalRefundStatus;
 
     @OneToOne
     @JoinColumn(name = "refund_id")
     private RefundEntity refundEntity;
 
-    @Builder
-    public ExternalRefundEntity(Long franchiseeIndex, Long customerIndex, ExternalRefundStatus externalRefundStatus) {
+    public ExternalRefundEntity(Long franchiseeIndex, Long customerIndex, ExternalRefundStatus externalRefundStatus, String deduction) {
         this.franchiseeIndex = franchiseeIndex;
         this.customerIndex = customerIndex;
         this.externalRefundStatus = externalRefundStatus;
+        this.deduction = deduction;
     }
 
     public ExternalRefundEntity changeStatus(ExternalRefundStatus externalRefundStatus) {
@@ -44,7 +47,7 @@ public class ExternalRefundEntity {
         return this;
     }
 
-    public ExternalRefundEntity refundIndexRegister(RefundEntity refundEntity){
+    public ExternalRefundEntity refundIndexRegister(RefundEntity refundEntity) {
         this.refundEntity = refundEntity;
         return this;
     }

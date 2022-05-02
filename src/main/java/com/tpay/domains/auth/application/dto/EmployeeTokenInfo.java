@@ -21,4 +21,5 @@ public class EmployeeTokenInfo {
     private FranchiseeStatus franchiseeStatus;
     private boolean isActiveSound;
     private boolean isActiveVibration;
+    private boolean isConnectedPos;
 }

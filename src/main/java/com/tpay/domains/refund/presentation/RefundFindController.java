@@ -1,7 +1,7 @@
 package com.tpay.domains.refund.presentation;
 
 import com.tpay.commons.util.DateFilter;
-import com.tpay.domains.refund.application.RefundFindService;
+import com.tpay.domains.refund.application.RefundDetailFindService;
 import com.tpay.domains.refund.application.dto.RefundByCustomerResponse;
 import com.tpay.domains.refund.application.dto.RefundCustomerRequest;
 import com.tpay.domains.refund.application.dto.RefundFindResponseInterface;
@@ -17,7 +17,7 @@ import java.util.List;
 @RestController
 public class RefundFindController {
 
-    private final RefundFindService refundFindService;
+    private final RefundDetailFindService refundDetailFindService;
 
     @GetMapping("/refunds/franchisee/{franchiseeIndex}")
     public ResponseEntity<List<RefundFindResponseInterface>> findList(
@@ -27,7 +27,7 @@ public class RefundFindController {
         @RequestParam(required = false) LocalDate endDate) {
 
         List<RefundFindResponseInterface> responseList =
-            refundFindService.findList(franchiseeIndex, dateFilter, startDate, endDate);
+            refundDetailFindService.findList(franchiseeIndex, startDate, endDate);
         return ResponseEntity.ok(responseList);
     }
 
@@ -37,13 +37,13 @@ public class RefundFindController {
         @RequestParam String endDate,
         @RequestParam RefundStatus refundStatus
     ) {
-        List<RefundFindResponseInterface> response = refundFindService.findAll(startDate, endDate, refundStatus);
+        List<RefundFindResponseInterface> response = refundDetailFindService.findAll(startDate, endDate, refundStatus);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/admin/refunds/{franchiseeIndex}")
     public ResponseEntity<List<RefundFindResponseInterface>> findAFranchisee(@PathVariable Long franchiseeIndex) {
-        List<RefundFindResponseInterface> result = refundFindService.findAFranchisee(franchiseeIndex);
+        List<RefundFindResponseInterface> result = refundDetailFindService.findAFranchisee(franchiseeIndex);
         return ResponseEntity.ok(result);
     }
 
@@ -52,7 +52,7 @@ public class RefundFindController {
         @PathVariable Long franchiseeIndex,
         @RequestBody RefundCustomerRequest refundCustomerRequest
     ) {
-        List<RefundByCustomerResponse> result = refundFindService.findRefundsByCustomerInfo(franchiseeIndex, refundCustomerRequest);
+        List<RefundByCustomerResponse> result = refundDetailFindService.findRefundsByCustomerInfo(franchiseeIndex, refundCustomerRequest);
         return ResponseEntity.ok(result);
     }
 }

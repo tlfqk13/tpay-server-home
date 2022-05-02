@@ -17,7 +17,7 @@ import com.tpay.domains.order.domain.OrderEntity;
 import com.tpay.domains.point.domain.SignType;
 import com.tpay.domains.point_scheduled.application.PointScheduledChangeService;
 import com.tpay.domains.push.application.NonBatchPushService;
-import com.tpay.domains.refund.application.RefundSaveService;
+import com.tpay.domains.refund.application.RefundService;
 import com.tpay.domains.refund.application.dto.RefundSaveRequest;
 import com.tpay.domains.refund.domain.RefundEntity;
 import com.tpay.domains.refund_core.application.dto.RefundApproveRequest;
@@ -39,7 +39,7 @@ import static com.tpay.commons.util.UserSelector.FRANCHISEE;
 public class RefundApproveService {
 
     private final OrderSaveService orderSaveService;
-    private final RefundSaveService refundSaveService;
+    private final RefundService refundService;
     private final PointScheduledChangeService pointScheduledChangeService;
     private final FranchiseeFindService franchiseeFindService;
     private final WebClient.Builder builder;
@@ -90,7 +90,7 @@ public class RefundApproveService {
 
         // TODO : 응답코드 "0000" 아닐시 테스트 필요
         RefundEntity refundEntity =
-            refundSaveService.save(
+            refundService.save(
                 refundResponse.getResponseCode(),
                 refundResponse.getPurchaseSequenceNumber(),
                 refundResponse.getTakeoutNumber(),
