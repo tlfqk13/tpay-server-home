@@ -60,6 +60,7 @@ public class SignInService {
                 .franchiseeStatus(employeeTokenInfo.getFranchiseeStatus())
                 .isActiveSound(employeeTokenInfo.isActiveSound())
                 .isActiveVibration(employeeTokenInfo.isActiveVibration())
+                .isConnectedPos(employeeTokenInfo.isConnectedPos())
                 .userSelector(EMPLOYEE)
                 .build();
         } else {
