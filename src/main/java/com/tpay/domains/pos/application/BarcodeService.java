@@ -36,6 +36,7 @@ public class BarcodeService {
         try {
             //바코드 생성
             Barcode barcode = BarcodeFactory.createCode128A(idPadding + deductionPadding);
+            barcode.setBarHeight(100);
             BufferedImage image = BarcodeImageHandler.getImage(barcode);
             ByteArrayOutputStream os = new ByteArrayOutputStream();
             ImageIO.write(image, "jpeg", os);
