@@ -1,48 +1,67 @@
 package com.tpay.domains.pos.application;
 
+import com.tpay.commons.aws.S3FileUploader;
+import com.tpay.commons.exception.ExceptionState;
+import com.tpay.commons.exception.detail.InvalidPassportInfoException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.sourceforge.barbecue.Barcode;
 import net.sourceforge.barbecue.BarcodeException;
 import net.sourceforge.barbecue.BarcodeFactory;
 import net.sourceforge.barbecue.BarcodeImageHandler;
 import net.sourceforge.barbecue.output.OutputException;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-import java.io.File;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.LocalDateTime;
+import java.io.InputStream;
 
-import static com.tpay.commons.custom.CustomValue.BARCODE_SAVE_PATH;
-
-@Component
+@Service
+@RequiredArgsConstructor
 @Slf4j
 public class BarcodeService {
 
-    public ResponseEntity<Resource> createResource(String deductionPadding, String idPadding, String filename) {
-        Resource resource = new FileSystemResource(BARCODE_SAVE_PATH);
-        HttpHeaders headers = new HttpHeaders();
+    private final S3FileUploader s3FileUploader;
+
+    public String createBarcode(Long id, String deduction) {
+
+        String deductionPadding = deduction.substring(3);
+        String idPadding = setWithZero(id.toString(), 7);
+
+        String uri = "";
+
         try {
+            //바코드 생성
             Barcode barcode = BarcodeFactory.createCode128A(idPadding + deductionPadding);
-            barcode.setBarHeight(100);
-            filename = LocalDateTime.now() + "_" + filename + ".png";
-            File file = new File(BARCODE_SAVE_PATH + filename);
-            BarcodeImageHandler.savePNG(barcode, file);
-            resource = new FileSystemResource(BARCODE_SAVE_PATH + filename);
-            Path filePath = Paths.get(BARCODE_SAVE_PATH + filename);
-            headers.add("Content-Type", Files.probeContentType(filePath));
+            BufferedImage image = BarcodeImageHandler.getImage(barcode);
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            ImageIO.write(image, "jpeg", os);
+
+            //Input stream 생성
+            InputStream is = new ByteArrayInputStream(os.toByteArray());
+
+            //S3 업로드
+            uri = s3FileUploader.uploadBarcode(id, is);
         } catch (OutputException | BarcodeException | IOException e) {
             log.error("Barcode Create Error : {}", e.getMessage());
         }
-        return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+        return uri;
+    }
 
+    static String setWithZero(String target, Integer size) {
+        StringBuilder stringBuilder = new StringBuilder();
+        StringBuilder after = stringBuilder.append(target);
+        if (after.length() <= size) {
+            while (after.length() < size) {
+                after.insert(0, "0");
+            }
+        } else {
+            throw new InvalidPassportInfoException(ExceptionState.INVALID_PASSWORD, "too long target to padding(target > size)");
+        }
+        return after.toString();
     }
 
 }
