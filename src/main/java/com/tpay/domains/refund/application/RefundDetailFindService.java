@@ -37,7 +37,7 @@ public class RefundDetailFindService {
     public List<RefundFindResponseInterface> findAll(String startDate, String endDate, RefundStatus refundStatus) {
         DateTimeFormatter yyyyMMdd = DateTimeFormatter.ofPattern("yyyyMMdd");
         LocalDate startLocalDate = LocalDate.parse("20" + startDate, yyyyMMdd);
-        LocalDate endLocalDate = LocalDate.parse("20" + endDate, yyyyMMdd);
+        LocalDate endLocalDate = LocalDate.parse("20" + endDate, yyyyMMdd).plusDays(1);
 
         if (refundStatus.equals(RefundStatus.ALL)) {
             return refundRepository.findAllNativeQuery(startLocalDate, endLocalDate);
@@ -138,15 +138,15 @@ public class RefundDetailFindService {
 
         @Override
         public int compare(RefundByCustomerResponse o1, RefundByCustomerResponse o2) {
-            return o2.getCreatedDate().compareTo(o1.getCreatedDate());
+            return o1.getCreatedDate().compareTo(o2.getCreatedDate());
         }
-    }
 
+    }
     private static class ResponseCompDesc implements Comparator<RefundByCustomerResponse> {
 
         @Override
         public int compare(RefundByCustomerResponse o1, RefundByCustomerResponse o2) {
-            return o1.getCreatedDate().compareTo(o2.getCreatedDate());
+            return o2.getCreatedDate().compareTo(o1.getCreatedDate());
         }
     }
 }

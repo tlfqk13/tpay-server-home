@@ -131,6 +131,7 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
         "         left join franchisee f on o.franchisee_id = f.id\n" +
         "where franchisee_id = :franchiseeIndex\n" +
         "  and r.created_date between :startDate and :endDate\n" +
+        "  and r.refund_status = 0\n" +
         "  and customer_id = :customerIndex\n" +
         "order by 3", nativeQuery = true)
     List<RefundFindResponseInterface> findRefundsByCustomerInfo(
