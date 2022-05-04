@@ -119,11 +119,12 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
         @Param("endDate") LocalDate endDate);
 
     @Query(value = "select r.id           as refundIndex,\n" +
-        "       purchs_sn      as orderNumber,\n" +
-        "       r.created_date as createdDate,\n" +
-        "       tot_amt        as totalAmount,\n" +
-        "       tot_refund     as totalRefund,\n" +
-        "       refund_status  as refundStatus\n" +
+        "       purchs_sn       as orderNumber,\n" +
+        "       r.created_date  as createdDate,\n" +
+        "  date(r.created_date) as formatDate,\n" +
+        "       tot_amt         as totalAmount,\n" +
+        "       tot_refund      as totalRefund,\n" +
+        "       refund_status   as refundStatus\n" +
         "from refund r\n" +
         "         left join orders o on o.id = r.order_id\n" +
         "         left join customer c on c.id = o.customer_id\n" +
