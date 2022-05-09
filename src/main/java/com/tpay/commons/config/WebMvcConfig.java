@@ -1,6 +1,7 @@
 package com.tpay.commons.config;
 
 import com.tpay.commons.interceptor.AuthInterceptor;
+import com.tpay.commons.interceptor.JwtValidationInterceptor;
 import com.tpay.commons.interceptor.PrintRequestInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
@@ -8,38 +9,44 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Configuration
 @RequiredArgsConstructor
 public class WebMvcConfig implements WebMvcConfigurer {
     private final AuthInterceptor authInterceptor;
     private final PrintRequestInterceptor printRequestInterceptor;
+    private final JwtValidationInterceptor jwtValidationInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        List<String> exclusivePathList = new ArrayList<>(List.of("/sign-in",
+            "/sign-up",
+            "/sign-out",
+            "/refresh",
+            "/categories",
+            "/certifications/**",
+            "/franchisee/password/exists",
+            "/franchisee/password/selfCertification",
+            "/franchisee/password/out",
+            "/admin/**",
+            "/refunds",
+            "/validate/**",
+            "/points/batch",
+            "/external/**",
+            "/push/batch/**",
+            "/error",
+            "/h2-console/**",
+            "/favicon.ico",
+            "/fcm/**"));
+        registry
+            .addInterceptor(jwtValidationInterceptor)
+            .addPathPatterns("/franchisee/password/**");
         registry
             .addInterceptor(authInterceptor)
             .addPathPatterns("/**")
-            .excludePathPatterns(
-                "/sign-in",
-                "/sign-up",
-                "/sign-out",
-                "/refresh",
-                "/categories",
-                "/certifications/**",
-                "/franchisee/business-number",
-                "/franchisee/password",
-                "/admin/**",
-                "/refunds",
-                "/h2-console/**",
-                "/favicon.ico",
-                "/validate/**",
-                "/refund/approval/fake",
-                "/franchisee/password/**",
-                "/points/batch",
-                "/external/**",
-                "/push/batch/**",
-                "/error",
-                    "/fcm/**");
+            .excludePathPatterns(exclusivePathList);
         registry.addInterceptor(printRequestInterceptor).addPathPatterns("/**");
     }
 
