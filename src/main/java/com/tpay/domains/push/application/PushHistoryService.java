@@ -54,7 +54,7 @@ public class PushHistoryService {
             .response(send)
             .userId(userPushTokenEntity.getFranchiseeEntity().getId())
             .isRead(false)
-            .isDetail(false)
+            .isDetail(true)
             .build();
 
 

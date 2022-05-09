@@ -76,10 +76,13 @@ public class FranchiseeSignUpService {
         franchiseeApplicantSaveService.save(franchiseeEntity);
 
         // 토큰 테이블에 토큰 저장
-        PushTokenEntity pushTokenEntity = new PushTokenEntity(request.getPushToken());
-        PushTokenEntity findPushTokenEntity = pushTokenService.saveIfNotExists(pushTokenEntity);
-
+        if(!(request.getPushToken() == null)) {
+            PushTokenEntity pushTokenEntity = new PushTokenEntity(request.getPushToken());
+            PushTokenEntity findPushTokenEntity = pushTokenService.saveIfNotExists(pushTokenEntity);
         // 유저-토큰 테이블 세이브 (기존 데이터는 삭제)
-        userPushTokenService.deleteIfExistsAndSave(franchiseeEntity, findPushTokenEntity);
+            userPushTokenService.deleteIfExistsAndSave(franchiseeEntity, findPushTokenEntity);
+        }
+
+
     }
 }

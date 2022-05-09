@@ -28,6 +28,6 @@ public class PushFindDto {
     @Builder
     @AllArgsConstructor
     public static class FindAllResponse {
-        private List<Response> responseList;
+        private List<AdminPushResponse> responseList;
     }
 }

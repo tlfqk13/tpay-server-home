@@ -56,25 +56,25 @@ public class AuthService {
 
     public AuthToken createAccessToken(FranchiseeEntity franchiseeEntity) {
         Map<String, Object> payload = new LinkedHashMap<>();
-        payload.put("access", franchiseeEntity.getBusinessNumber());
+        payload.put("accessF", franchiseeEntity.getId());
         return jwtUtils.createAuthToken(payload, TokenType.ACCESS_TOKEN);
     }
 
     public AuthToken createAccessToken(EmployeeEntity employeeEntity) {
         Map<String, Object> payload = new LinkedHashMap<>();
-        payload.put("access", employeeEntity.getUserId());
+        payload.put("accessE", employeeEntity.getId());
         return jwtUtils.createAuthToken(payload, TokenType.ACCESS_TOKEN);
     }
 
     public AuthToken createRefreshToken(FranchiseeEntity franchiseeEntity) {
         Map<String, Object> payload = new LinkedHashMap<>();
-        payload.put("refresh", franchiseeEntity.getId());
+        payload.put("refreshF", franchiseeEntity.getId());
         return jwtUtils.createAuthToken(payload, TokenType.REFRESH_TOKEN);
     }
 
     public AuthToken createRefreshToken(EmployeeEntity employeeEntity) {
         Map<String, Object> payload = new LinkedHashMap<>();
-        payload.put("refresh", employeeEntity.getId());
+        payload.put("refreshE", employeeEntity.getId());
         return jwtUtils.createAuthToken(payload, TokenType.REFRESH_TOKEN);
     }
 }

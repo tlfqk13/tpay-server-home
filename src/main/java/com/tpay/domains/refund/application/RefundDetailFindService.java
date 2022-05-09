@@ -1,44 +1,32 @@
 package com.tpay.domains.refund.application;
 
 import com.tpay.commons.aria.PassportNumberEncryptService;
-import com.tpay.commons.exception.ExceptionState;
-import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.util.DateFilter;
 import com.tpay.domains.customer.application.CustomerFindService;
 import com.tpay.domains.customer.application.dto.CustomerInfo;
-import com.tpay.domains.order.application.OrderFindService;
 import com.tpay.domains.refund.application.dto.*;
 import com.tpay.domains.refund.domain.RefundEntity;
 import com.tpay.domains.refund.domain.RefundRepository;
 import com.tpay.domains.refund.domain.RefundStatus;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class RefundDetailFindService {
 
     private final PassportNumberEncryptService passportNumberEncryptService;
     private final RefundRepository refundRepository;
-    private final RefundFindService refundFindService;
     private final CustomerFindService customerFindService;
-    private final OrderFindService orderFindService;
 
     public List<RefundFindResponseInterface> findList(Long franchiseeIndex, LocalDate startDate, LocalDate endDate) {
-
-//        // TODO: 2022/04/28 refundEntityList로 바꾸기 진행 중
-//        OrderEntity orderEntity = orderFindService.findByFranchiseeId(franchiseeIndex);
-//        RefundEntity refundEntity = refundFindService.findByOrderEntity(orderEntity);
-//        LocalDateTime startTime = startDate.atStartOfDay();
-//        LocalDateTime endTime = startDate.plusDays(1).atStartOfDay();
-//        List<RefundEntity> refundEntityList = refundRepository.findAllByIdAndCreatedDateBetween(refundEntity.getId(), startTime, endTime);
-
 
         LocalDate newEnd = endDate.plusDays(1);
         return refundRepository.findAllByFranchiseeIndex(franchiseeIndex, startDate.atTime(0, 0), newEnd.atTime(0, 0));
@@ -49,7 +37,7 @@ public class RefundDetailFindService {
     public List<RefundFindResponseInterface> findAll(String startDate, String endDate, RefundStatus refundStatus) {
         DateTimeFormatter yyyyMMdd = DateTimeFormatter.ofPattern("yyyyMMdd");
         LocalDate startLocalDate = LocalDate.parse("20" + startDate, yyyyMMdd);
-        LocalDate endLocalDate = LocalDate.parse("20" + endDate, yyyyMMdd);
+        LocalDate endLocalDate = LocalDate.parse("20" + endDate, yyyyMMdd).plusDays(1);
 
         if (refundStatus.equals(RefundStatus.ALL)) {
             return refundRepository.findAllNativeQuery(startLocalDate, endLocalDate);
@@ -94,7 +82,7 @@ public class RefundDetailFindService {
         return refundRepository.findAFranchiseeNativeQuery(franchiseeIndex);
     }
 
-    public List<RefundByCustomerResponse> findRefundsByCustomerInfo(Long franchiseeIndex, RefundCustomerRequest refundCustomerRequest) {
+    public List<RefundByCustomerDateResponse> findRefundsByCustomerInfo(Long franchiseeIndex, RefundCustomerRequest refundCustomerRequest) {
         RefundCustomerInfoRequest refundCustomerInfoRequest = refundCustomerRequest.getRefundCustomerInfoRequest();
         RefundCustomerDateRequest refundCustomerDateRequest = refundCustomerRequest.getRefundCustomerDateRequest();
 
@@ -108,27 +96,57 @@ public class RefundDetailFindService {
         Long customerIndex = customerFindService.findByNationAndPassportNumber(name, passportNumber, nation).getId();
 
         List<RefundFindResponseInterface> refundsByCustomerInfo = refundRepository.findRefundsByCustomerInfo(franchiseeIndex, startDate, endDate, customerIndex);
+
+        if (refundsByCustomerInfo.isEmpty()) {
+            return Collections.emptyList();
+        }
         List<RefundByCustomerResponse> refundByCustomerResponseList =
             refundsByCustomerInfo.stream()
-                .map(refundFindResponseInterface ->
-                    RefundByCustomerResponse.builder()
-                        .refundIndex(refundFindResponseInterface.getRefundIndex())
-                        .orderNumber(refundFindResponseInterface.getOrderNumber())
-                        .createdDate(refundFindResponseInterface.getCreatedDate())
-                        .totalAmount(refundFindResponseInterface.getTotalAmount())
-                        .totalRefund(refundFindResponseInterface.getTotalRefund())
-                        .refundStatus(refundFindResponseInterface.getRefundStatus())
-                        .build())
-                .sorted(Comparator.comparing(RefundByCustomerResponse::getCreatedDate))
+                .map(RefundByCustomerResponse::from)
                 .collect(Collectors.toList());
+        Queue<RefundByCustomerResponse> refundByCustomerResponseQueue = new PriorityQueue<>();
         if (orderCheck.equals("ASC")) {
-            return refundByCustomerResponseList;
-        } else if (orderCheck.equals("DESC")) {
-            return refundByCustomerResponseList.stream()
-                .sorted(Comparator.comparing(RefundByCustomerResponse::getCreatedDate).reversed())
-                .collect(Collectors.toList());
-        } else {
-            throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "invalid orderCheck");
+            refundByCustomerResponseQueue = new PriorityQueue<>(new ResponseCompAsc());
+        }
+        if (orderCheck.equals("DESC")) {
+            refundByCustomerResponseQueue = new PriorityQueue<>(new ResponseCompDesc());
+        }
+        refundByCustomerResponseQueue.addAll(refundByCustomerResponseList);
+
+        List<RefundByCustomerDateResponse> refundByCustomerDateResponseList = new ArrayList<>();
+        List<RefundByCustomerDateResponse.Data> dataList = new ArrayList<>();
+        LocalDate targetDate = refundByCustomerResponseQueue.element().getFormatDate();
+        while (!refundByCustomerResponseQueue.isEmpty()) {
+            RefundByCustomerResponse poll = refundByCustomerResponseQueue.poll();
+            if (poll.getFormatDate().equals(targetDate)) {
+                dataList.add(new RefundByCustomerDateResponse.Data(poll));
+            } else {
+                refundByCustomerDateResponseList.add(RefundByCustomerDateResponse.builder().date(targetDate.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))).dataList(dataList).build());
+                dataList = new ArrayList<>();
+                dataList.add(new RefundByCustomerDateResponse.Data(poll));
+                targetDate = poll.getFormatDate();
+            }
+            if (refundByCustomerResponseQueue.isEmpty()) {
+                refundByCustomerDateResponseList.add(RefundByCustomerDateResponse.builder().date(targetDate.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))).dataList(dataList).build());
+            }
+        }
+
+        return refundByCustomerDateResponseList;
+    }
+
+    private static class ResponseCompAsc implements Comparator<RefundByCustomerResponse> {
+
+        @Override
+        public int compare(RefundByCustomerResponse o1, RefundByCustomerResponse o2) {
+            return o1.getCreatedDate().compareTo(o2.getCreatedDate());
+        }
+
+    }
+    private static class ResponseCompDesc implements Comparator<RefundByCustomerResponse> {
+
+        @Override
+        public int compare(RefundByCustomerResponse o1, RefundByCustomerResponse o2) {
+            return o2.getCreatedDate().compareTo(o1.getCreatedDate());
         }
     }
 }

@@ -119,17 +119,19 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
         @Param("endDate") LocalDate endDate);
 
     @Query(value = "select r.id           as refundIndex,\n" +
-        "       purchs_sn      as orderNumber,\n" +
-        "       r.created_date as createdDate,\n" +
-        "       tot_amt        as totalAmount,\n" +
-        "       tot_refund     as totalRefund,\n" +
-        "       refund_status  as refundStatus\n" +
+        "       purchs_sn       as orderNumber,\n" +
+        "       r.created_date  as createdDate,\n" +
+        "  date(r.created_date) as formatDate,\n" +
+        "       tot_amt         as totalAmount,\n" +
+        "       tot_refund      as totalRefund,\n" +
+        "       refund_status   as refundStatus\n" +
         "from refund r\n" +
         "         left join orders o on o.id = r.order_id\n" +
         "         left join customer c on c.id = o.customer_id\n" +
         "         left join franchisee f on o.franchisee_id = f.id\n" +
         "where franchisee_id = :franchiseeIndex\n" +
         "  and r.created_date between :startDate and :endDate\n" +
+        "  and r.refund_status = 0\n" +
         "  and customer_id = :customerIndex\n" +
         "order by 3", nativeQuery = true)
     List<RefundFindResponseInterface> findRefundsByCustomerInfo(
@@ -139,12 +141,12 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
         @Param("customerIndex") Long customerIndex);
 
     @Query(value =
-        "select cast(sum(if(r.refund_status = 'APPROVAL', o.tot_amt, 0)) as integer)      as totalAmount,\n" +
-            "       (cast(sum(if(r.refund_status = 'APPROVAL', o.tot_amt, 0)) as integer)) -\n" +
-            "       (cast(sum(if(r.refund_status = 'APPROVAL', r.tot_refund, 0)) as integer)) as totalActualAmount,\n" +
-            "       cast(sum(if(r.refund_status = 'APPROVAL', r.tot_refund, 0)) as integer)   as totalRefund,\n" +
-            "       cast(sum(if(r.refund_status = 'APPROVAL', 1, 0)) as integer)              as totalCount,\n" +
-            "       sum(if(r.refund_status = 'CANCEL', 1, 0))                                 as totalCancel\n" +
+        "select cast(sum(if(r.refund_status = 0, o.tot_amt, 0)) as integer)      as totalAmount,\n" +
+            "       (cast(sum(if(r.refund_status = 0, o.tot_amt, 0)) as integer)) -\n" +
+            "       (cast(sum(if(r.refund_status = 0, r.tot_refund, 0)) as integer)) as totalActualAmount,\n" +
+            "       cast(sum(if(r.refund_status = 0, r.tot_refund, 0)) as integer)   as totalRefund,\n" +
+            "       cast(sum(if(r.refund_status = 0, 1, 0)) as integer)              as totalCount,\n" +
+            "       sum(if(r.refund_status = 2, 1, 0))                                 as totalCancel\n" +
             "from orders o\n" +
             "         left join refund r on o.id = r.order_id\n" +
             "where franchisee_id = :franchiseeIndex\n" +
@@ -155,12 +157,12 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
     );
 
     @Query(value =
-        "select cast(sum(if(r.refund_status = 'APPROVAL', o.tot_amt, 0)) as integer)      as totalAmount,\n" +
-            "       (cast(sum(if(r.refund_status = 'APPROVAL', o.tot_amt, 0)) as integer)) -\n" +
-            "       (cast(sum(if(r.refund_status = 'APPROVAL', r.tot_refund, 0)) as integer)) as totalActualAmount,\n" +
-            "       cast(sum(if(r.refund_status = 'APPROVAL', r.tot_refund, 0)) as integer)   as totalRefund,\n" +
-            "       cast(sum(if(r.refund_status = 'APPROVAL', 1, 0)) as integer)              as totalCount,\n" +
-            "       sum(if(r.refund_status = 'CANCEL', 1, 0))                                 as totalCancel\n" +
+        "select cast(sum(if(r.refund_status = 0, o.tot_amt, 0)) as integer)      as totalAmount,\n" +
+            "       (cast(sum(if(r.refund_status = 0, o.tot_amt, 0)) as integer)) -\n" +
+            "       (cast(sum(if(r.refund_status = 0, r.tot_refund, 0)) as integer)) as totalActualAmount,\n" +
+            "       cast(sum(if(r.refund_status = 0, r.tot_refund, 0)) as integer)   as totalRefund,\n" +
+            "       cast(sum(if(r.refund_status = 0, 1, 0)) as integer)              as totalCount,\n" +
+            "       sum(if(r.refund_status = 2, 1, 0))                                 as totalCancel\n" +
             "from orders o\n" +
             "         left join refund r on o.id = r.order_id\n" +
             "where franchisee_id = :franchiseeIndex\n" +
@@ -172,12 +174,12 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
 
 
     @Query(value =
-        "select cast(sum(if(r.refund_status = 'APPROVAL', o.tot_amt, 0)) as integer)      as totalAmount,\n" +
-            "       (cast(sum(if(r.refund_status = 'APPROVAL', o.tot_amt, 0)) as integer)) -\n" +
-            "       (cast(sum(if(r.refund_status = 'APPROVAL', r.tot_refund, 0)) as integer)) as totalActualAmount,\n" +
-            "       cast(sum(if(r.refund_status = 'APPROVAL', r.tot_refund, 0)) as integer)   as totalRefund,\n" +
-            "       cast(sum(if(r.refund_status = 'APPROVAL', 1, 0)) as integer)              as totalCount,\n" +
-            "       sum(if(r.refund_status = 'CANCEL', 1, 0))                                 as totalCancel\n" +
+        "select cast(sum(if(r.refund_status = 0, o.tot_amt, 0)) as integer)      as totalAmount,\n" +
+            "       (cast(sum(if(r.refund_status = 0, o.tot_amt, 0)) as integer)) -\n" +
+            "       (cast(sum(if(r.refund_status = 0, r.tot_refund, 0)) as integer)) as totalActualAmount,\n" +
+            "       cast(sum(if(r.refund_status = 0, r.tot_refund, 0)) as integer)   as totalRefund,\n" +
+            "       cast(sum(if(r.refund_status = 0, 1, 0)) as integer)              as totalCount,\n" +
+            "       sum(if(r.refund_status = 2, 1, 0))                                 as totalCancel\n" +
             "from orders o\n" +
             "         left join refund r on o.id = r.order_id\n" +
             "where franchisee_id = :franchiseeIndex", nativeQuery = true)
