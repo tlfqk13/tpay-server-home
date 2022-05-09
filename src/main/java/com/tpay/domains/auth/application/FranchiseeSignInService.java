@@ -40,13 +40,14 @@ public class FranchiseeSignInService {
         AuthToken refreshToken = authService.createRefreshToken(franchiseeEntity);
         authService.updateOrSave(franchiseeEntity, refreshToken.getValue());
 
-        // 토큰 테이블에 토큰 저장
-        PushTokenEntity pushTokenEntity = new PushTokenEntity(pushToken);
-        PushTokenEntity findPushTokenEntity = pushTokenService.saveIfNotExists(pushTokenEntity);
+        if(!(pushToken == null)) {
+            // 토큰 테이블에 토큰 저장
+            PushTokenEntity pushTokenEntity = new PushTokenEntity(pushToken);
+            PushTokenEntity findPushTokenEntity = pushTokenService.saveIfNotExists(pushTokenEntity);
 
-        // 유저-토큰 테이블 세이브 (기존 데이터는 삭제)
-        userPushTokenService.deleteIfExistsAndSave(franchiseeEntity, findPushTokenEntity);
-
+            // 유저-토큰 테이블 세이브 (기존 데이터는 삭제)
+            userPushTokenService.deleteIfExistsAndSave(franchiseeEntity, findPushTokenEntity);
+        }
         return FranchiseeTokenInfo.builder()
             .franchiseeIndex(franchiseeEntity.getId())
             .businessNumber(franchiseeEntity.getBusinessNumber())

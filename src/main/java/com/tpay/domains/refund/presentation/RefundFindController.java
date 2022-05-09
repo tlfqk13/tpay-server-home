@@ -2,7 +2,7 @@ package com.tpay.domains.refund.presentation;
 
 import com.tpay.commons.util.DateFilter;
 import com.tpay.domains.refund.application.RefundDetailFindService;
-import com.tpay.domains.refund.application.dto.RefundByCustomerResponse;
+import com.tpay.domains.refund.application.dto.RefundByCustomerDateResponse;
 import com.tpay.domains.refund.application.dto.RefundCustomerRequest;
 import com.tpay.domains.refund.application.dto.RefundFindResponseInterface;
 import com.tpay.domains.refund.domain.RefundStatus;
@@ -48,11 +48,11 @@ public class RefundFindController {
     }
 
     @PostMapping("/refunds/customer/{franchiseeIndex}")
-    public ResponseEntity<List<RefundByCustomerResponse>> findRefundsByCustomerInfo(
+    public ResponseEntity<List<RefundByCustomerDateResponse>> findRefundsByCustomerInfo(
         @PathVariable Long franchiseeIndex,
         @RequestBody RefundCustomerRequest refundCustomerRequest
     ) {
-        List<RefundByCustomerResponse> result = refundDetailFindService.findRefundsByCustomerInfo(franchiseeIndex, refundCustomerRequest);
+        List<RefundByCustomerDateResponse> result = refundDetailFindService.findRefundsByCustomerInfo(franchiseeIndex, refundCustomerRequest);
         return ResponseEntity.ok(result);
     }
 }

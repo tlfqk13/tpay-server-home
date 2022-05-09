@@ -10,6 +10,7 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -20,7 +21,9 @@ import javax.annotation.PostConstruct;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
+@Slf4j
 @Service
 @NoArgsConstructor
 public class S3FileUploader {
@@ -67,6 +70,22 @@ public class S3FileUploader {
         String key = profileName + "/" + franchiseeIndex + imageCategory;
         s3Client.deleteObject(bucket, key);
         return "Delete : " + key;
+    }
+
+    public String uploadBarcode(Long id, InputStream inputStream) {
+        String uri = "";
+        try {
+            ObjectMetadata objectMetadata = new ObjectMetadata();
+            objectMetadata.setContentType(MediaType.ALL_VALUE);
+            objectMetadata.setContentLength(inputStream.available());
+            String key = "barcode/" + id;
+            PutObjectRequest putObjectRequest = new PutObjectRequest(bucket, key, inputStream, objectMetadata);
+            s3Client.putObject(putObjectRequest.withCannedAcl(CannedAccessControlList.PublicRead));
+            uri = s3Client.getUrl(bucket, key).toString();
+        } catch (IOException e) {
+            log.error("IO exception");
+        }
+        return uri;
     }
 
     public String uploadXlsx(Long franchiseeIndex, XSSFWorkbook xssfWorkbook) throws IOException {

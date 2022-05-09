@@ -20,7 +20,7 @@ public class FranchiseeBankInfo {
         return FranchiseeBankInfo.builder()
             .accountNumber(franchiseeBankEntity.getAccountNumber())
             .bankName(franchiseeBankEntity.getBankName())
-            .withdrawalDate(franchiseeBankEntity.getWithdrawalDate())
+            .withdrawalDate(franchiseeBankEntity.getWithdrawalDate()+"일")
             .build();
     }
 
