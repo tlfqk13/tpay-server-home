@@ -14,6 +14,8 @@ public class FranchiseeStatusFindController {
 
     private final FranchiseeStatusFindService franchiseeStatusFindService;
 
+    //주의 franchisee-applicant 임 's' 없음
+    // TODO: 2022/05/11 jwt 신규검증 제외됨
     @GetMapping("/franchisee-applicant/{franchiseeApplicantIndex}")
     public ResponseEntity<FranchiseeApplicantStatusInfo> findByIndex(
         @PathVariable Long franchiseeApplicantIndex) {
