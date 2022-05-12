@@ -25,16 +25,17 @@ import static com.tpay.commons.util.UserSelector.FRANCHISEE;
  * 각 인증이 필요한 요청이 Jwt 토큰의 ID와 일치하는지, URI 별 검증
  * 생성 배경 : spring security 등 안전한 라이브러리로 구성이 안되어있음
  * K1 프로젝트 이후 URI변경 또는 기능추가가 많이 없을 것으로 예상
- * <p>
- * <p>
- * <용어정리>
+ * ====용어정리====
  * [firstDomain] - URI의 가장 첫 도메인, 해당 도메인을 기준으로 개별 파싱
+ *
  * [trim] - 개별 파싱의 가장 첫 도메인을 잘라낸 나머지 문자열
+ *
  * [NstDomainEnd] - substring하기 위해 만들어짐
  * - n번째 도메인의 끝+1 위치. 어디서부터 카운트할지는 각각 다름. 단 변수명은 전체 도메인 기준으로 함. 아래 예시 참고
  * 예시) /franchisee/example/test 라는 URI에서 secondDomainEnd 는 example의 e부터 test의 t앞의 '/' 까지의 index를 센다.
- * <p>
+ *
  * [NstTrim] - 전체 URI 기준으로 n번째 도메인까지 잘라낸 나머지 문자열
+ * ================
  */
 @Slf4j
 @Component
@@ -60,8 +61,9 @@ public class JwtValidationInterceptor implements HandlerInterceptor {
         if (indexInfo.getUserSelector().equals(indexFromUri.userSelector) && indexInfo.getIndex().equals(indexFromUri.getIndex())) {
             return true;
         } else {
-            log.warn("INDEX FROM URI : {}{}", indexFromUri.getUserSelector(),indexFromUri.getIndex());
-            log.warn("INDEX FROM AUTH: {}{}", indexInfo.getUserSelector(), indexInfo.getIndex());
+            log.warn("REQUEST URI : {}", request.getRequestURI());
+            log.warn("INDEX FROM URI : {} {}", indexFromUri.getUserSelector(),indexFromUri.getIndex());
+            log.warn("INDEX FROM AUTH: {} {}", indexInfo.getUserSelector(), indexInfo.getIndex());
             throw new JwtRuntimeException(ExceptionState.INVALID_TOKEN, "jwt Error : Authorization & URIInfo mismatch");
         }
 
@@ -72,10 +74,8 @@ public class JwtValidationInterceptor implements HandlerInterceptor {
         Object accessE = claims.get("accessE");
         if (accessE == null) {
             Object accessF = claims.get("accessF");
-            log.trace("@@@@@ accessF = {}", accessF);
             return new IndexInfo(FRANCHISEE, String.valueOf(accessF));
         }
-        log.trace("@@@@@ accessE = {}", accessE);
         return new IndexInfo(EMPLOYEE, String.valueOf(accessE));
     }
 
@@ -156,6 +156,7 @@ public class JwtValidationInterceptor implements HandlerInterceptor {
 
     private IndexInfo getIndexFromUriFranchiseeApplicants(HttpServletRequest request) {
         String trim = request.getRequestURI().substring(23);
+
         int secondDomainEnd = trim.indexOf("/");
         if (secondDomainEnd == -1) {
             FranchiseeApplicantEntity franchiseeApplicantEntity = franchiseeApplicantFindService.findByBusinessNumber(trim);
@@ -227,11 +228,11 @@ public class JwtValidationInterceptor implements HandlerInterceptor {
     private IndexInfo getIndexFromUriSale(HttpServletRequest request) {
         String trim = request.getRequestURI().substring(7);
         if (trim.contains(UriType.SALE_DETAIL.getKeyword())) {
-            String thirdTrim = trim.substring(17);
+            String thirdTrim = trim.substring(18);
             return new IndexInfo(FRANCHISEE, thirdTrim);
         } else {
             int secondDomainEnd = trim.indexOf("/");
-            String secondTrim = trim.substring(secondDomainEnd);
+            String secondTrim = trim.substring(secondDomainEnd+1);
             return new IndexInfo(FRANCHISEE, secondTrim);
         }
     }
@@ -268,7 +269,7 @@ public class JwtValidationInterceptor implements HandlerInterceptor {
         REFUND_CORE("refund"),
         REFUND_CORE_APPROVAL("approval"),
         REFUND_CORE_CANCEL("cancel"),
-        SALE("sale"),
+        SALE("sales"),
         SALE_DETAIL("detail");
         private String keyword;
     }
