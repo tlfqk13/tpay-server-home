@@ -31,18 +31,20 @@ public class WebMvcConfig implements WebMvcConfigurer {
             "/franchisee/password/selfCertification",
             "/franchisee/password/out",
             "/admin/**",
-            "/refunds",
             "/validate/**",
             "/points/batch",
             "/external/**",
             "/push/batch/**",
+            "/refund/limit",
             "/error",
             "/h2-console/**",
             "/favicon.ico",
+            "push/*/count",
             "/fcm/**"));
         registry
             .addInterceptor(jwtValidationInterceptor)
-            .addPathPatterns("/franchisee/password/**");
+            .addPathPatterns("/**")
+            .excludePathPatterns(exclusivePathList);
         registry
             .addInterceptor(authInterceptor)
             .addPathPatterns("/**")
