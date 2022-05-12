@@ -17,22 +17,8 @@ import javax.transaction.Transactional;
 @RequiredArgsConstructor
 public class FranchiseeBankService {
 
-    private final FranchiseeBankRepository franchiseeBankRepository;
     private final FranchiseeFindService franchiseeFindService;
     private final FranchiseeBankFindService franchiseeBankFindService;
-
-    public FranchiseeBankInfo save(Long franchiseeIndex, FranchiseeBankInfo franchiseeBankInfo) {
-
-        FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
-        FranchiseeBankEntity franchiseeBankEntity = FranchiseeBankEntity.builder()
-            .accountNumber(franchiseeBankInfo.getAccountNumber().replaceAll("-", ""))
-            .bankName(franchiseeBankInfo.getBankName())
-            .withdrawalDate(franchiseeBankInfo.getWithdrawalDate())
-            .franchiseeEntity(franchiseeEntity)
-            .build();
-        FranchiseeBankEntity result = franchiseeBankRepository.save(franchiseeBankEntity);
-        return FranchiseeBankInfo.of(result);
-    }
 
     public FranchiseeBankInfo findMyAccount(Long franchiseeIndex) {
         FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);

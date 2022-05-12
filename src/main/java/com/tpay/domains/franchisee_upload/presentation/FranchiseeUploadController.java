@@ -13,6 +13,7 @@ public class FranchiseeUploadController {
 
     private final FranchiseeUploadService franchiseeUploadService;
 
+    // TODO: 2022/05/11 URI 수정
     @PostMapping("/franchiseeUpload/{franchiseeIndex}")
     public ResponseEntity<String> uploadImageAndBankInfo(
         @PathVariable Long franchiseeIndex,
