@@ -18,6 +18,10 @@ public class PasswordResetController {
         return ResponseEntity.ok(result);
     }
 
+    /**
+     * 로그인 하지 않은 상태에서 비밀번호 재설정 시 검증용으로 사용함
+     * 포스트맨으로 테스트 불가. 기능에는 이상 없음
+     */
     @GetMapping("/franchisee/password/selfCertification/{businessNumber}")
     public ResponseEntity<Boolean> selfCertification(
         @PathVariable String businessNumber,
