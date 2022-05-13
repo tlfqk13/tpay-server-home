@@ -5,6 +5,7 @@ import com.tpay.commons.exception.detail.JwtRuntimeException;
 import com.tpay.commons.jwt.AuthToken;
 import com.tpay.commons.jwt.JwtUtils;
 import com.tpay.commons.util.UserSelector;
+import com.tpay.domains.employee.application.EmployeeFindService;
 import com.tpay.domains.franchisee_applicant.application.FranchiseeApplicantFindService;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
 import io.jsonwebtoken.Claims;
@@ -44,6 +45,7 @@ public class JwtValidationInterceptor implements HandlerInterceptor {
 
     private final JwtUtils jwtUtils;
     private final FranchiseeApplicantFindService franchiseeApplicantFindService;
+    private final EmployeeFindService employeeFindService;
 
     // 인터셉터 프리핸들 메서드 오버라이드
     @Override
@@ -60,11 +62,23 @@ public class JwtValidationInterceptor implements HandlerInterceptor {
 
         if (indexInfo.getUserSelector().equals(indexFromUri.userSelector) && indexInfo.getIndex().equals(indexFromUri.getIndex())) {
             return true;
+        } else if(indexInfo.getUserSelector().equals(EMPLOYEE) && indexFromUri.getUserSelector().equals(FRANCHISEE)) {
+            Long id = employeeFindService.findById(Long.parseLong(indexInfo.getIndex())).get().getFranchiseeEntity().getId();
+            String franchiseeIndexFromEmployee = String.valueOf(id);
+
+            if(franchiseeIndexFromEmployee.equals(indexFromUri.getIndex())){
+                return true;
+            }
+            log.warn("REQUEST URI : {}", request.getRequestURI());
+            log.warn("INDEX FROM URI : {} {}", indexFromUri.getUserSelector(),indexFromUri.getIndex());
+            log.warn("FRANCHISEE INDEX FROM EMPLOYEE : {}", franchiseeIndexFromEmployee);
+            log.warn("INDEX FROM AUTH: {} {}", indexInfo.getUserSelector(), indexInfo.getIndex());
+            throw new JwtRuntimeException(ExceptionState.INVALID_TOKEN, "jwt A Error : Authorization & URIInfo mismatch");
         } else {
             log.warn("REQUEST URI : {}", request.getRequestURI());
             log.warn("INDEX FROM URI : {} {}", indexFromUri.getUserSelector(),indexFromUri.getIndex());
             log.warn("INDEX FROM AUTH: {} {}", indexInfo.getUserSelector(), indexInfo.getIndex());
-            throw new JwtRuntimeException(ExceptionState.INVALID_TOKEN, "jwt Error : Authorization & URIInfo mismatch");
+            throw new JwtRuntimeException(ExceptionState.INVALID_TOKEN, "jwt B Error : Authorization & URIInfo mismatch");
         }
 
     }
@@ -144,7 +158,7 @@ public class JwtValidationInterceptor implements HandlerInterceptor {
         if (secondDomainEnd == -1) {
             return new IndexInfo(FRANCHISEE, trim);
         } else if (trim.contains(UriType.FRANCHISEE_PASSWORD.getKeyword())) {
-            int thirdDomainEnd = trim.indexOf("/", 21);
+            int thirdDomainEnd = trim.indexOf("/", 9);
             String fourthTrim = trim.substring(thirdDomainEnd + 1);
             return new IndexInfo(FRANCHISEE, fourthTrim);
         } else if (trim.contains(UriType.FRANCHISEE_BANK.getKeyword())) {
