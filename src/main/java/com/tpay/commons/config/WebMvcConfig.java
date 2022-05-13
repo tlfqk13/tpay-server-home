@@ -40,7 +40,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
             "/error",
             "/h2-console/**",
             "/favicon.ico",
-//            "push/?/count",
+            "/push/**",
             "/fcm/**"));
         registry
             .addInterceptor(jwtValidationInterceptor)

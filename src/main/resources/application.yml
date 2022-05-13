@@ -75,13 +75,13 @@ server:
 
 ---
 
-### Deploy ###
+### Test (on-premise) 이름은 profile 이름은 operation 임. S3 버킷 이름수정이 불가하여 우선 그대로 사용  ###
 spring:
   config:
     activate:
-      on-profile: deploy
+      on-profile: operation
   datasource:
-    url: ENC(ZZrRUZigtBRnXMPP5ion8y2SbDLomD9vlMl0Psv3YrZfjpMg1QKZa4tQnUX49vKa/IpYeRfHXl0jfVKK3Gz6E8KhSAdDt6AECPqR+yNeo3jSO10ybB3bdw2E/3wOnP3HD+ep5PFjLSH0PlhR/SZB1a+o1nqvqdLqbm3JIfFBtiwpAxiA8KiWXB18LOjWBQCG)
+    url: ENC(m+tIJT88xq9Qm4pH+hYNVlTu6QltKfPj4ALvpicZmgcJdcsrNxe6xOGTXUyZEqRWb/UAoyPb8G/IXqcr5Aa/Nrs8MiXroluIbtaznn1aiT2KxP219+HGpYwEFOK0oeFVOwQ7j3RaPhvz6fbLAhbHu3KOjzFYovTr91tmVrtNtAxHB9+0BCm3kv56Dp0jMS0y)
     username: ENC(0Jwk1Hd6bYJexLqbNVfZAA==)
     password: ENC(YBmOxehPGVqDcKl79oiEEvefewVUQFFB)
     driver-class-name: org.mariadb.jdbc.Driver
@@ -101,11 +101,11 @@ server:
 
 
 ---
-### Operation ###
+### Deploy (EC2) ###
 spring:
   config:
     activate:
-      on-profile: operation
+      on-profile: deploy
   datasource:
     url: ENC(ObZrFlFGQOYWEcnUVXAYfB0VkHa/T0cqmq4KarP0MAMk3vkxRWrQXD6wZz6XRX1T58+qjAjwIFL6kcEZrKQVknAQ3aCeihBjhvYbwO8NiKo7rHd8kUfSXryYwHD7x9K63t5KttOl4KQt6qFTuFT3Lz+/caZTsOPxNWwzhKkssuPFA15/Wjocng==)
     username: ENC(0Jwk1Hd6bYJexLqbNVfZAA==)
@@ -121,7 +121,7 @@ spring:
       ddl-auto: none
 custom:
   refund:
-    server: ENC(1G1Em0TfqKIRa78TPL1+wmAhlykscw4z7FmXUHFKlXmovCBJ/yQdMQ==)
+    server: ENC(+eRtO+doK/ahXZabjbGduz7tXusuG3GA45CehnBbNjGPSYBXFrg5JA==)
 server:
   port: 50921
 logging:
