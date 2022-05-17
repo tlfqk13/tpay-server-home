@@ -60,6 +60,7 @@ public class ExternalRefundCancelService {
 
             ExternalRefundResponse externalRefundResponse = ExternalRefundResponse.builder()
                 .responseCode(refundResponse.getResponseCode())
+                .payment(0)
                 .message(refundResponse.getMessage())
                 .build();
             return externalRefundResponse;

@@ -9,5 +9,6 @@ import lombok.*;
 @AllArgsConstructor
 public class ExternalRefundResponse {
     private String responseCode;
+    private Integer payment;
     private String message;
 }

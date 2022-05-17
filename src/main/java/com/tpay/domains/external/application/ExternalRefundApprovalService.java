@@ -80,6 +80,10 @@ public class ExternalRefundApprovalService {
                 refundResponse.getTakeoutNumber(),
                 orderEntity);
 
+            int totalAmount = Integer.parseInt(refundEntity.getOrderEntity().getTotalAmount());
+            int totalRefund = Integer.parseInt(refundEntity.getTotalRefund());
+            Integer payment = totalAmount - totalRefund;
+
             pointScheduledChangeService.change(refundEntity, SignType.POSITIVE);
             externalRefundEntity.refundIndexRegister(refundEntity);
             externalRefundEntity.changeStatus(ExternalRefundStatus.APPROVE);
@@ -91,6 +95,7 @@ public class ExternalRefundApprovalService {
             ExternalRefundResponse externalRefundResponse = ExternalRefundResponse.builder()
                 .responseCode(refundResponse.getResponseCode())
                 .message(refundResponse.getMessage())
+                .payment(payment)
                 .build();
             log.trace("{}번 모든 외부 승인 로직 정상 통과.", externalRefundApprovalRequest.getExternalRefundIndex());
             return externalRefundResponse;
