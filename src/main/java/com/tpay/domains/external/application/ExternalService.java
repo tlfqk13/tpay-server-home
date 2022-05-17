@@ -1,12 +1,12 @@
 package com.tpay.domains.external.application;
 
+import com.tpay.domains.external.application.dto.ExternalRefundResponse;
 import com.tpay.domains.external.application.dto.ExternalResultStatus;
 import com.tpay.domains.external.application.dto.ExternalStatusRequestResponse;
 import com.tpay.domains.external.application.dto.ExternalStatusUpdateDto;
 import com.tpay.domains.external.domain.ExternalRefundEntity;
 import com.tpay.domains.external.domain.ExternalRefundStatus;
 import com.tpay.domains.external.domain.ExternalRepository;
-import com.tpay.domains.order.domain.OrderEntity;
 import com.tpay.domains.refund.domain.RefundEntity;
 import com.tpay.domains.refund_core.application.dto.RefundData;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +24,7 @@ public class ExternalService {
 
     private final ExternalRepository externalRepository;
     private final ExternalRefundFindService externalRefundFindService;
+    private final PaymentCalculator paymentCalculator;
 
 
     @Transactional
@@ -40,11 +41,8 @@ public class ExternalService {
             return ResponseEntity.status(HttpStatus.OK).body(externalStatusRequestResponse);
         } else if (externalRefundStatus.equals(ExternalRefundStatus.CONFIRMED)) {
             RefundEntity refundEntity = externalRefundEntity.getRefundEntity();
-            OrderEntity orderEntity = refundEntity.getOrderEntity();
-            String totalAmount = orderEntity.getTotalAmount();
-            int totalAmountInt = Integer.parseInt(orderEntity.getTotalAmount());
-            int totalRefundInt = Integer.parseInt(refundEntity.getTotalRefund());
-            RefundData refundData = new RefundData(String.valueOf(totalAmountInt - totalRefundInt), totalAmount, refundEntity.getTotalRefund());
+            String paymentString = paymentCalculator.paymentString(refundEntity);
+            RefundData refundData = new RefundData(paymentString, refundEntity.getOrderEntity().getTotalAmount(), refundEntity.getTotalRefund());
             ExternalStatusRequestResponse externalStatusRequestResponse = new ExternalStatusRequestResponse(ExternalResultStatus.SUCCESS, refundData, "");
             return ResponseEntity.status(HttpStatus.OK).body(externalStatusRequestResponse);
         } else {
@@ -56,8 +54,18 @@ public class ExternalService {
     }
 
     @Transactional
-    public void statusUpdate(Long externalRefundIndex, ExternalStatusUpdateDto externalStatusUpdateDto) {
+    public ExternalRefundResponse statusUpdate(Long externalRefundIndex, ExternalStatusUpdateDto externalStatusUpdateDto) {
         ExternalRefundEntity externalRefundEntity = externalRefundFindService.findById(externalRefundIndex);
-        externalRefundEntity.changeStatus(externalStatusUpdateDto.getExternalRefundStatus());
+        RefundEntity refundEntity = externalRefundEntity.getRefundEntity();
+        String paymentFromEntity = paymentCalculator.paymentString(refundEntity);
+        String paymentFromExternal = externalStatusUpdateDto.getPayment();
+        if (!paymentFromEntity.equals(paymentFromExternal)) {
+            log.error("CODE[8105] - externalRefundIndex : {} paymentFromEntity : {} paymentFromExternal : {}", externalRefundEntity.getId(), paymentFromEntity, paymentFromExternal);
+            return ExternalRefundResponse.builder().responseCode("8105").payment(0).message("시스템 에러입니다.").build();
+        } else {
+            externalRefundEntity.changeStatus(externalStatusUpdateDto.getExternalRefundStatus());
+            return ExternalRefundResponse.builder().responseCode("0000").payment(0).message("").build();
+        }
+
     }
 }

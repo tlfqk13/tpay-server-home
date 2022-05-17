@@ -1,6 +1,7 @@
 package com.tpay.domains.external.presentation;
 
 import com.tpay.domains.external.application.ExternalService;
+import com.tpay.domains.external.application.dto.ExternalRefundResponse;
 import com.tpay.domains.external.application.dto.ExternalStatusRequestResponse;
 import com.tpay.domains.external.application.dto.ExternalStatusUpdateDto;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +21,10 @@ public class ExternalController {
     }
 
     @PatchMapping("/external/refund/confirm/{externalRefundIndex}")
-    public void statusUpdate(
+    public ResponseEntity<ExternalRefundResponse> statusUpdate(
         @PathVariable Long externalRefundIndex,
         @RequestBody ExternalStatusUpdateDto externalStatusUpdateDto) {
-        externalService.statusUpdate(externalRefundIndex, externalStatusUpdateDto);
+        ExternalRefundResponse externalRefundResponse = externalService.statusUpdate(externalRefundIndex, externalStatusUpdateDto);
+        return ResponseEntity.ok(externalRefundResponse);
     }
 }
