@@ -21,6 +21,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -32,6 +34,7 @@ public class ExternalRefundCancelService {
     private final WebRequestUtil webRequestUtil;
     private final ObjectMapper objectMapper;
 
+    @Transactional
     public ExternalRefundResponse cancel(ExternalRefundCancelRequest externalRefundCancelRequest) {
         try {
             ExternalRefundEntity externalRefundEntity = externalRefundFindService.findById(externalRefundCancelRequest.getExternalRefundIndex());
@@ -60,11 +63,13 @@ public class ExternalRefundCancelService {
             externalRefundEntity.changeStatus(ExternalRefundStatus.CANCEL);
             pointScheduledChangeService.change(refundEntity, SignType.NEGATIVE);
 
-            return ExternalRefundResponse.builder()
+            ExternalRefundResponse result = ExternalRefundResponse.builder()
                 .responseCode(refundResponse.getResponseCode())
                 .payment(0)
                 .message(refundResponse.getMessage())
                 .build();
+            log.trace("CODE[K5005] - externalRefundIndex : {} successfully CANCELLED", externalRefundEntity.getId());
+            return result;
         } catch (InvalidExternalRefundIndexException e) {
             log.error("CODE[K9101] - externalRefundIndex : {}, externalRefundIndex를 찾을 수 없음", externalRefundCancelRequest.getExternalRefundIndex());
             return ExternalRefundResponse.builder().responseCode("K9101").payment(0).message("[K9101] 시스템 에러입니다.").build();

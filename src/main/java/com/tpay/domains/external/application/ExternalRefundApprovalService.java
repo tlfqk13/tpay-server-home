@@ -14,6 +14,7 @@ import com.tpay.domains.external.domain.ExternalRefundStatus;
 import com.tpay.domains.franchisee.application.FranchiseeFindService;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.order.application.OrderSaveService;
+import com.tpay.domains.order.application.OrderService;
 import com.tpay.domains.order.domain.OrderEntity;
 import com.tpay.domains.point.domain.SignType;
 import com.tpay.domains.point_scheduled.application.PointScheduledChangeService;
@@ -33,7 +34,7 @@ import javax.transaction.Transactional;
 @RequiredArgsConstructor
 public class ExternalRefundApprovalService {
 
-    private final OrderSaveService orderSaveService;
+
     private final FranchiseeFindService franchiseeFindService;
     private final WebRequestUtil webRequestUtil;
     private final ObjectMapper objectMapper;
@@ -42,6 +43,8 @@ public class ExternalRefundApprovalService {
     private final ExternalRefundFindService externalRefundFindService;
     private final NonBatchPushService nonBatchPushService;
     private final PaymentCalculator paymentCalculator;
+    private final OrderSaveService orderSaveService;
+    private final OrderService orderService;
 
     @Transactional
     public ExternalRefundResponse approve(ExternalRefundApprovalRequest externalRefundApprovalRequest) {
@@ -64,7 +67,7 @@ public class ExternalRefundApprovalService {
             }
 
             OrderEntity orderEntity = orderSaveService.save(externalRefundEntity, externalRefundApprovalRequest.getAmount());
-            log.trace("CODE[K1000] - externalRefundIndex : {}, orderIndex : {} successfully SAVED", externalRefundEntity.getId(), orderEntity.getId());
+            log.trace("CODE[K5000] - externalRefundIndex : {}, orderIndex : {} successfully SAVED", externalRefundEntity.getId(), orderEntity.getId());
             RefundApproveRequest refundApproveRequest = RefundApproveRequest.of(orderEntity);
 
             String uri = CustomValue.REFUND_SERVER + "/refund/approval";
@@ -74,16 +77,16 @@ public class ExternalRefundApprovalService {
             //0000이 아닌경우 에러 발생
             if (!refundResponse.getResponseCode().equals("0000")) {
                 log.error("CODE[R8102] - externalRefundIndex : {}, 관세청 응답메시지 : {}", externalRefundApprovalRequest.getExternalRefundIndex(), refundResponse.getMessage());
+                orderService.deleteByIndex(orderEntity.getId());
                 return ExternalRefundResponse.builder().responseCode("R8102").message("[R8102] 시스템 에러입니다.").build();
             }
-
 
             RefundEntity refundEntity = refundService.save(
                 refundResponse.getResponseCode(),
                 refundResponse.getPurchaseSequenceNumber(),
                 refundResponse.getTakeoutNumber(),
                 orderEntity);
-            log.trace("CODE[K1000] - externalRefundIndex : {}, refundIndex : {} successfully SAVED", externalRefundEntity.getId(), refundEntity.getId());
+            log.trace("CODE[K5001] - externalRefundIndex : {}, refundIndex : {} successfully SAVED", externalRefundEntity.getId(), refundEntity.getId());
 
             Integer payment = paymentCalculator.paymentInteger(refundEntity);
             pointScheduledChangeService.change(refundEntity, SignType.POSITIVE);
@@ -99,7 +102,7 @@ public class ExternalRefundApprovalService {
                 .message(refundResponse.getMessage())
                 .payment(payment)
                 .build();
-            log.trace("CODE[K1000] - externalRefundIndex : {} successfully APPROVED", externalRefundEntity.getId());
+            log.trace("CODE[K5002] - externalRefundIndex : {} successfully changed to APPROVED", externalRefundEntity.getId());
             return externalRefundResponse;
         } catch (InvalidExternalRefundIndexException e) {
             log.error("CODE[K8103] - externalRefundIndex : {}, externalRefundIndex를 찾을 수 없음", externalRefundApprovalRequest.getExternalRefundIndex());

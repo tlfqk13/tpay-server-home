@@ -31,7 +31,7 @@ public class ExternalService {
     public ExternalRefundEntity save(Long franchiseeIndex, Long customerIndex, String deduction) {
         ExternalRefundEntity externalRefundEntity = new ExternalRefundEntity(franchiseeIndex, customerIndex, ExternalRefundStatus.SCAN, deduction);
         ExternalRefundEntity save = externalRepository.save(externalRefundEntity);
-        log.trace("CODE[K1000] - externalRefundIndex : {}, franchiseeIndex : {}, customerIndex : {} successfully SAVED", externalRefundEntity.getId(),franchiseeIndex,customerIndex);
+        log.trace("CODE[K5003] - externalRefundIndex : {}, franchiseeIndex : {}, customerIndex : {} successfully SAVED", externalRefundEntity.getId(),franchiseeIndex,customerIndex);
         return save;
     }
 
@@ -65,11 +65,11 @@ public class ExternalService {
         String paymentFromEntity = paymentCalculator.paymentString(refundEntity);
         String paymentFromExternal = externalStatusUpdateDto.getPayment();
         if (!paymentFromEntity.equals(paymentFromExternal)) {
-            log.error("CODE[K8105] - externalRefundIndex : {} paymentFromEntity : {} paymentFromExternal : {}", externalRefundEntity.getId(), paymentFromEntity, paymentFromExternal);
-            return ExternalRefundResponse.builder().responseCode("8105").payment(0).message("[K8105] 시스템 에러입니다.").build();
+            log.error("CODE[K8107] - externalRefundIndex : {} paymentFromEntity : {} paymentFromExternal : {}", externalRefundEntity.getId(), paymentFromEntity, paymentFromExternal);
+            return ExternalRefundResponse.builder().responseCode("8107").payment(0).message("[K8107] 시스템 에러입니다.").build();
         } else {
             externalRefundEntity.changeStatus(externalStatusUpdateDto.getExternalRefundStatus());
-            log.trace("CODE[K1000] - externalRefundIndex : {} successfully changed to {}", externalRefundEntity.getId(), externalStatusUpdateDto.getExternalRefundStatus());
+            log.trace("CODE[K5004] - externalRefundIndex : {} successfully changed to {}", externalRefundEntity.getId(), externalStatusUpdateDto.getExternalRefundStatus());
             return ExternalRefundResponse.builder().responseCode("0000").payment(0).message("").build();
         }
 
