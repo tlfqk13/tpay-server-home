@@ -2,7 +2,6 @@ package com.tpay.domains.external.application;
 
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidExternalRefundIndexException;
-import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.domains.external.domain.ExternalRefundEntity;
 import com.tpay.domains.external.domain.ExternalRepository;
 import lombok.RequiredArgsConstructor;
