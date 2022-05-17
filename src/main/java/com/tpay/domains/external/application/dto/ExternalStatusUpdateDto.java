@@ -5,6 +5,7 @@ import lombok.Getter;
 
 @Getter
 public class ExternalStatusUpdateDto {
+    Long externalRefundIndex;
     ExternalRefundStatus externalRefundStatus;
     String payment;
 }

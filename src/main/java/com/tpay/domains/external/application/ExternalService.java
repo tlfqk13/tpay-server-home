@@ -17,9 +17,9 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class ExternalService {
 
     private final ExternalRepository externalRepository;
@@ -30,9 +30,13 @@ public class ExternalService {
     @Transactional
     public ExternalRefundEntity save(Long franchiseeIndex, Long customerIndex, String deduction) {
         ExternalRefundEntity externalRefundEntity = new ExternalRefundEntity(franchiseeIndex, customerIndex, ExternalRefundStatus.SCAN, deduction);
-        return externalRepository.save(externalRefundEntity);
+        ExternalRefundEntity save = externalRepository.save(externalRefundEntity);
+        log.trace("CODE[K1000] - externalRefundIndex : {}, franchiseeIndex : {}, customerIndex : {} successfully SAVED", externalRefundEntity.getId(),franchiseeIndex,customerIndex);
+        return save;
     }
 
+    // 바코드 스캔 이후 자동으로 화면 넘어갈 때 사용되는 주기적인 요청
+    // 현재 미사용
     public ResponseEntity<ExternalStatusRequestResponse> statusRequest(Long externalRefundIndex) {
         ExternalRefundEntity externalRefundEntity = externalRefundFindService.findById(externalRefundIndex);
         ExternalRefundStatus externalRefundStatus = externalRefundEntity.getExternalRefundStatus();
@@ -54,16 +58,18 @@ public class ExternalService {
     }
 
     @Transactional
-    public ExternalRefundResponse statusUpdate(Long externalRefundIndex, ExternalStatusUpdateDto externalStatusUpdateDto) {
+    public ExternalRefundResponse statusUpdate(ExternalStatusUpdateDto externalStatusUpdateDto) {
+        Long externalRefundIndex = externalStatusUpdateDto.getExternalRefundIndex();
         ExternalRefundEntity externalRefundEntity = externalRefundFindService.findById(externalRefundIndex);
         RefundEntity refundEntity = externalRefundEntity.getRefundEntity();
         String paymentFromEntity = paymentCalculator.paymentString(refundEntity);
         String paymentFromExternal = externalStatusUpdateDto.getPayment();
         if (!paymentFromEntity.equals(paymentFromExternal)) {
-            log.error("CODE[8105] - externalRefundIndex : {} paymentFromEntity : {} paymentFromExternal : {}", externalRefundEntity.getId(), paymentFromEntity, paymentFromExternal);
-            return ExternalRefundResponse.builder().responseCode("8105").payment(0).message("시스템 에러입니다.").build();
+            log.error("CODE[K8105] - externalRefundIndex : {} paymentFromEntity : {} paymentFromExternal : {}", externalRefundEntity.getId(), paymentFromEntity, paymentFromExternal);
+            return ExternalRefundResponse.builder().responseCode("8105").payment(0).message("[K8105] 시스템 에러입니다.").build();
         } else {
             externalRefundEntity.changeStatus(externalStatusUpdateDto.getExternalRefundStatus());
+            log.trace("CODE[K1000] - externalRefundIndex : {} successfully changed to {}", externalRefundEntity.getId(), externalStatusUpdateDto.getExternalRefundStatus());
             return ExternalRefundResponse.builder().responseCode("0000").payment(0).message("").build();
         }
 

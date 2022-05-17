@@ -41,6 +41,7 @@ public class ExternalRefundApprovalService {
     private final PointScheduledChangeService pointScheduledChangeService;
     private final ExternalRefundFindService externalRefundFindService;
     private final NonBatchPushService nonBatchPushService;
+    private final PaymentCalculator paymentCalculator;
 
     @Transactional
     public ExternalRefundResponse approve(ExternalRefundApprovalRequest externalRefundApprovalRequest) {
@@ -48,7 +49,8 @@ public class ExternalRefundApprovalService {
         // 1. 금액이 정상 범위인지
         int amount = Integer.parseInt(externalRefundApprovalRequest.getAmount());
         if (amount >= 500000 || amount < 30000) {
-            return ExternalRefundResponse.builder().responseCode("8001").message("[User] 환급 금액이 범위 밖입니다. (환급 금액은 3만원 이상 50만원 미만입니다.)").build();
+            log.error("CODE[K8500] - externalRefundIndex : {}, amount : {}", externalRefundApprovalRequest.getExternalRefundIndex(), amount);
+            return ExternalRefundResponse.builder().responseCode("K8500").message("[K8500] 환급 가능 범위는 3만원 이상 50만원 미만입니다.").build();
         }
 
         try {
@@ -57,10 +59,12 @@ public class ExternalRefundApprovalService {
             FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(externalRefundEntity.getFranchiseeIndex());
 
             if (!externalRefundEntity.getExternalRefundStatus().equals(ExternalRefundStatus.SCAN)) {
-                return ExternalRefundResponse.builder().responseCode("8002").message("[User] 이미 종료된 Index입니다.").build();
+                log.error("CODE[K8101] - externalRefundIndex : {}, 환급 시도 INDEX가 SCAN 상태가 아님", externalRefundApprovalRequest.getExternalRefundIndex());
+                return ExternalRefundResponse.builder().responseCode("K8101").message("[K8101] 만료된 거래입니다.").build();
             }
 
             OrderEntity orderEntity = orderSaveService.save(externalRefundEntity, externalRefundApprovalRequest.getAmount());
+            log.trace("CODE[K1000] - externalRefundIndex : {}, orderIndex : {} successfully SAVED", externalRefundEntity.getId(), orderEntity.getId());
             RefundApproveRequest refundApproveRequest = RefundApproveRequest.of(orderEntity);
 
             String uri = CustomValue.REFUND_SERVER + "/refund/approval";
@@ -69,21 +73,19 @@ public class ExternalRefundApprovalService {
 
             //0000이 아닌경우 에러 발생
             if (!refundResponse.getResponseCode().equals("0000")) {
-                return ExternalRefundResponse.builder().responseCode("8103").message("[successmode] 관세청 에러입니다.").build();
+                log.error("CODE[R8102] - externalRefundIndex : {}, 관세청 응답메시지 : {}", externalRefundApprovalRequest.getExternalRefundIndex(), refundResponse.getMessage());
+                return ExternalRefundResponse.builder().responseCode("R8102").message("[R8102] 시스템 에러입니다.").build();
             }
 
-            externalRefundEntity.changeStatus(ExternalRefundStatus.APPROVE);
 
             RefundEntity refundEntity = refundService.save(
                 refundResponse.getResponseCode(),
                 refundResponse.getPurchaseSequenceNumber(),
                 refundResponse.getTakeoutNumber(),
                 orderEntity);
+            log.trace("CODE[K1000] - externalRefundIndex : {}, refundIndex : {} successfully SAVED", externalRefundEntity.getId(), refundEntity.getId());
 
-            int totalAmount = Integer.parseInt(refundEntity.getOrderEntity().getTotalAmount());
-            int totalRefund = Integer.parseInt(refundEntity.getTotalRefund());
-            Integer payment = totalAmount - totalRefund;
-
+            Integer payment = paymentCalculator.paymentInteger(refundEntity);
             pointScheduledChangeService.change(refundEntity, SignType.POSITIVE);
             externalRefundEntity.refundIndexRegister(refundEntity);
             externalRefundEntity.changeStatus(ExternalRefundStatus.APPROVE);
@@ -97,16 +99,20 @@ public class ExternalRefundApprovalService {
                 .message(refundResponse.getMessage())
                 .payment(payment)
                 .build();
-            log.trace("{}번 모든 외부 승인 로직 정상 통과.", externalRefundApprovalRequest.getExternalRefundIndex());
+            log.trace("CODE[K1000] - externalRefundIndex : {} successfully APPROVED", externalRefundEntity.getId());
             return externalRefundResponse;
         } catch (InvalidExternalRefundIndexException e) {
-            return ExternalRefundResponse.builder().responseCode("8000").message("[User] Index 정보를 찾을 수 없습니다.").build();
+            log.error("CODE[K8103] - externalRefundIndex : {}, externalRefundIndex를 찾을 수 없음", externalRefundApprovalRequest.getExternalRefundIndex());
+            return ExternalRefundResponse.builder().responseCode("K8103").message("[K8103] 시스템 에러입니다.").build();
         } catch (InvalidParameterException e) {
-            return ExternalRefundResponse.builder().responseCode("8102").message("[successmode] Index 정보를 찾을 수 없습니다.").build();
+            log.error("CODE[K8104] - externalRefundIndex : {}", externalRefundApprovalRequest.getExternalRefundIndex());
+            return ExternalRefundResponse.builder().responseCode("K8104").message("[K8104] 시스템 에러입니다.").build();
         } catch (IllegalArgumentException e) {
-            return ExternalRefundResponse.builder().responseCode("8101").message("[successmode] 내부 에러입니다.").build();
+            log.error("CODE[K8105] - externalRefundIndex : {}", externalRefundApprovalRequest.getExternalRefundIndex());
+            return ExternalRefundResponse.builder().responseCode("K8105").message("[K8105] 시스템 에러입니다.").build();
         } catch (Exception e) {
-            return ExternalRefundResponse.builder().responseCode("8100").message("[successmode] Unknown 에러입니다.").build();
+            log.error("CODE[K8106] - externalRefundIndex : {}", externalRefundApprovalRequest.getExternalRefundIndex());
+            return ExternalRefundResponse.builder().responseCode("K8106").message("[K8106] 시스템 에러입니다.").build();
         }
 
     }

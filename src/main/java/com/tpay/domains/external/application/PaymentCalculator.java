@@ -11,4 +11,10 @@ public class PaymentCalculator {
         int totalRefund = Integer.parseInt(refundEntity.getTotalRefund());
         return Integer.toString(totalAmount - totalRefund);
     }
+
+    public Integer paymentInteger(RefundEntity refundEntity) {
+        int totalAmount = Integer.parseInt(refundEntity.getOrderEntity().getTotalAmount());
+        int totalRefund = Integer.parseInt(refundEntity.getTotalRefund());
+        return totalAmount - totalRefund;
+    }
 }
