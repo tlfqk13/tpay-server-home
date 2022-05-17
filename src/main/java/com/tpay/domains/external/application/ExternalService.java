@@ -65,7 +65,7 @@ public class ExternalService {
         String paymentFromEntity = paymentCalculator.paymentString(refundEntity);
         String paymentFromExternal = externalStatusUpdateDto.getPayment();
         if (!paymentFromEntity.equals(paymentFromExternal)) {
-            log.error("CODE[K8107] - externalRefundIndex : {} paymentFromEntity : {} paymentFromExternal : {}", externalRefundEntity.getId(), paymentFromEntity, paymentFromExternal);
+            log.error("CODE[K8107] - externalRefundIndex : {} 디비값 : {} 입력값 : {}", externalRefundEntity.getId(), paymentFromEntity, paymentFromExternal);
             return ExternalRefundResponse.builder().responseCode("8107").payment(0).message("[K8107] 시스템 에러입니다.").build();
         } else {
             externalRefundEntity.changeStatus(externalStatusUpdateDto.getExternalRefundStatus());
