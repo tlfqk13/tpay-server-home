@@ -117,13 +117,13 @@ public class OrderEntity extends BaseTimeEntity {
 
     public String getTotalRefund() {
         double vat = Double.parseDouble(this.totalVat);
-        int totalRefund = (int) Math.floor(vat * 70) / 100;
+        int totalRefund = (int) Math.floor((vat * 70) / 100);
         return Integer.toString(totalRefund);
     }
 
     public long getPoints() {
         double vat = Double.parseDouble(this.totalVat);
-        long points = (long) Math.floor(vat * 30) / 100;
+        long points = (long) Math.floor((vat * 30) / 100);
         return points;
     }
 

@@ -3,8 +3,6 @@ package com.tpay.domains.external.application;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tpay.commons.custom.CustomValue;
-import com.tpay.commons.exception.ExceptionState;
-import com.tpay.commons.exception.detail.AlreadyCancelledException;
 import com.tpay.commons.exception.detail.InvalidExternalRefundIndexException;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.webClient.WebRequestUtil;
@@ -20,8 +18,12 @@ import com.tpay.domains.refund.domain.RefundEntity;
 import com.tpay.domains.refund_core.application.dto.RefundCancelRequest;
 import com.tpay.domains.refund_core.application.dto.RefundResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ExternalRefundCancelService {
@@ -32,12 +34,15 @@ public class ExternalRefundCancelService {
     private final WebRequestUtil webRequestUtil;
     private final ObjectMapper objectMapper;
 
+    @Transactional
     public ExternalRefundResponse cancel(ExternalRefundCancelRequest externalRefundCancelRequest) {
         try {
             ExternalRefundEntity externalRefundEntity = externalRefundFindService.findById(externalRefundCancelRequest.getExternalRefundIndex());
 
-            if (!externalRefundEntity.getExternalRefundStatus().equals(ExternalRefundStatus.APPROVE)) {
-                throw new AlreadyCancelledException(ExceptionState.ALREADY_CANCELLED, "already cancelled or Illegal request");
+            ExternalRefundStatus externalRefundStatus = externalRefundEntity.getExternalRefundStatus();
+            if (!(externalRefundStatus.equals(ExternalRefundStatus.APPROVE) || externalRefundStatus.equals(ExternalRefundStatus.CONFIRMED))) {
+                log.error("CODE[K9100] - externalRefundIndex : {}, 이미 취소된 건입니다.", externalRefundCancelRequest.getExternalRefundIndex());
+                return ExternalRefundResponse.builder().responseCode("K9100").payment(0).message("[K9100] 이미 취소된 건입니다.").build();
             }
 
             CustomerEntity customerEntity = customerFindService.findByIndex(externalRefundEntity.getCustomerIndex());
@@ -50,29 +55,33 @@ public class ExternalRefundCancelService {
 
             //0000이 아닌경우 에러 발생
             if (!refundResponse.getResponseCode().equals("0000")) {
-                throw new Exception("Refund-Server Error");
+                log.error("CODE[R9101] - externalRefundIndex : {}, 관세청 응답메시지 : {}", externalRefundCancelRequest.getExternalRefundIndex(), refundResponse.getMessage());
+                return ExternalRefundResponse.builder().responseCode("R9105").message("[R9101] 시스템 에러입니다.").build();
             }
 
             refundEntity.updateCancel(refundResponse.getResponseCode());
             externalRefundEntity.changeStatus(ExternalRefundStatus.CANCEL);
             pointScheduledChangeService.change(refundEntity, SignType.NEGATIVE);
 
-
-            ExternalRefundResponse externalRefundResponse = ExternalRefundResponse.builder()
+            ExternalRefundResponse result = ExternalRefundResponse.builder()
                 .responseCode(refundResponse.getResponseCode())
+                .payment(0)
                 .message(refundResponse.getMessage())
                 .build();
-            return externalRefundResponse;
-        } catch (AlreadyCancelledException e) {
-            return ExternalRefundResponse.builder().responseCode("9001").message("[User] 취소 가능한 상태가 아닙니다.").build();
+            log.trace("CODE[K5005] - externalRefundIndex : {} successfully CANCELLED", externalRefundEntity.getId());
+            return result;
         } catch (InvalidExternalRefundIndexException e) {
-            return ExternalRefundResponse.builder().responseCode("9000").message("[User] Index 정보를 찾을 수 없습니다.").build();
+            log.error("CODE[K9101] - externalRefundIndex : {}, externalRefundIndex를 찾을 수 없음", externalRefundCancelRequest.getExternalRefundIndex());
+            return ExternalRefundResponse.builder().responseCode("K9101").payment(0).message("[K9101] 시스템 에러입니다.").build();
         } catch (InvalidParameterException e) {
-            return ExternalRefundResponse.builder().responseCode("9102").message("[successmode] Index 정보를 찾을 수 없습니다.").build();
+            log.error("CODE[K9102] - externalRefundIndex : {}", externalRefundCancelRequest.getExternalRefundIndex());
+            return ExternalRefundResponse.builder().responseCode("K9102").payment(0).message("[K9102] 시스템 에러입니다.").build();
         } catch (IllegalArgumentException e) {
-            return ExternalRefundResponse.builder().responseCode("9101").message("[successmode] 내부 에러입니다.").build();
+            log.error("CODE[K9103] - externalRefundIndex : {}", externalRefundCancelRequest.getExternalRefundIndex());
+            return ExternalRefundResponse.builder().responseCode("K9103").payment(0).message("[K9103] 시스템 에러입니다.").build();
         } catch (Exception e) {
-            return ExternalRefundResponse.builder().responseCode("9100").message("[successmode] Unknown 에러입니다.").build();
+            log.error("CODE[K9104] - externalRefundIndex : {}", externalRefundCancelRequest.getExternalRefundIndex());
+            return ExternalRefundResponse.builder().responseCode("K9104").payment(0).message("[K9104] 시스템 에러입니다.").build();
         }
     }
 }

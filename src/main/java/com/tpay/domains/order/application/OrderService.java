@@ -7,6 +7,7 @@ import com.tpay.domains.vat.application.dto.VatReportResponseInterface;
 import com.tpay.domains.vat.application.dto.VatResponse;
 import com.tpay.domains.vat.application.dto.VatTotalResponseInterface;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderService {
@@ -68,5 +70,15 @@ public class OrderService {
         if (optionalResult.isEmpty()) {
             return 0L;
         } else return optionalResult.get();
+    }
+
+    @Transactional
+    public void deleteByIndex(Long orderIndex){
+        try {
+            orderRepository.deleteById(orderIndex);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.warn("삭제불가 orderIndex = {}",orderIndex);
+        }
     }
 }
