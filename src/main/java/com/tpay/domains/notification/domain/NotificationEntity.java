@@ -1,6 +1,7 @@
 package com.tpay.domains.notification.domain;
 
 import com.tpay.domains.BaseTimeEntity;
+import com.tpay.domains.notification.application.dto.DataList;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,8 @@ public class NotificationEntity extends BaseTimeEntity {
 
     private Boolean isImmediate;
 
+    private Boolean isInvisible;
+
     private LocalDateTime scheduledDate;
 
     private String title;
@@ -38,6 +41,7 @@ public class NotificationEntity extends BaseTimeEntity {
 
     private String content3;
 
+    // TODO: 2022/05/18 change to ENUM
     private String link;
 
     private String mainImage;
@@ -48,4 +52,39 @@ public class NotificationEntity extends BaseTimeEntity {
 
     private String subImg3;
 
+    public NotificationEntity(DataList dataList) {
+        this.isFixed = dataList.getIsFixed();
+        this.isImmediate = dataList.getIsImmediate();
+        this.isInvisible = dataList.getIsInvisible();
+        this.scheduledDate = dataList.getScheduledDate().equals("") ? LocalDateTime.now() : LocalDateTime.parse(dataList.getScheduledDate());
+        this.title = dataList.getTitle();
+        this.subTitle1 = dataList.getSubTitle1();
+        this.subTitle2 = dataList.getSubTitle2();
+        this.subTitle3 = dataList.getSubTitle3();
+        this.content1 = dataList.getContent1();
+        this.content2 = dataList.getContent2();
+        this.content3 = dataList.getContent3();
+        this.link = dataList.getLink();
+        this.mainImage = "";
+        this.subImg1 = "";
+        this.subImg2 = "";
+        this.subImg3 = "";
+    }
+
+    public void setImages(String keyName, String path) {
+        switch (keyName) {
+            case "mainImg":
+                this.mainImage = path;
+                break;
+            case "subImg1":
+                this.subImg1 = path;
+                break;
+            case "subImg2":
+                this.subImg2 = path;
+                break;
+            case "subImg3":
+                this.subImg3 = path;
+                break;
+        }
+    }
 }

@@ -22,6 +22,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -64,6 +67,26 @@ public class S3FileUploader {
         s3Client.putObject(new PutObjectRequest(bucket, key, file.getInputStream(), objectMetadata)
             .withCannedAcl(CannedAccessControlList.PublicRead));
         return s3Client.getUrl(bucket, key).toString();
+    }
+
+    /**
+     * 하나의 notification에 여러개 이미지 저장될 수 있으므로 return 은 Collections
+     */
+    public Map<String,String> uploadNotifications(Long notificationIndex, Map<String,MultipartFile> files, List<String> fileNames) throws IOException {
+        Map<String, String> paths = new LinkedHashMap<>();
+        for (int i = 0; i < files.size(); i++) {
+            ObjectMetadata objectMetadata = new ObjectMetadata();
+            objectMetadata.setContentType(MediaType.ALL_VALUE);
+            String keyName = fileNames.get(i);
+            MultipartFile value = files.get(keyName);
+            objectMetadata.setContentLength(value.getSize());
+            String key = profileName + "/notification_" + notificationIndex + "/" + keyName;
+            s3Client.putObject(new PutObjectRequest(bucket,key,value.getInputStream(), objectMetadata)
+                .withCannedAcl(CannedAccessControlList.PublicRead));
+
+            paths.put(keyName,s3Client.getUrl(bucket,key).toString());
+        }
+        return paths;
     }
 
     public String deleteJpg(Long franchiseeIndex, String imageCategory) {
