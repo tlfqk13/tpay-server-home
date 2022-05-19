@@ -75,8 +75,8 @@ public class NotificationEntity extends BaseTimeEntity {
         this.subImg3 = "";
     }
 
-    public void setImages(String keyName, String path) {
-        switch (keyName) {
+    public void setImages(String fileName, String path) {
+        switch (fileName) {
             case "mainImg":
                 this.mainImage = path;
                 break;
