@@ -2,7 +2,10 @@ package com.tpay.domains.notification.application;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tpay.commons.aws.S3FileUploader;
+import com.tpay.commons.exception.ExceptionState;
+import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.domains.notification.application.dto.DataList;
+import com.tpay.domains.notification.application.dto.NotificationFindDto;
 import com.tpay.domains.notification.domain.NotificationEntity;
 import com.tpay.domains.notification.domain.NotificationRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +15,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -49,4 +54,15 @@ public class NotificationService {
         }
     }
 
+    public List<NotificationFindDto.FindAllResponse> getAll() {
+        List<NotificationEntity> notificationEntityList = notificationRepository.findAll();
+        return notificationEntityList.stream().map(NotificationFindDto.FindAllResponse::new).collect(Collectors.toList());
+    }
+
+
+    public NotificationFindDto.FindOneResponse getOne(Long notificationIndex) {
+        NotificationEntity notificationEntity = notificationRepository.findById(notificationIndex)
+            .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid Notification Index"));
+        return new NotificationFindDto.FindOneResponse(notificationEntity);
+    }
 }
