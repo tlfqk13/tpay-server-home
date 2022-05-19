@@ -13,7 +13,7 @@ public class NotificationController {
 
     private final NotificationService notificationService;
 
-    @PostMapping("admin/notification")
+    @PostMapping("/admin/notification")
     public void registration(
         @RequestParam("dataList") String dataListString,
         @RequestParam(required = false) MultipartFile mainImg,

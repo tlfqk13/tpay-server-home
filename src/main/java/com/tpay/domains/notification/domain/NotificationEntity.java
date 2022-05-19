@@ -1,5 +1,6 @@
 package com.tpay.domains.notification.domain;
 
+import com.tpay.commons.custom.CustomValue;
 import com.tpay.domains.BaseTimeEntity;
 import com.tpay.domains.notification.application.dto.DataList;
 import lombok.AccessLevel;
@@ -41,8 +42,10 @@ public class NotificationEntity extends BaseTimeEntity {
 
     private String content3;
 
-    // TODO: 2022/05/18 change to ENUM
+    // TODO: 2022/05/18 change to ENUM ?
     private String link;
+
+    private String baseS3Uri;
 
     private String mainImage;
 
@@ -65,6 +68,7 @@ public class NotificationEntity extends BaseTimeEntity {
         this.content2 = dataList.getContent2();
         this.content3 = dataList.getContent3();
         this.link = dataList.getLink();
+        this.baseS3Uri = CustomValue.S3_BASE_URI;
         this.mainImage = "";
         this.subImg1 = "";
         this.subImg2 = "";

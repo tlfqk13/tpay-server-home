@@ -69,9 +69,6 @@ public class S3FileUploader {
         return s3Client.getUrl(bucket, key).toString();
     }
 
-    /**
-     * 하나의 notification에 여러개 이미지 저장될 수 있으므로 return 은 Collections
-     */
     public Map<String,String> uploadNotifications(Long notificationIndex, Map<String,MultipartFile> files, List<String> fileNames) throws IOException {
         Map<String, String> paths = new LinkedHashMap<>();
         for (int i = 0; i < files.size(); i++) {
@@ -80,7 +77,7 @@ public class S3FileUploader {
             String keyName = fileNames.get(i);
             MultipartFile value = files.get(keyName);
             objectMetadata.setContentLength(value.getSize());
-            String key = profileName + "/notification_" + notificationIndex + "/" + keyName;
+            String key = "notification/" + profileName +"/" + notificationIndex + "/" + keyName;
             s3Client.putObject(new PutObjectRequest(bucket,key,value.getInputStream(), objectMetadata)
                 .withCannedAcl(CannedAccessControlList.PublicRead));
 
