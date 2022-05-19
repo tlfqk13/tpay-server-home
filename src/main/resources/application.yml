@@ -2,6 +2,9 @@
 spring:
   profiles:
     active: local
+  servlet:
+    multipart:
+      max-file-size: 2MB
 jasypt:
   encryptor:
     iv-generator-classname: org.jasypt.iv.NoIvGenerator
@@ -29,6 +32,8 @@ custom:
     sdk-path: ENC(0m0F9EX+lh13N6+ZF8Y8n91G0REtGQQ768jdolj9J41rPDcrVbFPz2oLBhe5F4vOmyDWzftP+FcsgnOZ9rH74Q==)
   barcode:
     save-path: ENC(eYDNkT5cu7xnhdT895ea0Rl9ZSZRpxqT5dpWEmDiE4g=)
+  s3:
+    base-uri: ENC(XdSikIGy5Xl70+0BXM8scfYUK3jA4Y7Oj/9AM4K55jfHXeTp/hepZdGKWOPKGjkJwZgcQaqwI10AH/IC4ngDKA==)
 cloud:
   aws:
     credentials:
