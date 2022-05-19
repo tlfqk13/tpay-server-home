@@ -65,4 +65,16 @@ public class NotificationService {
             .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid Notification Index"));
         return new NotificationFindDto.FindOneResponse(notificationEntity);
     }
+
+    @Transactional
+    public void updateInvisible(Long notificationIndex) {
+        NotificationEntity notificationEntity = notificationRepository.findById(notificationIndex)
+            .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid Notification Index"));
+        notificationEntity.updateInvisible();
+    }
+
+    @Transactional
+    public void deleteNotification(Long notificationIndex) {
+        notificationRepository.deleteById(notificationIndex);
+    }
 }

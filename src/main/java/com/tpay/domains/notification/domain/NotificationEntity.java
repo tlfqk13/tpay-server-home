@@ -91,4 +91,9 @@ public class NotificationEntity extends BaseTimeEntity {
                 break;
         }
     }
+
+    public NotificationEntity updateInvisible(){
+        this.isInvisible = true;
+        return this;
+    }
 }

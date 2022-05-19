@@ -39,4 +39,15 @@ public class NotificationController {
         NotificationFindDto.FindOneResponse one = notificationService.getOne(notificationIndex);
         return ResponseEntity.ok(one);
     }
+
+    @PatchMapping("/admin/notification/{notificationIndex}")
+    public void updateInvisible(@PathVariable Long notificationIndex){
+        notificationService.updateInvisible(notificationIndex);
+    }
+
+    @DeleteMapping("/admin/notification/{notificationIndex}")
+    public void deleteNotification(@PathVariable Long notificationIndex){
+        notificationService.deleteNotification(notificationIndex);
+    }
+
 }
