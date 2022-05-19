@@ -30,6 +30,7 @@ public class NotificationFindDto {
     public static class FindOneResponse {
         private final Boolean isFixed;
         private final Boolean isImmediate;
+        private final LocalDateTime createdDate;
         private final LocalDateTime scheduledDate;
         private final String title;
         private final String subTitle1;
@@ -48,6 +49,7 @@ public class NotificationFindDto {
         public FindOneResponse(NotificationEntity notificationEntity) {
             this.isFixed = notificationEntity.getIsFixed();
             this.isImmediate = notificationEntity.getIsImmediate();
+            this.createdDate = notificationEntity.getCreatedDate();
             this.scheduledDate = notificationEntity.getScheduledDate();
             this.title = notificationEntity.getTitle();
             this.subTitle1 = notificationEntity.getSubTitle1();
