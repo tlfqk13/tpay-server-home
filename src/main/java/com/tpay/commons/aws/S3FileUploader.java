@@ -66,22 +66,22 @@ public class S3FileUploader {
         return s3Client.getUrl(bucket, key).toString();
     }
 
-    public String uploadNotification(Long notificationIndex, MultipartFile file, String fileName) throws IOException {
+    public String uploadNotice(Long noticeIndex, MultipartFile file, String fileName) throws IOException {
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentType(MediaType.ALL_VALUE);
         objectMetadata.setContentLength(file.getSize());
-        String key = "notification/" + profileName + "/" + notificationIndex + "/" + fileName;
+        String key = "notice/" + profileName + "/" + noticeIndex + "/" + fileName;
         s3Client.putObject(new PutObjectRequest(bucket, key, file.getInputStream(), objectMetadata)
             .withCannedAcl(CannedAccessControlList.PublicRead));
         return s3Client.getUrl(bucket, key).toString();
     }
 
-    public void deleteNotification(Long notificationIndex) {
+    public void deleteNotice(Long noticeIndex) {
         List<DeleteObjectsRequest.KeyVersion> keys = new ArrayList<>();
-        keys.add(new DeleteObjectsRequest.KeyVersion("notification/" + profileName + "/" + notificationIndex + "/mainImg"));
-        keys.add(new DeleteObjectsRequest.KeyVersion("notification/" + profileName + "/" + notificationIndex + "/subImg1"));
-        keys.add(new DeleteObjectsRequest.KeyVersion("notification/" + profileName + "/" + notificationIndex + "/subImg2"));
-        keys.add(new DeleteObjectsRequest.KeyVersion("notification/" + profileName + "/" + notificationIndex + "/subImg3"));
+        keys.add(new DeleteObjectsRequest.KeyVersion("notice/" + profileName + "/" + noticeIndex + "/mainImg"));
+        keys.add(new DeleteObjectsRequest.KeyVersion("notice/" + profileName + "/" + noticeIndex + "/subImg1"));
+        keys.add(new DeleteObjectsRequest.KeyVersion("notice/" + profileName + "/" + noticeIndex + "/subImg2"));
+        keys.add(new DeleteObjectsRequest.KeyVersion("notice/" + profileName + "/" + noticeIndex + "/subImg3"));
         DeleteObjectsRequest multipleDeleteObjectsRequest = new DeleteObjectsRequest(bucket)
             .withKeys(keys)
             .withQuiet(false);

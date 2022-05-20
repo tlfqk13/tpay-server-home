@@ -1,8 +1,8 @@
-package com.tpay.domains.notification.domain;
+package com.tpay.domains.notice.domain;
 
 import com.tpay.commons.custom.CustomValue;
 import com.tpay.domains.BaseTimeEntity;
-import com.tpay.domains.notification.application.dto.DataList;
+import com.tpay.domains.notice.application.dto.DataList;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,9 +12,9 @@ import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "notification")
+@Table(name = "notice")
 @Entity
-public class NotificationEntity extends BaseTimeEntity {
+public class NoticeEntity extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,7 +55,7 @@ public class NotificationEntity extends BaseTimeEntity {
 
     private String subImg3;
 
-    public NotificationEntity(DataList dataList) {
+    public NoticeEntity(DataList dataList) {
         this.isFixed = dataList.getIsFixed();
         this.isImmediate = dataList.getIsImmediate();
         this.isInvisible = dataList.getIsInvisible();
@@ -92,7 +92,7 @@ public class NotificationEntity extends BaseTimeEntity {
         }
     }
 
-    public NotificationEntity updateInvisible(){
+    public NoticeEntity updateInvisible(){
         this.isInvisible = true;
         return this;
     }
