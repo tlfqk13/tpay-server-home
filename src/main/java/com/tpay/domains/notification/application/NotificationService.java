@@ -75,6 +75,7 @@ public class NotificationService {
 
     @Transactional
     public void deleteNotification(Long notificationIndex) {
+        s3FileUploader.deleteNotification(notificationIndex);
         notificationRepository.deleteById(notificationIndex);
     }
 }
