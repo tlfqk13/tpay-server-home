@@ -6,9 +6,7 @@ import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.*;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -22,6 +20,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -66,19 +66,33 @@ public class S3FileUploader {
         return s3Client.getUrl(bucket, key).toString();
     }
 
-    public String uploadNotification(Long notificationIndex, MultipartFile file, String fileName) throws IOException {
+    public String uploadNotice(Long noticeIndex, MultipartFile file, String fileName) throws IOException {
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentType(MediaType.ALL_VALUE);
         objectMetadata.setContentLength(file.getSize());
-        String key = "notification/" + profileName + "/" + notificationIndex + "/" + fileName;
+        String key = "notice/" + profileName + "/" + noticeIndex + "/" + fileName;
         s3Client.putObject(new PutObjectRequest(bucket, key, file.getInputStream(), objectMetadata)
             .withCannedAcl(CannedAccessControlList.PublicRead));
         return s3Client.getUrl(bucket, key).toString();
     }
 
+    public void deleteNotice(Long noticeIndex) {
+        List<DeleteObjectsRequest.KeyVersion> keys = new ArrayList<>();
+        keys.add(new DeleteObjectsRequest.KeyVersion("notice/" + profileName + "/" + noticeIndex + "/mainImg"));
+        keys.add(new DeleteObjectsRequest.KeyVersion("notice/" + profileName + "/" + noticeIndex + "/subImg1"));
+        keys.add(new DeleteObjectsRequest.KeyVersion("notice/" + profileName + "/" + noticeIndex + "/subImg2"));
+        keys.add(new DeleteObjectsRequest.KeyVersion("notice/" + profileName + "/" + noticeIndex + "/subImg3"));
+        DeleteObjectsRequest multipleDeleteObjectsRequest = new DeleteObjectsRequest(bucket)
+            .withKeys(keys)
+            .withQuiet(false);
+        DeleteObjectsResult deleteObjectsResult = s3Client.deleteObjects(multipleDeleteObjectsRequest);
+        log.trace("successful delete = {}", deleteObjectsResult.getDeletedObjects().size());
+    }
+
     public String deleteJpg(Long franchiseeIndex, String imageCategory) {
         String key = profileName + "/" + franchiseeIndex + imageCategory;
         s3Client.deleteObject(bucket, key);
+
         return "Delete : " + key;
     }
 
@@ -96,6 +110,11 @@ public class S3FileUploader {
             log.error("IO exception");
         }
         return uri;
+    }
+
+    public void deleteBarcode(Long id) {
+        String key = "barcode/"+id;
+        s3Client.deleteObject(bucket,key);
     }
 
     public String uploadXlsx(Long franchiseeIndex, XSSFWorkbook xssfWorkbook) throws IOException {

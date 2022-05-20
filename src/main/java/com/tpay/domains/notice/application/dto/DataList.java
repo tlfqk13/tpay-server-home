@@ -1,4 +1,4 @@
-package com.tpay.domains.notification.application.dto;
+package com.tpay.domains.notice.application.dto;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

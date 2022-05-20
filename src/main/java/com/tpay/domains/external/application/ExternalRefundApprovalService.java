@@ -2,6 +2,7 @@ package com.tpay.domains.external.application;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tpay.commons.aws.S3FileUploader;
 import com.tpay.commons.custom.CustomValue;
 import com.tpay.commons.exception.detail.InvalidExternalRefundIndexException;
 import com.tpay.commons.exception.detail.InvalidParameterException;
@@ -45,6 +46,7 @@ public class ExternalRefundApprovalService {
     private final PaymentCalculator paymentCalculator;
     private final OrderSaveService orderSaveService;
     private final OrderService orderService;
+    private final S3FileUploader s3FileUploader;
 
     @Transactional
     public ExternalRefundResponse approve(ExternalRefundApprovalRequest externalRefundApprovalRequest) {
@@ -57,7 +59,7 @@ public class ExternalRefundApprovalService {
         }
 
         try {
-
+            s3FileUploader.deleteBarcode(externalRefundApprovalRequest.getExternalRefundIndex());
             ExternalRefundEntity externalRefundEntity = externalRefundFindService.findById(externalRefundApprovalRequest.getExternalRefundIndex());
             FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(externalRefundEntity.getFranchiseeIndex());
 
