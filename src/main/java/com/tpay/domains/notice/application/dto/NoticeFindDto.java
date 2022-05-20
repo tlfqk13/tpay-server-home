@@ -9,7 +9,7 @@ public class NoticeFindDto {
 
     @Getter
     public static class FindAllResponse {
-        private final Long notificationIndex;
+        private final Long noticeIndex;
         private final String title;
         private final LocalDateTime createdDate;
         private final LocalDateTime scheduledDate;
@@ -17,7 +17,7 @@ public class NoticeFindDto {
         private final Boolean isInvisible;
 
         public FindAllResponse(NoticeEntity noticeEntity) {
-            this.notificationIndex = noticeEntity.getId();
+            this.noticeIndex = noticeEntity.getId();
             this.title = noticeEntity.getTitle();
             this.createdDate = noticeEntity.getCreatedDate();
             this.scheduledDate = noticeEntity.getScheduledDate();
