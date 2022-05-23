@@ -56,4 +56,10 @@ public class NoticeController {
         AppNoticeFindDto.FindAllResponse result = noticeService.getAllApp();
         return ResponseEntity.ok(result);
     }
+
+    @GetMapping("/notice/{noticeIndex}")
+    public ResponseEntity<AppNoticeFindDto.FindOneResponse> getOneApp(@PathVariable Long noticeIndex){
+        AppNoticeFindDto.FindOneResponse oneApp = noticeService.getOneApp(noticeIndex);
+        return ResponseEntity.ok(oneApp);
+    }
 }

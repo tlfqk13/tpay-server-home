@@ -86,7 +86,12 @@ public class NoticeService {
         List<NoticeEntity> noticeEntityFalseList = noticeRepository.findByIsFixedAndScheduledDateBefore(Boolean.FALSE, LocalDateTime.now());
 
         return new AppNoticeFindDto.FindAllResponse(noticeEntityTrueList,noticeEntityFalseList);
+    }
 
+    public AppNoticeFindDto.FindOneResponse getOneApp(Long noticeIndex) {
+        NoticeEntity noticeEntity = noticeRepository.findById(noticeIndex)
+            .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid Notice Index"));
 
+        return new AppNoticeFindDto.FindOneResponse(noticeEntity);
     }
 }

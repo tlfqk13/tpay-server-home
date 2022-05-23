@@ -18,4 +18,13 @@ public class AppNoticeFindDto {
             this.nonFixedList = nonFixedList;
         }
     }
+
+    @Getter
+    public static class FindOneResponse {
+        NoticeEntity noticeEntity;
+
+        public FindOneResponse(NoticeEntity noticeEntity) {
+            this.noticeEntity = noticeEntity;
+        }
+    }
 }
