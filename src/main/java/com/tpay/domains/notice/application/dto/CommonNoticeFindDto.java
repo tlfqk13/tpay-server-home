@@ -5,7 +5,7 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-public class AdminNoticeFindDto {
+public class CommonNoticeFindDto {
 
     @Getter
     public static class FindAllResponse {

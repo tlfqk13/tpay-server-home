@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tpay.commons.aws.S3FileUploader;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
-import com.tpay.domains.notice.application.dto.AdminNoticeFindDto;
+import com.tpay.domains.notice.application.dto.CommonNoticeFindDto;
 import com.tpay.domains.notice.application.dto.AppNoticeFindDto;
 import com.tpay.domains.notice.application.dto.DataList;
 import com.tpay.domains.notice.domain.NoticeEntity;
@@ -56,16 +56,16 @@ public class NoticeService {
         }
     }
 
-    public List<AdminNoticeFindDto.FindAllResponse> getAll() {
+    public List<CommonNoticeFindDto.FindAllResponse> getAll() {
         List<NoticeEntity> noticeEntityList = noticeRepository.findAll();
-        return noticeEntityList.stream().map(AdminNoticeFindDto.FindAllResponse::new).collect(Collectors.toList());
+        return noticeEntityList.stream().map(CommonNoticeFindDto.FindAllResponse::new).collect(Collectors.toList());
     }
 
 
-    public AdminNoticeFindDto.FindOneResponse getOne(Long noticeIndex) {
+    public CommonNoticeFindDto.FindOneResponse getOne(Long noticeIndex) {
         NoticeEntity noticeEntity = noticeRepository.findById(noticeIndex)
             .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid Notice Index"));
-        return new AdminNoticeFindDto.FindOneResponse(noticeEntity);
+        return new CommonNoticeFindDto.FindOneResponse(noticeEntity);
     }
 
     @Transactional
@@ -84,14 +84,14 @@ public class NoticeService {
     public AppNoticeFindDto.FindAllResponse getAllApp() {
         List<NoticeEntity> noticeEntityTrueList = noticeRepository.findByIsFixedAndScheduledDateBefore(Boolean.TRUE, LocalDateTime.now());
         List<NoticeEntity> noticeEntityFalseList = noticeRepository.findByIsFixedAndScheduledDateBefore(Boolean.FALSE, LocalDateTime.now());
-
-        return new AppNoticeFindDto.FindAllResponse(noticeEntityTrueList,noticeEntityFalseList);
+        List<CommonNoticeFindDto.FindAllResponse> trueCollect = noticeEntityTrueList.stream().map(CommonNoticeFindDto.FindAllResponse::new).collect(Collectors.toList());
+        List<CommonNoticeFindDto.FindAllResponse> falseCollect = noticeEntityFalseList.stream().map(CommonNoticeFindDto.FindAllResponse::new).collect(Collectors.toList());
+        return new AppNoticeFindDto.FindAllResponse(trueCollect,falseCollect);
     }
 
-    public AppNoticeFindDto.FindOneResponse getOneApp(Long noticeIndex) {
+    public CommonNoticeFindDto.FindOneResponse getOneApp(Long noticeIndex) {
         NoticeEntity noticeEntity = noticeRepository.findById(noticeIndex)
             .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid Notice Index"));
-
-        return new AppNoticeFindDto.FindOneResponse(noticeEntity);
+        return new CommonNoticeFindDto.FindOneResponse(noticeEntity);
     }
 }

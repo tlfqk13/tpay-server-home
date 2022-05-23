@@ -1,7 +1,7 @@
 package com.tpay.domains.notice.presentation;
 
 import com.tpay.domains.notice.application.NoticeService;
-import com.tpay.domains.notice.application.dto.AdminNoticeFindDto;
+import com.tpay.domains.notice.application.dto.CommonNoticeFindDto;
 import com.tpay.domains.notice.application.dto.AppNoticeFindDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -28,16 +28,16 @@ public class NoticeController {
     }
 
     @GetMapping("/admin/notice")
-    public ResponseEntity<List<AdminNoticeFindDto.FindAllResponse>> getAll() {
-        List<AdminNoticeFindDto.FindAllResponse> all = noticeService.getAll();
+    public ResponseEntity<List<CommonNoticeFindDto.FindAllResponse>> getAll() {
+        List<CommonNoticeFindDto.FindAllResponse> all = noticeService.getAll();
         return ResponseEntity.ok(all);
     }
 
     @GetMapping("/admin/notice/{noticeIndex}")
-    public ResponseEntity<AdminNoticeFindDto.FindOneResponse> getOne(
+    public ResponseEntity<CommonNoticeFindDto.FindOneResponse> getOne(
         @PathVariable Long noticeIndex
     ) {
-        AdminNoticeFindDto.FindOneResponse one = noticeService.getOne(noticeIndex);
+        CommonNoticeFindDto.FindOneResponse one = noticeService.getOne(noticeIndex);
         return ResponseEntity.ok(one);
     }
 
@@ -58,8 +58,8 @@ public class NoticeController {
     }
 
     @GetMapping("/notice/{noticeIndex}")
-    public ResponseEntity<AppNoticeFindDto.FindOneResponse> getOneApp(@PathVariable Long noticeIndex){
-        AppNoticeFindDto.FindOneResponse oneApp = noticeService.getOneApp(noticeIndex);
+    public ResponseEntity<CommonNoticeFindDto.FindOneResponse> getOneApp(@PathVariable Long noticeIndex){
+        CommonNoticeFindDto.FindOneResponse oneApp = noticeService.getOneApp(noticeIndex);
         return ResponseEntity.ok(oneApp);
     }
 }
