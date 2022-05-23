@@ -44,7 +44,7 @@ public class FranchiseeController {
     /**
      * 마이페이지 조회
      */
-    @GetMapping("/franchisee/{franchiseeIndex}")
+    @GetMapping("/{franchiseeIndex}")
     public ResponseEntity<MyPageResponse> findMyPageInfo(
         @PathVariable Long franchiseeIndex) {
         MyPageResponse response = myPageFindService.findByFranchiseeIndex(franchiseeIndex);
