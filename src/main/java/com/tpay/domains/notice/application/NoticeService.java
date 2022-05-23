@@ -5,7 +5,7 @@ import com.tpay.commons.aws.S3FileUploader;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.domains.notice.application.dto.DataList;
-import com.tpay.domains.notice.application.dto.NoticeFindDto;
+import com.tpay.domains.notice.application.dto.AdminNoticeFindDto;
 import com.tpay.domains.notice.domain.NoticeEntity;
 import com.tpay.domains.notice.domain.NoticeRepository;
 import lombok.RequiredArgsConstructor;
@@ -54,16 +54,16 @@ public class NoticeService {
         }
     }
 
-    public List<NoticeFindDto.FindAllResponse> getAll() {
+    public List<AdminNoticeFindDto.FindAllResponse> getAll() {
         List<NoticeEntity> noticeEntityList = noticeRepository.findAll();
-        return noticeEntityList.stream().map(NoticeFindDto.FindAllResponse::new).collect(Collectors.toList());
+        return noticeEntityList.stream().map(AdminNoticeFindDto.FindAllResponse::new).collect(Collectors.toList());
     }
 
 
-    public NoticeFindDto.FindOneResponse getOne(Long noticeIndex) {
+    public AdminNoticeFindDto.FindOneResponse getOne(Long noticeIndex) {
         NoticeEntity noticeEntity = noticeRepository.findById(noticeIndex)
             .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid Notice Index"));
-        return new NoticeFindDto.FindOneResponse(noticeEntity);
+        return new AdminNoticeFindDto.FindOneResponse(noticeEntity);
     }
 
     @Transactional
