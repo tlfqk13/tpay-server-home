@@ -43,18 +43,16 @@ public class WebMvcConfig implements WebMvcConfigurer {
             "/h2-console/**",
             "/favicon.ico",
             "/push/**",
-            "/swagger-ui.html",
-            "/webjars/**",
-            "/web-jar/**",
+            "/notice/**",
             "/fcm/**"));
-//        registry
-//            .addInterceptor(jwtValidationInterceptor)
-//            .addPathPatterns("/**")
-//            .excludePathPatterns(exclusivePathList);
-//        registry
-//            .addInterceptor(authInterceptor)
-//            .addPathPatterns("/**")
-//            .excludePathPatterns(exclusivePathList);
+        registry
+            .addInterceptor(jwtValidationInterceptor)
+            .addPathPatterns("/**")
+            .excludePathPatterns(exclusivePathList);
+        registry
+            .addInterceptor(authInterceptor)
+            .addPathPatterns("/**")
+            .excludePathPatterns(exclusivePathList);
         registry.addInterceptor(printRequestInterceptor).addPathPatterns("/**");
     }
 

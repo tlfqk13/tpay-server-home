@@ -1,7 +1,8 @@
 package com.tpay.domains.notice.presentation;
 
 import com.tpay.domains.notice.application.NoticeService;
-import com.tpay.domains.notice.application.dto.NoticeFindDto;
+import com.tpay.domains.notice.application.dto.AdminNoticeFindDto;
+import com.tpay.domains.notice.application.dto.AppNoticeFindDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,16 +28,16 @@ public class NoticeController {
     }
 
     @GetMapping("/admin/notice")
-    public ResponseEntity<List<NoticeFindDto.FindAllResponse>> getAll() {
-        List<NoticeFindDto.FindAllResponse> all = noticeService.getAll();
+    public ResponseEntity<List<AdminNoticeFindDto.FindAllResponse>> getAll() {
+        List<AdminNoticeFindDto.FindAllResponse> all = noticeService.getAll();
         return ResponseEntity.ok(all);
     }
 
     @GetMapping("/admin/notice/{noticeIndex}")
-    public ResponseEntity<NoticeFindDto.FindOneResponse> getOne(
+    public ResponseEntity<AdminNoticeFindDto.FindOneResponse> getOne(
         @PathVariable Long noticeIndex
     ) {
-        NoticeFindDto.FindOneResponse one = noticeService.getOne(noticeIndex);
+        AdminNoticeFindDto.FindOneResponse one = noticeService.getOne(noticeIndex);
         return ResponseEntity.ok(one);
     }
 
@@ -50,4 +51,9 @@ public class NoticeController {
         noticeService.deleteNotification(noticeIndex);
     }
 
+    @GetMapping("/notice")
+    public ResponseEntity<AppNoticeFindDto.FindAllResponse> getAllApp(){
+        AppNoticeFindDto.FindAllResponse result = noticeService.getAllApp();
+        return ResponseEntity.ok(result);
+    }
 }

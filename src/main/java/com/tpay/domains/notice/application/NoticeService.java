@@ -4,8 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tpay.commons.aws.S3FileUploader;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
-import com.tpay.domains.notice.application.dto.DataList;
 import com.tpay.domains.notice.application.dto.AdminNoticeFindDto;
+import com.tpay.domains.notice.application.dto.AppNoticeFindDto;
+import com.tpay.domains.notice.application.dto.DataList;
 import com.tpay.domains.notice.domain.NoticeEntity;
 import com.tpay.domains.notice.domain.NoticeRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -77,5 +79,14 @@ public class NoticeService {
     public void deleteNotification(Long noticeIndex) {
         s3FileUploader.deleteNotice(noticeIndex);
         noticeRepository.deleteById(noticeIndex);
+    }
+
+    public AppNoticeFindDto.FindAllResponse getAllApp() {
+        List<NoticeEntity> noticeEntityTrueList = noticeRepository.findByIsFixedAndScheduledDateBefore(Boolean.TRUE, LocalDateTime.now());
+        List<NoticeEntity> noticeEntityFalseList = noticeRepository.findByIsFixedAndScheduledDateBefore(Boolean.FALSE, LocalDateTime.now());
+
+        return new AppNoticeFindDto.FindAllResponse(noticeEntityTrueList,noticeEntityFalseList);
+
+
     }
 }
