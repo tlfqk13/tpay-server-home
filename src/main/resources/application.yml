@@ -71,7 +71,7 @@ spring:
         dialect: org.hibernate.dialect.MySQL5InnoDBDialect
         format_sql: false
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
 custom:
   refund:
     server: ENC(vIOoRRzJSa0iqX39B4ogkiYcB9p++ieiU4J6sGZXUAXXWm4/TDvC6A==)
