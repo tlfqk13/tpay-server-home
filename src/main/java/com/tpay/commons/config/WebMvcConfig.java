@@ -34,7 +34,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
             "/franchisee/password/exists",
             "/franchisee/password/selfCertification",
             "/franchisee/password/out",
-            "/franchisee-applicant/**",
             "/admin/**",
             "/validate/**",
             "/points/batch",
@@ -48,7 +47,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
             "/notice/**"));
 
         if (!profileName.equals("deploy")) {
-            exclusivePathList.addAll(List.of("/swagger-re/*sources/**",
+            exclusivePathList.addAll(List.of("/swagger-resources/**",
                 "/swagger-ui.html/**",
                 "/swagger-ui/**",
                 "/webjars/**",
