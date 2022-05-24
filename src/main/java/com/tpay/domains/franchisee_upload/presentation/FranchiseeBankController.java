@@ -7,19 +7,29 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * 은행정보 업로드 관련
+ */
 @RestController
+@RequestMapping("/franchisee/bank")
 @RequiredArgsConstructor
 public class FranchiseeBankController {
 
     private final FranchiseeBankService franchiseeBankService;
 
-    @GetMapping("/franchisee/bank/{franchiseeIndex}")
+    /**
+     * 은행 정보 조회
+     */
+    @GetMapping("/{franchiseeIndex}")
     public ResponseEntity<FranchiseeBankInfo> findMyAccount(@PathVariable Long franchiseeIndex) {
         FranchiseeBankInfo result = franchiseeBankService.findMyAccount(franchiseeIndex);
         return ResponseEntity.ok(result);
     }
 
-    @PatchMapping("/franchisee/bank/{franchiseeIndex}")
+    /**
+     * 은행 정보 업데이트
+     */
+    @PatchMapping("/{franchiseeIndex}")
     public ResponseEntity<FranchiseeBankInfo> updateMyAccount(
         @PathVariable Long franchiseeIndex,
         @RequestBody FranchiseeBankInfo franchiseeBankInfo) {

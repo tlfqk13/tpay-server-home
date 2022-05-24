@@ -7,14 +7,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * 사후면세지정증 이미지 관련
+ */
 @RestController
+@RequestMapping("/franchiseeUpload")
 @RequiredArgsConstructor
 public class FranchiseeUploadController {
 
     private final FranchiseeUploadService franchiseeUploadService;
 
-    // TODO: 2022/05/11 URI 수정
-    @PostMapping("/franchiseeUpload/{franchiseeIndex}")
+    /**
+     * 사후면세지정증 이미지 업로드
+     */
+    @PostMapping("/{franchiseeIndex}")
     public ResponseEntity<String> uploadImageAndBankInfo(
         @PathVariable Long franchiseeIndex,
         @RequestParam String imageCategory,
@@ -25,7 +31,10 @@ public class FranchiseeUploadController {
         return ResponseEntity.ok(s3Path);
     }
 
-    @PatchMapping("/franchiseeUpload/{franchiseeIndex}")
+    /**
+     * 사후면세지정증 이미지 수정
+     */
+    @PatchMapping("/{franchiseeIndex}")
     public ResponseEntity<String> uploadUpdateImageAndBankInfo(
         @PathVariable Long franchiseeIndex,
         @RequestParam(required = false) String imageCategory,
