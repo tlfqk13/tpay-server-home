@@ -9,6 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * 앱 내 가맹점 기능
+ */
 @RestController
 @RequestMapping("/franchisee")
 @RequiredArgsConstructor
