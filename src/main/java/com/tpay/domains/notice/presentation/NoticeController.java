@@ -3,6 +3,7 @@ package com.tpay.domains.notice.presentation;
 import com.tpay.domains.notice.application.NoticeService;
 import com.tpay.domains.notice.application.dto.CommonNoticeFindDto;
 import com.tpay.domains.notice.application.dto.AppNoticeFindDto;
+import com.tpay.domains.notice.application.dto.DataList;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -49,6 +50,12 @@ public class NoticeController {
     @DeleteMapping("/admin/notice/{noticeIndex}")
     public void deleteNotification(@PathVariable Long noticeIndex){
         noticeService.deleteNotification(noticeIndex);
+    }
+
+    @PutMapping("/admin/notice/{noticeIndex}")
+    public void updateNotice(@PathVariable Long noticeIndex,
+    @RequestBody DataList dataList ) {
+        noticeService.updateNotice(noticeIndex,dataList);
     }
 
     @GetMapping("/notice")

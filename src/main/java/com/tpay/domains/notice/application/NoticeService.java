@@ -94,4 +94,11 @@ public class NoticeService {
             .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid Notice Index"));
         return new CommonNoticeFindDto.FindOneResponse(noticeEntity);
     }
+
+    @Transactional
+    public void updateNotice(Long noticeIndex, DataList dataList) {
+        NoticeEntity noticeEntity = noticeRepository.findById(noticeIndex)
+            .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid Parameter"));
+        noticeEntity.updateNotice(dataList);
+    }
 }
