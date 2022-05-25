@@ -4,8 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tpay.commons.aws.S3FileUploader;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
+import com.tpay.domains.notice.application.dto.CommonNoticeFindDto;
+import com.tpay.domains.notice.application.dto.AppNoticeFindDto;
 import com.tpay.domains.notice.application.dto.DataList;
-import com.tpay.domains.notice.application.dto.NoticeFindDto;
 import com.tpay.domains.notice.domain.NoticeEntity;
 import com.tpay.domains.notice.domain.NoticeRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -54,16 +56,16 @@ public class NoticeService {
         }
     }
 
-    public List<NoticeFindDto.FindAllResponse> getAll() {
+    public List<CommonNoticeFindDto.FindAllResponse> getAll() {
         List<NoticeEntity> noticeEntityList = noticeRepository.findAll();
-        return noticeEntityList.stream().map(NoticeFindDto.FindAllResponse::new).collect(Collectors.toList());
+        return noticeEntityList.stream().map(CommonNoticeFindDto.FindAllResponse::new).collect(Collectors.toList());
     }
 
 
-    public NoticeFindDto.FindOneResponse getOne(Long noticeIndex) {
+    public CommonNoticeFindDto.FindOneResponse getOne(Long noticeIndex) {
         NoticeEntity noticeEntity = noticeRepository.findById(noticeIndex)
             .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid Notice Index"));
-        return new NoticeFindDto.FindOneResponse(noticeEntity);
+        return new CommonNoticeFindDto.FindOneResponse(noticeEntity);
     }
 
     @Transactional
@@ -77,5 +79,26 @@ public class NoticeService {
     public void deleteNotification(Long noticeIndex) {
         s3FileUploader.deleteNotice(noticeIndex);
         noticeRepository.deleteById(noticeIndex);
+    }
+
+    public AppNoticeFindDto.FindAllResponse getAllApp() {
+        List<NoticeEntity> noticeEntityTrueList = noticeRepository.findByIsFixedAndScheduledDateBefore(Boolean.TRUE, LocalDateTime.now());
+        List<NoticeEntity> noticeEntityFalseList = noticeRepository.findByIsFixedAndScheduledDateBefore(Boolean.FALSE, LocalDateTime.now());
+        List<CommonNoticeFindDto.FindAllResponse> trueCollect = noticeEntityTrueList.stream().map(CommonNoticeFindDto.FindAllResponse::new).collect(Collectors.toList());
+        List<CommonNoticeFindDto.FindAllResponse> falseCollect = noticeEntityFalseList.stream().map(CommonNoticeFindDto.FindAllResponse::new).collect(Collectors.toList());
+        return new AppNoticeFindDto.FindAllResponse(trueCollect,falseCollect);
+    }
+
+    public CommonNoticeFindDto.FindOneResponse getOneApp(Long noticeIndex) {
+        NoticeEntity noticeEntity = noticeRepository.findById(noticeIndex)
+            .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid Notice Index"));
+        return new CommonNoticeFindDto.FindOneResponse(noticeEntity);
+    }
+
+    @Transactional
+    public void updateNotice(Long noticeIndex, DataList dataList) {
+        NoticeEntity noticeEntity = noticeRepository.findById(noticeIndex)
+            .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid Parameter"));
+        noticeEntity.updateNotice(dataList);
     }
 }

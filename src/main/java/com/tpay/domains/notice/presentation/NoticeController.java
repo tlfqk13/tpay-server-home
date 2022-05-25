@@ -1,7 +1,9 @@
 package com.tpay.domains.notice.presentation;
 
 import com.tpay.domains.notice.application.NoticeService;
-import com.tpay.domains.notice.application.dto.NoticeFindDto;
+import com.tpay.domains.notice.application.dto.CommonNoticeFindDto;
+import com.tpay.domains.notice.application.dto.AppNoticeFindDto;
+import com.tpay.domains.notice.application.dto.DataList;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,16 +29,16 @@ public class NoticeController {
     }
 
     @GetMapping("/admin/notice")
-    public ResponseEntity<List<NoticeFindDto.FindAllResponse>> getAll() {
-        List<NoticeFindDto.FindAllResponse> all = noticeService.getAll();
+    public ResponseEntity<List<CommonNoticeFindDto.FindAllResponse>> getAll() {
+        List<CommonNoticeFindDto.FindAllResponse> all = noticeService.getAll();
         return ResponseEntity.ok(all);
     }
 
     @GetMapping("/admin/notice/{noticeIndex}")
-    public ResponseEntity<NoticeFindDto.FindOneResponse> getOne(
+    public ResponseEntity<CommonNoticeFindDto.FindOneResponse> getOne(
         @PathVariable Long noticeIndex
     ) {
-        NoticeFindDto.FindOneResponse one = noticeService.getOne(noticeIndex);
+        CommonNoticeFindDto.FindOneResponse one = noticeService.getOne(noticeIndex);
         return ResponseEntity.ok(one);
     }
 
@@ -50,4 +52,21 @@ public class NoticeController {
         noticeService.deleteNotification(noticeIndex);
     }
 
+    @PutMapping("/admin/notice/{noticeIndex}")
+    public void updateNotice(@PathVariable Long noticeIndex,
+    @RequestBody DataList dataList ) {
+        noticeService.updateNotice(noticeIndex,dataList);
+    }
+
+    @GetMapping("/notice")
+    public ResponseEntity<AppNoticeFindDto.FindAllResponse> getAllApp(){
+        AppNoticeFindDto.FindAllResponse result = noticeService.getAllApp();
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/notice/{noticeIndex}")
+    public ResponseEntity<CommonNoticeFindDto.FindOneResponse> getOneApp(@PathVariable Long noticeIndex){
+        CommonNoticeFindDto.FindOneResponse oneApp = noticeService.getOneApp(noticeIndex);
+        return ResponseEntity.ok(oneApp);
+    }
 }

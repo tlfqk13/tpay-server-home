@@ -22,7 +22,7 @@ import javax.transaction.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class FranchiseeSignUpService {
+public class SignUpService {
 
     private final FranchiseeRepository franchiseeRepository;
     private final PasswordEncoder passwordEncoder;
