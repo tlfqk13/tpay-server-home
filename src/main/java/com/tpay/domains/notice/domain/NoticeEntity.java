@@ -96,4 +96,20 @@ public class NoticeEntity extends BaseTimeEntity {
         this.isInvisible = true;
         return this;
     }
+
+    public void updateNotice(DataList dataList) {
+        this.isFixed = dataList.getIsFixed();
+        this.isImmediate = dataList.getIsImmediate();
+        this.isInvisible = dataList.getIsInvisible();
+        this.scheduledDate = dataList.getScheduledDate().equals("") ? LocalDateTime.now() : LocalDateTime.parse(dataList.getScheduledDate());
+        this.title = dataList.getTitle();
+        this.subTitle1 = dataList.getSubTitle1();
+        this.subTitle2 = dataList.getSubTitle2();
+        this.subTitle3 = dataList.getSubTitle3();
+        this.content1 = dataList.getContent1();
+        this.content2 = dataList.getContent2();
+        this.content3 = dataList.getContent3();
+        this.link = dataList.getLink();
+        // TODO: 2022/05/24 여기 부터
+    }
 }

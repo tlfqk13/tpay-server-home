@@ -173,9 +173,14 @@ public class JwtValidationInterceptor implements HandlerInterceptor {
 
         int secondDomainEnd = trim.indexOf("/");
         if (secondDomainEnd == -1) {
-            FranchiseeApplicantEntity franchiseeApplicantEntity = franchiseeApplicantFindService.findByBusinessNumber(trim);
-            String index = franchiseeApplicantEntity.getFranchiseeEntity().getId().toString();
-            return new IndexInfo(FRANCHISEE, index);
+            if(request.getMethod().equals("GET")){
+                FranchiseeApplicantEntity franchiseeApplicantEntity = franchiseeApplicantFindService.findByIndex(Long.parseLong(trim));
+                return new IndexInfo(FRANCHISEE,franchiseeApplicantEntity.getFranchiseeEntity().getId().toString());
+            } else {
+                FranchiseeApplicantEntity franchiseeApplicantEntity = franchiseeApplicantFindService.findByBusinessNumber(trim);
+                String index = franchiseeApplicantEntity.getFranchiseeEntity().getId().toString();
+                return new IndexInfo(FRANCHISEE, index);
+            }
         } else {
             String thirdTrim = request.getRequestURI().substring(31);
             return new IndexInfo(FRANCHISEE, thirdTrim);

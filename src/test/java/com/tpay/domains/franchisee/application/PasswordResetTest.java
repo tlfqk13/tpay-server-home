@@ -3,7 +3,6 @@ package com.tpay.domains.franchisee.application;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.domains.franchisee.application.dto.FranchiseeSignUpRequest;
 import com.tpay.domains.franchisee.application.dto.PasswordChangeRequest;
@@ -23,7 +22,7 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 @SpringBootTest
 public class PasswordResetTest {
   @Autowired
-  FranchiseeSignUpService franchiseeSignUpService;
+  SignUpService signUpService;
   @Autowired
   PasswordResetService passwordResetService;
   @Autowired
@@ -60,7 +59,7 @@ public class PasswordResetTest {
         "}";
     try {
       FranchiseeSignUpRequest franchiseeSignUpRequest = objectMapper.readValue(json, FranchiseeSignUpRequest.class);
-      franchiseeSignUpService.signUp(franchiseeSignUpRequest);
+      signUpService.signUp(franchiseeSignUpRequest);
     } catch (Exception e) {
 
     }
