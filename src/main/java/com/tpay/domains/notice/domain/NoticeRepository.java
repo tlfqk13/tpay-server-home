@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface NoticeRepository extends JpaRepository<NoticeEntity, Long> {
 
-    List<NoticeEntity> findByIsFixedAndScheduledDateBefore(Boolean isFixed, LocalDateTime localDateTime);
+    List<NoticeEntity> findByIsFixedAndScheduledDateBeforeAndIsInvisible(Boolean isFixed, LocalDateTime localDateTime,Boolean aFalse);
 }

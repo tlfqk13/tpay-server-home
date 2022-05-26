@@ -7,6 +7,7 @@ import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.domains.notice.application.dto.CommonNoticeFindDto;
 import com.tpay.domains.notice.application.dto.AppNoticeFindDto;
 import com.tpay.domains.notice.application.dto.DataList;
+import com.tpay.domains.notice.application.dto.InvisibleUpdateDto;
 import com.tpay.domains.notice.domain.NoticeEntity;
 import com.tpay.domains.notice.domain.NoticeRepository;
 import lombok.RequiredArgsConstructor;
@@ -69,10 +70,10 @@ public class NoticeService {
     }
 
     @Transactional
-    public void updateInvisible(Long noticeIndex) {
+    public void updateInvisible(Long noticeIndex, InvisibleUpdateDto invisibleUpdateDto) {
         NoticeEntity noticeEntity = noticeRepository.findById(noticeIndex)
             .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid Notice Index"));
-        noticeEntity.updateInvisible();
+        noticeEntity.updateInvisible(invisibleUpdateDto.getIsInvisible());
     }
 
     @Transactional
@@ -82,8 +83,8 @@ public class NoticeService {
     }
 
     public AppNoticeFindDto.FindAllResponse getAllApp() {
-        List<NoticeEntity> noticeEntityTrueList = noticeRepository.findByIsFixedAndScheduledDateBefore(Boolean.TRUE, LocalDateTime.now());
-        List<NoticeEntity> noticeEntityFalseList = noticeRepository.findByIsFixedAndScheduledDateBefore(Boolean.FALSE, LocalDateTime.now());
+        List<NoticeEntity> noticeEntityTrueList = noticeRepository.findByIsFixedAndScheduledDateBeforeAndIsInvisible(Boolean.TRUE, LocalDateTime.now(),Boolean.FALSE);
+        List<NoticeEntity> noticeEntityFalseList = noticeRepository.findByIsFixedAndScheduledDateBeforeAndIsInvisible(Boolean.FALSE, LocalDateTime.now(),Boolean.FALSE);
         List<CommonNoticeFindDto.FindAllResponse> trueCollect = noticeEntityTrueList.stream().map(CommonNoticeFindDto.FindAllResponse::new).collect(Collectors.toList());
         List<CommonNoticeFindDto.FindAllResponse> falseCollect = noticeEntityFalseList.stream().map(CommonNoticeFindDto.FindAllResponse::new).collect(Collectors.toList());
         return new AppNoticeFindDto.FindAllResponse(trueCollect,falseCollect);

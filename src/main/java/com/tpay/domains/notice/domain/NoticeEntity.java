@@ -92,8 +92,8 @@ public class NoticeEntity extends BaseTimeEntity {
         }
     }
 
-    public NoticeEntity updateInvisible(){
-        this.isInvisible = true;
+    public NoticeEntity updateInvisible(Boolean isInvisible){
+        this.isInvisible = isInvisible;
         return this;
     }
 

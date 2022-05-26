@@ -4,6 +4,7 @@ import com.tpay.domains.notice.application.NoticeService;
 import com.tpay.domains.notice.application.dto.CommonNoticeFindDto;
 import com.tpay.domains.notice.application.dto.AppNoticeFindDto;
 import com.tpay.domains.notice.application.dto.DataList;
+import com.tpay.domains.notice.application.dto.InvisibleUpdateDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -43,8 +44,9 @@ public class NoticeController {
     }
 
     @PatchMapping("/admin/notice/{noticeIndex}")
-    public void updateInvisible(@PathVariable Long noticeIndex){
-        noticeService.updateInvisible(noticeIndex);
+    public void updateInvisible(@PathVariable Long noticeIndex,
+    @RequestBody InvisibleUpdateDto invisibleUpdateDto){
+        noticeService.updateInvisible(noticeIndex,invisibleUpdateDto);
     }
 
     @DeleteMapping("/admin/notice/{noticeIndex}")
