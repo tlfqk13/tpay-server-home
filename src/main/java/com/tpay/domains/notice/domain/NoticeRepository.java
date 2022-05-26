@@ -10,4 +10,6 @@ import java.util.List;
 public interface NoticeRepository extends JpaRepository<NoticeEntity, Long> {
 
     List<NoticeEntity> findByIsFixedAndScheduledDateBeforeAndIsInvisible(Boolean isFixed, LocalDateTime localDateTime,Boolean aFalse);
+
+    List<NoticeEntity> findByScheduledDateBeforeAndIsInvisible(LocalDateTime localDateTime, Boolean aFalse);
 }

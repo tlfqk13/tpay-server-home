@@ -4,6 +4,7 @@ import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.push.PushCategoryType;
 import com.tpay.commons.push.PushType;
+import com.tpay.domains.notice.application.NoticeService;
 import com.tpay.domains.push.application.dto.*;
 import com.tpay.domains.push.domain.PushHistoryEntity;
 import com.tpay.domains.push.domain.PushHistoryRepository;
@@ -28,6 +29,8 @@ public class AdminPushService {
 
     private final UserPushTokenService userPushTokenService;
     private final PushHistoryRepository pushHistoryRepository;
+
+    private final NoticeService noticeService;
 
     @Transactional
     public AdminNotificationDto.Response sendMessageByAdmin(AdminNotificationDto.Request adminRequest) {
@@ -65,5 +68,9 @@ public class AdminPushService {
             .body(pushHistoryEntity.getBody())
             .build();
 
+    }
+
+    public PushNoticeDto findAllNotice() {
+        return noticeService.findAllNotice();
     }
 }
