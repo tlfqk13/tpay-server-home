@@ -1,7 +1,8 @@
 package com.tpay.domains.franchisee.domain;
 
 import com.tpay.domains.BaseTimeEntity;
-import com.tpay.domains.franchisee.application.dto.FranchiseeUpdateDto;
+import com.tpay.domains.franchisee.application.dto.FranchiseeUpdateDtoRequest;
+import com.tpay.domains.franchisee.application.dto.FranchiseeUpdateDtoResponse;
 import com.tpay.domains.point.domain.SignType;
 import com.tpay.domains.pos.domain.PosType;
 import lombok.*;
@@ -194,9 +195,9 @@ public class FranchiseeEntity extends BaseTimeEntity {
         this.isConnectedPos = isConnectedPos;
         this.posType = posType;
     }
-    public FranchiseeEntity updateFranchisee(FranchiseeUpdateDto franchiseeUpdateDto){
-        this.storeNumber = franchiseeUpdateDto.getStoreNumber();
-        this.email = franchiseeUpdateDto.getEmail();
+    public FranchiseeEntity updateFranchisee(FranchiseeUpdateDtoRequest franchiseeUpdateDtoRequest){
+        this.storeNumber = franchiseeUpdateDtoRequest.getStoreNumber();
+        this.email = franchiseeUpdateDtoRequest.getEmail();
         return this;
     }
 

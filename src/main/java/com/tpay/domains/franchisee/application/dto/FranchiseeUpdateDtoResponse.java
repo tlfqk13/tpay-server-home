@@ -4,11 +4,11 @@ import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import lombok.Getter;
 
 @Getter
-public class FranchiseeUpdateDto {
+public class FranchiseeUpdateDtoResponse {
     private final String storeNumber;
     private final String email;
 
-    public FranchiseeUpdateDto(FranchiseeEntity franchiseeEntity) {
+    public FranchiseeUpdateDtoResponse(FranchiseeEntity franchiseeEntity) {
         this.storeNumber = franchiseeEntity.getStoreNumber();
         this.email = franchiseeEntity.getEmail();
     }

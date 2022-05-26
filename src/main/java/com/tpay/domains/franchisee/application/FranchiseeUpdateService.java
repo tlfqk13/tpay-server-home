@@ -1,6 +1,7 @@
 package com.tpay.domains.franchisee.application;
 
-import com.tpay.domains.franchisee.application.dto.FranchiseeUpdateDto;
+import com.tpay.domains.franchisee.application.dto.FranchiseeUpdateDtoRequest;
+import com.tpay.domains.franchisee.application.dto.FranchiseeUpdateDtoResponse;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,9 +22,9 @@ public class FranchiseeUpdateService {
     }
 
     @Transactional
-    public FranchiseeUpdateDto updateFranchisee(Long franchiseeIndex, FranchiseeUpdateDto franchiseeUpdateDto) {
+    public FranchiseeUpdateDtoResponse updateFranchisee(Long franchiseeIndex, FranchiseeUpdateDtoRequest franchiseeUpdateDtoRequest) {
         FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
-        FranchiseeEntity result = franchiseeEntity.updateFranchisee(franchiseeUpdateDto);
-        return new FranchiseeUpdateDto(result);
+        FranchiseeEntity result = franchiseeEntity.updateFranchisee(franchiseeUpdateDtoRequest);
+        return new FranchiseeUpdateDtoResponse(result);
     }
 }
