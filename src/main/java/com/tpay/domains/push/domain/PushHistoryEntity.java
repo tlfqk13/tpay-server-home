@@ -36,7 +36,7 @@ public class PushHistoryEntity extends BaseTimeEntity {
     private Long noticeIndex;
 
     public void updateIsDetail() {
-        if (this.pushCategory.equals("13") || this.pushCategory.equals("14")) {
+        if (this.pushCategory.equals("13") || this.pushCategory.equals("14") || (this.pushCategory.equals("15") && noticeIndex.equals(0L))) {
             this.isDetail = false;
         }
     }
