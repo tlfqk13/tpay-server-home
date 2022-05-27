@@ -40,7 +40,7 @@ public class AdminPushService {
             NotificationDto.Request request = new NotificationDto.Request(PushCategoryType.CASE_FIFTEEN, PushType.TOPIC, topic.toString(), adminRequest.getTitle(), adminRequest.getBody());
             String send = pushNotificationService.sendMessageByTopic(request);
             topicSubscribeService.subscribeByTopic(topic, SubscribeType.UNSUBSCRIBE);
-            subscribeList.stream().map(userPushTokenService::findByToken).forEach(entity -> pushHistoryService.saveHistory(request, send, entity.get()));
+            subscribeList.stream().map(userPushTokenService::findByToken).map(entity -> pushHistoryService.saveHistory(request, send, entity.get())).forEach(entity -> entity.updateNoticeIndex(adminRequest.getNoticeIndex()));
             return AdminNotificationDto.Response.builder()
                 .message(send)
                 .build();
