@@ -66,6 +66,7 @@ public class AdminPushService {
         return PushFindDto.Response.builder()
             .title(pushHistoryEntity.getTitle())
             .body(pushHistoryEntity.getBody())
+            .noticeIndex(pushHistoryEntity.getNoticeIndex())
             .build();
 
     }
