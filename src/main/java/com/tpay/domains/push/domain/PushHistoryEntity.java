@@ -42,7 +42,7 @@ public class PushHistoryEntity extends BaseTimeEntity {
     }
 
     public void updateIsReadInit() {
-        if (this.pushCategory.equals("7") || this.pushCategory.equals("13") || this.pushCategory.equals("14")) {
+        if (this.pushCategory.equals("7") || this.pushCategory.equals("13") || this.pushCategory.equals("14") || (this.pushCategory.equals("15") && noticeIndex.equals(0L))) {
             this.isRead = true;
         }
     }

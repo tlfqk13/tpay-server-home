@@ -63,7 +63,6 @@ public class PushHistoryService {
 
         pushHistoryEntity.updateIsReadInit();
         pushHistoryEntity.updateIsDetail();
-        log.trace("  SAVED INFO [   userPushTokenIndex  : {}]", userPushTokenEntity.getId() );
         return pushHistoryRepository.save(pushHistoryEntity);
     }
 }

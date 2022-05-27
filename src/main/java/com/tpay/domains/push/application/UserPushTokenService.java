@@ -58,7 +58,6 @@ public class UserPushTokenService {
         PushTokenEntity pushTokenEntity = pushTokenService.findByToken(token).orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Token Not Exists"));
 
         Optional<UserPushTokenEntity> byUserToken = userPushTokenRepository.findByPushTokenEntity(pushTokenEntity);
-        log.trace("  FIND INFO [   userPushTokenIndex  : {}]", byUserToken.get().getId());
         return byUserToken;
     }
 
