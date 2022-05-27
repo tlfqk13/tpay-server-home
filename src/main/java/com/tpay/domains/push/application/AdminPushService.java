@@ -34,13 +34,19 @@ public class AdminPushService {
 
     @Transactional
     public AdminNotificationDto.Response sendMessageByAdmin(AdminNotificationDto.Request adminRequest) {
+        log.trace("  =======================공지사항 발송========================");
+        log.trace("  TARGET INFO [    title    : {}]", adminRequest.getTitle());
+        log.trace("  TARGET INFO [    body     : {}]", adminRequest.getBody());
+        log.trace("  TARGET INFO [ noticeIndex : {}]", adminRequest.getNoticeIndex());
         TopicType topic = TopicType.ALL;
         List<String> subscribeList = topicSubscribeService.subscribeByTopic(topic, SubscribeType.SUBSCRIBE);
         if (!subscribeList.isEmpty()) {
             NotificationDto.Request request = new NotificationDto.Request(PushCategoryType.CASE_FIFTEEN, PushType.TOPIC, topic.toString(), adminRequest.getTitle(), adminRequest.getBody());
             String send = pushNotificationService.sendMessageByTopic(request);
             topicSubscribeService.subscribeByTopic(topic, SubscribeType.UNSUBSCRIBE);
-            subscribeList.stream().map(userPushTokenService::findByToken).map(entity -> pushHistoryService.saveHistory(request, send, entity.get())).forEach(entity -> entity.updateNoticeIndex(adminRequest.getNoticeIndex()));
+
+            subscribeList.stream().map(userPushTokenService::findByToken).map(entity -> pushHistoryService.saveHistory(request, send, entity.get(), adminRequest.getNoticeIndex())).forEach(entity -> entity.updateNoticeIndex(adminRequest.getNoticeIndex()));
+            log.trace("  =======================공지사항 종료========================");
             return AdminNotificationDto.Response.builder()
                 .message(send)
                 .build();

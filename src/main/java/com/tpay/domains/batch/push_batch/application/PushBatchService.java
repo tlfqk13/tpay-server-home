@@ -167,7 +167,7 @@ public class PushBatchService {
             NotificationDto.Request request = new NotificationDto.Request(pushCategoryType, PushType.TOPIC, topic.toString());
             String send = pushNotificationService.sendMessageByTopic(request);
             topicSubscribeService.subscribeByFranchisee(dateFilter, topic, SubscribeType.UNSUBSCRIBE);
-            subscribeList.stream().map(userPushTokenService::findByToken).forEach(entity -> pushHistoryService.saveHistory(request, send, entity.get()));
+            subscribeList.stream().map(userPushTokenService::findByToken).forEach(entity -> pushHistoryService.saveHistory(request, send, entity.get(),0L));
             System.out.println("[" + LocalDateTime.now() + "] Pushed - " + pushCategoryType);
         }
     }

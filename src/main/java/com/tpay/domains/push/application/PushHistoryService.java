@@ -9,12 +9,14 @@ import com.tpay.domains.push.domain.PushHistoryEntity;
 import com.tpay.domains.push.domain.PushHistoryRepository;
 import com.tpay.domains.push.domain.UserPushTokenEntity;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class PushHistoryService {
 
@@ -41,7 +43,7 @@ public class PushHistoryService {
     }
 
     @Transactional
-    public PushHistoryEntity saveHistory(NotificationDto.Request request, String send, UserPushTokenEntity userPushTokenEntity) {
+    public PushHistoryEntity saveHistory(NotificationDto.Request request, String send, UserPushTokenEntity userPushTokenEntity, Long noticeIndex) {
 
         //요청 정보, 응답정보, 유저정보로 history SAVE
         PushHistoryEntity pushHistoryEntity = PushHistoryEntity.builder()
@@ -55,11 +57,13 @@ public class PushHistoryService {
             .userId(userPushTokenEntity.getFranchiseeEntity().getId())
             .isRead(false)
             .isDetail(true)
+            .noticeIndex(noticeIndex)
             .build();
 
 
         pushHistoryEntity.updateIsReadInit();
         pushHistoryEntity.updateIsDetail();
+        log.trace("  SAVED INFO [   userPushTokenIndex  : {}]", userPushTokenEntity.getId() );
         return pushHistoryRepository.save(pushHistoryEntity);
     }
 }
