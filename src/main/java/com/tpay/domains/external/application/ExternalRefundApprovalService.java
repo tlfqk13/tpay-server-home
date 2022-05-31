@@ -54,7 +54,7 @@ public class ExternalRefundApprovalService {
         // 1. 금액이 정상 범위인지
         int amount = Integer.parseInt(externalRefundApprovalRequest.getAmount());
         if (amount >= 500000 || amount < 30000) {
-            log.error("CODE[K8500] - externalRefundIndex : {}, amount : {}", externalRefundApprovalRequest.getExternalRefundIndex(), amount);
+            log.error("CODE[K8500] - externalRefundIndex : {}, amount : {} 환급 범위 벗어남", externalRefundApprovalRequest.getExternalRefundIndex(), amount);
             return ExternalRefundResponse.builder().responseCode("K8500").message("[K8500] 환급 가능 범위는 3만원 이상 50만원 미만입니다.").build();
         }
 

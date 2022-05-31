@@ -10,12 +10,14 @@ import com.tpay.domains.pos.application.dto.PosBarcodeResponse;
 import com.tpay.domains.refund_core.application.dto.RefundLimitRequest;
 import com.tpay.domains.refund_core.application.dto.RefundResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
 import static com.tpay.commons.custom.CustomValue.REFUND_SERVER;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PosBarcodeService {
@@ -43,13 +45,13 @@ public class PosBarcodeService {
         //바코드 생성 및 S3파일 업로드
         String s3Path = barcodeService.createBarcode(id, refundResponse.getBeforeDeduction());
 
+        log.trace("externalRefundIndex : {} 바코드가 정상적으로 생성되었습니다.", id);
         return PosBarcodeResponse.builder()
             .s3Path(s3Path)
             .externalRefundIndex(id)
             .build();
 
     }
-
 
 }
 
