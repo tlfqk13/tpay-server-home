@@ -1,5 +1,6 @@
 package com.tpay.domains.external.application;
 
+import com.tpay.commons.logger.CommonLogger;
 import com.tpay.domains.external.application.dto.ExternalRefundResponse;
 import com.tpay.domains.external.application.dto.ExternalResultStatus;
 import com.tpay.domains.external.application.dto.ExternalStatusRequestResponse;
@@ -25,6 +26,7 @@ public class ExternalService {
     private final ExternalRepository externalRepository;
     private final ExternalRefundFindService externalRefundFindService;
     private final PaymentCalculator paymentCalculator;
+    private final CommonLogger commonLogger;
 
 
     @Transactional
@@ -60,16 +62,17 @@ public class ExternalService {
     @Transactional
     public ExternalRefundResponse statusUpdate(ExternalStatusUpdateDto externalStatusUpdateDto) {
         Long externalRefundIndex = externalStatusUpdateDto.getExternalRefundIndex();
+        commonLogger.headline(externalRefundIndex,"외부 환급 확정");
         ExternalRefundEntity externalRefundEntity = externalRefundFindService.findById(externalRefundIndex);
         RefundEntity refundEntity = externalRefundEntity.getRefundEntity();
         String paymentFromEntity = paymentCalculator.paymentString(refundEntity);
         String paymentFromExternal = externalStatusUpdateDto.getPayment();
         if (!paymentFromEntity.equals(paymentFromExternal)) {
-            log.error("CODE[K8107] - externalRefundIndex : {} 디비값 : {} 입력값 : {}", externalRefundEntity.getId(), paymentFromEntity, paymentFromExternal);
+            commonLogger.error1(externalRefundIndex,"K8107","입력한 계산값이 다름. 디비값 : " + paymentFromEntity + " 입력값 : " + paymentFromExternal);
             return ExternalRefundResponse.builder().responseCode("8107").payment(0).message("[K8107] 시스템 에러입니다.").build();
         } else {
             externalRefundEntity.changeStatus(externalStatusUpdateDto.getExternalRefundStatus());
-            log.trace("CODE[K5004] - externalRefundIndex : {} successfully changed to {}", externalRefundEntity.getId(), externalStatusUpdateDto.getExternalRefundStatus());
+            commonLogger.tailLine(externalRefundIndex,"환급 확정 종료");
             return ExternalRefundResponse.builder().responseCode("0000").payment(0).message("").build();
         }
 

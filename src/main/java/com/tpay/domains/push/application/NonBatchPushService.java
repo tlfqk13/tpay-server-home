@@ -6,6 +6,7 @@ import com.tpay.commons.push.PushType;
 import com.tpay.domains.push.application.dto.NotificationDto;
 import com.tpay.domains.push.domain.UserPushTokenEntity;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -16,6 +17,7 @@ import java.util.Optional;
  * 배치가 아닌 Push 들 메시징하는 서비스
  */
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class NonBatchPushService {
 
@@ -27,6 +29,7 @@ public class NonBatchPushService {
     public void nonBatchPushNSave(PushCategoryType pushCategoryType, Long franchiseeIndex) {
         Optional<UserPushTokenEntity> optionalUserPushTokenEntity = userPushTokenService.optionalFindByFranchiseeIndex(franchiseeIndex);
         if (optionalUserPushTokenEntity.isEmpty()) {
+            log.debug("푸시토큰이 존재하지 않습니다. franchiseeIndex : {}",franchiseeIndex);
             return;
         }
         NotificationDto.Request request = new NotificationDto.Request(pushCategoryType, PushType.TOKEN, optionalUserPushTokenEntity.get().getPushTokenEntity().getToken());
@@ -38,6 +41,7 @@ public class NonBatchPushService {
     public void nonBatchPushNSave(PushCategoryType pushCategoryType, Long franchiseeIndex, String message) {
         Optional<UserPushTokenEntity> optionalUserPushTokenEntity = userPushTokenService.optionalFindByFranchiseeIndex(franchiseeIndex);
         if (optionalUserPushTokenEntity.isEmpty()) {
+            log.debug("푸시토큰이 존재하지 않습니다. franchiseeIndex : {}",franchiseeIndex);
             return;
         }
         NotificationDto.Request request = new NotificationDto.Request(pushCategoryType, PushType.TOKEN, optionalUserPushTokenEntity.get().getPushTokenEntity().getToken());
