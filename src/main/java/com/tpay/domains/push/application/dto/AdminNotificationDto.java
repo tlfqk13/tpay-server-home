@@ -10,6 +10,7 @@ public class AdminNotificationDto {
     public static class Request {
         private String title;
         private String body;
+        private Long noticeIndex;
     }
 
     @Builder

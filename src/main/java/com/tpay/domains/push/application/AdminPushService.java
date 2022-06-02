@@ -4,6 +4,7 @@ import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.push.PushCategoryType;
 import com.tpay.commons.push.PushType;
+import com.tpay.domains.notice.application.NoticeService;
 import com.tpay.domains.push.application.dto.*;
 import com.tpay.domains.push.domain.PushHistoryEntity;
 import com.tpay.domains.push.domain.PushHistoryRepository;
@@ -29,15 +30,23 @@ public class AdminPushService {
     private final UserPushTokenService userPushTokenService;
     private final PushHistoryRepository pushHistoryRepository;
 
+    private final NoticeService noticeService;
+
     @Transactional
     public AdminNotificationDto.Response sendMessageByAdmin(AdminNotificationDto.Request adminRequest) {
+        log.trace("  =======================공지사항 발송========================");
+        log.trace("  TARGET INFO [    title    : {}]", adminRequest.getTitle());
+        log.trace("  TARGET INFO [    body     : {}]", adminRequest.getBody());
+        log.trace("  TARGET INFO [ noticeIndex : {}]", adminRequest.getNoticeIndex());
         TopicType topic = TopicType.ALL;
         List<String> subscribeList = topicSubscribeService.subscribeByTopic(topic, SubscribeType.SUBSCRIBE);
         if (!subscribeList.isEmpty()) {
             NotificationDto.Request request = new NotificationDto.Request(PushCategoryType.CASE_FIFTEEN, PushType.TOPIC, topic.toString(), adminRequest.getTitle(), adminRequest.getBody());
             String send = pushNotificationService.sendMessageByTopic(request);
             topicSubscribeService.subscribeByTopic(topic, SubscribeType.UNSUBSCRIBE);
-            subscribeList.stream().map(userPushTokenService::findByToken).forEach(entity -> pushHistoryService.saveHistory(request, send, entity.get()));
+
+            subscribeList.stream().map(userPushTokenService::findByToken).map(entity -> pushHistoryService.saveHistory(request, send, entity.get(), adminRequest.getNoticeIndex())).forEach(entity -> entity.updateNoticeIndex(adminRequest.getNoticeIndex()));
+            log.trace("  =======================공지사항 종료========================");
             return AdminNotificationDto.Response.builder()
                 .message(send)
                 .build();
@@ -63,7 +72,12 @@ public class AdminPushService {
         return PushFindDto.Response.builder()
             .title(pushHistoryEntity.getTitle())
             .body(pushHistoryEntity.getBody())
+            .noticeIndex(pushHistoryEntity.getNoticeIndex())
             .build();
 
+    }
+
+    public PushNoticeDto findAllNotice() {
+        return noticeService.findAllNotice();
     }
 }

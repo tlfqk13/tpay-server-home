@@ -22,6 +22,7 @@ public class PushFindDto {
         private String title;
         private LocalDateTime createdDate;
         private String body;
+        private Long noticeIndex;
     }
 
     @Getter

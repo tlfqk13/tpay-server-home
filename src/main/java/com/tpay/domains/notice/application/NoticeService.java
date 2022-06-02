@@ -7,10 +7,13 @@ import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.domains.notice.application.dto.CommonNoticeFindDto;
 import com.tpay.domains.notice.application.dto.AppNoticeFindDto;
 import com.tpay.domains.notice.application.dto.DataList;
+import com.tpay.domains.notice.application.dto.InvisibleUpdateDto;
 import com.tpay.domains.notice.domain.NoticeEntity;
 import com.tpay.domains.notice.domain.NoticeRepository;
+import com.tpay.domains.push.application.dto.PushNoticeDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -57,7 +60,7 @@ public class NoticeService {
     }
 
     public List<CommonNoticeFindDto.FindAllResponse> getAll() {
-        List<NoticeEntity> noticeEntityList = noticeRepository.findAll();
+        List<NoticeEntity> noticeEntityList = noticeRepository.findAll(Sort.by("id").descending());
         return noticeEntityList.stream().map(CommonNoticeFindDto.FindAllResponse::new).collect(Collectors.toList());
     }
 
@@ -69,10 +72,10 @@ public class NoticeService {
     }
 
     @Transactional
-    public void updateInvisible(Long noticeIndex) {
+    public void updateInvisible(Long noticeIndex, InvisibleUpdateDto invisibleUpdateDto) {
         NoticeEntity noticeEntity = noticeRepository.findById(noticeIndex)
             .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid Notice Index"));
-        noticeEntity.updateInvisible();
+        noticeEntity.updateInvisible(invisibleUpdateDto.getIsInvisible());
     }
 
     @Transactional
@@ -82,8 +85,8 @@ public class NoticeService {
     }
 
     public AppNoticeFindDto.FindAllResponse getAllApp() {
-        List<NoticeEntity> noticeEntityTrueList = noticeRepository.findByIsFixedAndScheduledDateBefore(Boolean.TRUE, LocalDateTime.now());
-        List<NoticeEntity> noticeEntityFalseList = noticeRepository.findByIsFixedAndScheduledDateBefore(Boolean.FALSE, LocalDateTime.now());
+        List<NoticeEntity> noticeEntityTrueList = noticeRepository.findByIsFixedAndScheduledDateBeforeAndIsInvisible(Boolean.TRUE, LocalDateTime.now(),Boolean.FALSE);
+        List<NoticeEntity> noticeEntityFalseList = noticeRepository.findByIsFixedAndScheduledDateBeforeAndIsInvisible(Boolean.FALSE, LocalDateTime.now(),Boolean.FALSE);
         List<CommonNoticeFindDto.FindAllResponse> trueCollect = noticeEntityTrueList.stream().map(CommonNoticeFindDto.FindAllResponse::new).collect(Collectors.toList());
         List<CommonNoticeFindDto.FindAllResponse> falseCollect = noticeEntityFalseList.stream().map(CommonNoticeFindDto.FindAllResponse::new).collect(Collectors.toList());
         return new AppNoticeFindDto.FindAllResponse(trueCollect,falseCollect);
@@ -100,5 +103,11 @@ public class NoticeService {
         NoticeEntity noticeEntity = noticeRepository.findById(noticeIndex)
             .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid Parameter"));
         noticeEntity.updateNotice(dataList);
+    }
+
+    public PushNoticeDto findAllNotice() {
+        List<NoticeEntity> noticeEntityList = noticeRepository.findByScheduledDateBeforeAndIsInvisible(LocalDateTime.now(), Boolean.FALSE);
+        List<PushNoticeDto.PushNoticeResponse> collect = noticeEntityList.stream().map(PushNoticeDto.PushNoticeResponse::new).collect(Collectors.toList());
+        return new PushNoticeDto(collect);
     }
 }
