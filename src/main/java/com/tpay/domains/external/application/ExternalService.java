@@ -33,7 +33,7 @@ public class ExternalService {
     public ExternalRefundEntity save(Long franchiseeIndex, Long customerIndex, String deduction) {
         ExternalRefundEntity externalRefundEntity = new ExternalRefundEntity(franchiseeIndex, customerIndex, ExternalRefundStatus.SCAN, deduction);
         ExternalRefundEntity save = externalRepository.save(externalRefundEntity);
-        log.trace("CODE[K5003] - externalRefundIndex : {}, franchiseeIndex : {}, customerIndex : {} successfully SAVED", externalRefundEntity.getId(),franchiseeIndex,customerIndex);
+        log.trace("CODE[K5003] - externalRefundIndex : {}, franchiseeIndex : {}, customerIndex : {} successfully SAVED", externalRefundEntity.getId(), franchiseeIndex, customerIndex);
         return save;
     }
 
@@ -62,17 +62,18 @@ public class ExternalService {
     @Transactional
     public ExternalRefundResponse statusUpdate(ExternalStatusUpdateDto externalStatusUpdateDto) {
         Long externalRefundIndex = externalStatusUpdateDto.getExternalRefundIndex();
-        commonLogger.headline(externalRefundIndex,"외부 환급 확정");
+        commonLogger.headline(externalRefundIndex, "외부 환급 확정");
         ExternalRefundEntity externalRefundEntity = externalRefundFindService.findById(externalRefundIndex);
         RefundEntity refundEntity = externalRefundEntity.getRefundEntity();
         String paymentFromEntity = paymentCalculator.paymentString(refundEntity);
         String paymentFromExternal = externalStatusUpdateDto.getPayment();
         if (!paymentFromEntity.equals(paymentFromExternal)) {
-            commonLogger.error1(externalRefundIndex,"K8107","입력한 계산값이 다름. 디비값 : " + paymentFromEntity + " 입력값 : " + paymentFromExternal);
+            commonLogger.error1(externalRefundIndex, "K8107", "입력한 계산값이 다름. 디비값 : " + paymentFromEntity + " 입력값 : " + paymentFromExternal);
             return ExternalRefundResponse.builder().responseCode("8107").payment(0).message("[K8107] 시스템 에러입니다.").build();
         } else {
             externalRefundEntity.changeStatus(externalStatusUpdateDto.getExternalRefundStatus());
-            commonLogger.tailLine(externalRefundIndex,"환급 확정 종료");
+            commonLogger.point2(externalRefundIndex, "환급이 정상적으로 확정되었습니다.");
+            commonLogger.tailLine(externalRefundIndex, "환급 확정 종료");
             return ExternalRefundResponse.builder().responseCode("0000").payment(0).message("").build();
         }
 
