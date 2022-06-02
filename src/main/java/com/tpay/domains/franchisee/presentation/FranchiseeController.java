@@ -4,6 +4,8 @@ import com.tpay.domains.franchisee.application.FranchiseeSettingService;
 import com.tpay.domains.franchisee.application.FranchiseeUpdateService;
 import com.tpay.domains.franchisee.application.MyPageFindService;
 import com.tpay.domains.franchisee.application.dto.FranchiseeSettingDto;
+import com.tpay.domains.franchisee.application.dto.FranchiseeUpdateDtoRequest;
+import com.tpay.domains.franchisee.application.dto.FranchiseeUpdateDtoResponse;
 import com.tpay.domains.franchisee.application.dto.MyPageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -52,5 +54,17 @@ public class FranchiseeController {
         @PathVariable Long franchiseeIndex) {
         MyPageResponse response = myPageFindService.findByFranchiseeIndex(franchiseeIndex);
         return ResponseEntity.ok(response);
+    }
+
+    /**
+     * 가맹점 상세 정보 수정
+     */
+    @PatchMapping("/{franchiseeIndex}")
+    public ResponseEntity<FranchiseeUpdateDtoResponse> updateFranchisee(
+        @PathVariable Long franchiseeIndex,
+        @RequestBody FranchiseeUpdateDtoRequest franchiseeUpdateDtoRequest
+    )  {
+        FranchiseeUpdateDtoResponse result = franchiseeUpdateService.updateFranchisee(franchiseeIndex, franchiseeUpdateDtoRequest);
+        return ResponseEntity.ok(result);
     }
 }

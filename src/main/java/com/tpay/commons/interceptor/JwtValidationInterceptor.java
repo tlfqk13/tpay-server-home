@@ -124,6 +124,8 @@ public class JwtValidationInterceptor implements HandlerInterceptor {
             indexInfo = getIndexFromUriFranchiseeUpload(request);
         } else if (isEquals(firstDomain, UriType.FRANCHISEE_APPLICANTS)) {
             indexInfo = getIndexFromUriFranchiseeApplicants(request);
+        } else if (isEquals(firstDomain, UriType.TEST_FRANCHISEE_APPLICANT)) {
+            indexInfo = getTest(request);
         }
 
         return indexInfo;
@@ -256,7 +258,13 @@ public class JwtValidationInterceptor implements HandlerInterceptor {
         }
     }
 
-
+    private IndexInfo getTest(HttpServletRequest request) {
+        // "/franchisee-applicant/{franchiseeApplicantIndex}" 하나가 testflight에 업데이트가 안되어 강제처리
+        String trim = request.getRequestURI().substring(22);
+        FranchiseeApplicantEntity franchiseeApplicantEntity = franchiseeApplicantFindService.findByIndex(Long.parseLong(trim));
+        Long id = franchiseeApplicantEntity.getFranchiseeEntity().getId();
+        return new IndexInfo(FRANCHISEE, id.toString());
+    }
     //이 아래는 이 클래스 내에서만 사용되는 공통부
     @Getter
     @AllArgsConstructor
@@ -278,6 +286,7 @@ public class JwtValidationInterceptor implements HandlerInterceptor {
         FRANCHISEE_BANK("bank"),
         FRANCHISEE_UPLOAD("franchiseeUpload"),
         FRANCHISEE_APPLICANTS("franchisee-applicants"),
+        TEST_FRANCHISEE_APPLICANT("franchisee-applicant"),
         POINTS("points"),
         POINTS_TOTAL("total"),
         POS("pos"),

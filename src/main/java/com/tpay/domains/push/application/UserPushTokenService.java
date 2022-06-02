@@ -7,8 +7,7 @@ import com.tpay.domains.push.domain.PushTokenEntity;
 import com.tpay.domains.push.domain.UserPushTokenEntity;
 import com.tpay.domains.push.domain.UserPushTokenRepository;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -18,29 +17,29 @@ import java.util.Optional;
 
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class UserPushTokenService {
 
     private final UserPushTokenRepository userPushTokenRepository;
     private final PushTokenService pushTokenService;
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
     @Transactional
     public UserPushTokenEntity deleteIfExistsAndSave(FranchiseeEntity franchiseeEntity, PushTokenEntity pushTokenEntity) {
         if (userPushTokenRepository.existsByFranchiseeEntity(franchiseeEntity)) {
             userPushTokenRepository.deleteByFranchiseeEntity(franchiseeEntity);
-            logger.trace("[franchiseeIndex : {}] franchisee already Exists, Deleted", franchiseeEntity.getId());
+            log.trace("[franchiseeIndex : {}] franchisee already Exists, Deleted", franchiseeEntity.getId());
         }
         if (userPushTokenRepository.existsByPushTokenEntity(pushTokenEntity)) {
             userPushTokenRepository.deleteByPushTokenEntity(pushTokenEntity);
-            logger.trace("[token : {}] token already exists, Deleted", pushTokenEntity.getToken());
+            log.trace("[token : {}] token already exists, Deleted", pushTokenEntity.getToken());
         }
         UserPushTokenEntity userPushTokenEntity = UserPushTokenEntity.builder()
             .franchiseeEntity(franchiseeEntity)
             .pushTokenEntity(pushTokenEntity)
             .build();
-        logger.trace("[franchiseeIndex : {}],[tokenIndex : {}] Saved", franchiseeEntity.getId(), pushTokenEntity.getId());
+        log.trace("[franchiseeIndex : {}],[tokenIndex : {}] Saved", franchiseeEntity.getId(), pushTokenEntity.getId());
         return userPushTokenRepository.save(userPushTokenEntity);
     }
 
@@ -57,13 +56,14 @@ public class UserPushTokenService {
 
     public Optional<UserPushTokenEntity> findByToken(String token) {
         PushTokenEntity pushTokenEntity = pushTokenService.findByToken(token).orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Token Not Exists"));
+
         Optional<UserPushTokenEntity> byUserToken = userPushTokenRepository.findByPushTokenEntity(pushTokenEntity);
         return byUserToken;
     }
 
     public List<String> findTokenByFranchiseeEntityList(List<FranchiseeEntity> franchiseeEntityList) {
         List<String> result = new ArrayList<>();
-        for(FranchiseeEntity franchiseeEntity : franchiseeEntityList) {
+        for (FranchiseeEntity franchiseeEntity : franchiseeEntityList) {
             userPushTokenRepository.findByFranchiseeEntity(franchiseeEntity).ifPresent(entity -> result.add(entity.getPushTokenEntity().getToken()));
         }
         return result;

@@ -15,12 +15,14 @@ import com.tpay.domains.push.application.PushTokenService;
 import com.tpay.domains.push.application.UserPushTokenService;
 import com.tpay.domains.push.domain.PushTokenEntity;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class SignUpService {
 
@@ -75,14 +77,19 @@ public class SignUpService {
         franchiseeRepository.save(franchiseeEntity);
         franchiseeApplicantSaveService.save(franchiseeEntity);
 
+        log.trace("==========================회원가입===========================");
+        log.trace("[사업자번호] : {}", request.getBusinessNumber());
+        log.trace("[가맹점  명] : {}", request.getStoreName());
+        log.trace("[대표자  명] : {}", request.getSellerName());
         // 토큰 테이블에 토큰 저장
         if(!(request.getPushToken() == null)) {
             PushTokenEntity pushTokenEntity = new PushTokenEntity(request.getPushToken());
             PushTokenEntity findPushTokenEntity = pushTokenService.saveIfNotExists(pushTokenEntity);
         // 유저-토큰 테이블 세이브 (기존 데이터는 삭제)
             userPushTokenService.deleteIfExistsAndSave(franchiseeEntity, findPushTokenEntity);
+        } else{
+            log.trace("===================토큰없이 회원가입 완료====================");
         }
-
 
     }
 }
