@@ -13,6 +13,7 @@ import com.tpay.domains.external.domain.ExternalRepository;
 import com.tpay.domains.franchisee.application.FranchiseeFindService;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.order.application.OrderSaveService;
+import com.tpay.domains.order.application.OrderService;
 import com.tpay.domains.order.domain.OrderEntity;
 import com.tpay.domains.point.domain.SignType;
 import com.tpay.domains.point_scheduled.application.PointScheduledChangeService;
@@ -44,6 +45,7 @@ public class RefundApproveService {
     private final FranchiseeFindService franchiseeFindService;
     private final WebClient.Builder builder;
     private final ExternalRepository externalRepository;
+    private final OrderService orderService;
 
     private final EmployeeFindService employeeFindService;
     private final NonBatchPushService nonBatchPushService;
@@ -87,6 +89,11 @@ public class RefundApproveService {
                 .bodyToMono(RefundResponse.class)
                 // .exchangeToMono(clientResponse -> clientResponse.bodyToMono(RefundResponse.class))
                 .block();
+
+        if (!refundResponse.getResponseCode().equals("0000")) {
+//            0000시 롤백
+            orderService.deleteByIndex(orderEntity.getId());
+        }
 
         // TODO : 응답코드 "0000" 아닐시 테스트 필요
         RefundEntity refundEntity =
