@@ -9,8 +9,7 @@ import com.tpay.domains.point.domain.SignType;
 import com.tpay.domains.point_scheduled.domain.PointScheduledEntity;
 import com.tpay.domains.point_scheduled.domain.PointScheduledRepository;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -18,11 +17,11 @@ import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PointConfirmedService {
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final PointRepository pointRepository;
     private final PointScheduledRepository pointScheduledRepository;
 
@@ -54,7 +53,7 @@ public class PointConfirmedService {
             pointScheduledEntity.updateStatusSave();
             franchiseeEntity.changeBalance(SignType.POSITIVE, orderEntity.getPoints());
         }
-        log.trace("{} Entity was Updated",pointScheduledEntityList.size());
+        log.trace("{} Entity was Updated", pointScheduledEntityList.size());
     }
 
 }

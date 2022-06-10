@@ -29,6 +29,7 @@ public class ExternalRefundEntity extends BaseTimeEntity {
     private String deduction;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     private ExternalRefundStatus externalRefundStatus;
 
     @OneToOne

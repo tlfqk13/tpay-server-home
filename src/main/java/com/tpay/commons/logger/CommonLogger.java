@@ -11,33 +11,33 @@ import org.springframework.stereotype.Component;
 @Component
 public class CommonLogger {
 
-    public void headline(Long externalRefundIndex,String headline) {
-        log.trace("================INDEX : {}, {}===========================", externalRefundIndex, headline);
+    public void headline(Long index,String headline) {
+        log.trace("================INDEX : {}, {}===========================", index, headline);
     }
 
-    public void beforeHttpClient(Long externalRefundIndex) {
-        log.trace("INDEX : {},HTTP 요청 전", externalRefundIndex);
+    public void beforeHttpClient(Long index) {
+        log.trace("INDEX : {},HTTP 요청 전", index);
     }
 
-    public void afterHttpClient(Long externalRefundIndex) {
-        log.trace("INDEX : {},HTTP 요청 후", externalRefundIndex);
+    public void afterHttpClient(Long index) {
+        log.trace("INDEX : {},HTTP 요청 후", index);
     }
 
-    public void point1(Long externalRefundIndex,String message) {
-        log.trace("INDEX : {}, 지점1 : {}", externalRefundIndex, message);
+    public void point1(Long index,String message) {
+        log.trace("INDEX : {}, 지점1 : {}", index, message);
     }
 
-    public void point2(Long externalRefundIndex,String message) {
-        log.trace("INDEX : {}, 지점2 : {}", externalRefundIndex, message);
+    public void point2(Long index,String message) {
+        log.trace("INDEX : {}, 지점2 : {}", index, message);
     }
 
-    public void error1(Long externalRefundIndex,String errorCode,String message) {
-        log.error("INDEX : {}, 에러1 : "+"CODE["+errorCode+"] {}", externalRefundIndex, message);
+    public void error1(Long index,String errorCode,String message) {
+        log.error("INDEX : {}, 에러1 : "+"CODE["+errorCode+"] {}", index, message);
     }
 
 
-    public void tailLine(Long externalRefundIndex,String tailLine) {
-        log.trace("================INDEX : {}, {}===========================", externalRefundIndex, tailLine);
+    public void tailLine(Long index,String tailLine) {
+        log.trace("================INDEX : {}, {}===========================", index, tailLine);
     }
 
 }
