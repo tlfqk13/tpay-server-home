@@ -2,6 +2,7 @@ package com.tpay.domains.point.application;
 
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
+import com.tpay.commons.logger.CommonLogger;
 import com.tpay.domains.franchisee.application.FranchiseeFindService;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee_upload.application.FranchiseeBankFindService;
@@ -27,8 +28,11 @@ public class PointWithdrawalService {
     private final FranchiseeFindService franchiseeFindService;
     private final FranchiseeBankFindService franchiseeBankFindService;
 
+    private final CommonLogger commonLogger;
+
     @Transactional
     public PointWithdrawalResponse pointWithdrawal(Long franchiseeIndex, PointWithdrawalRequest pointWithdrawalRequest) {
+        commonLogger.headline(franchiseeIndex,"포인트 출금 요청");
         Long amount = pointWithdrawalRequest.getAmount();
         FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
         FranchiseeBankEntity franchiseeBankEntity = franchiseeBankFindService.findByFranchiseeEntity(franchiseeEntity);
@@ -36,7 +40,7 @@ public class PointWithdrawalService {
         long withdrawalCheckAmount = amount;
 
         while (withdrawalCheckAmount != 0L) {
-            // TODO: 2022/03/15 findById는 비효율적임. Entity로 리턴하는 NativeQuery를 적용시키는 게 좋을 것 같음
+            // TODO: 2022/03/15 findById는 비효율적임. Entity로 리턴하는 NativeQuery 를 적용시키는 게 좋을 것 같음
             WithdrawalFindNextInterface next = pointRepository.findNext(franchiseeIndex);
             PointEntity pointEntity = pointRepository.findById(next.getId()).orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid PointId [pintWithdrawal]"));
             Long nextWithdrawalCheck = next.getWithdrawalCheck();
