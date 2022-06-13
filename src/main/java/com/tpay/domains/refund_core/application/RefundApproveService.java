@@ -4,6 +4,7 @@ import com.tpay.commons.custom.CustomValue;
 import com.tpay.commons.exception.ExceptionResponse;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
+import com.tpay.commons.exception.detail.WebfluxGeneralException;
 import com.tpay.commons.push.PushCategoryType;
 import com.tpay.domains.employee.application.EmployeeFindService;
 import com.tpay.domains.employee.domain.EmployeeEntity;
@@ -84,8 +85,8 @@ public class RefundApproveService {
                 .onStatus(
                     HttpStatus::isError,
                     response ->
-                        response.bodyToMono(ExceptionResponse.class).flatMap(error -> Mono.error(new InvalidParameterException(
-                            ExceptionState.REFUND, error.getMessage()))))
+                        response.bodyToMono(ExceptionResponse.class).flatMap(error -> Mono.error(new WebfluxGeneralException(
+                            ExceptionState.WEBFLUX_GENERAL, error.getMessage()))))
                 .bodyToMono(RefundResponse.class)
                 // .exchangeToMono(clientResponse -> clientResponse.bodyToMono(RefundResponse.class))
                 .block();
