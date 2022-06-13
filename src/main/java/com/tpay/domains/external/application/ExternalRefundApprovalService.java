@@ -82,7 +82,7 @@ public class ExternalRefundApprovalService {
 
             //0000이 아닌경우 에러 발생
             if (!refundResponse.getResponseCode().equals("0000")) {
-                commonLogger.error1(externalRefundIndex, "R8102", "응답 코듣가 0이 아님. 응답메시지 : " + refundResponse.getMessage());
+                commonLogger.error1(externalRefundIndex, "R810X", "응답 코듣가 0이 아님. 응답메시지 : " + refundResponse.getMessage());
                 orderService.deleteByIndex(orderEntity.getId());
                 return ExternalRefundResponse.builder().responseCode("R8102").message("[R8102] 시스템 에러입니다.").build();
             }
@@ -115,6 +115,12 @@ public class ExternalRefundApprovalService {
             commonLogger.error1(externalRefundApprovalRequest.getExternalRefundIndex(), "K8103", "인덱스 조회 실패");
             return ExternalRefundResponse.builder().responseCode("K8103").message("[K8103] 시스템 에러입니다.").build();
         } catch (InvalidParameterException e) {
+            String code = e.getMessage().substring(0, 4);
+            // TODO: 2022/06/13 CustomException으로 생성
+            if(code.equals("2001")) {
+                commonLogger.error1(externalRefundApprovalRequest.getExternalRefundIndex(), "K8103", "통합한도 초과");
+                return ExternalRefundResponse.builder().responseCode("R8103").message("[R8103] 즉시환급 통합한도(250만원) 초과자 입니다.").build();
+            }
             commonLogger.error1(externalRefundApprovalRequest.getExternalRefundIndex(), "K8104", "어딘가에서 잘못된 파라미터");
             return ExternalRefundResponse.builder().responseCode("K8104").message("[K8104] 시스템 에러입니다.").build();
         } catch (IllegalArgumentException e) {
