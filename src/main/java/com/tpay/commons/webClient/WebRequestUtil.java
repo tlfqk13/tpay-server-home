@@ -3,7 +3,7 @@ package com.tpay.commons.webClient;
 
 import com.tpay.commons.exception.ExceptionResponse;
 import com.tpay.commons.exception.ExceptionState;
-import com.tpay.commons.exception.detail.InvalidParameterException;
+import com.tpay.commons.exception.detail.WebfluxGeneralException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -28,7 +28,7 @@ public class WebRequestUtil {
             .bodyValue(request)
             .retrieve()
             .onStatus(HttpStatus::isError, message -> message.bodyToMono(ExceptionResponse.class)
-                .flatMap(error -> Mono.error(new InvalidParameterException(ExceptionState.REFUND, error.getMessage()))))
+                .flatMap(error -> Mono.error(new WebfluxGeneralException(ExceptionState.WEBFLUX_GENERAL, error.getMessage()))))
             .bodyToMono(Object.class)
             .block();
     }
