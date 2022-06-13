@@ -1,11 +1,12 @@
 package com.tpay.domains.refund_core.application;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tpay.commons.custom.CustomValue;
-import com.tpay.commons.exception.ExceptionResponse;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.exception.detail.WebfluxGeneralException;
 import com.tpay.commons.push.PushCategoryType;
+import com.tpay.commons.webClient.WebRequestUtil;
 import com.tpay.domains.employee.application.EmployeeFindService;
 import com.tpay.domains.employee.domain.EmployeeEntity;
 import com.tpay.domains.external.domain.ExternalRefundEntity;
@@ -25,10 +26,7 @@ import com.tpay.domains.refund.domain.RefundEntity;
 import com.tpay.domains.refund_core.application.dto.RefundApproveRequest;
 import com.tpay.domains.refund_core.application.dto.RefundResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
 import javax.transaction.Transactional;
 import java.util.Optional;
@@ -44,9 +42,10 @@ public class RefundApproveService {
     private final RefundService refundService;
     private final PointScheduledChangeService pointScheduledChangeService;
     private final FranchiseeFindService franchiseeFindService;
-    private final WebClient.Builder builder;
     private final ExternalRepository externalRepository;
     private final OrderService orderService;
+    private final WebRequestUtil webRequestUtil;
+    private final ObjectMapper objectMapper;
 
     private final EmployeeFindService employeeFindService;
     private final NonBatchPushService nonBatchPushService;
@@ -73,49 +72,35 @@ public class RefundApproveService {
         FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(request.getFranchiseeIndex());
         RefundApproveRequest refundApproveRequest = RefundApproveRequest.of(orderEntity);
 
-
-        WebClient webClient = builder.build();
         String uri = CustomValue.REFUND_SERVER + "/refund/approval";
-        RefundResponse refundResponse =
-            webClient
-                .post()
-                .uri(uri)
-                .bodyValue(refundApproveRequest)
-                .retrieve()
-                .onStatus(
-                    HttpStatus::isError,
-                    response ->
-                        response.bodyToMono(ExceptionResponse.class).flatMap(error -> Mono.error(new WebfluxGeneralException(
-                            ExceptionState.WEBFLUX_GENERAL, error.getMessage()))))
-                .bodyToMono(RefundResponse.class)
-                // .exchangeToMono(clientResponse -> clientResponse.bodyToMono(RefundResponse.class))
-                .block();
+        try {
+            Object post = webRequestUtil.post(uri, refundApproveRequest);
+            RefundResponse refundResponse = objectMapper.convertValue(post, RefundResponse.class);
 
-        if (!refundResponse.getResponseCode().equals("0000")) {
-//            0000시 롤백
+            // TODO : 응답코드 "0000" 아닐시 테스트 필요
+            RefundEntity refundEntity =
+                refundService.save(
+                    refundResponse.getResponseCode(),
+                    refundResponse.getPurchaseSequenceNumber(),
+                    refundResponse.getTakeoutNumber(),
+                    orderEntity);
+
+            //2022/03/25 여권 스캔을 바코드모드로하고, 앱으로 승인진행할 때 이 플로우 탐
+            Optional<ExternalRefundEntity> optionalExternalRefundEntity = externalRepository.findByRefundEntity(refundEntity);
+            optionalExternalRefundEntity.ifPresent(externalRefundEntity -> externalRefundEntity.changeStatus(ExternalRefundStatus.APPROVE));
+
+
+            pointScheduledChangeService.change(refundEntity, SignType.POSITIVE);
+
+            if (!franchiseeEntity.getIsRefundOnce()) {
+                nonBatchPushService.nonBatchPushNSave(PushCategoryType.CASE_FIVE, franchiseeEntity.getId());
+                franchiseeEntity.isRefundOnce();
+            }
+            return refundResponse;
+
+        } catch (WebfluxGeneralException e) {
             orderService.deleteByIndex(orderEntity.getId());
+            throw new WebfluxGeneralException(ExceptionState.WEBFLUX_GENERAL, "통신 에러입니다.");
         }
-
-        // TODO : 응답코드 "0000" 아닐시 테스트 필요
-        RefundEntity refundEntity =
-            refundService.save(
-                refundResponse.getResponseCode(),
-                refundResponse.getPurchaseSequenceNumber(),
-                refundResponse.getTakeoutNumber(),
-                orderEntity);
-
-        //2022/03/25 여권 스캔을 바코드모드로하고, 앱으로 승인진행할 때 이 플로우 탐
-        Optional<ExternalRefundEntity> optionalExternalRefundEntity = externalRepository.findByRefundEntity(refundEntity);
-        optionalExternalRefundEntity.ifPresent(externalRefundEntity -> externalRefundEntity.changeStatus(ExternalRefundStatus.APPROVE));
-
-
-        pointScheduledChangeService.change(refundEntity, SignType.POSITIVE);
-
-        if (!franchiseeEntity.getIsRefundOnce()) {
-            nonBatchPushService.nonBatchPushNSave(PushCategoryType.CASE_FIVE, franchiseeEntity.getId());
-            franchiseeEntity.isRefundOnce();
-        }
-
-        return refundResponse;
     }
 }
