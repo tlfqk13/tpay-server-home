@@ -34,7 +34,7 @@ public class JwtUtils {
 
     public void addCommonPayload(Map<String, Object> payload, TokenType tokenType) {
 
-        Date expiredDate = createExpiredDate(tokenType.getExpiredMinutes());
+        Date expiredDate = createExpiredDate(tokenType.getExpiredHours());
 //        payload.put("sub", tokenType == TokenType.ACCESS_TOKEN ? payload.get("access") : payload.get("refresh"));
         payload.put("iat", new Date());
         payload.put("exp", expiredDate);
@@ -46,6 +46,6 @@ public class JwtUtils {
 
     public Date createExpiredDate(long minutes) {
         return Date.from(
-            LocalDateTime.now().plusMinutes(minutes).atZone(ZoneId.systemDefault()).toInstant());
+            LocalDateTime.now().plusHours(minutes).atZone(ZoneId.systemDefault()).toInstant());
     }
 }
