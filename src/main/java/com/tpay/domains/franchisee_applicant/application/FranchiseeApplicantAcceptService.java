@@ -39,6 +39,11 @@ public class FranchiseeApplicantAcceptService {
         //푸시 전송
         nonBatchPushService.nonBatchPushNSave(CASE_TWO, franchiseeEntity.getId());
 
+        // TODO: 2022/06/15 필수입력으로 전환시 if 제거
+        if(!franchiseeFindRequest.getBalancePercentage().isEmpty()){
+            String balancePercentage = franchiseeFindRequest.getBalancePercentage();
+            franchiseeEntity.updateBalancePercentage(balancePercentage);
+        }
         return response;
     }
 

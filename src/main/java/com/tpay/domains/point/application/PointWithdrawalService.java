@@ -33,6 +33,11 @@ public class PointWithdrawalService {
     @Transactional
     public PointWithdrawalResponse pointWithdrawal(Long franchiseeIndex, PointWithdrawalRequest pointWithdrawalRequest) {
         commonLogger.headline(franchiseeIndex,"포인트 출금 요청");
+
+        if(pointWithdrawalRequest.getAmount() < 50000) {
+            commonLogger.error1(franchiseeIndex,"WITH","출금 요청 금액 5만원 미만");
+            throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER,"출금 요청 금액은 5만원 이상이어야합니다.");
+        }
         Long amount = pointWithdrawalRequest.getAmount();
         FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
         FranchiseeBankEntity franchiseeBankEntity = franchiseeBankFindService.findByFranchiseeEntity(franchiseeEntity);
