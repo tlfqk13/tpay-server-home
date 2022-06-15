@@ -46,17 +46,19 @@ public class PointFindService {
         LocalDate startDate = week > 0 ? endDate.minusWeeks(week) : endDate.minusMonths(month);
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by("createdDate").descending());
 
+        // 2022.06.14 기존 포인트 출금 하단에는 포인트 적립예정, 포인트 적립예정 취소, 포인트 적립, 포인트 출금 정보가 모두 취합되어있었으나, 금일 회의에 의하여
+        // 포인트 적립, 출금 정보만 표기하도록 함. 추후 개선될 여지가 있어서 코드는 주석처리
         //pointScheduled
-        List<PointScheduledEntity> pointScheduledEntityList = pointScheduledRepository.findAllByFranchiseeEntityIdAndCreatedDateBetween(franchiseeIndex, startDate.atStartOfDay(), endDate.atStartOfDay(), pageRequest);
-        List<PointInfo> pointInfoList = pointScheduledEntityList.stream().map(PointInfo::new).collect(Collectors.toList());
+//        List<PointScheduledEntity> pointScheduledEntityList = pointScheduledRepository.findAllByFranchiseeEntityIdAndCreatedDateBetween(franchiseeIndex, startDate.atStartOfDay(), endDate.atStartOfDay(), pageRequest);
+//        List<PointInfo> pointInfoList = pointScheduledEntityList.stream().map(PointInfo::new).collect(Collectors.toList());
 
         //points
         List<PointEntity> pointEntityList = pointRepository.findAllByPointStatusInAndFranchiseeEntityIdAndCreatedDateBetween(new ArrayList<>(List.of(PointStatus.WITHDRAW, PointStatus.COMPLETE)), franchiseeIndex, startDate.atStartOfDay(), endDate.atStartOfDay(), pageRequest);
-        List<PointInfo> pointInfoList1 = pointEntityList.stream().map(PointInfo::new).collect(Collectors.toList());
+        List<PointInfo> pointInfoList = pointEntityList.stream().map(PointInfo::new).collect(Collectors.toList());
 
         //merge - sort - return
-        pointInfoList.addAll(pointInfoList1);
-        pointInfoList.sort(new PointComparator());
+//        pointInfoList.addAll(pointInfoList1);
+//        pointInfoList.sort(new PointComparator());
         return PointFindResponse.builder()
             .startDate(startDate.format(DateTimeFormatter.ofPattern("yyyy. MM. dd")))
             .endDate(endDate.minusDays(1).format(DateTimeFormatter.ofPattern("yyyy. MM. dd")))

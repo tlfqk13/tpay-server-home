@@ -18,7 +18,8 @@ public enum ExceptionState {
     REFUND(400, HttpStatus.BAD_REQUEST, "R0001", "Refund Exception"),
     INVALID_PASSPORT_INFO(400, HttpStatus.BAD_REQUEST, "E0001", "Contact Backend Developer"),
     INVALID_EXTERNAL_REFUND_INDEX(400,HttpStatus.BAD_REQUEST,"G0001","Invalid External Refund Index"),
-    ALREADY_CANCELLED(409, HttpStatus.BAD_REQUEST, "G0002", "Already Cancelled Index");
+    ALREADY_CANCELLED(409, HttpStatus.BAD_REQUEST, "G0002", "Already Cancelled Index"),
+    WEBFLUX_GENERAL(400,HttpStatus.BAD_REQUEST, "G0003","Webflux General Exception");
 
     private final int value;
     private final HttpStatus httpStatus;

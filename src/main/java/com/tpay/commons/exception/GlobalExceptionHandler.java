@@ -86,6 +86,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(response.getValue()).body(response);
     }
 
+    @ExceptionHandler(WebfluxGeneralException.class)
+    public ResponseEntity<ExceptionResponse> handleWebfluxGeneralException(
+        HttpServletRequest request, WebfluxGeneralException exception) {
+        System.out.println("handleWebfluxGeneralException() : "+ exception.getMessage());
+        ExceptionResponse response = ExceptionResponse.of(request, exception);
+        return ResponseEntity.status(response.getValue()).body(response);
+    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ExceptionResponse> handleException(
@@ -97,4 +104,6 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.badRequest().body(response);
     }
+
+
 }

@@ -7,4 +7,5 @@ public class FranchiseeFindRequest {
     private String businessNumber;
     private String franchiseeName;
     private String franchiseeNumber;
+    private String balancePercentage;
 }

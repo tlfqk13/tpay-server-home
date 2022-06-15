@@ -25,7 +25,7 @@ import static com.tpay.commons.util.UserSelector.FRANCHISEE;
 /**
  * 각 인증이 필요한 요청이 Jwt 토큰의 ID와 일치하는지, URI 별 검증
  * 생성 배경 : spring security 등 안전한 라이브러리로 구성이 안되어있음
- * K1 프로젝트 이후 URI변경 또는 기능추가가 많이 없을 것으로 예상
+ * K1 프로젝트 이후 URI 변경 또는 기능추가가 많이 없을 것으로 예상
  * ====용어정리====
  * [firstDomain] - URI의 가장 첫 도메인, 해당 도메인을 기준으로 개별 파싱
  *
@@ -265,7 +265,7 @@ public class JwtValidationInterceptor implements HandlerInterceptor {
         Long id = franchiseeApplicantEntity.getFranchiseeEntity().getId();
         return new IndexInfo(FRANCHISEE, id.toString());
     }
-    //이 아래는 이 클래스 내에서만 사용되는 공통부
+
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
