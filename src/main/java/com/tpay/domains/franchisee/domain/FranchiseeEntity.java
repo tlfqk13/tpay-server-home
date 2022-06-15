@@ -100,6 +100,9 @@ public class FranchiseeEntity extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private PosType posType;
 
+    @Column
+    private Integer balancePercentage;
+
     @Builder
     public FranchiseeEntity(
         String businessNumber,
@@ -140,6 +143,7 @@ public class FranchiseeEntity extends BaseTimeEntity {
         this.isActiveVibration = true;
         this.isConnectedPos = false;
         this.posType = PosType.INIT;
+        this.balancePercentage = 0;
     }
 
     public FranchiseeEntity changeBalance(SignType signType, long change) {
@@ -201,4 +205,7 @@ public class FranchiseeEntity extends BaseTimeEntity {
         return this;
     }
 
+    public void updateBalancePercentage(String balancePercentage) {
+        this.balancePercentage = Integer.parseInt(balancePercentage);
+    }
 }
