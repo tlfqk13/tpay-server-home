@@ -143,7 +143,7 @@ public class FranchiseeEntity extends BaseTimeEntity {
         this.isActiveVibration = true;
         this.isConnectedPos = false;
         this.posType = PosType.INIT;
-        this.balancePercentage = 0;
+        this.balancePercentage = 30;
     }
 
     public FranchiseeEntity changeBalance(SignType signType, long change) {
