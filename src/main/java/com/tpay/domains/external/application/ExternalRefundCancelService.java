@@ -14,6 +14,8 @@ import com.tpay.domains.external.application.dto.ExternalRefundCancelRequest;
 import com.tpay.domains.external.application.dto.ExternalRefundResponse;
 import com.tpay.domains.external.domain.ExternalRefundEntity;
 import com.tpay.domains.external.domain.ExternalRefundStatus;
+import com.tpay.domains.franchisee.application.FranchiseeFindService;
+import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.point.domain.SignType;
 import com.tpay.domains.point_scheduled.application.PointScheduledChangeService;
 import com.tpay.domains.refund.domain.RefundEntity;
@@ -31,6 +33,7 @@ public class ExternalRefundCancelService {
     private final ExternalRefundFindService externalRefundFindService;
     private final CustomerFindService customerFindService;
     private final PointScheduledChangeService pointScheduledChangeService;
+    private final FranchiseeFindService franchiseeFindService;
 
     private final WebRequestUtil webRequestUtil;
     private final ObjectMapper objectMapper;
@@ -70,7 +73,8 @@ public class ExternalRefundCancelService {
 
             refundEntity.updateCancel(refundResponse.getResponseCode());
             externalRefundEntity.changeStatus(ExternalRefundStatus.CANCEL);
-            pointScheduledChangeService.change(refundEntity, SignType.NEGATIVE);
+            FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(externalRefundEntity.getFranchiseeIndex());
+            pointScheduledChangeService.change(refundEntity, SignType.NEGATIVE, franchiseeEntity.getBalancePercentage());
 
             commonLogger.point2(externalRefundIndex, "성공적으로 취소되었습니다.");
             ExternalRefundResponse result = ExternalRefundResponse.builder()

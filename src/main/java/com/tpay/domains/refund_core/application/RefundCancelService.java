@@ -8,6 +8,7 @@ import com.tpay.domains.customer.application.CustomerFindService;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.external.domain.ExternalRefundEntity;
 import com.tpay.domains.external.domain.ExternalRepository;
+import com.tpay.domains.franchisee.application.FranchiseeFindService;
 import com.tpay.domains.point.domain.SignType;
 import com.tpay.domains.point_scheduled.application.PointScheduledChangeService;
 import com.tpay.domains.refund.application.RefundFindService;
@@ -65,7 +66,8 @@ public class RefundCancelService {
 
         refundEntity.updateCancel(refundResponse.getResponseCode());
 
-        pointScheduledChangeService.change(refundEntity, SignType.NEGATIVE);
+        Integer balancePercentage = refundEntity.getOrderEntity().getFranchiseeEntity().getBalancePercentage();
+        pointScheduledChangeService.change(refundEntity, SignType.NEGATIVE,balancePercentage);
 
         return refundResponse;
     }

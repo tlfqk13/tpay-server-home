@@ -95,7 +95,7 @@ public class ExternalRefundApprovalService {
                 orderEntity);
 
             Integer payment = paymentCalculator.paymentInteger(refundEntity);
-            pointScheduledChangeService.change(refundEntity, SignType.POSITIVE);
+            pointScheduledChangeService.change(refundEntity, SignType.POSITIVE,franchiseeEntity.getBalancePercentage());
             externalRefundEntity.refundIndexRegister(refundEntity);
             externalRefundEntity.changeStatus(ExternalRefundStatus.APPROVE);
 

@@ -90,7 +90,7 @@ public class RefundApproveService {
             optionalExternalRefundEntity.ifPresent(externalRefundEntity -> externalRefundEntity.changeStatus(ExternalRefundStatus.APPROVE));
 
 
-            pointScheduledChangeService.change(refundEntity, SignType.POSITIVE);
+            pointScheduledChangeService.change(refundEntity, SignType.POSITIVE, franchiseeEntity.getBalancePercentage());
 
             if (!franchiseeEntity.getIsRefundOnce()) {
                 nonBatchPushService.nonBatchPushNSave(PushCategoryType.CASE_FIVE, franchiseeEntity.getId());
