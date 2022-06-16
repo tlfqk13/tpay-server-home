@@ -17,6 +17,13 @@ import org.springframework.core.io.ClassPathResource;
 
 import java.io.IOException;
 
+
+/**
+ * 배치 Configuration
+ *
+ * ApplicationListener<ContextRefreshedEvent>
+ * 애플리케이션 실행과 동시에 스프링 컨테이너 초기화 이후(그래서 PostConstruct 랑 다름) 한 번 실행됨
+ */
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
