@@ -4,6 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+/**
+ * 예외 종류 enum 클래스
+ * 하나의 예외는 에러코드, status, 내부 에러 code, 디폴트메시지를 속성으로 갖는다.
+ */
 @Getter
 @AllArgsConstructor
 public enum ExceptionState {
