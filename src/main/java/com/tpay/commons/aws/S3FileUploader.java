@@ -23,6 +23,10 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * AWS S3 버킷 업로더
+ */
 @Slf4j
 @Service
 @NoArgsConstructor
@@ -55,6 +59,9 @@ public class S3FileUploader {
             .build();
     }
 
+    /**
+     * 사후면세 지정증 업로드
+     */
     public String uploadJpg(Long franchiseeIndex, String imageCategory, MultipartFile file) throws IOException {
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentType(MediaType.ALL_VALUE);
@@ -66,6 +73,9 @@ public class S3FileUploader {
         return s3Client.getUrl(bucket, key).toString();
     }
 
+    /**
+     * 공지사항 파일업로드
+     */
     public String uploadNotice(Long noticeIndex, MultipartFile file, String fileName) throws IOException {
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentType(MediaType.ALL_VALUE);
@@ -76,6 +86,9 @@ public class S3FileUploader {
         return s3Client.getUrl(bucket, key).toString();
     }
 
+    /**
+     * 공지사항 파일 삭제 (존재하는 파일 전체 삭제)
+     */
     public void deleteNotice(Long noticeIndex) {
         List<DeleteObjectsRequest.KeyVersion> keys = new ArrayList<>();
         keys.add(new DeleteObjectsRequest.KeyVersion("notice/" + profileName + "/" + noticeIndex + "/mainImg"));
@@ -89,6 +102,9 @@ public class S3FileUploader {
         log.trace("successful delete = {}", deleteObjectsResult.getDeletedObjects().size());
     }
 
+    /**
+     * 지정증 삭제 (지정증 사진 수정에서 사용됨)
+     */
     public String deleteJpg(Long franchiseeIndex, String imageCategory) {
         String key = profileName + "/" + franchiseeIndex + imageCategory;
         s3Client.deleteObject(bucket, key);
@@ -96,6 +112,9 @@ public class S3FileUploader {
         return "Delete : " + key;
     }
 
+    /**
+     * 바코드 업로드
+     */
     public String uploadBarcode(Long id, InputStream inputStream) {
         String uri = "";
         try {
@@ -112,11 +131,17 @@ public class S3FileUploader {
         return uri;
     }
 
+    /**
+     * 바코드 삭제
+     */
     public void deleteBarcode(Long id) {
         String key = "barcode/"+id;
         s3Client.deleteObject(bucket,key);
     }
 
+    /**
+     * 엑셀파일 업로드
+     */
     public String uploadXlsx(Long franchiseeIndex, XSSFWorkbook xssfWorkbook) throws IOException {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         xssfWorkbook.write(byteArrayOutputStream);
