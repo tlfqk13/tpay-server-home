@@ -1,7 +1,6 @@
 package com.tpay.domains.external.application;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tpay.commons.aws.S3FileUploader;
 import com.tpay.commons.custom.CustomValue;
 import com.tpay.commons.exception.detail.InvalidExternalRefundIndexException;
@@ -36,7 +35,6 @@ public class ExternalRefundCancelService {
     private final FranchiseeFindService franchiseeFindService;
 
     private final WebRequestUtil webRequestUtil;
-    private final ObjectMapper objectMapper;
     private final S3FileUploader s3FileUploader;
     private final CommonLogger commonLogger;
 
@@ -61,8 +59,7 @@ public class ExternalRefundCancelService {
 
             commonLogger.beforeHttpClient(externalRefundIndex);
             String uri = CustomValue.REFUND_SERVER + "/refund/cancel";
-            Object post = webRequestUtil.post(uri, refundCancelRequest);
-            RefundResponse refundResponse = objectMapper.convertValue(post, RefundResponse.class);
+            RefundResponse refundResponse = webRequestUtil.post(uri, refundCancelRequest);
             commonLogger.afterHttpClient(externalRefundIndex);
 
             //0000이 아닌경우 에러 발생

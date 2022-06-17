@@ -1,7 +1,7 @@
 package com.tpay.domains.auth.application;
 
 import com.tpay.commons.jwt.AuthToken;
-import com.tpay.domains.auth.application.dto.FranchiseeTokenInfo;
+import com.tpay.domains.auth.application.dto.SignInTokenInfo;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee_applicant.application.FranchiseeApplicantFindService;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
@@ -27,7 +27,7 @@ public class FranchiseeSignInService {
 
 
     @Transactional
-    public FranchiseeTokenInfo signIn(String businessNumber, String password, String pushToken) {
+    public SignInTokenInfo signIn(String businessNumber, String password, String pushToken) {
         FranchiseeApplicantEntity franchiseeApplicantEntity = franchiseeApplicantFindService.findByBusinessNumber(businessNumber);
         FranchiseeEntity franchiseeEntity = franchiseeApplicantEntity.getFranchiseeEntity();
 
@@ -48,7 +48,8 @@ public class FranchiseeSignInService {
             // 유저-토큰 테이블 세이브 (기존 데이터는 삭제)
             userPushTokenService.deleteIfExistsAndSave(franchiseeEntity, findPushTokenEntity);
         }
-        return FranchiseeTokenInfo.builder()
+
+        return SignInTokenInfo.builder()
             .franchiseeIndex(franchiseeEntity.getId())
             .businessNumber(franchiseeEntity.getBusinessNumber())
             .franchiseeStatus(franchiseeApplicantEntity.getFranchiseeStatus())

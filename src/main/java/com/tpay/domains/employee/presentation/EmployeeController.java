@@ -28,8 +28,8 @@ public class EmployeeController {
      * 가맹점별 직원 목록 조회
      */
     @GetMapping("/{franchiseeIndex}")
-    public ResponseEntity<List<EmployeeFindResponseInterface>> findAllByFranchiseeId(@PathVariable Long franchiseeIndex) {
-        List<EmployeeFindResponseInterface> result = employeeFindService.findAllByFranchiseeId(franchiseeIndex);
+    public ResponseEntity<List<EmployeeFindResponse>> findAllByFranchiseeId(@PathVariable Long franchiseeIndex) {
+        List<EmployeeFindResponse> result = employeeFindService.findAllByFranchiseeId(franchiseeIndex);
         return ResponseEntity.ok(result);
     }
 

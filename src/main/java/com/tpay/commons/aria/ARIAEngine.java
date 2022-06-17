@@ -7,6 +7,10 @@ import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.util.Date;
 
+/**
+ * 여권번호 암호화에 사용되는 암호화 엔진클래스
+ * 초기 세팅 후 변경이력 없음. 관세청 여권번호 암호화 로직변경시에만 변경될 것으로 판단됨
+ */
 public class ARIAEngine {
     private static final char[] HEX_DIGITS = {
         '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'

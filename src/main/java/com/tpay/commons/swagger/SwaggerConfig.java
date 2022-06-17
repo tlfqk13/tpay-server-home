@@ -10,6 +10,10 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+/**
+ * Swagger 적용은 추후 KTP 웹 API 소개 페이지에서 활용될 것으로 초기 적용만 해둠
+ * 버전에따라 deprecated 메서드도 있으므로 문서를 참고하여 살펴보면 좋을 것 같습니다.
+ */
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
