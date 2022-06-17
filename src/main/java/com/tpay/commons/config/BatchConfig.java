@@ -17,6 +17,10 @@ import org.springframework.core.io.ClassPathResource;
 
 import java.io.IOException;
 
+
+/**
+ * 배치 Configuration
+ */
 @Slf4j
 @Configuration
 @RequiredArgsConstructor

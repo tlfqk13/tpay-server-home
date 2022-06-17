@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * Exception 발생시 각 로직 수행하는 RestControllerAdvice 클래스
+ */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 

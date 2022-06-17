@@ -1,6 +1,7 @@
 package com.tpay.domains.category.application;
 
 import com.tpay.domains.category.application.dto.CategoryInfo;
+import com.tpay.domains.category.domain.CategoryEntity;
 import com.tpay.domains.category.domain.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,16 +18,6 @@ public class CategoryFindService {
 
     @Transactional
     public List<CategoryInfo> findAll() {
-        List<CategoryInfo> categoryInfoList =
-            categoryRepository.findAll().stream()
-                .map(
-                    categoryEntity ->
-                        CategoryInfo.builder()
-                            .id(categoryEntity.getId())
-                            .name(categoryEntity.getName())
-                            .build())
-                .collect(Collectors.toList());
-
-        return categoryInfoList;
+        return categoryRepository.findAll().stream().map(CategoryInfo::new).collect(Collectors.toList());
     }
 }

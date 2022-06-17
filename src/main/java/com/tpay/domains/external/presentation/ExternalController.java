@@ -11,9 +11,12 @@ import org.springframework.web.bind.annotation.*;
 
 /**
  * 외부 통신 서버 관련
+ *
+ * 리팩토링필요 -> 서비스의 리턴을 ResponseEntity<T> 형식으로하여, 에러별 http status 핸들링
+ *
  */
 @RestController
-@RequestMapping("/external/refund")
+@RequestMapping("/external/refund"  )
 @RequiredArgsConstructor
 public class ExternalController {
 

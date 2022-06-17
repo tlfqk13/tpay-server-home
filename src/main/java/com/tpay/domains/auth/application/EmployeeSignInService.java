@@ -4,7 +4,7 @@ import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.jwt.AuthToken;
 import com.tpay.commons.push.PushCategoryType;
-import com.tpay.domains.auth.application.dto.EmployeeTokenInfo;
+import com.tpay.domains.auth.application.dto.SignInTokenInfo;
 import com.tpay.domains.employee.application.EmployeeFindService;
 import com.tpay.domains.employee.domain.EmployeeEntity;
 import com.tpay.domains.franchisee_applicant.application.FranchiseeApplicantFindService;
@@ -28,7 +28,7 @@ public class EmployeeSignInService {
     private final NonBatchPushService nonBatchPushService;
 
     @Transactional
-    public EmployeeTokenInfo signIn(String userId, String password) {
+    public SignInTokenInfo signIn(String userId, String password) {
         EmployeeEntity employeeEntity = employeeFindService.findByUserId(userId);
         if (!passwordEncoder.matches(password, employeeEntity.getPassword())) {
             throw new IllegalArgumentException("Invalid Password");
@@ -43,9 +43,9 @@ public class EmployeeSignInService {
         authService.updateOrSave(employeeEntity, refreshToken.getValue());
 
         //직원 로그인시 푸쉬
-        nonBatchPushService.nonBatchPushNSave(PushCategoryType.CASE_FOURTEEN,franchiseeApplicantEntity.getFranchiseeEntity().getId(),employeeEntity.getName());
+        nonBatchPushService.nonBatchPushNSave(PushCategoryType.CASE_FOURTEEN, franchiseeApplicantEntity.getFranchiseeEntity().getId(), employeeEntity.getName());
 
-        return EmployeeTokenInfo.builder()
+        return SignInTokenInfo.builder()
             .employeeIndex(employeeEntity.getId())
             .userId(employeeEntity.getUserId())
             .name(employeeEntity.getName())

@@ -1,7 +1,6 @@
 package com.tpay.domains.external.application;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tpay.commons.aws.S3FileUploader;
 import com.tpay.commons.custom.CustomValue;
 import com.tpay.commons.exception.detail.InvalidExternalRefundIndexException;
@@ -45,7 +44,6 @@ public class ExternalRefundApprovalService {
     private final NonBatchPushService nonBatchPushService;
 
     private final WebRequestUtil webRequestUtil;
-    private final ObjectMapper objectMapper;
     private final PaymentCalculator paymentCalculator;
     private final S3FileUploader s3FileUploader;
     private final CommonLogger commonLogger;
@@ -77,13 +75,12 @@ public class ExternalRefundApprovalService {
 
             commonLogger.beforeHttpClient(externalRefundIndex);
             String uri = CustomValue.REFUND_SERVER + "/refund/approval";
-            Object post = webRequestUtil.post(uri, refundApproveRequest);
-            RefundResponse refundResponse = objectMapper.convertValue(post, RefundResponse.class);
+            RefundResponse refundResponse = webRequestUtil.post(uri, refundApproveRequest);
             commonLogger.afterHttpClient(externalRefundIndex);
 
             //0000이 아닌경우 에러 발생
             if (!refundResponse.getResponseCode().equals("0000")) {
-                commonLogger.error1(externalRefundIndex, "R810X", "응답 코듣가 0이 아님. 응답메시지 : " + refundResponse.getMessage());
+                commonLogger.error1(externalRefundIndex, "R810X", "응답 코드가 0이 아님. 응답메시지 : " + refundResponse.getMessage());
                 orderService.deleteByIndex(orderEntity.getId());
                 return ExternalRefundResponse.builder().responseCode("R8102").message("[R8102] 시스템 에러입니다.").build();
             }
@@ -95,7 +92,7 @@ public class ExternalRefundApprovalService {
                 orderEntity);
 
             Integer payment = paymentCalculator.paymentInteger(refundEntity);
-            pointScheduledChangeService.change(refundEntity, SignType.POSITIVE,franchiseeEntity.getBalancePercentage());
+            pointScheduledChangeService.change(refundEntity, SignType.POSITIVE, franchiseeEntity.getBalancePercentage());
             externalRefundEntity.refundIndexRegister(refundEntity);
             externalRefundEntity.changeStatus(ExternalRefundStatus.APPROVE);
 
@@ -116,8 +113,6 @@ public class ExternalRefundApprovalService {
             commonLogger.error1(externalRefundApprovalRequest.getExternalRefundIndex(), "K8103", "인덱스 조회 실패");
             return ExternalRefundResponse.builder().responseCode("K8103").message("[K8103] 시스템 에러입니다.").build();
         } catch (InvalidParameterException e) {
-
-            // TODO: 2022/06/13 CustomException으로 생성
             commonLogger.error1(externalRefundApprovalRequest.getExternalRefundIndex(), "K8104", "어딘가에서 잘못된 파라미터");
             return ExternalRefundResponse.builder().responseCode("K8104").message("[K8104] 시스템 에러입니다.").build();
         } catch (IllegalArgumentException e) {
@@ -126,10 +121,12 @@ public class ExternalRefundApprovalService {
         } catch (WebfluxGeneralException e) {
             String code = e.getMessage().substring(0, 4);
             if (code.equals("2001")) {
-                commonLogger.error1(externalRefundApprovalRequest.getExternalRefundIndex(), "K8103", "통합한도 초과");
+                commonLogger.error1(externalRefundApprovalRequest.getExternalRefundIndex(), "R8103", "통합한도 초과");
                 return ExternalRefundResponse.builder().responseCode("R8103").message("[R8103] 즉시환급 통합한도(250만원) 초과자 입니다.").build();
+            } else {
+                commonLogger.error1(externalRefundApprovalRequest.getExternalRefundIndex(), "K8109", "관세청 응답코드 0 아님");
+                return ExternalRefundResponse.builder().responseCode("K8109").message("[K8109] 시스템 에러입니다.").build();
             }
-            return ExternalRefundResponse.builder().responseCode("K8108").message("[K8108] 시스템 에러입니다.").build();
         } catch (Exception e) {
             commonLogger.error1(externalRefundApprovalRequest.getExternalRefundIndex(), "K8106", "글로벌 에러. 응답메시지 : " + e.getMessage());
             return ExternalRefundResponse.builder().responseCode("K8106").message("[K8106] 시스템 에러입니다.").build();

@@ -6,6 +6,8 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
+import static com.tpay.commons.util.UserSelector.FRANCHISEE;
+
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -27,7 +29,6 @@ public class SignInTokenInfo {
     private Long employeeIndex;
     private String userId;
     private String name;
-    ;
     private LocalDateTime registeredDate;
 
 
@@ -37,4 +38,5 @@ public class SignInTokenInfo {
     private UserSelector userSelector;
     private Boolean isActiveSound;
     private Boolean isActiveVibration;
+
 }

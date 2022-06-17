@@ -1,6 +1,5 @@
 package com.tpay.domains.pos.application;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tpay.commons.webClient.WebRequestUtil;
 import com.tpay.domains.customer.application.CustomerFindService;
 import com.tpay.domains.customer.domain.CustomerEntity;
@@ -30,12 +29,10 @@ public class PosBarcodeService {
     @Transactional
     public PosBarcodeResponse saveAndCreateBarcode(Long franchiseeIndex, RefundLimitRequest request) {
         //Webflux - API
-        ObjectMapper objectMapper = new ObjectMapper();
         String uri = REFUND_SERVER + "/refund/limit";
-        Object post = webRequestUtil.post(uri, request);
+        RefundResponse refundResponse = webRequestUtil.post(uri, request);
 
         //외국인 정보 업데이트
-        RefundResponse refundResponse = objectMapper.convertValue(post, RefundResponse.class);
         CustomerEntity customerEntity = customerFindService.findByNationAndPassportNumber(request.getName(), request.getPassportNumber(), request.getNationality());
 
         //ExternalRepository 등록

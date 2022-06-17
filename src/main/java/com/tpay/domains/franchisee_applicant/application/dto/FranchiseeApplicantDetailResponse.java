@@ -1,6 +1,6 @@
 package com.tpay.domains.franchisee_applicant.application.dto;
 
-import com.tpay.domains.employee.application.dto.EmployeeFindResponseInterface;
+import com.tpay.domains.employee.application.dto.EmployeeFindResponse;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeStatus;
 import lombok.*;
 
@@ -36,5 +36,5 @@ public class FranchiseeApplicantDetailResponse {
     private String rejectReason;
 
     //Employee List
-    private List<EmployeeFindResponseInterface> employeeFindResponseInterfaceList;
+    private List<EmployeeFindResponse> employeeFindResponseInterfaceList;
 }
