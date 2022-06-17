@@ -13,7 +13,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 /**
- * Webflux post, get Util 화 하여 공통적용하는 클래스
+ * Webflux post Util 화 하여 공통적용하는 클래스
+ * Get 은 리턴 클래스가 모두 달라서 Object 로 리턴 시도하였으나 비효율적이라고 판단하여 삭제
  */
 @RequiredArgsConstructor
 @Component
@@ -35,6 +36,5 @@ public class WebRequestUtil {
             .bodyToMono(RefundResponse.class)
             .block();
     }
-
 
 }
