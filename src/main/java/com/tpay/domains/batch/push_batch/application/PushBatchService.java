@@ -33,6 +33,10 @@ import java.util.stream.Collectors;
 
 import static com.tpay.commons.push.PushCategoryType.*;
 
+/**
+ * 배치스크립트 PUSH알림 모음
+ * CASE 12, 13은 CMS 출금쪽이 정해진 이후 작업해야함
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -182,6 +186,7 @@ public class PushBatchService {
         return franchiseeApplicantEntity.getCreatedDate().isBefore(minusWeeks);
     }
 
+    // 애플리케이션 실행시 첫 실행 방지용 메서드
     private static boolean isFirstCall() {
         return (firstCallTime.equals(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmm"))) || firstCallTime.equals(LocalDateTime.now().minusMinutes(1).format(DateTimeFormatter.ofPattern("yyyyMMddHHmm"))));
     }
