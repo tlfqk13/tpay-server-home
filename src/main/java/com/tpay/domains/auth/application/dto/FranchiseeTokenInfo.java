@@ -1,5 +1,6 @@
 package com.tpay.domains.auth.application.dto;
 
+import com.tpay.commons.util.UserSelector;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeStatus;
 import lombok.*;
 
@@ -9,7 +10,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class FranchiseeTokenInfo {
+public class FranchiseeTokenInfo implements TokenInfoInterface{
     private Long franchiseeIndex;
     private String businessNumber;
     private FranchiseeStatus franchiseeStatus;
@@ -23,4 +24,30 @@ public class FranchiseeTokenInfo {
     private boolean isActiveVibration;
     private boolean isConnectedPos;
     private String posType;
+
+    @Override
+    public Long getEmployeeIndex() {
+        return null;
+    }
+
+    @Override
+    public String getUserId() {
+        return null;
+    }
+
+    @Override
+    public String getName() {
+        return null;
+    }
+
+    @Override
+    public LocalDateTime getRegisteredDate() {
+        return null;
+    }
+
+    @Override
+    public UserSelector getUserSelector() {
+        return UserSelector.FRANCHISEE;
+    }
+
 }
