@@ -1,7 +1,6 @@
 package com.tpay.domains.external.application;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tpay.commons.aws.S3FileUploader;
 import com.tpay.commons.custom.CustomValue;
 import com.tpay.commons.exception.detail.InvalidExternalRefundIndexException;
@@ -45,7 +44,6 @@ public class ExternalRefundApprovalService {
     private final NonBatchPushService nonBatchPushService;
 
     private final WebRequestUtil webRequestUtil;
-    private final ObjectMapper objectMapper;
     private final PaymentCalculator paymentCalculator;
     private final S3FileUploader s3FileUploader;
     private final CommonLogger commonLogger;
@@ -77,8 +75,7 @@ public class ExternalRefundApprovalService {
 
             commonLogger.beforeHttpClient(externalRefundIndex);
             String uri = CustomValue.REFUND_SERVER + "/refund/approval";
-            Object post = webRequestUtil.post(uri, refundApproveRequest);
-            RefundResponse refundResponse = objectMapper.convertValue(post, RefundResponse.class);
+            RefundResponse refundResponse = webRequestUtil.post(uri, refundApproveRequest);
             commonLogger.afterHttpClient(externalRefundIndex);
 
             //0000이 아닌경우 에러 발생
@@ -95,7 +92,7 @@ public class ExternalRefundApprovalService {
                 orderEntity);
 
             Integer payment = paymentCalculator.paymentInteger(refundEntity);
-            pointScheduledChangeService.change(refundEntity, SignType.POSITIVE,franchiseeEntity.getBalancePercentage());
+            pointScheduledChangeService.change(refundEntity, SignType.POSITIVE, franchiseeEntity.getBalancePercentage());
             externalRefundEntity.refundIndexRegister(refundEntity);
             externalRefundEntity.changeStatus(ExternalRefundStatus.APPROVE);
 

@@ -1,6 +1,5 @@
 package com.tpay.domains.refund_core.application;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tpay.commons.custom.CustomValue;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
@@ -45,7 +44,6 @@ public class RefundApproveService {
     private final ExternalRepository externalRepository;
     private final OrderService orderService;
     private final WebRequestUtil webRequestUtil;
-    private final ObjectMapper objectMapper;
 
     private final EmployeeFindService employeeFindService;
     private final NonBatchPushService nonBatchPushService;
@@ -74,8 +72,7 @@ public class RefundApproveService {
 
         String uri = CustomValue.REFUND_SERVER + "/refund/approval";
         try {
-            Object post = webRequestUtil.post(uri, refundApproveRequest);
-            RefundResponse refundResponse = objectMapper.convertValue(post, RefundResponse.class);
+            RefundResponse refundResponse = webRequestUtil.post(uri, refundApproveRequest);
 
             // TODO : 응답코드 "0000" 아닐시 테스트 필요
             RefundEntity refundEntity =
