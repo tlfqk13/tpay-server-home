@@ -39,27 +39,4 @@ public class SignInTokenInfo {
     private Boolean isActiveSound;
     private Boolean isActiveVibration;
 
-
-    public SignInTokenInfo(TokenInfoInterface tokenInfoInterface){
-        this.franchiseeIndex = tokenInfoInterface.getFranchiseeIndex();
-        this.businessNumber = tokenInfoInterface.getBusinessNumber();
-        this.franchiseeStatus = tokenInfoInterface.getFranchiseeStatus();
-        this.rejectReason = tokenInfoInterface.getRejectReason();
-        this.signUpDate = tokenInfoInterface.getSignUpDate();
-        this.popUp = tokenInfoInterface.isPopUp();
-        this.storeName = tokenInfoInterface.getStoreName();
-        this.isConnectedPos = tokenInfoInterface.isConnectedPos();
-        this.posType = tokenInfoInterface.getPosType();
-
-        this.employeeIndex = tokenInfoInterface.getEmployeeIndex();
-        this.userId = tokenInfoInterface.getUserId();
-        this.name = tokenInfoInterface.getName();
-        this.registeredDate = tokenInfoInterface.getRegisteredDate();
-
-        this.accessToken = tokenInfoInterface.getAccessToken();
-        this.refreshToken = tokenInfoInterface.getRefreshToken();
-        this.userSelector = tokenInfoInterface.getUserSelector();
-        this.isActiveSound = tokenInfoInterface.isActiveSound();
-        this.isActiveVibration = tokenInfoInterface.isActiveVibration();
-    }
 }

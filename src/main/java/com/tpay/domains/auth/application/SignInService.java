@@ -3,8 +3,6 @@ package com.tpay.domains.auth.application;
 
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
-import com.tpay.domains.auth.application.dto.EmployeeTokenInfo;
-import com.tpay.domains.auth.application.dto.FranchiseeTokenInfo;
 import com.tpay.domains.auth.application.dto.SignInRequest;
 import com.tpay.domains.auth.application.dto.SignInTokenInfo;
 import lombok.RequiredArgsConstructor;
@@ -25,11 +23,9 @@ public class SignInService {
     @Transactional
     public SignInTokenInfo signIn(SignInRequest signInRequest) {
         if (signInRequest.getUserSelector().equals(FRANCHISEE)) {
-            FranchiseeTokenInfo franchiseeTokenInfo = franchiseeSignInService.signIn(signInRequest.getBusinessNumber(), signInRequest.getPassword(), signInRequest.getPushToken());
-            return new SignInTokenInfo(franchiseeTokenInfo);
+            return franchiseeSignInService.signIn(signInRequest.getBusinessNumber(), signInRequest.getPassword(), signInRequest.getPushToken());
         } else if (signInRequest.getUserSelector().equals(EMPLOYEE)) {
-            EmployeeTokenInfo employeeTokenInfo = employeeSignInService.signIn(signInRequest.getUserId(), signInRequest.getPassword());
-            return new SignInTokenInfo(employeeTokenInfo);
+            return employeeSignInService.signIn(signInRequest.getUserId(), signInRequest.getPassword());
         } else {
             throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Parse Failed");
         }
