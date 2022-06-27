@@ -1,6 +1,7 @@
 package com.tpay.domains.auth.application;
 
 import com.tpay.commons.jwt.AuthToken;
+import com.tpay.commons.util.UserSelector;
 import com.tpay.domains.auth.application.dto.SignInTokenInfo;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee_applicant.application.FranchiseeApplicantFindService;
@@ -63,6 +64,7 @@ public class FranchiseeSignInService {
             .storeName(franchiseeEntity.getStoreName())
             .isConnectedPos(franchiseeEntity.getIsConnectedPos())
             .posType(franchiseeEntity.getPosType().getPosName())
+            .userSelector(UserSelector.FRANCHISEE)
             .build();
     }
 }
