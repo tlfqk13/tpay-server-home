@@ -4,6 +4,7 @@ import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.jwt.AuthToken;
 import com.tpay.commons.push.PushCategoryType;
+import com.tpay.commons.util.UserSelector;
 import com.tpay.domains.auth.application.dto.SignInTokenInfo;
 import com.tpay.domains.employee.application.EmployeeFindService;
 import com.tpay.domains.employee.domain.EmployeeEntity;
@@ -57,6 +58,7 @@ public class EmployeeSignInService {
             .isActiveSound(employeeEntity.getIsActiveSound())
             .isActiveVibration(employeeEntity.getIsActiveVibration())
             .isConnectedPos(employeeEntity.getFranchiseeEntity().getIsConnectedPos())
+            .userSelector(UserSelector.EMPLOYEE)
             .build();
     }
 }
