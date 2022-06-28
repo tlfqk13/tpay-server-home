@@ -7,6 +7,7 @@ import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
 import com.tpay.domains.franchisee_upload.application.FranchiseeBankFindService;
 import com.tpay.domains.push.application.NonBatchPushService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -15,6 +16,7 @@ import javax.transaction.Transactional;
 
 import static com.tpay.commons.push.PushCategoryType.CASE_TWO;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class FranchiseeApplicantAcceptService {
@@ -40,10 +42,15 @@ public class FranchiseeApplicantAcceptService {
         nonBatchPushService.nonBatchPushNSave(CASE_TWO, franchiseeEntity.getId());
 
         // TODO: 2022/06/15 필수입력으로 전환시 if 제거
-        if(!franchiseeFindRequest.getBalancePercentage().isEmpty()){
-            String balancePercentage = franchiseeFindRequest.getBalancePercentage();
-            franchiseeEntity.updateBalancePercentage(balancePercentage);
+        try {
+            if(!franchiseeFindRequest.getBalancePercentage().isEmpty()){
+                String balancePercentage = franchiseeFindRequest.getBalancePercentage();
+                franchiseeEntity.updateBalancePercentage(balancePercentage);
+            }
+        } catch (NullPointerException e){
+            log.trace("franchiseeApplicantIndex : {} Accepted", franchiseeApplicantIndex);
         }
+
         return response;
     }
 

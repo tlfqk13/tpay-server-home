@@ -35,12 +35,11 @@ public class PushNotificationService {
                 .build();
 
             Optional<UserPushTokenEntity> optionalUserPushTokenEntity = userPushTokenService.findByToken(request.getPushTypeValue());
-
             if (optionalUserPushTokenEntity.isPresent()) {
                 String send = FirebaseMessaging.getInstance().send(message);
                 pushHistoryService.saveHistory(request, send, optionalUserPushTokenEntity.get(),0L);
             }
-        } catch (FirebaseMessagingException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
