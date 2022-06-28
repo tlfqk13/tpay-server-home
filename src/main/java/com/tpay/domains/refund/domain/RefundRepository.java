@@ -190,4 +190,23 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
 
     @EntityGraph(attributePaths = {"orderEntity"})
     List<RefundEntity> findByCreatedDateBetween(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+
+    @Query(value = "select\n" +
+                " r.id as refundIndex\n" +
+                " ,o.franchisee_id as franchiseeIndex\n" +
+                " ,o.created_date as createDate\n" +
+                " ,o.tot_amt as totalAmount\n" +
+                " ,o.tot_refund as totalRefund\n" +
+                " ,o.tot_amt - r.tot_refund as actualAmount" +
+                " ,p.balance as balance\n" +
+        "from refund r\n "
+                + "left join orders o on o.id = r.order_id\n"
+                + "left join points p on o.id = p.order_id\n"+
+                "where o.id = :refundIndex\n" +
+                    "and p.order_id = :refundIndex\n" +
+                    "and o.franchisee_id = :franchiseeIndex\n",nativeQuery = true)
+    List<RefundFindResponseInterface> findDetailNativeQuery(
+            @Param("refundIndex") Long refundIndex,
+            @Param("franchiseeIndex") Long franchiseeIndex);
+
 }
