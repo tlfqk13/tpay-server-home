@@ -34,10 +34,10 @@ public class RefundFindController {
     // 환급 상세 by sondong
     // TODO: 28/06/2022 JWT 검증 확인
 
-    @GetMapping("/refunds/franchisee/{franchiseeIndex}/detail/{refundIndex}")
+    @GetMapping("/refunds/franchisee/detail/{franchiseeIndex}")
     public ResponseEntity<List<RefundFindResponseInterface>> findDetail(
             @PathVariable Long franchiseeIndex,
-            @PathVariable Long refundIndex) {
+            @RequestParam Long refundIndex) {
         List<RefundFindResponseInterface> responseDetail =
                 refundDetailFindService.findDetail(franchiseeIndex,refundIndex);
         return ResponseEntity.ok(responseDetail);
