@@ -134,7 +134,6 @@ public class RefundDetailFindService {
         return refundByCustomerDateResponseList;
     }
 
-    // 환급 상세 by sondong
     public List<RefundFindResponseInterface> findDetail(Long franchiseeIndex,Long refundIndex) {
         return refundRepository.findDetailNativeQuery(franchiseeIndex,refundIndex);
     }

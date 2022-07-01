@@ -31,9 +31,6 @@ public class RefundFindController {
         return ResponseEntity.ok(responseList);
     }
 
-    // 환급 상세 by sondong
-    // TODO: 28/06/2022 JWT 검증 확인
-
     @GetMapping("/refunds/franchisee/detail/{franchiseeIndex}")
     public ResponseEntity<List<RefundFindResponseInterface>> findDetail(
             @PathVariable Long franchiseeIndex,
