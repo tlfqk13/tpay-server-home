@@ -205,10 +205,6 @@ public class JwtValidationInterceptor implements HandlerInterceptor {
     }
 
     private IndexInfo getIndexFromUriPos(HttpServletRequest request) {
-//        /pos/refund/limit/1
-//        trim = refund/limit/1
-//        trim.substring(13) = 1 = index
-//        012345678901234567
         String trim = request.getRequestURI().substring(5);
         if (request.getRequestURI().contains(UriType.POS_LIMIT.getKeyword())) {
             return new IndexInfo(FRANCHISEE, trim.substring(13));
@@ -233,10 +229,8 @@ public class JwtValidationInterceptor implements HandlerInterceptor {
         if(trim.contains(UriType.REFUNDS_DETAIL.getKeyword())){
             secondTrim = trim.substring(18);
             return new IndexInfo(FRANCHISEE,secondTrim);
-        }else if(trim.contains(UriType.FRANCHISEE.getKeyword())){
+        }else {
             return new IndexInfo(FRANCHISEE, request.getRequestURI().substring(secondDomainEnd + 1));
-        }else{
-            return new IndexInfo();
         }
     }
 
