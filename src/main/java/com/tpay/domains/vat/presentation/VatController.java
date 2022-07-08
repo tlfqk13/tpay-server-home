@@ -1,6 +1,7 @@
 package com.tpay.domains.vat.presentation;
 
 
+import com.tpay.commons.util.DateFilter;
 import com.tpay.domains.vat.application.VatService;
 import com.tpay.domains.vat.application.dto.VatDetailResponse;
 import com.tpay.domains.vat.application.dto.VatResponse;
@@ -34,6 +35,25 @@ public class VatController {
     ) {
         VatDetailResponse vatDetailResponse = vatService.vatDetail(franchiseeIndex, requestDate);
         return ResponseEntity.ok(vatDetailResponse);
+    }
+
+    // TODO: 2022/07/06 환급실적명세서 다운로드 기능 시작.
+    @GetMapping("/franchisee/{franchiseeIndex}/vat/downloads")
+    public ResponseEntity<String> vatDownloads(
+            @PathVariable Long franchiseeIndex,
+            @RequestParam String requestDate
+    ){
+        String result = vatService.vatDownloads(franchiseeIndex,requestDate);
+        return ResponseEntity.ok("Asdf");
+    }
+
+    @GetMapping("/franchisee/{franchiseeIndex}/vat/monthly-downloads")
+    public ResponseEntity<String> vatMonthlyDownloads(
+            @PathVariable Long franchiseeIndex,
+            @RequestParam DateFilter dateFilter
+    ){
+        String result = vatService.vatMonthlySendMailFile(franchiseeIndex,dateFilter);
+        return ResponseEntity.ok("vatMonthlySendMailFile");
     }
 
 
