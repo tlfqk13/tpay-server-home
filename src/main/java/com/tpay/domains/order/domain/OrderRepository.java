@@ -40,24 +40,44 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
         "      count(*) as totalCount\n" +
         "      ,IFNULL(sum( cast ( tot_amt  as INTEGER )),0) as totalAmount\n" +
         "      ,IFNULL(sum( cast ( tot_vat  as INTEGER )),0) as totalVat\n" +
+        "      ,IFNULL(sum( cast (tot_refund as INTEGER)),0) as totalRefund\n" +
         "      from orders o inner join refund r on o.id = r.order_id\n" +
         "      where franchisee_id = :franchiseeIndex\n" +
         "      and refund_status = 'APPROVAL' and o.created_date between :startDate and :endDate", nativeQuery = true)
     VatTotalResponseInterface findQuarterlyTotal(@Param("franchiseeIndex") Long franchiseeIndex, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
+    @Query(value = "select\n" +
+            "    purchs_sn                                as purchaseSerialNumber\n" +
+            "    ,substr(replace(o.created_date,'-',''),1,8) as saleDate\n" +
+            "    ,tk_out_conf_no                             as takeoutConfirmNumber\n" +
+            "    ,tot_refund                                 as refundAmount\n" +
+            "    ,tot_amt                                    as amount\n" +
+            "    ,tot_vat                                    as vat\n" +
+            "    ,c.cus_nm                                    as customerName\n" +
+            "    ,c.cus_natn                                    as customerNational\n" +
+            "    from orders o inner join refund r on o.id = r.order_id\n" +
+            "                  left join customer c on c.id = o.customer_id\n" +
+            "    where franchisee_id = :franchiseeIndex\n" +
+            "    and refund_status = 'APPROVAL' and o.created_date between :startDate and :endDate\n" +
+            "    order by 3 desc", nativeQuery = true)
+    List<VatDetailResponseInterface> findQuarterlyVatDetail(@Param("franchiseeIndex") Long franchiseeIndex, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
     @Query(value = "select\n" +
-        "    purchs_sn                                as purchaseSerialNumber\n" +
-        "    ,substr(replace(o.created_date,'-',''),1,8) as saleDate\n" +
-        "    ,tk_out_conf_no                             as takeoutConfirmNumber\n" +
-        "    ,tot_refund                                 as refundAmount\n" +
-        "    ,tot_amt                                    as amount\n" +
-        "    ,tot_vat                                    as vat\n" +
-        "    from orders o inner join refund r on o.id = r.order_id\n" +
-        "    where franchisee_id = :franchiseeIndex\n" +
-        "    and refund_status = 'APPROVAL' and o.created_date between :startDate and :endDate\n" +
-        "    order by 3 desc", nativeQuery = true)
-    List<VatDetailResponseInterface> findQuarterlyVatDetail(@Param("franchiseeIndex") Long franchiseeIndex, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+            "    purchs_sn                                as purchaseSerialNumber\n" +
+            "    ,substr(replace(o.created_date,'-',''),1,8) as saleDate\n" +
+            "    ,tk_out_conf_no                             as takeoutConfirmNumber\n" +
+            "    ,tot_refund                                 as refundAmount\n" +
+            "    ,tot_amt                                    as amount\n" +
+            "    ,tot_vat                                    as vat\n" +
+            "    ,c.cus_nm                                    as customerName\n" +
+            "    ,c.cus_natn                                    as customerNational\n" +
+            "    from orders o inner join refund r on o.id = r.order_id\n" +
+            "                  left join customer c on c.id = o.customer_id\n" +
+            "    where franchisee_id = :franchiseeIndex\n" +
+            "    and refund_status = 'APPROVAL' and o.created_date between :startDate and :endDate\n" +
+            "    order by 3 desc", nativeQuery = true)
+    List<VatDetailResponseInterface> findMonthlyVatDetail(@Param("franchiseeIndex") Long franchiseeIndex, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
 
     @Query(value = "select\n" +
         "    franchisee_id as franchiseeIndex,\n" +
