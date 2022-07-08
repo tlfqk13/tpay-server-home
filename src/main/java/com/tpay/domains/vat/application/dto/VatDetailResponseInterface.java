@@ -13,4 +13,8 @@ public interface VatDetailResponseInterface {
     String getAmount();
 
     String getVat();
+
+    String getCustomerName();
+
+    String getCustomerNational();
 }

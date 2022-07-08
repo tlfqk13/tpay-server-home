@@ -11,15 +11,14 @@ import com.tpay.domains.order.application.dto.CmsResponseDetailInterface;
 import com.tpay.domains.order.application.dto.CmsResponseInterface;
 import com.tpay.domains.order.domain.OrderRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.io.FileUtils;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -80,22 +79,39 @@ public class CmsService {
     public String cmsDownloads(Long franchiseeIndex, String requestDate) {
         try {
             ClassPathResource resource = new ClassPathResource("KTP_CMS_Form.xlsx");
-            File file = resource.getFile();
-            FileInputStream fileInputStream = new FileInputStream(file);
+            File file1;
+            try (InputStream inputStream = resource.getInputStream()) {
+                file1 = File.createTempFile("KTP_CMS_Form", "xlsx");
+                FileUtils.copyInputStreamToFile(inputStream, file1);
+            }
+            FileInputStream fileInputStream = new FileInputStream(file1);
             XSSFWorkbook xssfWorkbook = new XSSFWorkbook(fileInputStream);
             XSSFSheet sheet = xssfWorkbook.getSheetAt(0);
-            XSSFRow row = sheet.createRow(12);
             XSSFRow row1 = sheet.getRow(11);
-            row.createCell(11, STRING);
-            row.createCell(5, STRING);
             row1.getCell(5).setCellValue("수신자만 바뀌었으면 성공");
-            row.getCell(5).setCellValue("기존것도 바뀌는지 테스트"); //실패
-            row.getCell(11).setCellValue("가맹점번호 : " + franchiseeIndex + "가 입력되었습니다.");
             // TODO: 2022/02/03 엑셀파일 일부 write 후 저장까지 테스트 완료 포멧에 맞게 입력하는 로직 정해지면 구현할 것
-//      FileOutputStream fileOutputStream = new FileOutputStream("/Users/sunba/excelExportTest.xlsx", false);
-//      xssfWorkbook.write(fileOutputStream);
-//      fileOutputStream.flush();
-//      fileOutputStream.close();
+            // TODO: 2022/07/08 CMS 청구내역 엑셀파일 양식 새롭게 받음.
+
+            XSSFRow row25 = sheet.createRow(25); // 총 환급 건수
+            row25.createCell(9,STRING);
+            row25.getCell(9).setCellValue("총환급");
+
+            XSSFRow row27 = sheet.createRow(27); // 즉시환급건수
+            row27.createCell(9,STRING);
+            row27.getCell(9).setCellValue("즉시환급건수");
+
+            XSSFRow row30 = sheet.createRow(30); // 총 환급 건수
+            row30.createCell(9,STRING);
+            row30.getCell(9).setCellValue("총 청구 환급 세액"); // 총청구환급세액
+
+            XSSFRow row32 = sheet.createRow(32); // 즉시환급 청구액
+            row32.createCell(9,STRING);
+            row32.getCell(9).setCellValue("즉시환급 청구액");
+
+            //FileOutputStream fileOutputStream = new FileOutputStream("/Users/backend/excelExportTest.xlsx", false);
+            //xssfWorkbook.write(fileOutputStream);
+            //fileOutputStream.flush();
+            //fileOutputStream.close();
 
             System.out.println("아웃풋스트림 생성 전");
             String result = s3FileUploader.uploadXlsx(franchiseeIndex, xssfWorkbook);

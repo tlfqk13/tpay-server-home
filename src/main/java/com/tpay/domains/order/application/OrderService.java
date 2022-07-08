@@ -31,11 +31,11 @@ public class OrderService {
         }
 
         return VatResponse.builder()
-            .totalAmount(queryResult.getTotalAmount())
-            .totalCount(queryResult.getTotalCount())
-            .totalVat(queryResult.getTotalVat())
-            .totalSupply(queryResult.getTotalSupply())
-            .build();
+                .totalAmount(queryResult.getTotalAmount())
+                .totalCount(queryResult.getTotalCount())
+                .totalVat(queryResult.getTotalVat())
+                .totalSupply(queryResult.getTotalSupply())
+                .build();
 
     }
 
@@ -45,6 +45,7 @@ public class OrderService {
         result.add(NumberFormatConverter.addCommaToNumber(vatTotalResponseInterface.getTotalCount()));
         result.add(NumberFormatConverter.addCommaToNumber(vatTotalResponseInterface.getTotalAmount()));
         result.add(NumberFormatConverter.addCommaToNumber(vatTotalResponseInterface.getTotalVat()));
+        result.add(NumberFormatConverter.addCommaToNumber(vatTotalResponseInterface.getTotalRefund()));
         return result;
     }
 
@@ -56,9 +57,29 @@ public class OrderService {
             baseList.add(vatDetailResponseInterface.getPurchaseSerialNumber());
             baseList.add(vatDetailResponseInterface.getSaleDate());
             baseList.add(vatDetailResponseInterface.getTakeoutConfirmNumber());
-            baseList.add(NumberFormatConverter.addCommaToNumber(vatDetailResponseInterface.getRefundAmount()));
             baseList.add(NumberFormatConverter.addCommaToNumber(vatDetailResponseInterface.getAmount()));
             baseList.add(NumberFormatConverter.addCommaToNumber(vatDetailResponseInterface.getVat()));
+            baseList.add(NumberFormatConverter.addCommaToNumber(vatDetailResponseInterface.getRefundAmount()));
+            baseList.add(vatDetailResponseInterface.getCustomerName());
+            baseList.add(vatDetailResponseInterface.getCustomerNational());
+            detailResult.add(baseList);
+        }
+        return detailResult;
+    }
+
+    public List<List<String>> findMonthlyDetail(Long franchiseeIndex, LocalDate startDate, LocalDate endDate) {
+        List<VatDetailResponseInterface> vatDetailResponseInterfaceList = orderRepository.findMonthlyVatDetail(franchiseeIndex, startDate, endDate);
+        List<List<String>> detailResult = new ArrayList<>();
+        for (VatDetailResponseInterface vatDetailResponseInterface : vatDetailResponseInterfaceList) {
+            List<String> baseList = new ArrayList<>();
+            baseList.add(vatDetailResponseInterface.getPurchaseSerialNumber());
+            baseList.add(vatDetailResponseInterface.getSaleDate());
+            baseList.add(vatDetailResponseInterface.getTakeoutConfirmNumber());
+            baseList.add(NumberFormatConverter.addCommaToNumber(vatDetailResponseInterface.getAmount()));
+            baseList.add(NumberFormatConverter.addCommaToNumber(vatDetailResponseInterface.getVat()));
+            baseList.add(NumberFormatConverter.addCommaToNumber(vatDetailResponseInterface.getRefundAmount()));
+            baseList.add(vatDetailResponseInterface.getCustomerName());
+            baseList.add(vatDetailResponseInterface.getCustomerNational());
             detailResult.add(baseList);
         }
         return detailResult;
@@ -73,12 +94,12 @@ public class OrderService {
     }
 
     @Transactional
-    public void deleteByIndex(Long orderIndex){
+    public void deleteByIndex(Long orderIndex) {
         try {
             orderRepository.deleteById(orderIndex);
         } catch (Exception e) {
             e.printStackTrace();
-            log.warn("삭제불가 orderIndex = {}",orderIndex);
+            log.warn("삭제불가 orderIndex = {}", orderIndex);
         }
     }
 }
