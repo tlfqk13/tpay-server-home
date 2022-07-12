@@ -64,6 +64,10 @@ public class OrderService {
         return detailResult;
     }
 
+    public List<VatDetailResponseInterface> findDetailBetweenDates(Long franchiseeIndex, LocalDate startDate, LocalDate endDate) {
+        return orderRepository.findQuarterlyVatDetail(franchiseeIndex, startDate, endDate);
+    }
+
     @Transactional
     public Long sumTotalSaleAmountByFranchiseeIndex(Long franchiseeIndex) {
         Optional<Long> optionalResult = orderRepository.sumTotalSaleAmountByFranchiseeIndex(franchiseeIndex);
