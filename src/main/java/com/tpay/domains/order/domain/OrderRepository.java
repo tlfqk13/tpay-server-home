@@ -47,6 +47,17 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
     VatTotalResponseInterface findQuarterlyTotal(@Param("franchiseeIndex") Long franchiseeIndex, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
     @Query(value = "select\n" +
+            "      count(*) as totalCount\n" +
+            "      ,IFNULL(sum( cast ( tot_amt  as INTEGER )),0) as totalAmount\n" +
+            "      ,IFNULL(sum( cast ( tot_vat  as INTEGER )),0) as totalVat\n" +
+            "      ,IFNULL(sum( cast (tot_refund as INTEGER)),0) as totalRefund\n" +
+            "      from orders o inner join refund r on o.id = r.order_id\n" +
+            "      where franchisee_id = :franchiseeIndex\n" +
+            "      and refund_status = 'APPROVAL' and substr(o.created_date,1,4) = :year\n" +
+            "      and substr(o.created_date,6,2) = :month", nativeQuery = true)
+    VatTotalResponseInterface findMonthlyTotal(Long franchiseeIndex, String year, String month);
+
+    @Query(value = "select\n" +
             "    purchs_sn                                as purchaseSerialNumber\n" +
             "    ,substr(replace(o.created_date,'-',''),1,8) as saleDate\n" +
             "    ,tk_out_conf_no                             as takeoutConfirmNumber\n" +
@@ -74,9 +85,11 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
             "    from orders o inner join refund r on o.id = r.order_id\n" +
             "                  left join customer c on c.id = o.customer_id\n" +
             "    where franchisee_id = :franchiseeIndex\n" +
-            "    and refund_status = 'APPROVAL' and o.created_date between :startDate and :endDate\n" +
+            "    and refund_status = 'APPROVAL'\n" +
+            "    and substr(o.created_date,1,4) = :year\n" +
+            "    and substr(o.created_date,6,2) = :month\n" +
             "    order by 3 desc", nativeQuery = true)
-    List<VatDetailResponseInterface> findMonthlyVatDetail(@Param("franchiseeIndex") Long franchiseeIndex, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+    List<VatDetailResponseInterface> findMonthlyVatDetail(@Param("franchiseeIndex") Long franchiseeIndex, @Param("year") String year, @Param("month") String month);
 
 
     @Query(value = "select\n" +
@@ -120,4 +133,6 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
     CmsResponseDetailInterface findMonthlyCmsDetail(@Param("franchiseeIndex") Long franchiseeIndex, @Param("year") String year, @Param("month") String month);
 
     Optional<OrderEntity> findByFranchiseeEntityId(Long franchiseeIndex);
+
+
 }

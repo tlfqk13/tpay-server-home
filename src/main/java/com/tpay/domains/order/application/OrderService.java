@@ -49,8 +49,20 @@ public class OrderService {
         return result;
     }
 
-    public List<List<String>> findQuarterlyDetail(Long franchiseeIndex, LocalDate startDate, LocalDate endDate) {
-        List<VatDetailResponseInterface> vatDetailResponseInterfaceList = orderRepository.findQuarterlyVatDetail(franchiseeIndex, startDate, endDate);
+    public List<String> findMonthlyTotal(Long franchiseeIndex, String year, String month) {
+        VatTotalResponseInterface vatTotalResponseInterface = orderRepository.findMonthlyTotal(franchiseeIndex, year, month);
+        List<String> result = new ArrayList<>();
+        result.add(NumberFormatConverter.addCommaToNumber(vatTotalResponseInterface.getTotalCount()));
+        result.add(NumberFormatConverter.addCommaToNumber(vatTotalResponseInterface.getTotalAmount()));
+        result.add(NumberFormatConverter.addCommaToNumber(vatTotalResponseInterface.getTotalVat()));
+        result.add(NumberFormatConverter.addCommaToNumber(vatTotalResponseInterface.getTotalRefund()));
+        return result;
+    }
+
+    public List<List<String>> findQuarterlyDetail(Long franchiseeIndex, LocalDate startDate, LocalDate endDate,boolean isMonthly) {
+        List<VatDetailResponseInterface> vatDetailResponseInterfaceList
+                = orderRepository.findQuarterlyVatDetail(franchiseeIndex, startDate, endDate);
+
         List<List<String>> detailResult = new ArrayList<>();
         for (VatDetailResponseInterface vatDetailResponseInterface : vatDetailResponseInterfaceList) {
             List<String> baseList = new ArrayList<>();
@@ -67,8 +79,8 @@ public class OrderService {
         return detailResult;
     }
 
-    public List<List<String>> findMonthlyDetail(Long franchiseeIndex, LocalDate startDate, LocalDate endDate) {
-        List<VatDetailResponseInterface> vatDetailResponseInterfaceList = orderRepository.findMonthlyVatDetail(franchiseeIndex, startDate, endDate);
+    public List<List<String>> findMonthlyDetail(Long franchiseeIndex, String year, String month) {
+        List<VatDetailResponseInterface> vatDetailResponseInterfaceList = orderRepository.findMonthlyVatDetail(franchiseeIndex, year, month);
         List<List<String>> detailResult = new ArrayList<>();
         for (VatDetailResponseInterface vatDetailResponseInterface : vatDetailResponseInterfaceList) {
             List<String> baseList = new ArrayList<>();
