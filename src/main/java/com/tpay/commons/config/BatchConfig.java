@@ -7,6 +7,7 @@ import com.tpay.commons.custom.CustomValue;
 import com.tpay.domains.batch.point_batch.application.PointConfirmedService;
 import com.tpay.domains.batch.point_batch.application.PointDeleteService;
 import com.tpay.domains.batch.push_batch.application.PushBatchService;
+import com.tpay.domains.batch.vat_batch.application.VatMonthlySendService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
@@ -28,8 +29,8 @@ public class BatchConfig implements ApplicationListener<ContextRefreshedEvent> {
 
     private final PointConfirmedService pointConfirmedService;
     private final PointDeleteService pointDeleteService;
-
     private final PushBatchService pushBatchService;
+    private final VatMonthlySendService vatMonthlySendService;
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
@@ -42,6 +43,9 @@ public class BatchConfig implements ApplicationListener<ContextRefreshedEvent> {
 
         //푸시 관련 init
         pushBatchService.batchPush();
+
+        //실적 명세서 관련 init
+        vatMonthlySendService.vatMonthlyFile();
     }
 
     @Bean
