@@ -138,6 +138,17 @@ public class RefundDetailFindService {
         return refundRepository.findDetailNativeQuery(franchiseeIndex,refundIndex);
     }
 
+    public List<List<String>> findFranchiseeId(String year, String month) {
+        List<RefundFindResponseInterface> refundFindResponseInterfaceList = refundRepository.findFranchiseeId(year, month);
+        List<List<String>> result = new ArrayList<>();
+        for(RefundFindResponseInterface refundFindResponseInterface : refundFindResponseInterfaceList ){
+            List<String> baseList = new ArrayList<>();
+            baseList.add(refundFindResponseInterface.getFranchiseeId());
+            result.add(baseList);
+        }
+        return result;
+    }
+
     private static class ResponseCompAsc implements Comparator<RefundByCustomerResponse> {
 
         @Override
@@ -153,4 +164,6 @@ public class RefundDetailFindService {
             return o2.getCreatedDate().compareTo(o1.getCreatedDate());
         }
     }
+
+
 }
