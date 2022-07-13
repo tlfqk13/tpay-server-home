@@ -97,10 +97,6 @@ public class OrderService {
         return detailResult;
     }
 
-    public List<VatDetailResponseInterface> findDetailBetweenDates(Long franchiseeIndex, LocalDate startDate, LocalDate endDate) {
-        return orderRepository.findQuarterlyVatDetail(franchiseeIndex, startDate, endDate);
-    }
-
     @Transactional
     public Long sumTotalSaleAmountByFranchiseeIndex(Long franchiseeIndex) {
         Optional<Long> optionalResult = orderRepository.sumTotalSaleAmountByFranchiseeIndex(franchiseeIndex);
@@ -117,5 +113,13 @@ public class OrderService {
             e.printStackTrace();
             log.warn("삭제불가 orderIndex = {}", orderIndex);
         }
+    }
+
+    public List<VatDetailResponseInterface> findDetailBetweenDates(Long franchiseeIndex, LocalDate startDate, LocalDate endDate) {
+        return orderRepository.findQuarterlyVatDetail(franchiseeIndex, startDate, endDate);
+    }
+
+    public VatTotalResponseInterface findTotalBetweenDates(Long franchiseeIndex, LocalDate startDate, LocalDate endDate) {
+        return orderRepository.findQuarterlyTotal(franchiseeIndex, startDate, endDate);
     }
 }
