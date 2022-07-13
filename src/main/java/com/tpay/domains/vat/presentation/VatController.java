@@ -2,8 +2,10 @@ package com.tpay.domains.vat.presentation;
 
 
 import com.tpay.commons.util.DateFilter;
+import com.tpay.domains.vat.application.VatHomeTaxService;
 import com.tpay.domains.vat.application.VatService;
 import com.tpay.domains.vat.application.dto.VatDetailResponse;
+import com.tpay.domains.vat.application.dto.VatHomeTaxDto;
 import com.tpay.domains.vat.application.dto.VatResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class VatController {
 
     private final VatService vatService;
+    private final VatHomeTaxService homeTaxService;
 
 
     @GetMapping("/franchisee/{franchiseeIndex}/vat")
@@ -56,5 +59,10 @@ public class VatController {
         return ResponseEntity.ok("vatMonthlySendMailFile");
     }
 
-
+    @GetMapping("/franchisee/{franchiseeIndex}/vat/hometax")
+    public ResponseEntity<VatHomeTaxDto.Response> homeTaxFile(@PathVariable Long franchiseeIndex,
+                                              @RequestParam String requestDate) {
+        VatHomeTaxDto.Response homeTaxResponse = homeTaxService.createHomeTaxUploadFile(franchiseeIndex, requestDate);
+        return ResponseEntity.ok(homeTaxResponse);
+    }
 }
