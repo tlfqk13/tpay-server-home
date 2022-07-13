@@ -160,4 +160,22 @@ public class S3FileUploader {
         }
         return s3Client.getUrl(bucket, key).toString();
     }
+
+    public String uploadXlsx(Long franchiseeIndex, XSSFWorkbook xssfWorkbook, String fileName,String month) throws IOException {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        xssfWorkbook.write(byteArrayOutputStream);
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+        ObjectMetadata objectMetaData = new ObjectMetadata();
+        objectMetaData.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        objectMetaData.setContentLength((long) byteArrayOutputStream.toByteArray().length);
+        byteArrayOutputStream.close();
+        String key = "monthlyReport/" + month + "/" + fileName;
+        try {
+            s3Client.putObject(new PutObjectRequest(bucket, key, byteArrayInputStream, objectMetaData)
+                    .withCannedAcl(CannedAccessControlList.PublicRead));
+        } finally {
+            byteArrayInputStream.close();
+        }
+        return s3Client.getUrl(bucket, key).toString();
+    }
 }

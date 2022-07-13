@@ -25,4 +25,6 @@ public interface RefundFindResponseInterface {
     String getBusinessNumber();
 
     String getStoreName();
+
+    String getFranchiseeId();
 }

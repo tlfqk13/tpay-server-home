@@ -2,6 +2,8 @@ package com.tpay.domains.vat.presentation;
 
 
 import com.tpay.commons.util.DateFilter;
+import com.tpay.domains.batch.vat_batch.application.VatMonthlySendService;
+import com.tpay.domains.vat.application.VatDownloadService;
 import com.tpay.domains.vat.application.VatService;
 import com.tpay.domains.vat.application.dto.VatDetailResponse;
 import com.tpay.domains.vat.application.dto.VatResponse;
@@ -17,6 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class VatController {
 
     private final VatService vatService;
+    private final VatMonthlySendService vatMonthlySendService;
+
+    private final VatDownloadService vatDownloadService;
 
 
     @GetMapping("/franchisee/{franchiseeIndex}/vat")
@@ -43,18 +48,17 @@ public class VatController {
             @PathVariable Long franchiseeIndex,
             @RequestParam String requestDate
     ){
-        String result = vatService.vatDownloads(franchiseeIndex,requestDate);
+        String result = vatDownloadService.vatDownloads(franchiseeIndex,requestDate);
         return ResponseEntity.ok("Asdf");
     }
 
+    // API 호출 TEST 용도임
     @GetMapping("/franchisee/{franchiseeIndex}/vat/monthly-downloads")
     public ResponseEntity<String> vatMonthlyDownloads(
             @PathVariable Long franchiseeIndex,
-            @RequestParam DateFilter dateFilter
+            @RequestParam String requestMonth // ?requestMonth = 225
     ){
-        String result = vatService.vatMonthlySendMailFile(franchiseeIndex,dateFilter);
+        vatMonthlySendService.vatMonthlyFile();
         return ResponseEntity.ok("vatMonthlySendMailFile");
     }
-
-
 }

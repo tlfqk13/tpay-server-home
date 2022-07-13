@@ -67,6 +67,7 @@ public class ExternalRefundApprovalService {
 
             if (!externalRefundEntity.getExternalRefundStatus().equals(ExternalRefundStatus.SCAN)) {
                 commonLogger.error1(externalRefundIndex, "K8101", "SCAN 상태가 아님. 입력값 : " + externalRefundEntity.getExternalRefundStatus());
+                System.out.println("_________________E___________________");
                 return ExternalRefundResponse.builder().responseCode("K8101").message("[K8101] 만료된 거래입니다.").build();
             }
 
@@ -131,7 +132,6 @@ public class ExternalRefundApprovalService {
             commonLogger.error1(externalRefundApprovalRequest.getExternalRefundIndex(), "K8106", "글로벌 에러. 응답메시지 : " + e.getMessage());
             return ExternalRefundResponse.builder().responseCode("K8106").message("[K8106] 시스템 에러입니다.").build();
         }
-
     }
 
 }
