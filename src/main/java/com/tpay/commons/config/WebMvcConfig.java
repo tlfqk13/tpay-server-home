@@ -31,7 +31,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
             "/refresh",
             "/categories",
             "/certifications/**",
-            "/franchisee/password/exists",
+            "/franchisee/password/exists/**",
             "/franchisee/password/selfCertification",
             "/franchisee/password/out",
             "/admin/**",

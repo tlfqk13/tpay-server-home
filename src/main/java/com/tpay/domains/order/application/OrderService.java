@@ -114,4 +114,12 @@ public class OrderService {
             log.warn("삭제불가 orderIndex = {}", orderIndex);
         }
     }
+
+    public List<VatDetailResponseInterface> findDetailBetweenDates(Long franchiseeIndex, LocalDate startDate, LocalDate endDate) {
+        return orderRepository.findQuarterlyVatDetail(franchiseeIndex, startDate, endDate);
+    }
+
+    public VatTotalResponseInterface findTotalBetweenDates(Long franchiseeIndex, LocalDate startDate, LocalDate endDate) {
+        return orderRepository.findQuarterlyTotal(franchiseeIndex, startDate, endDate);
+    }
 }
