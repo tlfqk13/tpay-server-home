@@ -27,11 +27,11 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.tpay.commons.push.PushCategoryType.*;
+import static com.tpay.commons.util.KtpCommonUtil.isApplicationInitBeforeOneMinute;
 
 /**
  * 배치스크립트 PUSH알림 모음
@@ -41,8 +41,6 @@ import static com.tpay.commons.push.PushCategoryType.*;
 @Service
 @RequiredArgsConstructor
 public class PushBatchService {
-
-    private static final String firstCallTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmm"));
     private final FranchiseeApplicantFindService franchiseeApplicantFindService;
     private final PushNotificationService pushNotificationService;
     private final TopicSubscribeService topicSubscribeService;
@@ -66,7 +64,7 @@ public class PushBatchService {
     public void caseOne() {
         TopicType topic = TopicType.INIT;
         List<FranchiseeApplicantEntity> franchiseeApplicantEntityList = franchiseeApplicantFindService.findByFranchiseeStatus(FranchiseeStatus.INIT);
-        if (isFirstCall()) {
+        if (isApplicationInitBeforeOneMinute()) {
             log.trace("First Call - CASE_ONE");
         } else if (franchiseeApplicantEntityList.isEmpty()) {
             log.trace("Nothing to PUSH - CASE_ONE");
@@ -81,7 +79,7 @@ public class PushBatchService {
         TopicType topic = TopicType.REJECTED;
         List<FranchiseeApplicantEntity> franchiseeApplicantEntityList = franchiseeApplicantFindService.findByFranchiseeStatus(FranchiseeStatus.REJECTED);
 
-        if (isFirstCall()) {
+        if (isApplicationInitBeforeOneMinute()) {
             log.trace("First Call - CASE_FOUR");
         } else if (franchiseeApplicantEntityList.isEmpty()) {
             log.trace("Nothing to PUSH - CASE_FOUR");
@@ -94,8 +92,8 @@ public class PushBatchService {
     @Scheduled(cron = "0 1 15 * * *")
     private void caseEight() {
         TopicType topic = TopicType.DISAPPEAR;
-        List<PointEntity> pointEntityList = pointRepository.findByCreatedDateBefore(DisappearDate.DISAPPEAR_DATE.getDisappearDate());
-        if (isFirstCall()) {
+        List<PointEntity> pointEntityList = pointRepository.findByCreatedDateBefore(DisappearDate.getDisappearDate());
+        if (isApplicationInitBeforeOneMinute()) {
             log.trace("First Call - CASE_EIGHT");
         } else if (pointEntityList.isEmpty()) {
             log.trace("Nothing to PUSH - CASE_EIGHT");
@@ -111,7 +109,7 @@ public class PushBatchService {
         LocalDateTime startDate = LocalDate.now().minusMonths(1).withDayOfMonth(1).atStartOfDay();
         LocalDateTime endDate = LocalDate.now().withDayOfMonth(1).atStartOfDay();
         List<RefundEntity> refundEntityList = refundRepository.findByCreatedDateBetween(startDate, endDate);
-        if (isFirstCall()) {
+        if (isApplicationInitBeforeOneMinute()) {
             log.trace("First Call - CASE_NINE");
         } else if (refundEntityList.isEmpty()) {
             log.trace("Nothing to PUSH - CASE_NINE");
@@ -127,7 +125,7 @@ public class PushBatchService {
         LocalDateTime startDate = LocalDate.now().minusYears(1).withDayOfYear(1).atStartOfDay();
         LocalDateTime endDate = LocalDate.now().withDayOfYear(1).atStartOfDay();
         List<RefundEntity> refundEntityList = refundRepository.findByCreatedDateBetween(startDate, endDate);
-        if (isFirstCall()) {
+        if (isApplicationInitBeforeOneMinute()) {
             log.trace("First Call - CASE_TEN");
         } else if (refundEntityList.isEmpty()) {
             log.trace("Nothing to PUSH - CASE_TEN");
@@ -144,7 +142,7 @@ public class PushBatchService {
         LocalDateTime endDate = LocalDate.now().withDayOfMonth(1).atStartOfDay();
         List<RefundEntity> refundEntityList = refundRepository.findByCreatedDateBetween(startDate, endDate);
         Month nowMonth = LocalDate.now().getMonth();
-        if (isFirstCall()) {
+        if (isApplicationInitBeforeOneMinute()) {
             log.trace("First Call - CASE_ELEVEN");
         } else if (!(nowMonth.equals(Month.JANUARY) || nowMonth.equals(Month.JULY))) {
             log.trace("{} NOT JAN OR JULY - CASE_ELEVEN", nowMonth);
@@ -184,10 +182,5 @@ public class PushBatchService {
     private boolean isAfterTwoWeek(FranchiseeApplicantEntity franchiseeApplicantEntity) {
         LocalDateTime minusWeeks = LocalDateTime.now().minusWeeks(2);
         return franchiseeApplicantEntity.getCreatedDate().isBefore(minusWeeks);
-    }
-
-    // 애플리케이션 실행시 첫 실행 방지용 메서드
-    private static boolean isFirstCall() {
-        return (firstCallTime.equals(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmm"))) || firstCallTime.equals(LocalDateTime.now().minusMinutes(1).format(DateTimeFormatter.ofPattern("yyyyMMddHHmm"))));
     }
 }

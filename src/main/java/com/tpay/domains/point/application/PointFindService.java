@@ -68,7 +68,7 @@ public class PointFindService {
 
     // 전체 포인트 / 적립예정포인트 / 소멸예정포인트 한방 Native Query. 순수 Jpa로 Group By 구현이 어렵고 성능이슈에 따라 Native로 남겨둠
     public PointTotalResponseInterface findPointsTotal(Long franchiseeIndex) {
-        LocalDateTime disappearDate = DisappearDate.DISAPPEAR_DATE.getDisappearDate();
+        LocalDateTime disappearDate = DisappearDate.getDisappearDate();
         return pointRepository.findPointsTotal(franchiseeIndex, disappearDate);
     }
 
