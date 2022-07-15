@@ -216,7 +216,7 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
             "         left join franchisee f on o.franchisee_id = f.id\n" +
             "      where substr(o.created_date, 1, 4) = :year\n" +
             "        and substr(o.created_date, 6, 2) = :month\n"+
-            "        and refund_status = 'APPROVAL'\n" +
+            "        and refund_status = 0\n" +
             "group by f.id", nativeQuery = true)
     List<RefundFindResponseInterface> findFranchiseeId(
             @Param("year") String year,

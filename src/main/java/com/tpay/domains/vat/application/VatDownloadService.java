@@ -64,12 +64,12 @@ public class VatDownloadService {
             String saleTerm = (String) localDates.get(2);
             //연월일
             //1. 제출자 인적사항
-            List<String> personalInfoResult = this.findPersonalInfo(franchiseeIndex, saleTerm);
+            boolean isMonthly = false;
+            List<String> personalInfoResult = this.findPersonalInfo(franchiseeIndex, saleTerm,isMonthly);
             //2. 물품판매 총합계
             List<String> totalResult = orderService.findQuarterlyTotal(franchiseeIndex, startDate, endDate);
             //3. 물품판매 명세 (반기)
-            boolean isMonthly = false;
-            List<List<String>> detailResult = orderService.findQuarterlyDetail(franchiseeIndex, startDate, endDate,isMonthly);
+            List<List<String>> detailResult = orderService.findQuarterlyDetail(franchiseeIndex, startDate, endDate);
 
             // 엑셀 테두리, 글꼴
             CellStyle topSectionCellStyle = cellStyleCustom(xssfWorkbook, false);
@@ -159,14 +159,15 @@ public class VatDownloadService {
             FileInputStream fileInputStream = new FileInputStream(file);
             XSSFWorkbook xssfWorkbook = new XSSFWorkbook(fileInputStream);
             XSSFSheet sheet = xssfWorkbook.getSheetAt(0); // 첫번째 시트를 가져옴
-            XSSFSheet sheet2 = xssfWorkbook.getSheetAt(2); // 첫번째 시트를 가져옴
 
             List<String> date = cmsService.setUpDate(requestMonth);
             String year = date.get(0);
             String month = date.get(1);
+            String saleTerm = year + month;
 
             //1. 제출자 인적사항
-            List<String> personalInfoResult = this.findPersonalInfo(franchiseeIndex,month);
+            boolean isMonthly = true;
+            List<String> personalInfoResult = this.findPersonalInfo(franchiseeIndex,saleTerm,isMonthly);
             //2. 물품판매 총합계
             List<String> totalResult = orderService.findMonthlyTotal(franchiseeIndex, year, month);
             //3. 물품판매 명세 (월)
@@ -205,7 +206,7 @@ public class VatDownloadService {
             }
 
             // 2. 물품판매 총합계
-            // 데이터 ex ) totalCount, totalAmount, totalVat
+            // 데이터 ex ) totalCount, totalAmount, totalVat totalRefund
             XSSFRow totalResultRow = sheet.getRow(VatCustomValue.TOTALRESULT_ROW);
             for (int i = 3; i <= 8; i++) {
                 totalResultRow.createCell(i, STRING).setCellStyle(personalInfoResultCellStyle);
@@ -304,7 +305,7 @@ public class VatDownloadService {
         return dateList;
     }
 
-    private List<String> findPersonalInfo(Long franchiseeIndex, String saleTerm) {
+    private List<String> findPersonalInfo(Long franchiseeIndex, String saleTerm, Boolean isMonthly) {
         FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
         FranchiseeUploadEntity franchiseeUploadEntity = franchiseeUploadFindService.findByFranchiseeIndex(franchiseeIndex);
         List<String> result = new ArrayList<>();
@@ -312,6 +313,11 @@ public class VatDownloadService {
         result.add(NumberFormatConverter.addBarToBusinessNumber(franchiseeEntity.getBusinessNumber()));
         result.add(franchiseeEntity.getStoreName());
         result.add(franchiseeEntity.getStoreAddressBasic() + " " + franchiseeEntity.getStoreAddressDetail());
+        if(isMonthly){
+            result.add("20" + saleTerm.substring(0,2) + "년"
+                    + saleTerm.substring(2) + "월 01일 ~ "
+                    + saleTerm.substring(2) + "월 31일 " );
+        }
         result.add(saleTerm);
         result.add(franchiseeUploadEntity.getTaxFreeStoreNumber());
         return result;

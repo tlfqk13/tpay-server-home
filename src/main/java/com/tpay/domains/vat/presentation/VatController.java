@@ -1,7 +1,6 @@
 package com.tpay.domains.vat.presentation;
 
 
-import com.tpay.commons.util.DateFilter;
 import com.tpay.domains.batch.vat_batch.application.VatMonthlySendService;
 import com.tpay.domains.vat.application.VatDownloadService;
 import com.tpay.domains.vat.application.VatHomeTaxService;
