@@ -24,7 +24,7 @@ public class PointDeleteService {
     @Transactional
     @Scheduled(cron = "0 0 23 * * *")
     public String deletePoint() {
-        LocalDateTime disappearDate = DisappearDate.DISAPPEAR_DATE.getDisappearDate();
+        LocalDateTime disappearDate = DisappearDate.getDisappearDate();
         List<PointEntity> pointEntityList = pointRepository.findByCreatedDateBefore(disappearDate);
         if (pointEntityList.isEmpty()) {
             System.out.println("Nothing to Update - Point Deleted");

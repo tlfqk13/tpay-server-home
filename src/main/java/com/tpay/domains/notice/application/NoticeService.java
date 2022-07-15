@@ -102,7 +102,7 @@ public class NoticeService {
     public void updateNotice(Long noticeIndex, DataList dataList) {
         NoticeEntity noticeEntity = noticeRepository.findById(noticeIndex)
             .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid Parameter"));
-        noticeEntity.updateNotice(dataList);
+        noticeEntity.updateNotice(dataList, LocalDateTime.now());
     }
 
     public PushNoticeDto findAllNotice() {
