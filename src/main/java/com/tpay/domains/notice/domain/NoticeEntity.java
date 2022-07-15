@@ -97,11 +97,11 @@ public class NoticeEntity extends BaseTimeEntity {
         return this;
     }
 
-    public void updateNotice(DataList dataList) {
+    public void updateNotice(DataList dataList, LocalDateTime now) {
         this.isFixed = dataList.getIsFixed();
         this.isImmediate = dataList.getIsImmediate();
         this.isInvisible = dataList.getIsInvisible();
-        this.scheduledDate = dataList.getScheduledDate().equals("") ? LocalDateTime.now() : LocalDateTime.parse(dataList.getScheduledDate());
+        this.scheduledDate = dataList.getScheduledDate().equals("") ? now : LocalDateTime.parse(dataList.getScheduledDate());
         this.title = dataList.getTitle();
         this.subTitle1 = dataList.getSubTitle1();
         this.subTitle2 = dataList.getSubTitle2();

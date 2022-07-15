@@ -4,21 +4,35 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
 public enum DateFilter {
-    TODAY(LocalDate.now(), LocalDate.now().plusDays(1)),
-    WEEK(LocalDate.now().minusDays(7), LocalDate.now().plusDays(1)),
-    MONTH(LocalDate.now().minusMonths(1), LocalDate.now().plusDays(1)),
-    YEAR(LocalDate.now().minusYears(1), LocalDate.now().plusDays(1)),
+    TODAY,
+    WEEK,
+    MONTH,
+    YEAR,
     CUSTOM;
 
-    private LocalDate startDate;
-    private LocalDate endDate;
+    public LocalDate getStartDate() {
+        LocalDate now = LocalDate.now();
+        DateFilter curDateFilter = valueOf(this.name());
 
-    DateFilter(LocalDate startDate, LocalDate endDate) {
-        this.startDate = startDate;
-        this.endDate = endDate;
+        if (DateFilter.TODAY == curDateFilter) {
+            return now;
+        } else if (DateFilter.WEEK == curDateFilter) {
+            return now.minusDays(7);
+        } else if (DateFilter.MONTH == curDateFilter) {
+            return now.minusMonths(1);
+        } else if (DateFilter.YEAR == curDateFilter) {
+            return now.minusYears(1);
+        } else {
+            return LocalDate.MIN;
+        }
+    }
+
+    public LocalDate getEndDate() {
+        return CUSTOM != valueOf(this.name()) ? LocalDate.now().plusDays(1) : LocalDate.MAX;
     }
 }

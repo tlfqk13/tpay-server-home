@@ -7,12 +7,8 @@ import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
-public enum DisappearDate {
-    DISAPPEAR_DATE(LocalDateTime.now().minusYears(5).plusMonths(1).minusDays(1));
-
-    private LocalDateTime disappearDate;
-
-    DisappearDate(LocalDateTime disappearDate) {
-        this.disappearDate = disappearDate;
+public class DisappearDate {
+    public static LocalDateTime getDisappearDate(){
+        return LocalDateTime.now().minusYears(5).plusMonths(1).minusDays(1);
     }
 }
