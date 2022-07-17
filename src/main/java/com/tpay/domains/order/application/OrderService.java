@@ -59,7 +59,7 @@ public class OrderService {
         return result;
     }
 
-    public List<List<String>> findQuarterlyDetail(Long franchiseeIndex, LocalDate startDate, LocalDate endDate,boolean isMonthly) {
+    public List<List<String>> findQuarterlyDetail(Long franchiseeIndex, LocalDate startDate, LocalDate endDate) {
         List<VatDetailResponseInterface> vatDetailResponseInterfaceList
                 = orderRepository.findQuarterlyVatDetail(franchiseeIndex, startDate, endDate);
 

@@ -9,19 +9,16 @@ import com.tpay.domains.franchisee.application.FranchiseeFindService;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee_upload.application.FranchiseeUploadFindService;
 import com.tpay.domains.franchisee_upload.domain.FranchiseeUploadEntity;
-import com.tpay.domains.order.application.CmsService;
 import com.tpay.domains.order.application.OrderService;
 import com.tpay.domains.vat.application.dto.VatDetailResponse;
 import com.tpay.domains.vat.application.dto.VatResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.apache.poi.ss.usermodel.CellType.STRING;
 
 @Service
 @RequiredArgsConstructor
@@ -50,7 +47,7 @@ public class VatService {
         List<String> totalResult = orderService.findQuarterlyTotal(franchiseeIndex, startDate, endDate);
         //3. 물품판매 명세
         boolean isMonthly = false;
-        List<List<String>> detailResult = orderService.findQuarterlyDetail(franchiseeIndex, startDate, endDate,isMonthly);
+        List<List<String>> detailResult = orderService.findQuarterlyDetail(franchiseeIndex, startDate, endDate);
 
         return VatDetailResponse.builder()
                 .vatDetailResponsePersonalInfoList(personalInfoResult)
