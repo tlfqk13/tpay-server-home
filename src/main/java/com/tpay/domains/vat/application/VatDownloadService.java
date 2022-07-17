@@ -143,8 +143,6 @@ public class VatDownloadService {
         } catch (IOException e) {
             throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "File Input Failed");
         }
-//    FranchiseeCmsResponseDetailInterface franchiseeCmsResponseDetailInterface = cmsDetail(franchiseeIndex, requestDate);
-//    return "실패";
     }
 
     // TODO: 2022/07/08 가정 6월의 매출내역 메일을 7월 15일 새벽에 생성
@@ -305,7 +303,7 @@ public class VatDownloadService {
         return dateList;
     }
 
-    private List<String> findPersonalInfo(Long franchiseeIndex, String saleTerm, Boolean isMonthly) {
+    private List<String> findPersonalInfo(Long franchiseeIndex, String saleTerm, boolean isMonthly) {
         FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
         FranchiseeUploadEntity franchiseeUploadEntity = franchiseeUploadFindService.findByFranchiseeIndex(franchiseeIndex);
         List<String> result = new ArrayList<>();

@@ -12,6 +12,8 @@ import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 
+import static com.tpay.commons.util.KtpCommonUtil.isApplicationInitBeforeOneMinute;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -32,8 +34,15 @@ public class VatMonthlySendService {
         String year = date.get(0);
         String month = date.get(1);
         List<List<String>> totalResult = refundDetailFindService.findFranchiseeId(year, month);
-        for (List<String> strings : totalResult) {
-            vatDownloadService.vatMonthlySendMailFile(Long.valueOf(strings.get(0)), requestYearMonthly);
+
+        if(isApplicationInitBeforeOneMinute()){
+            log.trace("First Call - vatMonthlyFile");
+        }else if(totalResult.isEmpty()){
+            log.trace("TotalResult is Nothing");
+        }else{
+            for (List<String> strings : totalResult) {
+                vatDownloadService.vatMonthlySendMailFile(Long.valueOf(strings.get(0)), requestYearMonthly);
+            }
         }
     }
 }
