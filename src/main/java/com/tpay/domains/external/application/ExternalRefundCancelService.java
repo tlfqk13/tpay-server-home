@@ -6,6 +6,7 @@ import com.tpay.commons.custom.CustomValue;
 import com.tpay.commons.exception.detail.InvalidExternalRefundIndexException;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.logger.CommonLogger;
+import com.tpay.commons.push.PushCategoryType;
 import com.tpay.commons.webClient.WebRequestUtil;
 import com.tpay.domains.customer.application.CustomerFindService;
 import com.tpay.domains.customer.domain.CustomerEntity;
@@ -17,6 +18,7 @@ import com.tpay.domains.franchisee.application.FranchiseeFindService;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.point.domain.SignType;
 import com.tpay.domains.point_scheduled.application.PointScheduledChangeService;
+import com.tpay.domains.push.application.NonBatchPushService;
 import com.tpay.domains.refund.domain.RefundEntity;
 import com.tpay.domains.refund_core.application.dto.RefundCancelRequest;
 import com.tpay.domains.refund_core.application.dto.RefundResponse;
@@ -33,6 +35,7 @@ public class ExternalRefundCancelService {
     private final CustomerFindService customerFindService;
     private final PointScheduledChangeService pointScheduledChangeService;
     private final FranchiseeFindService franchiseeFindService;
+    private final NonBatchPushService nonBatchPushService;
 
     private final WebRequestUtil webRequestUtil;
     private final S3FileUploader s3FileUploader;
@@ -70,17 +73,23 @@ public class ExternalRefundCancelService {
 
             refundEntity.updateCancel(refundResponse.getResponseCode());
             externalRefundEntity.changeStatus(ExternalRefundStatus.CANCEL);
-            FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(externalRefundEntity.getFranchiseeIndex());
+            Long externalRefundFranchiseeIndex = externalRefundEntity.getFranchiseeIndex();
+            FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(externalRefundFranchiseeIndex);
             pointScheduledChangeService.change(refundEntity, SignType.NEGATIVE, franchiseeEntity.getBalancePercentage());
 
             commonLogger.point2(externalRefundIndex, "성공적으로 취소되었습니다.");
             ExternalRefundResponse result = ExternalRefundResponse.builder()
-                .responseCode(refundResponse.getResponseCode())
-                .payment(0)
-                .message(refundResponse.getMessage())
-                .build();
+                    .responseCode(refundResponse.getResponseCode())
+                    .payment(0)
+                    .message(refundResponse.getMessage())
+                    .build();
 
             commonLogger.tailLine(externalRefundIndex, "외부 취소 종료");
+
+            commonLogger.headline(externalRefundFranchiseeIndex, "푸시 전달 시작");
+            nonBatchPushService.nonBatchPushNSave(PushCategoryType.REFUND_CANCEL_SCREEN_REFRESH_WITH_EXTERNAL, externalRefundFranchiseeIndex);
+            commonLogger.tailLine(externalRefundFranchiseeIndex, "푸시 전달 종료");
+
             return result;
         } catch (InvalidExternalRefundIndexException e) {
             commonLogger.error1(externalRefundCancelRequest.getExternalRefundIndex(), "K9101", "인덱스 조회 실패");

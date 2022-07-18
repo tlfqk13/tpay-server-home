@@ -20,8 +20,15 @@ public enum PushCategoryType {
     CASE_TWELVE("12", "ktp://notification", "\uD83D\uDC49내일은 환급수수료가 이체되는 날이에요", "마이페이지에서 ‘CMS 청구내역’을 확인해보세요!"),
     CASE_THIRTEEN("13", "ktp://notification", "환급수수료가 정상적으로 이체되었어요\uD83D\uDE00", "출금된 금액 : "),
     CASE_FOURTEEN("14", "ktp://notification", "직원이 로그인했어요\uD83D\uDC4B", "님이 직원 계정으로 로그인을 했어요."),
-    CASE_FIFTEEN("15", "ktp://notification", "", "");
+    CASE_FIFTEEN("15", "ktp://notification", "", ""),
 
+
+    /**
+     * 개발용, 사용자 노출이 아닌 back 에서 front 로 알림이 필요한 경우
+     * pushCategory 9000번대 부터 사용
+     */
+    REFUND_CANCEL_SCREEN_REFRESH_WITH_EXTERNAL("9000", "", "", "")
+    ;
 
     private final String pushCategory;
     private final String link;
