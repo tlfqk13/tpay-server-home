@@ -112,16 +112,6 @@ public class CmsService {
             secondSection(sheet,topSectionInfo);
             // 총 건수 . 청구 금액
             totalResultRow(sheet,totalResult);
-<<<<<<< HEAD
-
-            if(detailMonthlyResult.size() <= 15){
-                // 물품상세 내역
-                detailResultRow(sheet,detailMonthlyResult,totalResult);
-            }else{
-                return null;
-            }
-=======
->>>>>>> cf3de62 (CMS excel 파일 월생성)
 
             if(detailMonthlyResult.size() <= 15){
                 // 물품상세 내역
