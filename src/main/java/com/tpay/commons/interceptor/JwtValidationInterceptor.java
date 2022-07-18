@@ -6,6 +6,9 @@ import com.tpay.commons.jwt.AuthToken;
 import com.tpay.commons.jwt.JwtUtils;
 import com.tpay.commons.util.UserSelector;
 import com.tpay.domains.employee.application.EmployeeFindService;
+import com.tpay.domains.employee.domain.EmployeeEntity;
+import com.tpay.domains.franchisee.application.FranchiseeFindService;
+import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee_applicant.application.FranchiseeApplicantFindService;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
 import io.jsonwebtoken.Claims;
@@ -18,6 +21,8 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.util.Optional;
 
 import static com.tpay.commons.util.UserSelector.EMPLOYEE;
 import static com.tpay.commons.util.UserSelector.FRANCHISEE;
@@ -46,6 +51,7 @@ public class JwtValidationInterceptor implements HandlerInterceptor {
     private final JwtUtils jwtUtils;
     private final FranchiseeApplicantFindService franchiseeApplicantFindService;
     private final EmployeeFindService employeeFindService;
+    private final FranchiseeFindService franchiseeFindService;
 
     // 인터셉터 프리핸들 메서드 오버라이드
     @Override
@@ -57,30 +63,58 @@ public class JwtValidationInterceptor implements HandlerInterceptor {
     private boolean validationCheck(HttpServletRequest request) {
 
         Claims claims = getClaims(request);
-        IndexInfo indexInfo = getIndexFromClaims(claims);
-        IndexInfo indexFromUri = getIndexFromUri(request);
+        IndexInfo tokenInfo = getIndexFromClaims(claims);
+        IndexInfo uriInfo = getIndexFromUri(request);
 
-        if (indexInfo.getUserSelector().equals(indexFromUri.userSelector) && indexInfo.getIndex().equals(indexFromUri.getIndex())) {
+        UserSelector tokenUserSelector = tokenInfo.getUserSelector();
+        String tokenIndex = tokenInfo.getIndex();
+        String uriIndex = uriInfo.getIndex();
+        if (tokenInfo.getUserSelector().equals(uriInfo.userSelector) && tokenIndex.equals(uriIndex)) {
+            if (FRANCHISEE == tokenUserSelector) {
+                findFranchiseeById(tokenIndex, request.getRequestURI());
+            } else {
+                Optional<EmployeeEntity> employeeEntityOptional = employeeFindService.findById(Long.parseLong(tokenIndex));
+                if(employeeEntityOptional.isPresent()){
+                    EmployeeEntity employeeEntity = employeeEntityOptional.get();
+                    FranchiseeEntity franchiseeEntity = employeeEntity.getFranchiseeEntity();
+                    findFranchiseeById(franchiseeEntity.getId(), request.getRequestURI());
+                } else {
+                    throw new JwtRuntimeException(ExceptionState.INVALID_TOKEN, "jwt A Error : Authorization & URIInfo mismatch");
+                }
+            }
             return true;
-        } else if(indexInfo.getUserSelector().equals(EMPLOYEE) && indexFromUri.getUserSelector().equals(FRANCHISEE)) {
-            Long id = employeeFindService.findById(Long.parseLong(indexInfo.getIndex())).get().getFranchiseeEntity().getId();
+        } else if(tokenInfo.getUserSelector().equals(EMPLOYEE) && uriInfo.getUserSelector().equals(FRANCHISEE)) {
+            Long id = employeeFindService.findById(Long.parseLong(tokenIndex)).get().getFranchiseeEntity().getId();
             String franchiseeIndexFromEmployee = String.valueOf(id);
 
-            if(franchiseeIndexFromEmployee.equals(indexFromUri.getIndex())){
+            if(franchiseeIndexFromEmployee.equals(uriIndex)){
                 return true;
             }
             log.warn("REQUEST URI : {}", request.getRequestURI());
-            log.warn("INDEX FROM URI : {} {}", indexFromUri.getUserSelector(),indexFromUri.getIndex());
+            log.warn("INDEX FROM URI : {} {}", uriInfo.getUserSelector(), uriIndex);
             log.warn("FRANCHISEE INDEX FROM EMPLOYEE : {}", franchiseeIndexFromEmployee);
-            log.warn("INDEX FROM AUTH: {} {}", indexInfo.getUserSelector(), indexInfo.getIndex());
+            log.warn("INDEX FROM AUTH: {} {}", tokenInfo.getUserSelector(), tokenIndex);
             throw new JwtRuntimeException(ExceptionState.INVALID_TOKEN, "jwt A Error : Authorization & URIInfo mismatch");
         } else {
             log.warn("REQUEST URI : {}", request.getRequestURI());
-            log.warn("INDEX FROM URI : {} {}", indexFromUri.getUserSelector(),indexFromUri.getIndex());
-            log.warn("INDEX FROM AUTH: {} {}", indexInfo.getUserSelector(), indexInfo.getIndex());
+            log.warn("INDEX FROM URI : {} {}", uriInfo.getUserSelector(), uriIndex);
+            log.warn("INDEX FROM AUTH: {} {}", tokenInfo.getUserSelector(), tokenIndex);
             throw new JwtRuntimeException(ExceptionState.INVALID_TOKEN, "jwt B Error : Authorization & URIInfo mismatch");
         }
+    }
 
+    private void findFranchiseeById(String tokenIndex, String requestUri) {
+        findFranchiseeById(Long.parseLong(tokenIndex), requestUri);
+    }
+
+    private void findFranchiseeById(Long tokenIndex, String requestUri) {
+        try {
+            franchiseeFindService.findByIndex(tokenIndex);
+        } catch (IllegalArgumentException e) {
+            log.warn("REQUEST URI : {}", requestUri);
+            log.warn("INDEX FROM AUTH: {} {}", "FRANCHISEE", tokenIndex);
+            throw new JwtRuntimeException(ExceptionState.MISMATCH_TOKEN, "jwt C Error : Authorization info mismatch");
+        }
     }
 
     //jwt AT 토큰 파싱
