@@ -52,7 +52,7 @@ cloud:
 spring:
   config:
     activate:
-      on-profile: local
+      on-profile: local #, security
   datasource:
     url: jdbc:h2:mem:testdb
     driver-class-name: org.h2.Driver

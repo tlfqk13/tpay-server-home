@@ -3,6 +3,7 @@ package com.tpay.domains.auth.application;
 
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
+import com.tpay.domains.auth.application.dto.SignInDto;
 import com.tpay.domains.auth.application.dto.SignInRequest;
 import com.tpay.domains.auth.application.dto.SignInTokenInfo;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,15 @@ public class SignInService {
             return employeeSignInService.signIn(signInRequest.getUserId(), signInRequest.getPassword());
         } else {
             throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Parse Failed");
+        }
+    }
+
+    @Transactional
+    public SignInTokenInfo signInNew(SignInDto.Request signInRequest) {
+        if(null == signInRequest.getUserId() || signInRequest.getUserId().isBlank()){
+            return franchiseeSignInService.signInNew(signInRequest.getBusinessNumber(), signInRequest.getPassword(), signInRequest.getPushToken());
+        } else {
+            return employeeSignInService.signIn(signInRequest.getUserId(), signInRequest.getPassword());
         }
     }
 }
