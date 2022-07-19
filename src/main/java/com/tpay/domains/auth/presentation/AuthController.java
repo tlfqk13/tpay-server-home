@@ -3,7 +3,6 @@ package com.tpay.domains.auth.presentation;
 import com.tpay.domains.auth.application.SignInService;
 import com.tpay.domains.auth.application.SignOutService;
 import com.tpay.domains.auth.application.TokenUpdateService;
-import com.tpay.domains.auth.application.dto.SignInDto;
 import com.tpay.domains.auth.application.dto.SignInRequest;
 import com.tpay.domains.auth.application.dto.SignInTokenInfo;
 import com.tpay.domains.auth.application.dto.SignOutRequest;
@@ -47,27 +46,5 @@ public class AuthController {
     public ResponseEntity<SignInTokenInfo> refresh(
         @RequestBody SignInTokenInfo signInTokenInfo) {
         return ResponseEntity.ok(tokenUpdateService.refresh(signInTokenInfo));
-    }
-
-    /**
-     * Spring security Sign-in and out
-     * Not applied yet
-     */
-
-    @PostMapping("/sign-in-new")
-    ResponseEntity<SignInTokenInfo> signIn(@RequestBody SignInDto.Request signInRequest) {
-        SignInTokenInfo signInTokenInfo = signInService.signInNew(signInRequest);
-        return ResponseEntity.ok(signInTokenInfo);
-    }
-
-    @DeleteMapping("/sign-out-new")
-    public ResponseEntity<String> signOut() {
-        String result = signOutService.signOutNew();
-        return ResponseEntity.ok(result);
-    }
-
-    @GetMapping("/test-access")
-    ResponseEntity<String> test() {
-        return ResponseEntity.ok("ok");
     }
 }
