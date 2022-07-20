@@ -43,5 +43,4 @@ public class SignOutService {
             throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid Parameter(FRANCHISEE or EMPLOYEE)");
         }
     }
-
 }

@@ -19,6 +19,7 @@ public enum ExceptionState {
     AUTHENTICATION_FAILED(401, HttpStatus.UNAUTHORIZED, "A0001", "Invalid Authentication"),
     INVALID_TOKEN(401, HttpStatus.UNAUTHORIZED, "A0002", "Invalid Auth Token"),
     FORCE_REFRESH(401, HttpStatus.UNAUTHORIZED, "A0003", "Sign-in Again"),
+    MISMATCH_TOKEN(401, HttpStatus.UNAUTHORIZED, "A0004", "Authentication info not matched"),
     REFUND(400, HttpStatus.BAD_REQUEST, "R0001", "Refund Exception"),
     INVALID_PASSPORT_INFO(400, HttpStatus.BAD_REQUEST, "E0001", "Contact Backend Developer"),
     INVALID_EXTERNAL_REFUND_INDEX(400,HttpStatus.BAD_REQUEST,"G0001","Invalid External Refund Index"),

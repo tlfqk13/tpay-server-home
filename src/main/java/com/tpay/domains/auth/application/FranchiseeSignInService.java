@@ -26,7 +26,6 @@ public class FranchiseeSignInService {
     private final UserPushTokenService userPushTokenService;
     private final PushTokenService pushTokenService;
 
-
     @Transactional
     public SignInTokenInfo signIn(String businessNumber, String password, String pushToken) {
         FranchiseeApplicantEntity franchiseeApplicantEntity = franchiseeApplicantFindService.findByBusinessNumber(businessNumber);
