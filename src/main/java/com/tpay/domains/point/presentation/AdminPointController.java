@@ -26,12 +26,12 @@ public class AdminPointController {
     /**
      * 기본 조회
      */
-    @GetMapping("/{isAll}/{withdrawalStatus}")
+    @GetMapping("/{isAll}/{withdrawalStatus}/{page}")
     public ResponseEntity<List<AdminPointResponse>> findPointsAdmin(
         @PathVariable Boolean isAll,
-        @PathVariable WithdrawalStatus withdrawalStatus
-    ) {
-        List<AdminPointResponse> pointsAdmin = pointFindService.findPointsAdmin(isAll, withdrawalStatus);
+        @PathVariable WithdrawalStatus withdrawalStatus,
+        @PathVariable int page) {
+        List<AdminPointResponse> pointsAdmin = pointFindService.findPointsAdmin(isAll, withdrawalStatus,page);
         return ResponseEntity.ok(pointsAdmin);
     }
 

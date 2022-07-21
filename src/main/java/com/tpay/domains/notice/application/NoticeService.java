@@ -13,7 +13,7 @@ import com.tpay.domains.notice.domain.NoticeRepository;
 import com.tpay.domains.push.application.dto.PushNoticeDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -59,8 +59,10 @@ public class NoticeService {
         }
     }
 
-    public List<CommonNoticeFindDto.FindAllResponse> getAll() {
-        List<NoticeEntity> noticeEntityList = noticeRepository.findAll(Sort.by("id").descending());
+    public List<CommonNoticeFindDto.FindAllResponse> getAll(int page) {
+        PageRequest pageRequest = PageRequest.of(page,10);
+        //List<NoticeEntity> noticeEntityList = noticeRepository.findAll(Sort.by("id").descending());
+        List<NoticeEntity> noticeEntityList = noticeRepository.findAllByOrderByIdDesc(pageRequest);
         return noticeEntityList.stream().map(CommonNoticeFindDto.FindAllResponse::new).collect(Collectors.toList());
     }
 

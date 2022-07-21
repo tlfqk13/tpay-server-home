@@ -59,6 +59,8 @@ public class FranchiseeApplicantDetailService {
             .withdrawalDate(franchiseeBankEntity.getWithdrawalDate())
             .rejectReason(franchiseeApplicantEntity.getRejectReason())
 
+            .balancePercentage(franchiseeEntity.getBalancePercentage())
+
             .employeeFindResponseInterfaceList(employeeResponse)
             .build();
         return franchiseeApplicantDetailResponse;

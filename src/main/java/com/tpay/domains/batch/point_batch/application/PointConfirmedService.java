@@ -42,7 +42,7 @@ public class PointConfirmedService {
             PointEntity pointEntity = PointEntity.builder()
                 .createdDate(LocalDateTime.now())
                 .signType(SignType.POSITIVE)
-                .change(orderEntity.getPoints())
+                .change(orderEntity.getPointsWithPercentage(franchiseeEntity.getBalancePercentage()))
                 .pointStatus(PointStatus.SAVE)
                 .balance(franchiseeEntity.getBalance())
                 .franchiseeEntity(franchiseeEntity)
@@ -51,7 +51,7 @@ public class PointConfirmedService {
                 .build();
             pointRepository.save(pointEntity);
             pointScheduledEntity.updateStatusSave();
-            franchiseeEntity.changeBalance(SignType.POSITIVE, orderEntity.getPoints());
+            franchiseeEntity.changeBalance(SignType.POSITIVE, orderEntity.getPointsWithPercentage(franchiseeEntity.getBalancePercentage()));
         }
         log.trace("{} Entity was Updated", pointScheduledEntityList.size());
     }

@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -19,7 +21,7 @@ public class PointScheduledChangeService {
 
     private final PointScheduledRepository pointScheduledRepository;
 
-    public PointScheduledEntity change(RefundEntity refundEntity, SignType signType, Integer balancePercentage) {
+    public PointScheduledEntity change(RefundEntity refundEntity, SignType signType, Double balancePercentage) {
         OrderEntity orderEntity = refundEntity.getOrderEntity();
         FranchiseeEntity franchiseeEntity = orderEntity.getFranchiseeEntity();
         long pointsWithPercentage = orderEntity.getPointsWithPercentage(balancePercentage);

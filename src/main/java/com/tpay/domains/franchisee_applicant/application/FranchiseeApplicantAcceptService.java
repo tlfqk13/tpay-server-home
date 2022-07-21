@@ -43,8 +43,8 @@ public class FranchiseeApplicantAcceptService {
 
         // TODO: 2022/06/15 필수입력으로 전환시 if 제거
         try {
-            if(!franchiseeFindRequest.getBalancePercentage().isEmpty()){
-                String balancePercentage = franchiseeFindRequest.getBalancePercentage();
+            if(franchiseeFindRequest.getBalancePercentage() != null){
+                Double balancePercentage = franchiseeFindRequest.getBalancePercentage();
                 franchiseeEntity.updateBalancePercentage(balancePercentage);
             }
         } catch (NullPointerException e){
