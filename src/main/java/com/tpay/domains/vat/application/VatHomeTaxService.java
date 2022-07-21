@@ -7,6 +7,7 @@ import com.tpay.domains.franchisee.application.FranchiseeFindService;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee_upload.application.FranchiseeUploadFindService;
 import com.tpay.domains.franchisee_upload.domain.FranchiseeUploadEntity;
+import com.tpay.domains.order.application.CmsService;
 import com.tpay.domains.order.application.OrderService;
 import com.tpay.domains.vat.HomeTaxConstant;
 import com.tpay.domains.vat.application.dto.VatDetailResponseInterface;
@@ -16,15 +17,19 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import static com.tpay.domains.vat.HomeTaxConstant.*;
 import static com.tpay.domains.vat.HomeTaxConstant.BUSINESS_REG_NUMBER;
+import static com.tpay.domains.vat.application.VatCustomValue.HOMETAX_FIRST_OF_YEAR;
+import static com.tpay.domains.vat.application.VatCustomValue.HOMETAX_SECOND_OF_YEAR;
 
 @Slf4j
 @Service
@@ -34,6 +39,8 @@ public class VatHomeTaxService {
     private final OrderService orderService;
     private final FranchiseeFindService franchiseeFindService;
     private final FranchiseeUploadFindService franchiseeUploadFindService;
+
+    private final CmsService cmsService; //zip 파일 생성용 테스트
 
     private static final String TEST_BIZ_NUM = "2390401226";
 
@@ -45,7 +52,7 @@ public class VatHomeTaxService {
     private static final String CHARSET = "EUC-KR";
     private static final String REFUND_CORP_NUM = "2390401226";
 
-    public VatHomeTaxDto.Response createHomeTaxUploadFile(Long franchiseeIndex, String requestDate) {
+    public VatHomeTaxDto.Response createHomeTaxUploadFile(Long franchiseeIndex, String requestDate) throws IOException {
         List<LocalDate> localDates = setUpDate(requestDate);
         LocalDate startDate = localDates.get(0);
         LocalDate endDate = localDates.get(1);
@@ -78,7 +85,7 @@ public class VatHomeTaxService {
         return dateList;
     }
 
-    private void createHomeTaxRecords(Long franchiseeIndex, LocalDate startDate, LocalDate endDate) {
+    private void createHomeTaxRecords(Long franchiseeIndex, LocalDate startDate, LocalDate endDate) throws IOException {
         FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
 
         if (!franchiseeEntity.getIsRefundOnce()) {
@@ -107,16 +114,17 @@ public class VatHomeTaxService {
         byte[] homeTaxUploadData = convertByteArrayUsingCharset(dataString.toString());
 
         // TODO 데이터 저장 위치와 형태, 제목 설정하고 저장하는 로직 추가
-        
-//        File file = new File("/home/ec2-user/testdata/" + fileName);
-//        try (FileOutputStream outStream = new FileOutputStream(file)) {
-//            outStream.write(convertByteArrayUsingCharset(dataString.toString()));
-//            log.trace("Home tax upload file save success = {} ", fileName);
-//        } catch (IOException e) {
-//            log.error("Home tax upload file saved failed");
-//            throw new UnknownException(ExceptionState.UNKNOWN, "홈택스 파일 쓰기 실패");
-//        }
-        
+
+        //File file = new File("/home/ec2-user/testdata/" + fileName);
+        File file = new File("/home/success/downloads/" + fileName);
+        try (FileOutputStream outStream = new FileOutputStream(file)) {
+            outStream.write(convertByteArrayUsingCharset(dataString.toString()));
+            log.trace("Home tax upload file save success = {} ", fileName);
+        } catch (IOException e) {
+            log.error("Home tax upload file saved failed");
+            throw new UnknownException(ExceptionState.UNKNOWN, "홈택스 파일 쓰기 실패");
+        }
+       zipFileDown(1,fileName,franchiseeEntity.getStoreName(),endDate);
     }
     
     private byte[] creatHeadRecord(FranchiseeEntity franchiseeEntity, LocalDate endDate) {
@@ -284,5 +292,45 @@ public class VatHomeTaxService {
         }
 
         return data;
+    }
+    // 홈텍스 zipFile 만들기
+    private void zipFileDown(int i, String homeTaxFileName, String storeName, LocalDate endDate) throws IOException {
+
+        final String folder = "/home/success/downloads/";
+
+        List<File> files = new ArrayList<>();
+        for(int j=0;j<i;j++){
+            File file = new File(folder,homeTaxFileName);
+            files.add(file);
+        }
+
+        String zipFileName = null;
+        String zipTitleYear = endDate.toString().substring(0,4);
+        String zipTitleMonth = endDate.toString().substring(5,6);
+
+        if(Integer.parseInt(zipTitleMonth) < 7){
+            // 2022가게 이름_전반기
+            zipFileName = zipTitleYear + " " + storeName + HOMETAX_FIRST_OF_YEAR;
+        }else{
+            zipFileName = zipTitleYear + " " + storeName + HOMETAX_SECOND_OF_YEAR;
+        }
+
+        File zipFile = new File(folder,zipFileName + ".zip");
+        byte[] buf = new byte[4096];
+        try(ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zipFile))){
+            for(File file : files){
+                try(FileInputStream in = new FileInputStream(file)){
+                    ZipEntry ze = new ZipEntry(file.getName());
+                    out.putNextEntry(ze);
+                    int len;
+                    while((len = in.read(buf))>0){
+                        out.write(buf,0,len);
+                    }
+                    out.closeEntry();
+                }
+            }
+        }
+        System.out.println("Zip Success");
+
     }
 }

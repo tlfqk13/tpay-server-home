@@ -54,9 +54,9 @@ public class S3FileUploader {
         AWSCredentials awsCredentials = new BasicAWSCredentials(this.accessKey, this.secretKey);
 
         s3Client = AmazonS3ClientBuilder.standard()
-            .withCredentials(new AWSStaticCredentialsProvider(awsCredentials))
-            .withRegion(this.region)
-            .build();
+                .withCredentials(new AWSStaticCredentialsProvider(awsCredentials))
+                .withRegion(this.region)
+                .build();
     }
 
     /**
@@ -69,7 +69,7 @@ public class S3FileUploader {
         objectMetadata.setContentDisposition("attachment; filename=\"" + franchiseeIndex + imageCategory + ".jpg\"");
         String key = profileName + "/" + franchiseeIndex + imageCategory;
         s3Client.putObject(new PutObjectRequest(bucket, key, file.getInputStream(), objectMetadata)
-            .withCannedAcl(CannedAccessControlList.PublicRead));
+                .withCannedAcl(CannedAccessControlList.PublicRead));
         return s3Client.getUrl(bucket, key).toString();
     }
 
@@ -82,7 +82,7 @@ public class S3FileUploader {
         objectMetadata.setContentLength(file.getSize());
         String key = "notice/" + profileName + "/" + noticeIndex + "/" + fileName;
         s3Client.putObject(new PutObjectRequest(bucket, key, file.getInputStream(), objectMetadata)
-            .withCannedAcl(CannedAccessControlList.PublicRead));
+                .withCannedAcl(CannedAccessControlList.PublicRead));
         return s3Client.getUrl(bucket, key).toString();
     }
 
@@ -96,8 +96,8 @@ public class S3FileUploader {
         keys.add(new DeleteObjectsRequest.KeyVersion("notice/" + profileName + "/" + noticeIndex + "/subImg2"));
         keys.add(new DeleteObjectsRequest.KeyVersion("notice/" + profileName + "/" + noticeIndex + "/subImg3"));
         DeleteObjectsRequest multipleDeleteObjectsRequest = new DeleteObjectsRequest(bucket)
-            .withKeys(keys)
-            .withQuiet(false);
+                .withKeys(keys)
+                .withQuiet(false);
         DeleteObjectsResult deleteObjectsResult = s3Client.deleteObjects(multipleDeleteObjectsRequest);
         log.trace("successful delete = {}", deleteObjectsResult.getDeletedObjects().size());
     }
@@ -135,8 +135,8 @@ public class S3FileUploader {
      * 바코드 삭제
      */
     public void deleteBarcode(Long id) {
-        String key = "barcode/"+id;
-        s3Client.deleteObject(bucket,key);
+        String key = "barcode/" + id;
+        s3Client.deleteObject(bucket, key);
     }
 
     /**
@@ -154,14 +154,14 @@ public class S3FileUploader {
         String key = profileName + "/" + franchiseeIndex + "excelTest";
         try {
             s3Client.putObject(new PutObjectRequest(bucket, key, byteArrayInputStream, objectMetaData)
-                .withCannedAcl(CannedAccessControlList.PublicRead));
+                    .withCannedAcl(CannedAccessControlList.PublicRead));
         } finally {
             byteArrayInputStream.close();
         }
         return s3Client.getUrl(bucket, key).toString();
     }
 
-    public String uploadXlsx(Long franchiseeIndex, XSSFWorkbook xssfWorkbook, String fileName,String month) throws IOException {
+    public String uploadXlsx(Long franchiseeIndex, XSSFWorkbook xssfWorkbook, String fileName, String month) throws IOException {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         xssfWorkbook.write(byteArrayOutputStream);
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
