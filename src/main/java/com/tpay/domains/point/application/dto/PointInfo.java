@@ -7,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+
 import java.time.format.DateTimeFormatter;
 
 @Getter
@@ -17,7 +18,6 @@ public class PointInfo {
     private Long value;
     private PointStatus pointStatus;
 
-
     public PointInfo(PointScheduledEntity pointScheduledEntity) {
         this.datetime = pointScheduledEntity.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH.mm.ss"));
         this.totalAmount = pointScheduledEntity.getOrderEntity().getTotalAmount();
@@ -27,6 +27,7 @@ public class PointInfo {
 
     public PointInfo(PointEntity pointEntity) {
         this.datetime = pointEntity.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH.mm.ss"));
+        this.totalAmount = pointEntity.getOrderEntity().getTotalAmount();
         this.value = pointEntity.getChange();
         this.pointStatus = pointEntity.getPointStatus();
     }

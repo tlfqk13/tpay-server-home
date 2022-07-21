@@ -9,6 +9,7 @@ import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantRepository;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeStatus;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -41,6 +42,14 @@ public class FranchiseeApplicantFindService {
 
     public List<FranchiseeApplicantInfo> findAll() {
         List<FranchiseeApplicantEntity> franchiseeApplicantEntityList = franchiseeApplicantRepository.findAllByOrderByIdDesc();
+        return franchiseeApplicantEntityList.stream().map(FranchiseeApplicantInfo::toResponse).collect(Collectors.toList());
+    }
+
+    // TODO: 2022/07/21 관리자페이지 페이징 기능 개발
+    public List<FranchiseeApplicantInfo> findAll(int page) {
+        PageRequest pageRequest = PageRequest.of(page,10);
+        List<FranchiseeApplicantEntity> franchiseeApplicantEntityList =
+                franchiseeApplicantRepository.findAllByOrderByIdDesc(pageRequest);
         return franchiseeApplicantEntityList.stream().map(FranchiseeApplicantInfo::toResponse).collect(Collectors.toList());
     }
 

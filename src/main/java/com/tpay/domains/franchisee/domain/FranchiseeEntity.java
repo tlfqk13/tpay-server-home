@@ -2,7 +2,6 @@ package com.tpay.domains.franchisee.domain;
 
 import com.tpay.domains.BaseTimeEntity;
 import com.tpay.domains.franchisee.application.dto.FranchiseeUpdateDtoRequest;
-import com.tpay.domains.franchisee.application.dto.FranchiseeUpdateDtoResponse;
 import com.tpay.domains.point.domain.SignType;
 import com.tpay.domains.pos.domain.PosType;
 import lombok.*;
@@ -10,6 +9,7 @@ import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -101,7 +101,7 @@ public class FranchiseeEntity extends BaseTimeEntity {
     private PosType posType;
 
     @Column
-    private Integer balancePercentage;
+    private Double balancePercentage;
 
     @Builder
     public FranchiseeEntity(
@@ -118,7 +118,8 @@ public class FranchiseeEntity extends BaseTimeEntity {
         String signboard,
         String storeNumber,
         String email,
-        String isTaxRefundShop
+        String isTaxRefundShop,
+        Double balancePercentage
     ) {
         this.memberName = "";
         this.memberNumber = "";
@@ -143,7 +144,7 @@ public class FranchiseeEntity extends BaseTimeEntity {
         this.isActiveVibration = true;
         this.isConnectedPos = false;
         this.posType = PosType.INIT;
-        this.balancePercentage = 30;
+        this.balancePercentage = balancePercentage;
     }
 
     public FranchiseeEntity changeBalance(SignType signType, long change) {
@@ -205,7 +206,8 @@ public class FranchiseeEntity extends BaseTimeEntity {
         return this;
     }
 
-    public void updateBalancePercentage(String balancePercentage) {
-        this.balancePercentage = Integer.parseInt(balancePercentage);
+    public Double updateBalancePercentage(Double balancePercentage) {
+        this.balancePercentage = balancePercentage;
+        return balancePercentage;
     }
 }
