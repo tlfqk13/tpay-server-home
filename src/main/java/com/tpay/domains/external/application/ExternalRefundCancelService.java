@@ -87,7 +87,8 @@ public class ExternalRefundCancelService {
             commonLogger.tailLine(externalRefundIndex, "외부 취소 종료");
 
             commonLogger.headline(externalRefundFranchiseeIndex, "푸시 전달 시작");
-            nonBatchPushService.nonBatchPushNSave(PushCategoryType.REFUND_CANCEL_SCREEN_REFRESH_WITH_EXTERNAL, externalRefundFranchiseeIndex);
+            nonBatchPushService.nonBatchPushNSave(PushCategoryType.REFUND_CANCEL_SCREEN_REFRESH_WITH_EXTERNAL,
+                    externalRefundFranchiseeIndex, false);
             commonLogger.tailLine(externalRefundFranchiseeIndex, "푸시 전달 종료");
 
             return result;

@@ -72,9 +72,9 @@ public class DeveloperPushController {
 
     }
 
-    @GetMapping("/fcm/dev/push/refresh/{id}")
+    @PostMapping("/fcm/dev/push/refresh/{id}")
     public void refundRefreshPush(@PathVariable Long id) {
-        nonBatchPushService.nonBatchPushWithTopic(PushCategoryType.REFUND_CANCEL_SCREEN_REFRESH_WITH_EXTERNAL, id);
+        nonBatchPushService.nonBatchPushNSave(PushCategoryType.REFUND_CANCEL_SCREEN_REFRESH_WITH_EXTERNAL, id, false);
 
     }
 
