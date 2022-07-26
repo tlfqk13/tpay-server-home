@@ -17,7 +17,7 @@ public class FranchiseeApplicantSetBalancePerService {
     private final FranchiseeFindService franchiseeFindService;
 
     @Transactional
-    public Double updateBalancePercentage(Long franchiseeApplicantIndex, FranchiseeApplicantSetBalancePerRequest franchiseeApplicantSetBalancePerRequest) {
+    public double updateBalancePercentage(Long franchiseeApplicantIndex, FranchiseeApplicantSetBalancePerRequest franchiseeApplicantSetBalancePerRequest) {
         FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeApplicantIndex);
         return franchiseeEntity.updateBalancePercentage(franchiseeApplicantSetBalancePerRequest.getBalancePercentage());
     }

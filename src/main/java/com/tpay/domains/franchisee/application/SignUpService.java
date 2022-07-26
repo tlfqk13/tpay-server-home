@@ -58,7 +58,7 @@ public class SignUpService {
         }
 
         String encodedPassword = passwordEncoder.encode(password);
-        Double defaultBalancePercentage = (double)0;
+        double defaultBalancePercentage = 0;
         FranchiseeEntity franchiseeEntity =
             FranchiseeEntity.builder()
                 .businessNumber(request.getBusinessNumber())

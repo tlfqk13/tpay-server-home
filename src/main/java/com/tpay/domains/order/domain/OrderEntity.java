@@ -127,7 +127,7 @@ public class OrderEntity extends BaseTimeEntity {
         return points;
     }
 
-    public long getPointsWithPercentage(Double balancePercentage){
+    public long getPointsWithPercentage(double balancePercentage){
         double vat = Double.parseDouble(this.totalVat);
         return (long) Math.floor((vat * balancePercentage) / 100);
     }

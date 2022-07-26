@@ -66,14 +66,13 @@ public class AdminFranchiseeApplicant {
         return ResponseEntity.ok(responseList);
     }*/
 
-    @GetMapping("/list/{page}")
+    @GetMapping("")
     public ResponseEntity<List<FranchiseeApplicantInfo>> pageList(
-            @PathVariable int page
+            @RequestParam int page
     ){
         List<FranchiseeApplicantInfo> responseList = franchiseeApplicantFindService.findAll(page);
         return ResponseEntity.ok(responseList);
     }
-
 
     /**
      * 가맹점 신청 상세 정보
@@ -101,7 +100,6 @@ public class AdminFranchiseeApplicant {
     @PatchMapping("/{franchiseeApplicantIndex}/taxFreeStoreNumber")
     @ApiOperation(value = "가맹점 신청 내역조회", notes = "가맹점 현황 내 상세보기 내 사후면세지정증 수기 업데이트")
     public ResponseEntity<String> updateTaxFreeStoreNumber(@PathVariable Long franchiseeApplicantIndex, @RequestBody FranchiseeApplicantSetNumberRequest franchiseeApplicantSetNumberRequest) {
-        System.out.println("taxNumber___________________");
         String result = franchiseeApplicantSetNumberService.updateTaxFreeStoreNumber(franchiseeApplicantIndex, franchiseeApplicantSetNumberRequest);
         return ResponseEntity.ok(result);
     }

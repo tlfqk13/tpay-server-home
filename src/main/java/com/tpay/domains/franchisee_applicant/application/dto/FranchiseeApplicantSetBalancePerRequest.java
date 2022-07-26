@@ -7,5 +7,5 @@ import lombok.Getter;
 
 @Getter
 public class FranchiseeApplicantSetBalancePerRequest {
-    Double balancePercentage;
+    double balancePercentage;
 }

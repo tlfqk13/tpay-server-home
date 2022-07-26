@@ -4,12 +4,16 @@ import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee_applicant.application.dto.FilterSelector;
+import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeApplicantFindResponse;
 import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeApplicantInfo;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantRepository;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeStatus;
+import com.tpay.domains.push.application.dto.AdminPushDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -47,11 +51,24 @@ public class FranchiseeApplicantFindService {
 
     // TODO: 2022/07/21 관리자페이지 페이징 기능 개발
     public List<FranchiseeApplicantInfo> findAll(int page) {
-        PageRequest pageRequest = PageRequest.of(page,10);
-        List<FranchiseeApplicantEntity> franchiseeApplicantEntityList =
-                franchiseeApplicantRepository.findAllByOrderByIdDesc(pageRequest);
+        Pageable pageRequest = PageRequest.of(page,10);
+        Page<FranchiseeApplicantEntity> franchiseeApplicantEntityList = franchiseeApplicantRepository.findAllByOrderByIdDesc(pageRequest);
         return franchiseeApplicantEntityList.stream().map(FranchiseeApplicantInfo::toResponse).collect(Collectors.toList());
     }
+/*
+    public FranchiseeApplicantFindResponse findAll(int page){
+        PageRequest pageRequest = PageRequest.of(page,10);
+        Page<FranchiseeApplicantEntity> franchiseeApplicantEntityList = franchiseeApplicantRepository.findAllByOrderByIdDesc(pageRequest);
+        List<FranchiseeApplicantInfo> franchiseeApplicantInfoList = franchiseeApplicantEntityList.stream().map(FranchiseeApplicantInfo::toResponse).collect(Collectors.toList());
+
+        FranchiseeApplicantFindResponse franchiseeApplicantFindResponse = FranchiseeApplicantFindResponse.builder()
+                .totalPage(franchiseeApplicantEntityList.getTotalPages() -1 )
+                .franchiseeApplicantInfoList(franchiseeApplicantInfoList)
+                .build();
+
+        return franchiseeApplicantFindResponse;
+    }
+*/
 
     public FranchiseeApplicantEntity findByBusinessNumber(String businessNumber) {
         businessNumber = businessNumber.replaceAll("-", "");

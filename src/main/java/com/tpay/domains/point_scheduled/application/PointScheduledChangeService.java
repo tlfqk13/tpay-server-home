@@ -21,7 +21,7 @@ public class PointScheduledChangeService {
 
     private final PointScheduledRepository pointScheduledRepository;
 
-    public PointScheduledEntity change(RefundEntity refundEntity, SignType signType, Double balancePercentage) {
+    public PointScheduledEntity change(RefundEntity refundEntity, SignType signType, double balancePercentage) {
         OrderEntity orderEntity = refundEntity.getOrderEntity();
         FranchiseeEntity franchiseeEntity = orderEntity.getFranchiseeEntity();
         long pointsWithPercentage = orderEntity.getPointsWithPercentage(balancePercentage);

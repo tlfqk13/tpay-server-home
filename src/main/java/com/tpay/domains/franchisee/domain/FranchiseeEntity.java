@@ -101,7 +101,7 @@ public class FranchiseeEntity extends BaseTimeEntity {
     private PosType posType;
 
     @Column
-    private Double balancePercentage;
+    private double balancePercentage;
 
     @Builder
     public FranchiseeEntity(
@@ -119,7 +119,7 @@ public class FranchiseeEntity extends BaseTimeEntity {
         String storeNumber,
         String email,
         String isTaxRefundShop,
-        Double balancePercentage
+        double balancePercentage
     ) {
         this.memberName = "";
         this.memberNumber = "";
@@ -206,7 +206,7 @@ public class FranchiseeEntity extends BaseTimeEntity {
         return this;
     }
 
-    public Double updateBalancePercentage(Double balancePercentage) {
+    public double updateBalancePercentage(double balancePercentage) {
         this.balancePercentage = balancePercentage;
         return balancePercentage;
     }

@@ -1,6 +1,7 @@
 package com.tpay.domains.franchisee_applicant.domain;
 
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,7 +20,7 @@ public interface FranchiseeApplicantRepository
     List<FranchiseeApplicantEntity> findAllByOrderByIdDesc();
 
     @EntityGraph(attributePaths = {"franchiseeEntity"})
-    List<FranchiseeApplicantEntity> findAllByOrderByIdDesc(Pageable pageable);
+    Page<FranchiseeApplicantEntity> findAllByOrderByIdDesc(Pageable pageable);
 
     @EntityGraph(attributePaths = {"franchiseeEntity"})
     List<FranchiseeApplicantEntity> findByFranchiseeStatus(FranchiseeStatus franchiseeStatus);

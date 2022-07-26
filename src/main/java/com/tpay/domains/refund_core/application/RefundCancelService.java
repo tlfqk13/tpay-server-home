@@ -48,7 +48,7 @@ public class RefundCancelService {
 
         refundEntity.updateCancel(refundResponse.getResponseCode());
 
-        Double balancePercentage = refundEntity.getOrderEntity().getFranchiseeEntity().getBalancePercentage();
+        double balancePercentage = refundEntity.getOrderEntity().getFranchiseeEntity().getBalancePercentage();
         pointScheduledChangeService.change(refundEntity, SignType.NEGATIVE, balancePercentage);
 
         return refundResponse;

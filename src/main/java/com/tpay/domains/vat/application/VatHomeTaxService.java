@@ -7,7 +7,6 @@ import com.tpay.domains.franchisee.application.FranchiseeFindService;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee_upload.application.FranchiseeUploadFindService;
 import com.tpay.domains.franchisee_upload.domain.FranchiseeUploadEntity;
-import com.tpay.domains.order.application.CmsService;
 import com.tpay.domains.order.application.OrderService;
 import com.tpay.domains.vat.HomeTaxConstant;
 import com.tpay.domains.vat.application.dto.VatDetailResponseInterface;
@@ -39,8 +38,6 @@ public class VatHomeTaxService {
     private final OrderService orderService;
     private final FranchiseeFindService franchiseeFindService;
     private final FranchiseeUploadFindService franchiseeUploadFindService;
-
-    private final CmsService cmsService; //zip 파일 생성용 테스트
 
     private static final String TEST_BIZ_NUM = "2390401226";
 

@@ -2,7 +2,6 @@ package com.tpay.domains.order.application;
 
 
 import com.tpay.commons.aws.S3FileUploader;
-import com.tpay.commons.util.ZipUtil;
 import com.tpay.commons.util.converter.NumberFormatConverter;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
@@ -23,8 +22,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,6 +39,7 @@ public class CmsService {
     private final S3FileUploader s3FileUploader;
     private final OrderService orderService;
     private final FranchiseeFindService franchiseeFindService;
+
     private final FranchiseeUploadFindService franchiseeUploadFindService;
 
     public CmsResponse cmsReport(Long franchiseeIndex, String requestDate) {
@@ -254,17 +252,6 @@ public class CmsService {
             xssfWorkbook.write(fileOutputStream);
             fileOutputStream.flush();
             fileOutputStream.close();
-
-           /* String unZipPath ="/Users/backend/Downloads/";
-            String unZipFile = "excelExportTest";
-            ZipUtil zipUtil = new ZipUtil();
-            try{
-                if(!zipUtil.compress("/Users/backend/Downloads/excelExportTest.xlsx",unZipPath,unZipFile)){
-                    System.out.println("압축 실패");
-                }
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }*/
 
             System.out.println("아웃풋스트림 생성 전");
             /*String result = s3FileUploader.uploadXlsx(franchiseeIndex, xssfWorkbook);
