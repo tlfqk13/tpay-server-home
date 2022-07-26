@@ -23,21 +23,21 @@ public class PushNotificationService {
     public void sendMessageByToken(NotificationDto.Request request) {
         try {
             Notification notification = Notification.builder()
-                .setTitle(request.getTitle())
-                .setBody(request.getBody())
-                .build();
+                    .setTitle(request.getTitle())
+                    .setBody(request.getBody())
+                    .build();
 
             Message message = Message.builder()
-                .setNotification(notification)
-                .putData("pushCategory", request.getPushCategory())
-                .putData("link", request.getLink())
-                .setToken(request.getPushTypeValue())
-                .build();
+                    .setNotification(notification)
+                    .putData("pushCategory", request.getPushCategory())
+                    .putData("link", request.getLink())
+                    .setToken(request.getPushTypeValue())
+                    .build();
 
             Optional<UserPushTokenEntity> optionalUserPushTokenEntity = userPushTokenService.findByToken(request.getPushTypeValue());
             if (optionalUserPushTokenEntity.isPresent()) {
                 String send = FirebaseMessaging.getInstance().send(message);
-                pushHistoryService.saveHistory(request, send, optionalUserPushTokenEntity.get(),0L);
+                pushHistoryService.saveHistory(request, send, optionalUserPushTokenEntity.get(), 0L);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -48,16 +48,16 @@ public class PushNotificationService {
     public String sendMessageByTopic(NotificationDto.Request request) {
         try {
             Notification notification = Notification.builder()
-                .setTitle(request.getTitle())
-                .setBody(request.getBody())
-                .build();
+                    .setTitle(request.getTitle())
+                    .setBody(request.getBody())
+                    .build();
 
             Message message = Message.builder()
-                .setNotification(notification)
-                .putData("pushCategory", request.getPushCategory())
-                .putData("link", request.getLink())
-                .setTopic(request.getPushTypeValue())
-                .build();
+                    .setNotification(notification)
+                    .putData("pushCategory", request.getPushCategory())
+                    .putData("link", request.getLink())
+                    .setTopic(request.getPushTypeValue())
+                    .build();
 
             return FirebaseMessaging.getInstance().send(message);
         } catch (FirebaseMessagingException e) {
@@ -66,6 +66,23 @@ public class PushNotificationService {
         }
     }
 
+    @Transactional
+    public void sendMessageByTokenWithoutNotification(NotificationDto.Request request) {
+        try {
+            Message message = Message.builder()
+                    .putData("pushCategory", request.getPushCategory())
+                    .putData("link", request.getLink())
+                    .setToken(request.getPushTypeValue())
+                    .build();
 
+            Optional<UserPushTokenEntity> optionalUserPushTokenEntity = userPushTokenService.findByToken(request.getPushTypeValue());
+            if (optionalUserPushTokenEntity.isPresent()) {
+                String send = FirebaseMessaging.getInstance().send(message);
+                pushHistoryService.saveHistory(request, send, optionalUserPushTokenEntity.get(),0L);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
 

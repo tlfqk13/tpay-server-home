@@ -3,9 +3,7 @@ package com.tpay.domains.zdeveloper;
 import com.tpay.commons.push.PushCategoryType;
 import com.tpay.domains.push.application.NonBatchPushService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -73,4 +71,11 @@ public class DeveloperPushController {
         nonBatchPushService.nonBatchPushNSave(pushCategoryType, request.getFranchiseeIndex());
 
     }
+
+    @PostMapping("/fcm/dev/push/refresh/{id}")
+    public void refundRefreshPush(@PathVariable Long id) {
+        nonBatchPushService.nonBatchPushNSave(PushCategoryType.REFUND_CANCEL_SCREEN_REFRESH_WITH_EXTERNAL, id, false);
+
+    }
+
 }
