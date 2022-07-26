@@ -29,6 +29,7 @@ public class AdminFranchiseeApplicant {
     private final FranchiseeApplicantFindService franchiseeApplicantFindService;
     private final FranchiseeApplicantReadService franchiseeApplicantReadService;
     private final FranchiseeApplicantRejectService franchiseeApplicantRejectService;
+    private final FranchiseeApplicantSetBalancePerService franchiseeApplicantSetBalancePerService;
 
     /**
      * 가맹점 신청 수락
@@ -58,13 +59,20 @@ public class AdminFranchiseeApplicant {
     /**
      * 가맹점 신청 전체 내역 조회
      */
-    @GetMapping
+   /* @GetMapping
     @ApiOperation(value = "가맹점 신청 내역조회", notes = "가맹점 현황")
     public ResponseEntity<List<FranchiseeApplicantInfo>> findAll() {
         List<FranchiseeApplicantInfo> responseList = franchiseeApplicantFindService.findAll();
         return ResponseEntity.ok(responseList);
-    }
+    }*/
 
+    @GetMapping("")
+    public ResponseEntity<List<FranchiseeApplicantInfo>> pageList(
+            @RequestParam int page
+    ){
+        List<FranchiseeApplicantInfo> responseList = franchiseeApplicantFindService.findAll(page);
+        return ResponseEntity.ok(responseList);
+    }
 
     /**
      * 가맹점 신청 상세 정보
@@ -106,6 +114,15 @@ public class AdminFranchiseeApplicant {
         return ResponseEntity.ok(result);
     }
 
-
-
+    /**
+     * 포인트 적립 비율 업데이트
+     */
+    @PatchMapping("/{franchiseeApplicantIndex}/balancePercentage")
+    @ApiOperation(value = "가맹점 포인트 적립 비율 업데이트  ", notes = "가맹점 포인트 적립 비율 업데이트 ")
+    public ResponseEntity<String> updateBalancePercentage(
+            @PathVariable Long franchiseeApplicantIndex
+            ,@RequestBody FranchiseeApplicantSetBalancePerRequest franchiseeApplicantSetBalancePerRequest) {
+        String result = String.valueOf(franchiseeApplicantSetBalancePerService.updateBalancePercentage(franchiseeApplicantIndex, franchiseeApplicantSetBalancePerRequest));
+        return ResponseEntity.ok(result);
+    }
 }

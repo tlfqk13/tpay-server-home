@@ -52,7 +52,7 @@ public interface PointRepository extends JpaRepository<PointEntity, Long> {
     WithdrawalFindNextInterface findNext(@Param("franchiseeIndex") Long franchiseeIndex);
 
     @EntityGraph(attributePaths = {"franchiseeEntity"})
-    List<PointEntity> findByPointStatusInAndIsReadInOrderByIdDesc(@Param("pointStatus") List<PointStatus> pointStatus, @Param("isRead") List<Boolean> isRead);
+    List<PointEntity> findByPointStatusInAndIsReadInOrderByIdDesc(@Param("pointStatus") List<PointStatus> pointStatus, @Param("isRead") List<Boolean> isRead,Pageable pageable);
 
     @NotNull
     @Override

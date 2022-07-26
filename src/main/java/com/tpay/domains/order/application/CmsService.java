@@ -26,6 +26,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import static org.apache.poi.ss.usermodel.CellType.STRING;
 
@@ -37,6 +39,7 @@ public class CmsService {
     private final S3FileUploader s3FileUploader;
     private final OrderService orderService;
     private final FranchiseeFindService franchiseeFindService;
+
     private final FranchiseeUploadFindService franchiseeUploadFindService;
 
     public CmsResponse cmsReport(Long franchiseeIndex, String requestDate) {
@@ -222,5 +225,118 @@ public class CmsService {
         result.add(franchiseeEntity.getStoreName() + month +"월 " + "내국세 환급세액 청구" ); // 제목
         result.add("[ "+ year + "년" + month + "월 01일 ~ " + month + "월 31일 ]" );
         return result;
+    }
+
+
+    public String cmsDownloadsTest(Long franchiseeIndex, String requestDate) {
+        try {
+            ClassPathResource resource = new ClassPathResource("KTP_CMS_Form.xlsx");
+            File file1;
+            try (InputStream inputStream = resource.getInputStream()) {
+                file1 = File.createTempFile("KTP_CMS_Form", "xlsx");
+                FileUtils.copyInputStreamToFile(inputStream, file1);
+            }
+            FileInputStream fileInputStream = new FileInputStream(file1);
+            XSSFWorkbook xssfWorkbook = new XSSFWorkbook(fileInputStream);
+            XSSFSheet sheet = xssfWorkbook.getSheetAt(0);
+            XSSFRow row = sheet.createRow(12);
+            XSSFRow row1 = sheet.getRow(11);
+            row.createCell(11, STRING);
+            row.createCell(5, STRING);
+            row1.getCell(5).setCellValue("수신자만 바뀌었으면 성공");
+            row.getCell(5).setCellValue("기존것도 바뀌는지 테스트"); //실패
+            row.getCell(11).setCellValue("가맹점번호 : " + franchiseeIndex + "가 입력되었습니다.");
+            // TODO: 2022/02/03 엑셀파일 일부 write 후 저장까지 테스트 완료 포멧에 맞게 입력하는 로직 정해지면 구현할 것
+
+            FileOutputStream fileOutputStream = new FileOutputStream("/Users/backend/Downloads/zipTest/excelExportTest.xlsx", false);
+            xssfWorkbook.write(fileOutputStream);
+            fileOutputStream.flush();
+            fileOutputStream.close();
+
+            System.out.println("아웃풋스트림 생성 전");
+            /*String result = s3FileUploader.uploadXlsx(franchiseeIndex, xssfWorkbook);
+            return result;*/
+
+            return "test";
+
+
+        } catch (IOException e) {
+            throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "File Input Failed");
+        }
+
+//    FranchiseeCmsResponseDetailInterface franchiseeCmsResponseDetailInterface = cmsDetail(franchiseeIndex, requestDate);
+//    return "실패";
+    }
+
+    public String cmsDownloadsTest(Long franchiseeIndex, int i) {
+        try {
+            ClassPathResource resource = new ClassPathResource("KTP_CMS_Form.xlsx");
+            File file1;
+            try (InputStream inputStream = resource.getInputStream()) {
+                file1 = File.createTempFile("KTP_CMS_Form", "xlsx");
+                FileUtils.copyInputStreamToFile(inputStream, file1);
+            }
+            FileInputStream fileInputStream = new FileInputStream(file1);
+            XSSFWorkbook xssfWorkbook = new XSSFWorkbook(fileInputStream);
+            XSSFSheet sheet = xssfWorkbook.getSheetAt(0);
+            XSSFRow row = sheet.createRow(12);
+            XSSFRow row1 = sheet.getRow(11);
+            row.createCell(11, STRING);
+            row.createCell(5, STRING);
+            row1.getCell(5).setCellValue("수신자만 바뀌었으면 성공");
+            row.getCell(5).setCellValue("기존것도 바뀌는지 테스트"); //실패
+            row.getCell(11).setCellValue("가맹점번호 : " + franchiseeIndex + "가 입력되었습니다.");
+            // TODO: 2022/02/03 엑셀파일 일부 write 후 저장까지 테스트 완료 포멧에 맞게 입력하는 로직 정해지면 구현할 것
+            //String fileName = "/Users/backend/Downloads/zipTest/excelExportTest" +i +".xlsx";
+            String fileName = "/home/success/downloads/excelExportTest" +i +".xlsx";
+            FileOutputStream fileOutputStream = new FileOutputStream(fileName, false);
+            xssfWorkbook.write(fileOutputStream);
+            fileOutputStream.flush();
+            fileOutputStream.close();
+
+            System.out.println("아웃풋스트림 생성 전");
+            /*String result = s3FileUploader.uploadXlsx(franchiseeIndex, xssfWorkbook);
+            return result;*/
+
+            return "test";
+
+
+        } catch (IOException e) {
+            throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "File Input Failed");
+        }
+
+//    FranchiseeCmsResponseDetailInterface franchiseeCmsResponseDetailInterface = cmsDetail(franchiseeIndex, requestDate);
+//    return "실패";
+    }
+
+    // 파일 여러개 압축
+    public void zipFileDown(int i) throws IOException {
+
+        final String folder = "/home/success/downloads/";
+        List<File> files = new ArrayList<>();
+        for(int j=0;j<i;j++){
+            File file = new File(folder,"excelExportTest" + j + ".xlsx");
+            files.add(file);
+        }
+
+        File zipFile = new File(folder,"zipTest.zip");
+        byte[] buf = new byte[4096];
+
+        try(ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zipFile))){
+            for(File file : files){
+                try(FileInputStream in = new FileInputStream(file)){
+                    ZipEntry ze = new ZipEntry(file.getName());
+                    out.putNextEntry(ze);
+
+                    int len;
+                    while((len = in.read(buf))>0){
+                        out.write(buf,0,len);
+                    }
+                    out.closeEntry();
+                }
+            }
+        }
+        System.out.println("Zip Success");
+
     }
 }

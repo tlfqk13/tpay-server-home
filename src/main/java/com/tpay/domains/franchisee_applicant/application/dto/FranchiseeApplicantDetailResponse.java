@@ -35,6 +35,8 @@ public class FranchiseeApplicantDetailResponse {
     private String withdrawalDate;
     private String rejectReason;
 
+    private double balancePercentage;
+
     //Employee List
     private List<EmployeeFindResponse> employeeFindResponseInterfaceList;
 }

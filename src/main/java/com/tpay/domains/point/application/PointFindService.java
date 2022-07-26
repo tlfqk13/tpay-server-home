@@ -53,9 +53,15 @@ public class PointFindService {
 //        List<PointInfo> pointInfoList = pointScheduledEntityList.stream().map(PointInfo::new).collect(Collectors.toList());
 
         //points
-        List<PointEntity> pointEntityList = pointRepository.findAllByPointStatusInAndFranchiseeEntityIdAndCreatedDateBetween(new ArrayList<>(List.of(PointStatus.WITHDRAW, PointStatus.COMPLETE)), franchiseeIndex, startDate.atStartOfDay(), endDate.atStartOfDay(), pageRequest);
+        List<PointEntity> pointEntityList =
+                pointRepository
+                        .findAllByPointStatusInAndFranchiseeEntityIdAndCreatedDateBetween(
+                                new ArrayList<>(List.of(PointStatus.WITHDRAW, PointStatus.COMPLETE,PointStatus.SAVE))
+                                ,franchiseeIndex
+                                ,startDate.atStartOfDay()
+                                ,endDate.atStartOfDay()
+                                ,pageRequest);
         List<PointInfo> pointInfoList = pointEntityList.stream().map(PointInfo::new).collect(Collectors.toList());
-
         //merge - sort - return
 //        pointInfoList.addAll(pointInfoList1);
 //        pointInfoList.sort(new PointComparator());
@@ -72,15 +78,18 @@ public class PointFindService {
         return pointRepository.findPointsTotal(franchiseeIndex, disappearDate);
     }
 
-    public List<AdminPointResponse> findPointsAdmin(Boolean isAll, WithdrawalStatus withdrawalStatus) {
+    public List<AdminPointResponse> findPointsAdmin(Boolean isAll, WithdrawalStatus withdrawalStatus, int page) {
         List<PointEntity> result;
         List<Boolean> booleanList = new ArrayList<>(List.of(false));
-
+        PageRequest pageRequest = PageRequest.of(page,10);
         if (isAll) {
             booleanList.add(true);
         }
 
-        result = pointRepository.findByPointStatusInAndIsReadInOrderByIdDesc(withdrawalStatus.getPointStatusList(), booleanList);
+        result = pointRepository.findByPointStatusInAndIsReadInOrderByIdDesc(
+                withdrawalStatus.getPointStatusList()
+                , booleanList
+                , pageRequest);
 
         if (result.isEmpty()) {
             return new ArrayList<>();

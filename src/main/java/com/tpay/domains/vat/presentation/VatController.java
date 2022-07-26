@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -66,8 +67,9 @@ public class VatController {
 
     @GetMapping("/franchisee/{franchiseeIndex}/vat/hometax")
     public ResponseEntity<VatHomeTaxDto.Response> homeTaxFile(@PathVariable Long franchiseeIndex,
-                                              @RequestParam String requestDate) {
+                                              @RequestParam String requestDate) throws IOException {
         VatHomeTaxDto.Response homeTaxResponse = homeTaxService.createHomeTaxUploadFile(franchiseeIndex, requestDate);
         return ResponseEntity.ok(homeTaxResponse);
     }
+
 }

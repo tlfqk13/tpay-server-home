@@ -58,6 +58,7 @@ public class SignUpService {
         }
 
         String encodedPassword = passwordEncoder.encode(password);
+        double defaultBalancePercentage = 0;
         FranchiseeEntity franchiseeEntity =
             FranchiseeEntity.builder()
                 .businessNumber(request.getBusinessNumber())
@@ -73,6 +74,7 @@ public class SignUpService {
                 .storeNumber(request.getStoreNumber().replaceAll("-", ""))
                 .email(request.getEmail())
                 .isTaxRefundShop(request.getIsTaxRefundShop())
+                .balancePercentage(defaultBalancePercentage)
                 .build();
         franchiseeRepository.save(franchiseeEntity);
         franchiseeApplicantSaveService.save(franchiseeEntity);
