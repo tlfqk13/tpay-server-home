@@ -19,14 +19,14 @@ import java.util.List;
  */
 @RestController
 @Api(tags = "어드민 - 가맹점 신청 관련")
-@RequestMapping("/admin/franchisee-applicants")
+@RequestMapping("/test/admin/franchisee-applicants")
 @RequiredArgsConstructor
-public class AdminFranchiseeApplicant {
+public class AdminFranchiseeApplicantTest {
 
     private final FranchiseeApplicantAcceptService franchiseeApplicantAcceptService;
     private final FranchiseeApplicantDetailService franchiseeApplicantDetailService;
     private final FranchiseeApplicantSetNumberService franchiseeApplicantSetNumberService;
-    private final FranchiseeApplicantFindService franchiseeApplicantFindService;
+    private final FranchiseeApplicantTestFindService franchiseeApplicantTestFindService;
     private final FranchiseeApplicantReadService franchiseeApplicantReadService;
     private final FranchiseeApplicantRejectService franchiseeApplicantRejectService;
     private final FranchiseeApplicantSetBalancePerService franchiseeApplicantSetBalancePerService;
@@ -56,12 +56,11 @@ public class AdminFranchiseeApplicant {
         return ResponseEntity.ok().build();
     }
 
-
     @GetMapping("")
     public ResponseEntity<FranchiseeApplicantFindResponse> findAll(
             @RequestParam int page
     ){
-        FranchiseeApplicantFindResponse responseList = franchiseeApplicantFindService.findAll(page);
+        FranchiseeApplicantFindResponse responseList = franchiseeApplicantTestFindService.findAll(page);
         return ResponseEntity.ok(responseList);
     }
 
@@ -81,7 +80,7 @@ public class AdminFranchiseeApplicant {
     @GetMapping("/{filterSelector}/{value}")
     @ApiOperation(value = "가맹점 신청 내역조회", notes = "가맹점 현황 필터링")
     public ResponseEntity<List<FranchiseeApplicantInfo>> filter(@PathVariable FilterSelector filterSelector, @PathVariable String value) {
-        List<FranchiseeApplicantInfo> result = franchiseeApplicantFindService.applicantFilter(filterSelector, value);
+        List<FranchiseeApplicantInfo> result = franchiseeApplicantTestFindService.applicantFilter(filterSelector, value);
         return ResponseEntity.ok(result);
     }
 

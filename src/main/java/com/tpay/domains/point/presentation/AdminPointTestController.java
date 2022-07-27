@@ -1,6 +1,6 @@
 package com.tpay.domains.point.presentation;
 
-import com.tpay.domains.point.application.PointFindService;
+import com.tpay.domains.point.application.PointTestFindService;
 import com.tpay.domains.point.application.PointUpdateService;
 import com.tpay.domains.point.application.dto.*;
 import lombok.RequiredArgsConstructor;
@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/admin/points")
-public class AdminPointController {
+@RequestMapping("/test/admin/points")
+public class AdminPointTestController {
 
-    private final PointFindService pointFindService;
+    private final PointTestFindService pointTestFindService;
     private final PointUpdateService pointUpdateService;
 
     /**
@@ -23,10 +23,10 @@ public class AdminPointController {
      */
     @GetMapping("/{isAll}/{withdrawalStatus}")
     public ResponseEntity<AdminPointResponse> findPointsAdmin(
-            @PathVariable Boolean isAll,
-            @PathVariable WithdrawalStatus withdrawalStatus,
-            @RequestParam int page) {
-        AdminPointResponse pointsAdmin = pointFindService.findPointsAdmin(isAll, withdrawalStatus,page);
+        @PathVariable Boolean isAll,
+        @PathVariable WithdrawalStatus withdrawalStatus,
+        @RequestParam int page) {
+        AdminPointResponse pointsAdmin = pointTestFindService.findPointsAdmin(isAll, withdrawalStatus,page);
         return ResponseEntity.ok(pointsAdmin);
     }
 
@@ -35,7 +35,7 @@ public class AdminPointController {
      */
     @GetMapping("/detail/{pointsIndex}")
     public ResponseEntity<PointFindDetailResponse> findPointsAdminDetail(@PathVariable Long pointsIndex) {
-        PointFindDetailResponse pointFindDetailResponse = pointFindService.findDetailByIndex(pointsIndex);
+        PointFindDetailResponse pointFindDetailResponse = pointTestFindService.findDetailByIndex(pointsIndex);
         return ResponseEntity.ok(pointFindDetailResponse);
     }
 

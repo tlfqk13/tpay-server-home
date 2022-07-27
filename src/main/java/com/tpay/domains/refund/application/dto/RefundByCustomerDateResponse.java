@@ -25,6 +25,7 @@ public class RefundByCustomerDateResponse {
         private String totalAmount;
         private String totalRefund;
         private RefundStatus refundStatus;
+        private Long point;
 
         public Data(RefundByCustomerResponse response) {
             this.refundIndex = response.getRefundIndex();
@@ -34,6 +35,7 @@ public class RefundByCustomerDateResponse {
             this.totalAmount = response.getTotalAmount();
             this.totalRefund = response.getTotalRefund();
             this.refundStatus = response.getRefundStatus();
+            this.point = response.getPoint();
         }
     }
 }

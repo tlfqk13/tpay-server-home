@@ -1,7 +1,7 @@
 package com.tpay.domains.refund.presentation;
 
 import com.tpay.commons.util.DateFilter;
-import com.tpay.domains.refund.application.RefundDetailFindService;
+import com.tpay.domains.refund.application.RefundTestDetailFindService;
 import com.tpay.domains.refund.application.dto.RefundByCustomerDateResponse;
 import com.tpay.domains.refund.application.dto.RefundCustomerRequest;
 import com.tpay.domains.refund.application.dto.RefundFindResponseInterface;
@@ -16,9 +16,10 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-public class RefundFindController {
+@RequestMapping("/test")
+public class RefundTestFindController {
 
-    private final RefundDetailFindService refundDetailFindService;
+    private final RefundTestDetailFindService refundTestDetailFindService;
 
     @GetMapping("/refunds/franchisee/{franchiseeIndex}")
     public ResponseEntity<List<RefundFindResponseInterface>> findList(
@@ -28,7 +29,7 @@ public class RefundFindController {
         @RequestParam(required = false) LocalDate endDate) {
 
         List<RefundFindResponseInterface> responseList =
-            refundDetailFindService.findList(franchiseeIndex, startDate, endDate);
+            refundTestDetailFindService.findList(franchiseeIndex, startDate, endDate);
         return ResponseEntity.ok(responseList);
     }
 
@@ -37,7 +38,7 @@ public class RefundFindController {
             @PathVariable Long franchiseeIndex,
             @RequestParam Long refundIndex) {
         List<RefundFindResponseInterface> responseDetail =
-                refundDetailFindService.findDetail(franchiseeIndex,refundIndex);
+                refundTestDetailFindService.findDetail(franchiseeIndex,refundIndex);
         return ResponseEntity.ok(responseDetail);
     }
 
@@ -48,15 +49,15 @@ public class RefundFindController {
         @RequestParam String endDate,
         @RequestParam RefundStatus refundStatus
     ) {
-        RefundPagingFindResponse response = refundDetailFindService.findAll(page,startDate, endDate, refundStatus);
+        RefundPagingFindResponse response = refundTestDetailFindService.findAll(page,startDate, endDate, refundStatus);
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/admin/refunds/{franchiseeIndex}/{page}")
+    @GetMapping("/admin/refunds/{franchiseeIndex}")
     public ResponseEntity<List<RefundFindResponseInterface>> findAFranchisee(
             @PathVariable Long franchiseeIndex,
-            @PathVariable int page) {
-        List<RefundFindResponseInterface> result = refundDetailFindService.findAFranchisee(franchiseeIndex,page);
+            @RequestParam int page) {
+        List<RefundFindResponseInterface> result = refundTestDetailFindService.findAFranchisee(franchiseeIndex,page);
         return ResponseEntity.ok(result);
     }
 
@@ -65,7 +66,7 @@ public class RefundFindController {
         @PathVariable Long franchiseeIndex,
         @RequestBody RefundCustomerRequest refundCustomerRequest
     ) {
-        List<RefundByCustomerDateResponse> result = refundDetailFindService.findRefundsByCustomerInfo(franchiseeIndex, refundCustomerRequest);
+        List<RefundByCustomerDateResponse> result = refundTestDetailFindService.findRefundsByCustomerInfo(franchiseeIndex, refundCustomerRequest);
         return ResponseEntity.ok(result);
     }
 }

@@ -44,6 +44,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
             "/h2-console/**",
             "/favicon.ico",
             "/push/**",
+            // TODO: 2022/07/26 test url 권한 추가
+            "/test/admin/**",
+            "/test/refunds/**",
+            "/test/points/**",
             "/notice/**"));
 
         if (!profileName.equals("deploy")) {

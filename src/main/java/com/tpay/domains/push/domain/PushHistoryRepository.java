@@ -1,6 +1,7 @@
 package com.tpay.domains.push.domain;
 
 import com.tpay.domains.push.application.dto.AdminPushDto;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -16,6 +17,9 @@ public interface PushHistoryRepository extends JpaRepository<PushHistoryEntity, 
 
     @Query(value = "select id,created_date as createdDate,title from push_history\n" +
         "where push_category =15\n" +
-        "group by date(created_date), title, body order by 1 desc", nativeQuery = true)
-    List<AdminPushDto> findAllAnnouncement();
+        "group by date(created_date), title, body order by 1 desc\n",
+          countQuery =  "select id,created_date as createdDate,title from push_history\n" +
+            "where push_category =15\n" +
+            "group by date(created_date), title, body order by 1 desc\n", nativeQuery = true)
+    List<AdminPushDto> findAllAnnouncement(Pageable pageable);
 }
