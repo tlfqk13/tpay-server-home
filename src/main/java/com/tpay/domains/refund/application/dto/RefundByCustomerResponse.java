@@ -18,6 +18,7 @@ public class RefundByCustomerResponse {
     private String totalAmount;
     private String totalRefund;
     private RefundStatus refundStatus;
+    private Long point;
 
 
     public static RefundByCustomerResponse from(RefundFindResponseInterface refundFindResponseInterface){
@@ -29,6 +30,7 @@ public class RefundByCustomerResponse {
             .totalAmount(refundFindResponseInterface.getTotalAmount())
             .totalRefund(refundFindResponseInterface.getTotalRefund())
             .refundStatus(refundFindResponseInterface.getRefundStatus())
+            .point(refundFindResponseInterface.getPoint())
             .build();
     }
 }

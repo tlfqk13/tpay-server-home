@@ -1,6 +1,7 @@
 package com.tpay.domains.notice.application.dto;
 
 import com.tpay.domains.notice.domain.NoticeEntity;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;

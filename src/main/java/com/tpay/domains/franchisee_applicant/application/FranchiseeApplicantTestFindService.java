@@ -9,7 +9,6 @@ import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeApplicant
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantRepository;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeStatus;
-import com.tpay.domains.push.application.dto.AdminPushDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,7 +24,7 @@ import static com.tpay.domains.franchisee_applicant.application.dto.FilterSelect
 
 @Service
 @RequiredArgsConstructor
-public class FranchiseeApplicantFindService {
+public class FranchiseeApplicantTestFindService {
 
     private final FranchiseeApplicantRepository franchiseeApplicantRepository;
 
@@ -49,7 +48,6 @@ public class FranchiseeApplicantFindService {
         return franchiseeApplicantEntityList.stream().map(FranchiseeApplicantInfo::toResponse).collect(Collectors.toList());
     }
 
-    // TODO: 2022/07/21 관리자페이지 페이징 기능 개발
     public FranchiseeApplicantFindResponse findAll(int page){
         PageRequest pageRequest = PageRequest.of(page,10);
         Page<FranchiseeApplicantEntity> franchiseeApplicantEntityPage = franchiseeApplicantRepository.findAllByOrderByIdDesc(pageRequest);
@@ -62,6 +60,8 @@ public class FranchiseeApplicantFindService {
 
         return franchiseeApplicantFindResponse;
     }
+
+
     public FranchiseeApplicantEntity findByBusinessNumber(String businessNumber) {
         businessNumber = businessNumber.replaceAll("-", "");
 

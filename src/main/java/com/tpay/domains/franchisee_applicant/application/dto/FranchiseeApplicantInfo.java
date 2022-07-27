@@ -22,7 +22,6 @@ public class FranchiseeApplicantInfo {
 
     public static FranchiseeApplicantInfo toResponse(FranchiseeApplicantEntity franchiseeApplicantEntity) {
         FranchiseeEntity franchiseeEntity = franchiseeApplicantEntity.getFranchiseeEntity();
-
         return FranchiseeApplicantInfo.builder()
             .franchiseeApplicantIndex(franchiseeApplicantEntity.getId())
             .franchiseeStatus(franchiseeApplicantEntity.getFranchiseeStatus())
