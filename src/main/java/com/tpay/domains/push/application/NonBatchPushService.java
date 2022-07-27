@@ -3,6 +3,7 @@ package com.tpay.domains.push.application;
 
 import com.tpay.commons.push.PushCategoryType;
 import com.tpay.commons.push.PushType;
+import com.tpay.domains.franchisee.application.FranchiseeFindService;
 import com.tpay.domains.push.application.dto.NotificationDto;
 import com.tpay.domains.push.domain.UserPushTokenEntity;
 import lombok.RequiredArgsConstructor;
@@ -24,18 +25,30 @@ public class NonBatchPushService {
     private final UserPushTokenService userPushTokenService;
     private final PushNotificationService pushNotificationService;
 
+    private final TopicSubscribeService topicSubscribeService;
+
+    private final FranchiseeFindService franchiseeFindService;
+
     // 토큰기반 Non-Batch 푸시 알람
     @Transactional
     public void nonBatchPushNSave(PushCategoryType pushCategoryType, Long franchiseeIndex) {
+        nonBatchPushNSave(pushCategoryType, franchiseeIndex, true);
+    }
+
+    @Transactional
+    public void nonBatchPushNSave(PushCategoryType pushCategoryType, Long franchiseeIndex, boolean withNotification) {
         Optional<UserPushTokenEntity> optionalUserPushTokenEntity = userPushTokenService.optionalFindByFranchiseeIndex(franchiseeIndex);
         if (optionalUserPushTokenEntity.isEmpty()) {
             log.debug("푸시토큰이 존재하지 않습니다. franchiseeIndex : {}",franchiseeIndex);
             return;
         }
         NotificationDto.Request request = new NotificationDto.Request(pushCategoryType, PushType.TOKEN, optionalUserPushTokenEntity.get().getPushTokenEntity().getToken());
-        pushNotificationService.sendMessageByToken(request);
+        if(withNotification) {
+            pushNotificationService.sendMessageByToken(request);
+        } else {
+            pushNotificationService.sendMessageByTokenWithoutNotification(request);
+        }
     }
-
     //Non-Batch 이면서 동적 메시지인 케이스 : 3, 7, 14
     @Transactional
     public void nonBatchPushNSave(PushCategoryType pushCategoryType, Long franchiseeIndex, String message) {
@@ -58,5 +71,4 @@ public class NonBatchPushService {
         }
         pushNotificationService.sendMessageByToken(request);
     }
-
 }
