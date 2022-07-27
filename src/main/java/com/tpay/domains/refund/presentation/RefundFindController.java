@@ -52,11 +52,10 @@ public class RefundFindController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/admin/refunds/{franchiseeIndex}/{page}")
+    @GetMapping("/admin/refunds/{franchiseeIndex}")
     public ResponseEntity<List<RefundFindResponseInterface>> findAFranchisee(
-            @PathVariable Long franchiseeIndex,
-            @PathVariable int page) {
-        List<RefundFindResponseInterface> result = refundDetailFindService.findAFranchisee(franchiseeIndex,page);
+            @PathVariable Long franchiseeIndex) {
+        List<RefundFindResponseInterface> result = refundDetailFindService.findAFranchisee(franchiseeIndex);
         return ResponseEntity.ok(result);
     }
 

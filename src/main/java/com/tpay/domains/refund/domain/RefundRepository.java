@@ -215,7 +215,7 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
                     "                  left join franchisee f on o.franchisee_id = f.id\n" +
                     "    where f.id = :franchiseeIndex\n" +
                     "    order by refundIndex  desc;",nativeQuery = true)
-    List<RefundFindResponseInterface> findAFranchiseeNativeQueryT(Long franchiseeIndex, Pageable pageable);
+    List<RefundFindResponseInterface> findAFranchiseeNativeQueryTest(Long franchiseeIndex, Pageable pageable);
 
     @Query(
             value =

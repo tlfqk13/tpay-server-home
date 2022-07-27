@@ -55,9 +55,8 @@ public class RefundTestFindController {
 
     @GetMapping("/admin/refunds/{franchiseeIndex}")
     public ResponseEntity<List<RefundFindResponseInterface>> findAFranchisee(
-            @PathVariable Long franchiseeIndex,
-            @RequestParam int page) {
-        List<RefundFindResponseInterface> result = refundTestDetailFindService.findAFranchisee(franchiseeIndex,page);
+            @PathVariable Long franchiseeIndex) {
+        List<RefundFindResponseInterface> result = refundTestDetailFindService.findAFranchisee(franchiseeIndex);
         return ResponseEntity.ok(result);
     }
 

@@ -92,10 +92,8 @@ public class RefundDetailFindService {
             .collect(Collectors.toList());
     }
 
-    public List<RefundFindResponseInterface> findAFranchisee(Long franchiseeIndex,int page) {
-        Pageable pageable = PageRequest.of(page,10);
-        //return refundRepository.findAFranchiseeNativeQuery(franchiseeIndex,pageable);
-        return refundRepository.findAFranchiseeNativeQueryT(franchiseeIndex,pageable);
+    public List<RefundFindResponseInterface> findAFranchisee(Long franchiseeIndex) {
+        return refundRepository.findAFranchiseeNativeQuery(franchiseeIndex);
     }
 
     public List<RefundByCustomerDateResponse> findRefundsByCustomerInfo(Long franchiseeIndex, RefundCustomerRequest refundCustomerRequest) {
@@ -122,8 +120,7 @@ public class RefundDetailFindService {
         Queue<RefundByCustomerResponse> refundByCustomerResponseQueue = new PriorityQueue<>();
         if (orderCheck.equals("ASC")) {
             refundByCustomerResponseQueue = new PriorityQueue<>(new ResponseCompAsc());
-        }
-        if (orderCheck.equals("DESC")) {
+        }else if (orderCheck.equals("DESC")) {
             refundByCustomerResponseQueue = new PriorityQueue<>(new ResponseCompDesc());
         }
         refundByCustomerResponseQueue.addAll(refundByCustomerResponseList);
