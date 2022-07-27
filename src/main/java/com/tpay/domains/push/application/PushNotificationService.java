@@ -66,12 +66,7 @@ public class PushNotificationService {
             addHighPriority(messageBuilder);
             messageBuilder.setToken(request.getPushTypeValue());
             Message message = messageBuilder.build();
-
-            Optional<UserPushTokenEntity> optionalUserPushTokenEntity = userPushTokenService.findByToken(request.getPushTypeValue());
-            if (optionalUserPushTokenEntity.isPresent()) {
-                String send = FirebaseMessaging.getInstance().send(message);
-                pushHistoryService.saveHistory(request, send, optionalUserPushTokenEntity.get(), 0L);
-            }
+            FirebaseMessaging.getInstance().send(message);
         } catch (Exception e) {
             e.printStackTrace();
         }
