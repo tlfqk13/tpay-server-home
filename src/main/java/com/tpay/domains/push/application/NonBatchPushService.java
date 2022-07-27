@@ -29,36 +29,36 @@ public class NonBatchPushService {
 
     private final FranchiseeFindService franchiseeFindService;
 
+    @Transactional
+    public void nonBatchPush(PushCategoryType pushCategoryType, Long franchiseeIndex) {
+        Optional<UserPushTokenEntity> optionalUserPushTokenEntity = getPushTokenEntity(franchiseeIndex);
+        if(optionalUserPushTokenEntity.isEmpty())
+            return;
+
+        NotificationDto.Request request = createNotificationRequest(pushCategoryType, optionalUserPushTokenEntity.get());
+        pushNotificationService.sendMessageByTokenWithoutNotification(request);
+    }
+
     // 토큰기반 Non-Batch 푸시 알람
     @Transactional
     public void nonBatchPushNSave(PushCategoryType pushCategoryType, Long franchiseeIndex) {
-        nonBatchPushNSave(pushCategoryType, franchiseeIndex, true);
+        Optional<UserPushTokenEntity> optionalUserPushTokenEntity = getPushTokenEntity(franchiseeIndex);
+        if(optionalUserPushTokenEntity.isEmpty())
+            return;
+
+        NotificationDto.Request request = createNotificationRequest(pushCategoryType, optionalUserPushTokenEntity.get());
+        pushNotificationService.sendMessageByToken(request);
     }
 
-    @Transactional
-    public void nonBatchPushNSave(PushCategoryType pushCategoryType, Long franchiseeIndex, boolean withNotification) {
-        Optional<UserPushTokenEntity> optionalUserPushTokenEntity = userPushTokenService.optionalFindByFranchiseeIndex(franchiseeIndex);
-        if (optionalUserPushTokenEntity.isEmpty()) {
-            log.debug("푸시토큰이 존재하지 않습니다. franchiseeIndex : {}",franchiseeIndex);
-            return;
-        }
-        NotificationDto.Request request = new NotificationDto.Request(pushCategoryType, PushType.TOKEN, optionalUserPushTokenEntity.get().getPushTokenEntity().getToken());
-        if(withNotification) {
-            pushNotificationService.sendMessageByToken(request);
-        } else {
-            pushNotificationService.sendMessageByTokenWithoutNotification(request);
-        }
-    }
     //Non-Batch 이면서 동적 메시지인 케이스 : 3, 7, 14
     @Transactional
     public void nonBatchPushNSave(PushCategoryType pushCategoryType, Long franchiseeIndex, String message) {
-        Optional<UserPushTokenEntity> optionalUserPushTokenEntity = userPushTokenService.optionalFindByFranchiseeIndex(franchiseeIndex);
-        if (optionalUserPushTokenEntity.isEmpty()) {
-            log.debug("푸시토큰이 존재하지 않습니다. franchiseeIndex : {}",franchiseeIndex);
+        Optional<UserPushTokenEntity> optionalUserPushTokenEntity = getPushTokenEntity(franchiseeIndex);
+        if(optionalUserPushTokenEntity.isEmpty())
             return;
-        }
-        NotificationDto.Request request = new NotificationDto.Request(pushCategoryType, PushType.TOKEN, optionalUserPushTokenEntity.get().getPushTokenEntity().getToken());
-        ;
+
+        NotificationDto.Request request = createNotificationRequest(pushCategoryType, optionalUserPushTokenEntity.get());
+
         switch (pushCategoryType) {
             case CASE_THREE:
                 request = request.setFrontTitle(message);
@@ -70,5 +70,18 @@ public class NonBatchPushService {
                 request = request.setFrontBody(message);
         }
         pushNotificationService.sendMessageByToken(request);
+    }
+
+    private Optional<UserPushTokenEntity> getPushTokenEntity(Long franchiseeIndex) {
+        Optional<UserPushTokenEntity> optionalUserPushTokenEntity = userPushTokenService.optionalFindByFranchiseeIndex(franchiseeIndex);
+        if (optionalUserPushTokenEntity.isEmpty()) {
+            log.debug("푸시토큰이 존재하지 않습니다. franchiseeIndex : {}", franchiseeIndex);
+            return Optional.empty();
+        }
+        return optionalUserPushTokenEntity;
+    }
+
+    private NotificationDto.Request createNotificationRequest(PushCategoryType pushCategoryType, UserPushTokenEntity userPushTokenEntity) {
+        return new NotificationDto.Request(pushCategoryType, PushType.TOKEN, userPushTokenEntity.getPushTokenEntity().getToken());
     }
 }
