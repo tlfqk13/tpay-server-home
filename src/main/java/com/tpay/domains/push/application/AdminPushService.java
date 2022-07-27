@@ -12,6 +12,9 @@ import com.tpay.domains.push.domain.SubscribeType;
 import com.tpay.domains.push.domain.TopicType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -59,8 +62,9 @@ public class AdminPushService {
 
     }
 
-    public PushFindDto.FindAllResponse findAll() {
-        List<AdminPushDto> allAnnouncement = pushHistoryRepository.findAllAnnouncement();
+    public PushFindDto.FindAllResponse findAll(int page) {
+        Pageable pageable = PageRequest.of(page,10);
+        List<AdminPushDto> allAnnouncement = pushHistoryRepository.findAllAnnouncement(pageable);
         List<AdminPushResponse> collect = allAnnouncement.stream().map(AdminPushResponse::new).collect(Collectors.toList());
         return PushFindDto.FindAllResponse.builder()
             .responseList(collect)

@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class RefundDetailFindService {
+public class RefundTestDetailFindService {
 
     private final PassportNumberEncryptService passportNumberEncryptService;
     private final RefundRepository refundRepository;
@@ -43,7 +43,7 @@ public class RefundDetailFindService {
         LocalDate endLocalDate = LocalDate.parse("20" + endDate, yyyyMMdd).plusDays(1);
         Pageable pageable = PageRequest.of(page,10);
 
-        Page<RefundFindResponseInterface> refundFindResponseInterfaces = refundRepository.findAllNativeQuery(pageable,startLocalDate, endLocalDate);
+        Page<RefundFindResponseInterface> refundFindResponseInterfaces = refundRepository.findAllNativeQueryTest(pageable,startLocalDate, endLocalDate);
         List<RefundFindResponseInterface> list = refundFindResponseInterfaces.getContent();
 
         if (refundStatus.equals(RefundStatus.ALL)) {
@@ -108,6 +108,7 @@ public class RefundDetailFindService {
         String nation = refundCustomerInfoRequest.getNationality();
         String passportNumber = refundCustomerInfoRequest.getPassportNumber();
         Long customerIndex = customerFindService.findByNationAndPassportNumber(name, passportNumber, nation).getId();
+
         List<RefundFindResponseInterface> refundsByCustomerInfo = refundRepository.findRefundsByCustomerInfo(franchiseeIndex, startDate, endDate, customerIndex);
 
         if (refundsByCustomerInfo.isEmpty()) {

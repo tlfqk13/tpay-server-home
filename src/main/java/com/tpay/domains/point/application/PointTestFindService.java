@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class PointFindService {
+public class PointTestFindService {
 
     private final PointRepository pointRepository;
     private final PointScheduledRepository pointScheduledRepository;
@@ -80,20 +80,21 @@ public class PointFindService {
     }
 
     public AdminPointResponse findPointsAdmin(Boolean isAll, WithdrawalStatus withdrawalStatus, int page) {
-        Page<PointEntity> result;
+
         List<Boolean> booleanList = new ArrayList<>(List.of(false));
-        PageRequest pageRequest = PageRequest.of(page,10);
+        Pageable pageable = PageRequest.of(page,10);
         if (isAll) {
             booleanList.add(true);
         }
 
-        result = pointRepository.findByPointStatusInAndIsReadInOrderByIdDesc(
+        Page<PointEntity> result =
+                pointRepository.findByPointStatusInAndIsReadInOrderByIdDesc(
                 withdrawalStatus.getPointStatusList()
                 , booleanList
-                , pageRequest);
+                , pageable);
 
         List<AdminPointInfo> adminPointResponseList
-                = result.stream().map(AdminPointInfo::new).collect(Collectors.toList());
+        = result.stream().map(AdminPointInfo::new).collect(Collectors.toList());
 
         AdminPointResponse adminPointResponse = AdminPointResponse.builder()
                 .totalPage(result.getTotalPages() -1 )
@@ -103,6 +104,7 @@ public class PointFindService {
         if (adminPointResponseList.isEmpty()) {
             return null;
         }
+
         return adminPointResponse;
     }
 
