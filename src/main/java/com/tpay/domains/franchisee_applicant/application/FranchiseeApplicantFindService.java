@@ -51,7 +51,7 @@ public class FranchiseeApplicantFindService {
 
     // TODO: 2022/07/21 관리자페이지 페이징 기능 개발
     public FranchiseeApplicantFindResponse findAll(int page){
-        PageRequest pageRequest = PageRequest.of(page,10);
+        PageRequest pageRequest = PageRequest.of(page,15);
         Page<FranchiseeApplicantEntity> franchiseeApplicantEntityPage = franchiseeApplicantRepository.findAllByOrderByIdDesc(pageRequest);
         List<FranchiseeApplicantInfo> franchiseeApplicantInfoList = franchiseeApplicantEntityPage.stream().map(FranchiseeApplicantInfo::toResponse).collect(Collectors.toList());
 

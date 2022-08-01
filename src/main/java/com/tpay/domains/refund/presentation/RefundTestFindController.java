@@ -47,9 +47,10 @@ public class RefundTestFindController {
         @RequestParam int page,
         @RequestParam String startDate,
         @RequestParam String endDate,
-        @RequestParam RefundStatus refundStatus
+        @RequestParam RefundStatus refundStatus,
+        @RequestParam String searchKeyword
     ) {
-        RefundPagingFindResponse response = refundTestDetailFindService.findAll(page,startDate, endDate, refundStatus);
+        RefundPagingFindResponse response = refundTestDetailFindService.findAll(page,startDate, endDate, refundStatus,searchKeyword);
         return ResponseEntity.ok(response);
     }
 

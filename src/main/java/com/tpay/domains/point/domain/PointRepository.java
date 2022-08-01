@@ -58,8 +58,8 @@ public interface PointRepository extends JpaRepository<PointEntity, Long> {
     //List<PointEntity> findByPointStatusInAndIsReadInOrderByIdDesc(@Param("pointStatus") List<PointStatus> pointStatus, @Param("isRead") List<Boolean> isRead, Pageable pageable);
 
     @EntityGraph(attributePaths = {"franchiseeEntity"})
-    //Page<AdminPointResponse> findByPointStatusInAndIsReadInOrderByIdDesc(@Param("pointStatus") List<PointStatus> pointStatus, @Param("isRead") List<Boolean> isRead, Pageable pageable);
     Page<PointEntity> findByPointStatusInAndIsReadInOrderByIdDesc(@Param("pointStatus") List<PointStatus> pointStatus, @Param("isRead") List<Boolean> isRead, Pageable pageable);
+    //Page<PointEntity> findByPointStatusInAndIsReadInOrderByIdDesc(@Param("pointStatus") List<PointStatus> pointStatus, @Param("isRead") List<Boolean> isRead, Pageable pageable);
 
     @NotNull
     @Override

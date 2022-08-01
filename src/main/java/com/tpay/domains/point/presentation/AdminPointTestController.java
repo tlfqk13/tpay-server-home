@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * 포인트 관련 admin 기능
  */
@@ -22,11 +24,11 @@ public class AdminPointTestController {
      * 기본 조회
      */
     @GetMapping("/{isAll}/{withdrawalStatus}")
-    public ResponseEntity<AdminPointResponse> findPointsAdmin(
+    public ResponseEntity<List<AdminPointResponse>> findPointsAdmin(
         @PathVariable Boolean isAll,
         @PathVariable WithdrawalStatus withdrawalStatus,
         @RequestParam int page) {
-        AdminPointResponse pointsAdmin = pointTestFindService.findPointsAdmin(isAll, withdrawalStatus,page);
+        List<AdminPointResponse> pointsAdmin = pointTestFindService.findPointsAdmin(isAll, withdrawalStatus,page);
         return ResponseEntity.ok(pointsAdmin);
     }
 

@@ -41,7 +41,7 @@ public class RefundDetailFindService {
         DateTimeFormatter yyyyMMdd = DateTimeFormatter.ofPattern("yyyyMMdd");
         LocalDate startLocalDate = LocalDate.parse("20" + startDate, yyyyMMdd);
         LocalDate endLocalDate = LocalDate.parse("20" + endDate, yyyyMMdd).plusDays(1);
-        Pageable pageable = PageRequest.of(page,10);
+        Pageable pageable = PageRequest.of(page,15);
 
         Page<RefundFindResponseInterface> refundFindResponseInterfaces = refundRepository.findAllNativeQuery(pageable,startLocalDate, endLocalDate);
         List<RefundFindResponseInterface> list = refundFindResponseInterfaces.getContent();

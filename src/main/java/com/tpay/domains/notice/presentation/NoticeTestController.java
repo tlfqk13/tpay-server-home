@@ -32,9 +32,8 @@ public class NoticeTestController {
 
     @GetMapping("/admin/notice")
     public ResponseEntity<List<CommonNoticeFindDto.FindAllResponse>> getAll(
-            @RequestParam int page
     ) {
-        List<CommonNoticeFindDto.FindAllResponse> all = noticeTestService.getAll(page);
+        List<CommonNoticeFindDto.FindAllResponse> all = noticeTestService.getAll();
         return ResponseEntity.ok(all);
     }
 
