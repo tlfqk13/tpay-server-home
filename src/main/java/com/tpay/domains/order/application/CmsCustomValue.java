@@ -11,6 +11,7 @@ public class CmsCustomValue {
     public static final int TOTALRESULT_SECONDCELL = 7;
     public static final int SECONDSECTION_CELL = 0;
     public static final int DETAILRESULT_ROW = 30;
+    public static final int DETAILRESULT_ROW_PAGING = 22;
     public static final int DETAILRESULT_STARTCELL = 1;
     public static final int DETAILRESULT_ENDCELL = 7;
 }

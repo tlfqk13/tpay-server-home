@@ -8,6 +8,8 @@ import com.tpay.domains.vat.application.dto.VatResponse;
 import com.tpay.domains.vat.application.dto.VatTotalResponseInterface;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -81,6 +83,28 @@ public class OrderService {
 
     public List<List<String>> findMonthlyDetail(Long franchiseeIndex, String year, String month) {
         List<VatDetailResponseInterface> vatDetailResponseInterfaceList = orderRepository.findMonthlyVatDetail(franchiseeIndex, year, month);
+        List<List<String>> detailResult = new ArrayList<>();
+        for (VatDetailResponseInterface vatDetailResponseInterface : vatDetailResponseInterfaceList) {
+            List<String> baseList = new ArrayList<>();
+            baseList.add(vatDetailResponseInterface.getPurchaseSerialNumber());
+            baseList.add(vatDetailResponseInterface.getSaleDate());
+            baseList.add(vatDetailResponseInterface.getTakeoutConfirmNumber());
+            baseList.add(NumberFormatConverter.addCommaToNumber(vatDetailResponseInterface.getAmount()));
+            baseList.add(NumberFormatConverter.addCommaToNumber(vatDetailResponseInterface.getVat()));
+            baseList.add(NumberFormatConverter.addCommaToNumber(vatDetailResponseInterface.getRefundAmount()));
+            baseList.add(vatDetailResponseInterface.getCustomerName());
+            baseList.add(vatDetailResponseInterface.getCustomerNational());
+            detailResult.add(baseList);
+        }
+        return detailResult;
+    }
+
+    public List<List<String>> findMonthlyCmsDetail(Long franchiseeIndex, String year, String month,boolean isPaging) {
+        int pageData = 15;
+        if(isPaging){
+            pageData = 100;
+        }
+        List<VatDetailResponseInterface> vatDetailResponseInterfaceList = orderRepository.findMonthlyCmsDetail(franchiseeIndex, year, month,pageData);
         List<List<String>> detailResult = new ArrayList<>();
         for (VatDetailResponseInterface vatDetailResponseInterface : vatDetailResponseInterfaceList) {
             List<String> baseList = new ArrayList<>();

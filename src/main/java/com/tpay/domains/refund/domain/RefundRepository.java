@@ -118,7 +118,6 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
                     "order by refundIndex desc", nativeQuery = true)
     Page<RefundFindResponseInterface> findAllNativeQueryTest(Pageable pageable, @Param("startLocalDate") LocalDate startLocalDate, @Param("endLocalDate") LocalDate endLocalDate);
 
-
     @Query(value =
             "select r.id            as refundIndex,\n" +
                     "       o.purchs_sn     as orderNumber,\n" +

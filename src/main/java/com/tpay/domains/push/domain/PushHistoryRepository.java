@@ -21,5 +21,5 @@ public interface PushHistoryRepository extends JpaRepository<PushHistoryEntity, 
           countQuery =  "select id,created_date as createdDate,title from push_history\n" +
             "where push_category =15\n" +
             "group by date(created_date), title, body order by 1 desc\n", nativeQuery = true)
-    List<AdminPushDto> findAllAnnouncement(Pageable pageable);
+    List<AdminPushDto> findAllAnnouncement();
 }

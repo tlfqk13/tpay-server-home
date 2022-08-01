@@ -41,7 +41,7 @@ public class CmsController {
     }
 
     // TODO: 2022/04/27 URI 변경할 것 franchisee -> order
-    @GetMapping("/franchisee/{franchiseeIndex}/cms/downloads")
+/*    @GetMapping("/franchisee/{franchiseeIndex}/cms/downloads")
     public ResponseEntity<String> cmsDownloads(
         @PathVariable Long franchiseeIndex,
         @RequestParam String requestDate
@@ -52,6 +52,15 @@ public class CmsController {
         }
         cmsService.zipFileDown(10);
         return ResponseEntity.ok("Asdf");
+    }*/
+
+    @GetMapping("/franchisee/{franchiseeIndex}/cms/downloads")
+    public ResponseEntity<String> cmsDownloads(
+            @PathVariable Long franchiseeIndex,
+            @RequestParam String requestDate
+    ) {
+        cmsService.cmsDownloads(franchiseeIndex, requestDate);
+        return ResponseEntity.ok("Asdf");
     }
 
     // ZIP 파일 생성 테스트용
@@ -61,6 +70,15 @@ public class CmsController {
             @RequestParam String requestDate // ?requestMonth = 225
     ){
         String result = cmsService.cmsDownloadsTest(franchiseeIndex, requestDate);
+        return ResponseEntity.ok("Asdf");
+    }
+
+    // TODO: 2022/07/29 관리자가 한번에 cms 청구서 뽑으려고 만드는 중
+    @GetMapping("/franchisee/{franchiseeIndex}/cms-admin/downloads")
+    public ResponseEntity<String> adminCmsDownloads(
+            @PathVariable Long franchiseeIndex
+    ) {
+        cmsService.cmsAdminDownloads();
         return ResponseEntity.ok("Asdf");
     }
 }

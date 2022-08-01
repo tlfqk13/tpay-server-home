@@ -131,8 +131,9 @@ public class VatDownloadService {
             // 3. 물품판매 명세
             detailMonthlyResultSection(xssfWorkbook,sheet,detailMonthlyResult);
 
-            String fileName = personalInfoResult.get(2) + "_" + month + "월";
-            String result = s3FileUploader.uploadXlsx(franchiseeIndex, xssfWorkbook,fileName,month);
+            StringBuilder fileName = new StringBuilder();
+            fileName.append(personalInfoResult.get(2)).append("_").append(month).append("월").append("_실적명세서");
+            String result = s3FileUploader.uploadXlsx(franchiseeIndex, xssfWorkbook,fileName,month,false);
 
         } catch (IOException e) {
             throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "File Input Failed");

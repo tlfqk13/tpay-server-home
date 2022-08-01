@@ -22,20 +22,10 @@ public class AdminPushController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/admin/push/list/{page}")
-    public ResponseEntity<PushFindDto.FindAllResponse> findAll(
-            @PathVariable int page
-    ) {
-        PushFindDto.FindAllResponse response = adminPushService.findAll(page);
-        return ResponseEntity.ok(response);
-    }
-
-    // TODO: 2022/07/22 page를 requestParam으로 받아보자
     @GetMapping("/admin/push")
-    public ResponseEntity<PushFindDto.FindAllResponse> findAllReqParam(
-            @RequestParam int page
+    public ResponseEntity<PushFindDto.FindAllResponse> findAll(
     ) {
-        PushFindDto.FindAllResponse response = adminPushService.findAll(page);
+        PushFindDto.FindAllResponse response = adminPushService.findAll();
         return ResponseEntity.ok(response);
     }
 

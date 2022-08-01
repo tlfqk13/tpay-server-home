@@ -13,8 +13,12 @@ import com.tpay.domains.order.application.dto.CmsResponse;
 import com.tpay.domains.order.application.dto.CmsResponseDetailInterface;
 import com.tpay.domains.order.application.dto.CmsResponseInterface;
 import com.tpay.domains.order.domain.OrderRepository;
+import com.tpay.domains.refund.application.RefundDetailFindService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FileUtils;
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -41,6 +45,7 @@ public class CmsService {
     private final FranchiseeFindService franchiseeFindService;
 
     private final FranchiseeUploadFindService franchiseeUploadFindService;
+    private final RefundDetailFindService refundDetailFindService;
 
     public CmsResponse cmsReport(Long franchiseeIndex, String requestDate) {
         List<String> date = setUpDate(requestDate);
@@ -85,7 +90,7 @@ public class CmsService {
         return CmsDetailResponse.builder().commissionInfoList(commissionInfoList).customerInfoList(customerInfoList).build();
     }
 
-    public String cmsDownloads(Long franchiseeIndex, String requestDate) {
+    public void cmsDownloads(Long franchiseeIndex, String requestDate) {
         try {
             ClassPathResource resource = new ClassPathResource("KTP_CMS_Form.xlsx");
             File file1;
@@ -96,6 +101,7 @@ public class CmsService {
             FileInputStream fileInputStream = new FileInputStream(file1);
             XSSFWorkbook xssfWorkbook = new XSSFWorkbook(fileInputStream);
             XSSFSheet sheet = xssfWorkbook.getSheetAt(0);
+            XSSFSheet sheet1 = xssfWorkbook.getSheetAt(1);
             // TODO: 2022/02/03 엑셀파일 일부 write 후 저장까지 테스트 완료 포멧에 맞게 입력하는 로직 정해지면 구현할 것
             // TODO: 2022/07/14 CMS 청구내역 엑셀파일 양식 새롭게 받음.
 
@@ -103,7 +109,8 @@ public class CmsService {
             String year = date.get(0);
             String month = date.get(1);
             // 1. 물품판매 상세내역
-            List<List<String>> detailMonthlyResult = orderService.findMonthlyDetail(franchiseeIndex, year, month);
+            boolean isPaging  = true;
+            List<List<String>> detailMonthlyResult = orderService.findMonthlyCmsDetail(franchiseeIndex, year, month,false);
             // 2. 물품판매 총합계
             List<String> totalResult = orderService.findMonthlyTotal(franchiseeIndex, year, month);
             // TopSection
@@ -112,26 +119,44 @@ public class CmsService {
             // 최상단 영역
             topSection(sheet,topSectionInfo);
             // [매장명] [날짜] 영역
-            secondSection(sheet,topSectionInfo);
+            secondSection(xssfWorkbook,sheet,topSectionInfo);
             // 총 건수 . 청구 금액
             totalResultRow(sheet,totalResult);
 
-            if(detailMonthlyResult.size() <= 15){
+            if(detailMonthlyResult.size() == 15){
                 // 물품상세 내역
-                detailResultRow(sheet,detailMonthlyResult,totalResult);
+                detailResultRow(xssfWorkbook,sheet,detailMonthlyResult,totalResult,false);
+                detailMonthlyResult = orderService.findMonthlyCmsDetail(franchiseeIndex, year, month,isPaging);
+                detailResultRow(xssfWorkbook,sheet1,detailMonthlyResult,totalResult,isPaging);
             }else{
-                return null;
+                detailMonthlyResult = orderService.findMonthlyDetail(franchiseeIndex, year, month);
+                detailResultRow(xssfWorkbook,sheet,detailMonthlyResult,totalResult,false);
             }
 
-            System.out.println("아웃풋스트림 생성 전");
-            String result = s3FileUploader.uploadXlsx(franchiseeIndex, xssfWorkbook);
-            return result;
-
+           StringBuilder fileName = new StringBuilder();
+           fileName.append(topSectionInfo.get(2)).append("_").append(month).append("월").append("_cms");
+           boolean isCms = true;
+           String result = s3FileUploader.uploadXlsx(franchiseeIndex, xssfWorkbook,fileName,month,isCms);
 
         } catch (IOException e) {
             throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "File Input Failed");
         }
     }
+
+    public void cmsAdminDownloads() {
+        String requestYear = String.valueOf(LocalDate.now().getYear()).substring(2);
+        String requestMonthly = String.valueOf(LocalDate.now().getMonthValue());
+        String requestYearMonthly = requestYear + requestMonthly;
+
+        List<String> date = this.setUpDate(requestYearMonthly);
+        String year = date.get(0);
+        String month = date.get(1);
+        List<List<String>> totalResult = refundDetailFindService.findFranchiseeId(year, month);
+        for (List<String> strings : totalResult) {
+            this.cmsDownloads(Long.valueOf(strings.get(0)), requestYearMonthly);
+        }
+    }
+
     public List<String> setUpDate(String requestDatePart) {
 
         int yearInt = Integer.parseInt("20" + requestDatePart.substring(0, 2));
@@ -177,38 +202,65 @@ public class CmsService {
         totalResultRow.getCell(CmsCustomValue.TOTALRESULT_FIRSTCELL).setCellValue(totalResult.get(0));
         totalResultRow.getCell(CmsCustomValue.TOTALRESULT_SECONDCELL).setCellValue(totalResult.get(3));
     }
-    private void secondSection(XSSFSheet sheet, List<String> topSectionInfo) {
+    private void secondSection(XSSFWorkbook xssfWorkbook,XSSFSheet sheet, List<String> topSectionInfo) {
         XSSFRow secondSection = sheet.getRow(CmsCustomValue.SECONDSECTION_ROW);
-        secondSection.createCell(CmsCustomValue.SECONDSECTION_CELL);
+        CellStyle secondSectionCellStyle = cellStyleCustom(xssfWorkbook);
+        secondSection.createCell(CmsCustomValue.SECONDSECTION_CELL).setCellStyle(secondSectionCellStyle);
         secondSection.getCell(CmsCustomValue.SECONDSECTION_CELL).setCellValue(topSectionInfo.get(2) + "대표님의 " +  topSectionInfo.get(4)+" 환급세액 청구서입니다");
     }
-    private void detailResultRow(XSSFSheet sheet, List<List<String>> detailMonthlyResult, List<String> totalResult) {
-        for(int i=0;i<detailMonthlyResult.size();i++) {
-            // TODO: 2022/07/15 엑셀양식 15개 max 라서 건수 많으면 추가로 그릴 시트 요청 필요.
-            XSSFRow detailResultRow = sheet.getRow(i + CmsCustomValue.DETAILRESULT_ROW);
-            detailResultRow.createCell(0, STRING);
-            detailResultRow.getCell(0).setCellValue(i + 1);
-            for (int j = CmsCustomValue.DETAILRESULT_STARTCELL; j <= CmsCustomValue.DETAILRESULT_ENDCELL; j += 2) {
-                if (j == 1) {
-                    detailResultRow.createCell(j, STRING);
-                    detailResultRow.getCell(j).setCellValue(detailMonthlyResult.get(i).get(1));//판매일자
-                } else if (j == 3) {
-                    detailResultRow.createCell(j, STRING);
-                    detailResultRow.getCell(j).setCellValue(detailMonthlyResult.get(i).get(0));//구매일련번호
-                } else if (j == 5) {
-                    detailResultRow.createCell(j, STRING);
-                    detailResultRow.getCell(j).setCellValue(detailMonthlyResult.get(i).get(3));//세금포함가격
-                } else {
-                    detailResultRow.createCell(j, STRING);
-                    detailResultRow.getCell(j).setCellValue(detailMonthlyResult.get(i).get(4));//부가가치세
+    private void detailResultRow(XSSFWorkbook xssfWorkbook,XSSFSheet sheet, List<List<String>> detailMonthlyResult, List<String> totalResult,boolean isPaging) {
+        CellStyle detailResultRowCellStyle = cellStyleCustom(xssfWorkbook);
+        if(isPaging){
+            for(int i=0;i<detailMonthlyResult.size();i++) {
+                // TODO: 2022/07/15 엑셀양식 15개 max 라서 건수 많으면 추가로 그릴 시트 요청 필요.
+                XSSFRow detailResultRow = sheet.getRow(i + CmsCustomValue.DETAILRESULT_ROW_PAGING);
+                detailResultRow.createCell(0, STRING);
+                detailResultRow.getCell(0).setCellValue(i + 1);
+                for (int j = CmsCustomValue.DETAILRESULT_STARTCELL; j <= CmsCustomValue.DETAILRESULT_ENDCELL; j += 2) {
+                    if (j == 1) {
+                        detailResultRow.createCell(j, STRING).setCellStyle(detailResultRowCellStyle);
+                        detailResultRow.getCell(j).setCellValue(detailMonthlyResult.get(i).get(1));//판매일자
+                    } else if (j == 3) {
+                        detailResultRow.createCell(j, STRING).setCellStyle(detailResultRowCellStyle);
+                        detailResultRow.getCell(j).setCellValue(detailMonthlyResult.get(i).get(0));//구매일련번호
+                    } else if (j == 5) {
+                        detailResultRow.createCell(j, STRING).setCellStyle(detailResultRowCellStyle);
+                        detailResultRow.getCell(j).setCellValue(detailMonthlyResult.get(i).get(3));//세금포함가격
+                    } else {
+                        detailResultRow.createCell(j, STRING).setCellStyle(detailResultRowCellStyle);
+                        detailResultRow.getCell(j).setCellValue(detailMonthlyResult.get(i).get(4));//부가가치세
+                    }
                 }
             }
-            if (i == detailMonthlyResult.size() - 1) {
-                detailResultRow = sheet.getRow(45);
-                detailResultRow.createCell(5, STRING);
-                detailResultRow.createCell(7, STRING);
-                detailResultRow.getCell(5).setCellValue(totalResult.get(1));
-                detailResultRow.getCell(7).setCellValue(totalResult.get(2));
+        }
+        else {
+            for (int i = 0; i < detailMonthlyResult.size(); i++) {
+                // TODO: 2022/07/15 엑셀양식 15개 max 라서 건수 많으면 추가로 그릴 시트 요청 필요.
+                XSSFRow detailResultRow = sheet.getRow(i + CmsCustomValue.DETAILRESULT_ROW);
+                detailResultRow.createCell(0, STRING);
+                detailResultRow.getCell(0).setCellValue(i + 1);
+                for (int j = CmsCustomValue.DETAILRESULT_STARTCELL; j <= CmsCustomValue.DETAILRESULT_ENDCELL; j += 2) {
+                    if (j == 1) {
+                        detailResultRow.createCell(j, STRING).setCellStyle(detailResultRowCellStyle);
+                        detailResultRow.getCell(j).setCellValue(detailMonthlyResult.get(i).get(1));//판매일자
+                    } else if (j == 3) {
+                        detailResultRow.createCell(j, STRING).setCellStyle(detailResultRowCellStyle);
+                        detailResultRow.getCell(j).setCellValue(detailMonthlyResult.get(i).get(0));//구매일련번호
+                    } else if (j == 5) {
+                        detailResultRow.createCell(j, STRING).setCellStyle(detailResultRowCellStyle);
+                        detailResultRow.getCell(j).setCellValue(detailMonthlyResult.get(i).get(3));//세금포함가격
+                    } else {
+                        detailResultRow.createCell(j, STRING).setCellStyle(detailResultRowCellStyle);
+                        detailResultRow.getCell(j).setCellValue(detailMonthlyResult.get(i).get(4));//부가가치세
+                    }
+                }
+                if (i == detailMonthlyResult.size() - 1) {
+                    detailResultRow = sheet.getRow(45);
+                    detailResultRow.createCell(5, STRING).setCellStyle(detailResultRowCellStyle);
+                    detailResultRow.createCell(7, STRING).setCellStyle(detailResultRowCellStyle);
+                    detailResultRow.getCell(5).setCellValue(totalResult.get(1));
+                    detailResultRow.getCell(7).setCellValue(totalResult.get(2));
+                }
             }
         }
     }
@@ -338,5 +390,11 @@ public class CmsService {
         }
         System.out.println("Zip Success");
 
+    }
+
+    private CellStyle cellStyleCustom(XSSFWorkbook xssfWorkbook){
+        CellStyle cellStyle = xssfWorkbook.createCellStyle();
+        cellStyle.setAlignment(HorizontalAlignment.CENTER);
+        return cellStyle;
     }
 }

@@ -79,33 +79,22 @@ public class PointTestFindService {
         return pointRepository.findPointsTotal(franchiseeIndex, disappearDate);
     }
 
-    public AdminPointResponse findPointsAdmin(Boolean isAll, WithdrawalStatus withdrawalStatus, int page) {
-
+    public List<AdminPointResponse> findPointsAdmin(Boolean isAll, WithdrawalStatus withdrawalStatus,int page) {
+        Page<PointEntity> result;
         List<Boolean> booleanList = new ArrayList<>(List.of(false));
-        Pageable pageable = PageRequest.of(page,10);
+        Pageable pageRequest = PageRequest.of(page,15);
+
         if (isAll) {
             booleanList.add(true);
         }
 
-        Page<PointEntity> result =
-                pointRepository.findByPointStatusInAndIsReadInOrderByIdDesc(
-                withdrawalStatus.getPointStatusList()
-                , booleanList
-                , pageable);
+        result = pointRepository.findByPointStatusInAndIsReadInOrderByIdDesc(withdrawalStatus.getPointStatusList(), booleanList,pageRequest);
 
-        List<AdminPointInfo> adminPointResponseList
-        = result.stream().map(AdminPointInfo::new).collect(Collectors.toList());
-
-        AdminPointResponse adminPointResponse = AdminPointResponse.builder()
-                .totalPage(result.getTotalPages() -1 )
-                .adminPointInfoList(adminPointResponseList)
-                .build();
-
-        if (adminPointResponseList.isEmpty()) {
-            return null;
+        if (result.isEmpty()) {
+            return new ArrayList<>();
         }
 
-        return adminPointResponse;
+        return result.stream().map(AdminPointResponse::new).collect(Collectors.toList());
     }
 
     public PointFindDetailResponse findDetailByIndex(Long pointsIndex) {
