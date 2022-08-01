@@ -62,9 +62,8 @@ public class AdminPushService {
 
     }
 
-    public PushFindDto.FindAllResponse findAll(int page) {
-        Pageable pageable = PageRequest.of(page,10);
-        List<AdminPushDto> allAnnouncement = pushHistoryRepository.findAllAnnouncement(pageable);
+    public PushFindDto.FindAllResponse findAll() {
+        List<AdminPushDto> allAnnouncement = pushHistoryRepository.findAllAnnouncement();
         List<AdminPushResponse> collect = allAnnouncement.stream().map(AdminPushResponse::new).collect(Collectors.toList());
         return PushFindDto.FindAllResponse.builder()
             .responseList(collect)

@@ -56,11 +56,15 @@ public class AdminFranchiseeApplicantTest {
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * 가맹점  정보
+     */
     @GetMapping("")
     public ResponseEntity<FranchiseeApplicantFindResponse> findAll(
-            @RequestParam int page
+            @RequestParam int page,
+            @RequestParam String searchKeyword
     ){
-        FranchiseeApplicantFindResponse responseList = franchiseeApplicantTestFindService.findAll(page);
+        FranchiseeApplicantFindResponse responseList = franchiseeApplicantTestFindService.findAll(page,searchKeyword);
         return ResponseEntity.ok(responseList);
     }
 

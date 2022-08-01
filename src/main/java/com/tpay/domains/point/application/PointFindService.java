@@ -80,9 +80,9 @@ public class PointFindService {
     }
 
     public AdminPointResponse findPointsAdmin(Boolean isAll, WithdrawalStatus withdrawalStatus, int page) {
-        Page<PointEntity> result;
+/*        Page<PointEntity> result;
         List<Boolean> booleanList = new ArrayList<>(List.of(false));
-        PageRequest pageRequest = PageRequest.of(page,10);
+        PageRequest pageRequest = PageRequest.of(page,15);
         if (isAll) {
             booleanList.add(true);
         }
@@ -103,7 +103,8 @@ public class PointFindService {
         if (adminPointResponseList.isEmpty()) {
             return null;
         }
-        return adminPointResponse;
+        return adminPointResponse;*/
+        return null;
     }
 
     public PointFindDetailResponse findDetailByIndex(Long pointsIndex) {

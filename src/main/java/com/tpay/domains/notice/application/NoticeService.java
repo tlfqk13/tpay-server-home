@@ -60,7 +60,7 @@ public class NoticeService {
     }
 
     public List<CommonNoticeFindDto.FindAllResponse> getAll(int page) {
-        PageRequest pageRequest = PageRequest.of(page,10);
+        PageRequest pageRequest = PageRequest.of(page,15);
         //List<NoticeEntity> noticeEntityList = noticeRepository.findAll(Sort.by("id").descending());
         List<NoticeEntity> noticeEntityList = noticeRepository.findAllByOrderByIdDesc(pageRequest);
         return noticeEntityList.stream().map(CommonNoticeFindDto.FindAllResponse::new).collect(Collectors.toList());

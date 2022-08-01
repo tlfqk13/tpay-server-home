@@ -1,6 +1,7 @@
 package com.tpay.domains.point.application.dto;
 
 
+import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.point.domain.PointEntity;
 import com.tpay.domains.point.domain.PointStatus;
 import lombok.*;
@@ -19,14 +20,18 @@ public class AdminPointInfo {
         private Long amount;
         private Boolean isRead;
 
-        public AdminPointInfo(PointEntity point) {
-                this.pointsIndex = point.getId();
-                this.pointStatus = point.getPointStatus();
-                this.businessNumber = point.getFranchiseeEntity().getBusinessNumber();
-                this.storeName = point.getFranchiseeEntity().getStoreName();
-                this.sellerName = point.getFranchiseeEntity().getSellerName();
-                this.requestedDate = point.getCreatedDate().toString();
-                this.amount = point.getChange();
-                this.isRead =point.getIsRead();
+        public static AdminPointInfo toResponse(PointEntity pointEntity){
+                FranchiseeEntity franchiseeEntity = pointEntity.getFranchiseeEntity();
+                return AdminPointInfo.builder()
+                        .pointsIndex(pointEntity.getId())
+                        .pointStatus(pointEntity.getPointStatus())
+                        .businessNumber(franchiseeEntity.getBusinessNumber())
+                        .storeName(franchiseeEntity.getStoreName())
+                        .sellerName(franchiseeEntity.getSellerName())
+                        .requestedDate(pointEntity.getCreatedDate().toString())
+                        .amount(pointEntity.getChange())
+                        .isRead(pointEntity.getIsRead())
+                        .build();
         }
 }
+

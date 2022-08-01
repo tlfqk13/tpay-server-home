@@ -8,6 +8,7 @@ import com.tpay.domains.refund.application.dto.*;
 import com.tpay.domains.refund.domain.RefundEntity;
 import com.tpay.domains.refund.domain.RefundRepository;
 import com.tpay.domains.refund.domain.RefundStatus;
+import com.tpay.domains.search.application.dto.SearchRefundRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -28,6 +29,7 @@ public class RefundTestDetailFindService {
     private final PassportNumberEncryptService passportNumberEncryptService;
     private final RefundRepository refundRepository;
     private final CustomerFindService customerFindService;
+    private final SearchRefundRepository searchRefundRepository;
 
     public List<RefundFindResponseInterface> findList(Long franchiseeIndex, LocalDate startDate, LocalDate endDate) {
 
@@ -37,29 +39,47 @@ public class RefundTestDetailFindService {
 
     }
 
-    public RefundPagingFindResponse findAll(int page, String startDate, String endDate, RefundStatus refundStatus) {
+    public RefundPagingFindResponse findAll(int page, String startDate, String endDate, RefundStatus refundStatus, String searchKeyword) {
         DateTimeFormatter yyyyMMdd = DateTimeFormatter.ofPattern("yyyyMMdd");
         LocalDate startLocalDate = LocalDate.parse("20" + startDate, yyyyMMdd);
         LocalDate endLocalDate = LocalDate.parse("20" + endDate, yyyyMMdd).plusDays(1);
-        Pageable pageable = PageRequest.of(page,10);
+        PageRequest pageRequest = PageRequest.of(page, 10);
 
-        Page<RefundFindResponseInterface> refundFindResponseInterfaces = refundRepository.findAllNativeQueryTest(pageable,startLocalDate, endLocalDate);
-        List<RefundFindResponseInterface> list = refundFindResponseInterfaces.getContent();
+        Page<RefundFindResponseInterface> refundFindResponseInterfaces = null;
+        boolean isBusinessNumber = searchKeyword.chars().allMatch(Character::isDigit);
 
-        if (refundStatus.equals(RefundStatus.ALL)) {
-            return RefundPagingFindResponse.builder()
-                    .totalPage(refundFindResponseInterfaces.getTotalPages()-1)
-                    .refundFindResponseInterfaceList(list)
-                    .build();
-        } else {
+        if(refundStatus.equals(RefundStatus.ALL)) {
+            if (searchKeyword.isEmpty()) {
+                refundFindResponseInterfaces = refundRepository.findAllNativeQueryTest(pageRequest, startLocalDate, endLocalDate);
+            } else {
+                if (isBusinessNumber) {
+                    //사업자 번호로 검색
+                    refundFindResponseInterfaces = searchRefundRepository.SearchFindByBusinessNumberTest(pageRequest, startLocalDate, endLocalDate, searchKeyword);
+                } else {
+                    //가게 이름으로 검색
+                    refundFindResponseInterfaces = searchRefundRepository.SearchFindByStoreNameTest(pageRequest, startLocalDate, endLocalDate, searchKeyword);
+                }
+            }
+        }else{
             int ordinal = refundStatus.ordinal();
-            refundFindResponseInterfaces = refundRepository.findRefundStatusNativeQueryTest(pageable,startLocalDate, endLocalDate, ordinal);
-            return RefundPagingFindResponse.builder()
-                    .totalPage(refundFindResponseInterfaces.getTotalPages()-1)
-                    .refundFindResponseInterfaceList(list)
-                    .build();
+            if (searchKeyword.isEmpty()) {
+                refundFindResponseInterfaces = refundRepository.findRefundStatusNativeQueryTest(pageRequest, startLocalDate, endLocalDate,ordinal);
+            } else {
+                if (isBusinessNumber) {
+                    //사업자 번호로 검색
+                    refundFindResponseInterfaces = searchRefundRepository.SearchFindByBusinessNumberTest(pageRequest, startLocalDate, endLocalDate, searchKeyword,ordinal);
+                } else {
+                    //가게 이름으로 검색
+                    refundFindResponseInterfaces = searchRefundRepository.SearchFindByStoreNameTest(pageRequest, startLocalDate, endLocalDate, searchKeyword,ordinal);
+                }
+            }
         }
 
+        List<RefundFindResponseInterface> list = refundFindResponseInterfaces.getContent();
+        return RefundPagingFindResponse.builder()
+                .totalPage(refundFindResponseInterfaces.getTotalPages()-1)
+                .refundFindResponseInterfaceList(list)
+                .build();
     }
 
     public List<RefundFindResponse> findAllByCustomerInfo(

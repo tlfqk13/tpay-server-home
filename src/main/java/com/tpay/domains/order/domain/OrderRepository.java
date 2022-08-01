@@ -5,6 +5,8 @@ import com.tpay.domains.order.application.dto.CmsResponseInterface;
 import com.tpay.domains.vat.application.dto.VatDetailResponseInterface;
 import com.tpay.domains.vat.application.dto.VatReportResponseInterface;
 import com.tpay.domains.vat.application.dto.VatTotalResponseInterface;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -90,6 +92,24 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
             "    and substr(o.created_date,6,2) = :month\n" +
             "    order by 3 desc", nativeQuery = true)
     List<VatDetailResponseInterface> findMonthlyVatDetail(@Param("franchiseeIndex") Long franchiseeIndex, @Param("year") String year, @Param("month") String month);
+
+    @Query(value = "select\n" +
+            "    purchs_sn                                as purchaseSerialNumber\n" +
+            "    ,substr(replace(o.created_date,'-',''),1,8) as saleDate\n" +
+            "    ,tk_out_conf_no                             as takeoutConfirmNumber\n" +
+            "    ,tot_refund                                 as refundAmount\n" +
+            "    ,tot_amt                                    as amount\n" +
+            "    ,tot_vat                                    as vat\n" +
+            "    ,c.cus_nm                                    as customerName\n" +
+            "    ,c.cus_natn                                    as customerNational\n" +
+            "    from orders o inner join refund r on o.id = r.order_id\n" +
+            "                  left join customer c on c.id = o.customer_id\n" +
+            "    where franchisee_id = :franchiseeIndex\n" +
+            "    and refund_status = 'APPROVAL'\n" +
+            "    and substr(o.created_date,1,4) = :year\n" +
+            "    and substr(o.created_date,6,2) = :month\n" +
+            "    order by 3 desc limit 15,:pageData", nativeQuery = true)
+    List<VatDetailResponseInterface> findMonthlyCmsDetail(@Param("franchiseeIndex") Long franchiseeIndex, @Param("year") String year, @Param("month") String month,@Param("pageData")int pageData);
 
 
     @Query(value = "select\n" +

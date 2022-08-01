@@ -12,7 +12,6 @@ import com.tpay.domains.franchisee_applicant.domain.FranchiseeStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -48,11 +47,22 @@ public class FranchiseeApplicantTestFindService {
         return franchiseeApplicantEntityList.stream().map(FranchiseeApplicantInfo::toResponse).collect(Collectors.toList());
     }
 
-    public FranchiseeApplicantFindResponse findAll(int page){
-        PageRequest pageRequest = PageRequest.of(page,10);
-        Page<FranchiseeApplicantEntity> franchiseeApplicantEntityPage = franchiseeApplicantRepository.findAllByOrderByIdDesc(pageRequest);
-        List<FranchiseeApplicantInfo> franchiseeApplicantInfoList = franchiseeApplicantEntityPage.stream().map(FranchiseeApplicantInfo::toResponse).collect(Collectors.toList());
+    public FranchiseeApplicantFindResponse findAll(int page,String searchKeyword){
+        PageRequest pageRequest = PageRequest.of(page,15);
+        Page<FranchiseeApplicantEntity> franchiseeApplicantEntityPage;
 
+        if(!searchKeyword.isEmpty()){
+            boolean isBusinessNumber = searchKeyword.chars().allMatch(Character::isDigit);
+            if (isBusinessNumber) {
+                franchiseeApplicantEntityPage = franchiseeApplicantRepository.findByFranchiseeEntityBusinessNumber(pageRequest,searchKeyword);
+            }else{
+                franchiseeApplicantEntityPage = franchiseeApplicantRepository.findByFranchiseeEntityStoreName(pageRequest,searchKeyword);
+            }
+        }else {
+            franchiseeApplicantEntityPage = franchiseeApplicantRepository.findAllByOrderByIdDesc(pageRequest);
+        }
+
+        List<FranchiseeApplicantInfo> franchiseeApplicantInfoList = franchiseeApplicantEntityPage.stream().map(FranchiseeApplicantInfo::toResponse).collect(Collectors.toList());
         FranchiseeApplicantFindResponse franchiseeApplicantFindResponse = FranchiseeApplicantFindResponse.builder()
                 .totalPage(franchiseeApplicantEntityPage.getTotalPages()-1)
                 .franchiseeApplicantInfoList(franchiseeApplicantInfoList)
