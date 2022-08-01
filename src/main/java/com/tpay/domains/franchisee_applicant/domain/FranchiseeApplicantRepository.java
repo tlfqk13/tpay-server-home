@@ -24,9 +24,9 @@ public interface FranchiseeApplicantRepository
     @EntityGraph(attributePaths = {"franchiseeEntity"})
     Page<FranchiseeApplicantEntity> findAllByOrderByIdDesc(Pageable pageable);
     @EntityGraph(attributePaths = {"franchiseeEntity"})
-    Page<FranchiseeApplicantEntity> findByFranchiseeEntityBusinessNumber(Pageable pageable,@Param("businessNumber") String searchKeyword);
+    Page<FranchiseeApplicantEntity> findByFranchiseeEntityBusinessNumber(Pageable pageable,@Param("businessNumber") String searchBusinessNumber);
     @EntityGraph(attributePaths = {"franchiseeEntity"})
-    Page<FranchiseeApplicantEntity> findByFranchiseeEntityStoreName(Pageable pageable,@Param("storeName") String searchKeyword);
+    Page<FranchiseeApplicantEntity> findByFranchiseeEntityStoreName(Pageable pageable,@Param("storeName") String searchStoreName);
 
     @EntityGraph(attributePaths = {"franchiseeEntity"})
     List<FranchiseeApplicantEntity> findByFranchiseeStatus(FranchiseeStatus franchiseeStatus);

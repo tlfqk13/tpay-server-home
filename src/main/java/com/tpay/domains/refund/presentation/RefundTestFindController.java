@@ -7,6 +7,8 @@ import com.tpay.domains.refund.application.dto.RefundCustomerRequest;
 import com.tpay.domains.refund.application.dto.RefundFindResponseInterface;
 import com.tpay.domains.refund.application.dto.RefundPagingFindResponse;
 import com.tpay.domains.refund.domain.RefundStatus;
+import com.tpay.domains.sale.application.SaleAnalysisFindService;
+import com.tpay.domains.sale.application.dto.SaleAnalysisFindResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +22,7 @@ import java.util.List;
 public class RefundTestFindController {
 
     private final RefundTestDetailFindService refundTestDetailFindService;
+    private final SaleAnalysisFindService saleAnalysisFindService;
 
     @GetMapping("/refunds/franchisee/{franchiseeIndex}")
     public ResponseEntity<List<RefundFindResponseInterface>> findList(
@@ -58,6 +61,17 @@ public class RefundTestFindController {
     public ResponseEntity<List<RefundFindResponseInterface>> findAFranchisee(
             @PathVariable Long franchiseeIndex) {
         List<RefundFindResponseInterface> result = refundTestDetailFindService.findAFranchisee(franchiseeIndex);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/admin/refunds/total/{franchiseeIndex}")
+    public ResponseEntity<List<SaleAnalysisFindResponse>> findByDateRange(
+            @PathVariable Long franchiseeIndex,
+            @RequestParam DateFilter dateFilter,
+            @RequestParam(required = false) LocalDate startDate,
+            @RequestParam(required = false) LocalDate endDate
+    ) {
+        List<SaleAnalysisFindResponse> result = saleAnalysisFindService.findByDateRange(franchiseeIndex, dateFilter, startDate, endDate);
         return ResponseEntity.ok(result);
     }
 
