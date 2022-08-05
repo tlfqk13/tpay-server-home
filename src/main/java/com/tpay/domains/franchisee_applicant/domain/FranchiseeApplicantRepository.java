@@ -3,6 +3,7 @@ package com.tpay.domains.franchisee_applicant.domain;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.search.application.dto.SearchListInterface;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -24,18 +25,37 @@ public interface FranchiseeApplicantRepository
     @EntityGraph(attributePaths = {"franchiseeEntity"})
     Page<FranchiseeApplicantEntity> findAllByOrderByIdDesc(Pageable pageable);
     @EntityGraph(attributePaths = {"franchiseeEntity"})
-    Page<FranchiseeApplicantEntity> findByFranchiseeEntityBusinessNumber(Pageable pageable,@Param("businessNumber") String searchBusinessNumber);
+    Page<FranchiseeApplicantEntity> findByFranchiseeEntityBusinessNumberContaining(Pageable pageable,@Param("businessNumber") String searchBusinessNumber);
     @EntityGraph(attributePaths = {"franchiseeEntity"})
-    Page<FranchiseeApplicantEntity> findByFranchiseeEntityStoreName(Pageable pageable,@Param("storeName") String searchStoreName);
+    Page<FranchiseeApplicantEntity> findByFranchiseeEntityStoreNameContaining(Pageable pageable,@Param("storeName") String searchStoreName);
 
     @EntityGraph(attributePaths = {"franchiseeEntity"})
     List<FranchiseeApplicantEntity> findByFranchiseeStatus(FranchiseeStatus franchiseeStatus);
 
     @EntityGraph(attributePaths = {"franchiseeEntity"})
-    List<FranchiseeApplicantEntity> findByIsReadInAndFranchiseeStatusInOrderByIdDesc(@Param("isRead") List<Boolean> isRead, @Param("franchiseeStatus") List<FranchiseeStatus> franchiseeStatus);
+    Page<FranchiseeApplicantEntity> findByIsReadInAndFranchiseeStatusInOrderByIdDesc(
+            @Param("isRead") List<Boolean> isRead, @Param("franchiseeStatus") List<FranchiseeStatus> franchiseeStatus,Pageable pageable);
 
     @EntityGraph(attributePaths = {"franchiseeEntity"})
-    List<FranchiseeApplicantEntity> findByIsReadOrderByIdDesc(@Param("isRead") Boolean isRead);
+    Page<FranchiseeApplicantEntity> findByIsReadInAndFranchiseeStatusInAndFranchiseeEntityBusinessNumberContainingOrderByIdDesc(
+            @Param("isRead") List<Boolean> isRead, @Param("franchiseeStatus") List<FranchiseeStatus> franchiseeStatus
+            ,Pageable pageable,@Param("businessNumber") String businessNumber);
+
+    @EntityGraph(attributePaths = {"franchiseeEntity"})
+    Page<FranchiseeApplicantEntity> findByIsReadInAndFranchiseeStatusInAndFranchiseeEntityStoreNameContainingOrderByIdDesc(
+            @Param("isRead") List<Boolean> isRead, @Param("franchiseeStatus") List<FranchiseeStatus> franchiseeStatus
+            ,Pageable pageable,@Param("storeName") String storeName);
+
+    @EntityGraph(attributePaths = {"franchiseeEntity"})
+    Page<FranchiseeApplicantEntity> findByIsReadOrderByIdDesc(@Param("isRead") Boolean isRead,Pageable pageable);
+
+    @EntityGraph(attributePaths = {"franchiseeEntity"})
+    Page<FranchiseeApplicantEntity> findByIsReadAndFranchiseeEntityBusinessNumberContainingOrderByIdDesc(@Param("isRead") Boolean isRead
+            ,Pageable pageable,@Param("businessNumber") String businessNumber);
+
+    @EntityGraph(attributePaths = {"franchiseeEntity"})
+    Page<FranchiseeApplicantEntity> findByIsReadAndFranchiseeEntityStoreNameContainingOrderByIdDesc(@Param("isRead") Boolean isRead
+            ,Pageable pageable,@Param("storeName") String storeName);
 
     @Query(value = "select\n" +
             " f.store_nm as storeName,\n" +

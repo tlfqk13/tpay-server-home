@@ -1,13 +1,11 @@
-package com.tpay.domains.point.presentation;
+package com.tpay.domains.point_test.presentation;
 
-import com.tpay.domains.point.application.PointTestFindService;
+import com.tpay.domains.point_test.application.PointTestFindService;
 import com.tpay.domains.point.application.PointUpdateService;
 import com.tpay.domains.point.application.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * 포인트 관련 admin 기능
@@ -24,11 +22,12 @@ public class AdminPointTestController {
      * 기본 조회
      */
     @GetMapping("/{isAll}/{withdrawalStatus}")
-    public ResponseEntity<List<AdminPointResponse>> findPointsAdmin(
+    public ResponseEntity<AdminPointResponse> findPointsAdmin(
         @PathVariable Boolean isAll,
         @PathVariable WithdrawalStatus withdrawalStatus,
-        @RequestParam int page) {
-        List<AdminPointResponse> pointsAdmin = pointTestFindService.findPointsAdmin(isAll, withdrawalStatus,page);
+        @RequestParam int page,
+        @RequestParam String searchKeyword) {
+        AdminPointResponse pointsAdmin = pointTestFindService.findPointsAdmin(isAll, withdrawalStatus,page,searchKeyword);
         return ResponseEntity.ok(pointsAdmin);
     }
 

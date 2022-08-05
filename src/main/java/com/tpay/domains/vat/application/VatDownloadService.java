@@ -53,8 +53,6 @@ public class VatDownloadService {
             FileInputStream fileInputStream = new FileInputStream(file);
             XSSFWorkbook xssfWorkbook = new XSSFWorkbook(fileInputStream);
             XSSFSheet sheet = xssfWorkbook.getSheetAt(0); // 첫번째 시트를 가져옴
-            // TODO: 2022/07/06 글꼴, 크기 스타일(color) 는 아직 레퍼런스 없음
-            // TODO: 2022/02/03 엑셀파일 일부 write 후 저장까지 테스트 완료 포멧에 맞게 입력하는 로직 정해지면 구현할 것
 
             List<Object> localDates = setUpDate(requestDate);
             LocalDate startDate = (LocalDate) localDates.get(0);
@@ -186,7 +184,7 @@ public class VatDownloadService {
         }
         totalResultRow.getCell(3).setCellValue(totalResult.get(0));
         totalResultRow.getCell(7).setCellValue("석세스모드");
-        totalResultRow.getCell(8).setCellValue("석세스모드 사업자 번호");
+        totalResultRow.getCell(8).setCellValue(VatCustomValue.SUCCESSMODE_BUSINESSNUMBER);
     }
     private void detailMonthlyResultSection(XSSFWorkbook xssfWorkbook, XSSFSheet sheet, List<List<String>> detailMonthlyResult) {
         for (int i = 0; i < detailMonthlyResult.size(); i++) {
@@ -278,12 +276,13 @@ public class VatDownloadService {
         result.add(franchiseeEntity.getStoreName());
         result.add(franchiseeEntity.getStoreAddressBasic() + " " + franchiseeEntity.getStoreAddressDetail());
         if(isMonthly){
-            result.add("20" + saleTerm.substring(0,2) + "년"
-                    + saleTerm.substring(2) + "월 01일 ~ "
-                    + saleTerm.substring(2) + "월 31일 " );
+            result.add("20" + saleTerm.substring(2,4) + "년"
+                    + saleTerm.substring(4,6) + "월 01일 ~ "
+                    + saleTerm.substring(4,6) + "월 31일 " );
+        }else{
+            result.add(saleTerm); // 거래기간
         }
-        result.add(saleTerm);
-        result.add(franchiseeUploadEntity.getTaxFreeStoreNumber());
+        result.add(franchiseeUploadEntity.getTaxFreeStoreNumber()); // 면세 판매장 지정번호
         return result;
     }
 }

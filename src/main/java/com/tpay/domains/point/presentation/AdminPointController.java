@@ -25,8 +25,9 @@ public class AdminPointController {
     public ResponseEntity<AdminPointResponse> findPointsAdmin(
             @PathVariable Boolean isAll,
             @PathVariable WithdrawalStatus withdrawalStatus,
-            @RequestParam int page) {
-        AdminPointResponse pointsAdmin = pointFindService.findPointsAdmin(isAll, withdrawalStatus,page);
+            @RequestParam int page,
+            @RequestParam String searchKeyword) {
+        AdminPointResponse pointsAdmin = pointFindService.findPointsAdmin(isAll, withdrawalStatus,page,searchKeyword);
         return ResponseEntity.ok(pointsAdmin);
     }
 

@@ -1,4 +1,4 @@
-package com.tpay.domains.point.application;
+package com.tpay.domains.point_test.application;
 
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
@@ -79,22 +79,34 @@ public class PointTestFindService {
         return pointRepository.findPointsTotal(franchiseeIndex, disappearDate);
     }
 
-    public List<AdminPointResponse> findPointsAdmin(Boolean isAll, WithdrawalStatus withdrawalStatus,int page) {
+    public AdminPointResponse findPointsAdmin(Boolean isAll, WithdrawalStatus withdrawalStatus,int page,String searchKeyword) {
         Page<PointEntity> result;
         List<Boolean> booleanList = new ArrayList<>(List.of(false));
         Pageable pageRequest = PageRequest.of(page,15);
+        boolean isBusinessNumber = searchKeyword.chars().allMatch(Character::isDigit);
 
         if (isAll) {
             booleanList.add(true);
         }
 
-        result = pointRepository.findByPointStatusInAndIsReadInOrderByIdDesc(withdrawalStatus.getPointStatusList(), booleanList,pageRequest);
-
-        if (result.isEmpty()) {
-            return new ArrayList<>();
+        if(searchKeyword.isEmpty()){
+            result = pointRepository.findByPointStatusInAndIsReadInOrderByIdDesc(withdrawalStatus.getPointStatusList(), booleanList,pageRequest);
+        }else{
+            if(isBusinessNumber){
+                result = pointRepository.findByPointStatusInAndIsReadInAndFranchiseeEntityBusinessNumberContainingOrderByIdDesc(withdrawalStatus.getPointStatusList(),booleanList,pageRequest,searchKeyword);
+            }else{
+                result = pointRepository.findByPointStatusInAndIsReadInAndFranchiseeEntityStoreNameContainingOrderByIdDesc(withdrawalStatus.getPointStatusList(),booleanList,pageRequest,searchKeyword);
+            }
         }
 
-        return result.stream().map(AdminPointResponse::new).collect(Collectors.toList());
+        List<AdminPointInfo> adminPointInfoList = result.stream().map(AdminPointInfo::new).collect(Collectors.toList());
+
+        AdminPointResponse adminPointResponse = AdminPointResponse.builder()
+                .adminPointInfoList(adminPointInfoList)
+                .totalPage(result.getTotalPages()-1)
+                .build();
+
+        return adminPointResponse;
     }
 
     public PointFindDetailResponse findDetailByIndex(Long pointsIndex) {

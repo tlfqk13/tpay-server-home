@@ -5,6 +5,9 @@ import com.tpay.commons.exception.detail.JwtRuntimeException;
 import com.tpay.commons.jwt.AuthToken;
 import com.tpay.commons.jwt.JwtUtils;
 import com.tpay.commons.util.UserSelector;
+import com.tpay.domains.auth.application.AccessTokenService;
+import com.tpay.domains.auth.domain.EmployeeAccessTokenEntity;
+import com.tpay.domains.auth.domain.FranchiseeAccessTokenEntity;
 import com.tpay.domains.employee.application.EmployeeFindService;
 import com.tpay.domains.employee.domain.EmployeeEntity;
 import com.tpay.domains.franchisee.application.FranchiseeFindService;
@@ -52,6 +55,7 @@ public class JwtValidationInterceptor implements HandlerInterceptor {
     private final FranchiseeApplicantFindService franchiseeApplicantFindService;
     private final EmployeeFindService employeeFindService;
     private final FranchiseeFindService franchiseeFindService;
+    private final AccessTokenService accessTokenService;
 
     // 인터셉터 프리핸들 메서드 오버라이드
     @Override
@@ -69,6 +73,28 @@ public class JwtValidationInterceptor implements HandlerInterceptor {
         UserSelector tokenUserSelector = tokenInfo.getUserSelector();
         String tokenIndex = tokenInfo.getIndex();
         String uriIndex = uriInfo.getIndex();
+
+        if(FRANCHISEE == tokenUserSelector){
+            Optional<FranchiseeAccessTokenEntity> franchiseeAccessTokenEntityOptional =
+                    accessTokenService.findByFranchiseeId(Long.valueOf(tokenIndex));
+            String latestFranchiseeAccessToken  = franchiseeAccessTokenEntityOptional.get().getAccessToken();
+
+            AuthToken authFranchiseeToken = jwtUtils.convertAuthToken(latestFranchiseeAccessToken);
+            if(!claims.getIssuedAt().equals(authFranchiseeToken.getData().getIssuedAt())){
+                throw new JwtRuntimeException(ExceptionState.FORCE_REFRESH);
+            }
+        }else{
+            System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            Optional<EmployeeAccessTokenEntity> employeeAccessTokenEntityOptional =
+                    accessTokenService.findByEmployeeId(Long.valueOf(tokenIndex));
+            String latestEmployeeAccessToken = employeeAccessTokenEntityOptional.get().getAccessToken();
+
+            AuthToken authEmployeeToken = jwtUtils.convertAuthToken(latestEmployeeAccessToken);
+            if(!claims.getIssuedAt().equals(authEmployeeToken.getData().getIssuedAt())){
+                throw new JwtRuntimeException(ExceptionState.FORCE_REFRESH);
+            }
+        }
+
         if (tokenInfo.getUserSelector().equals(uriInfo.userSelector) && tokenIndex.equals(uriIndex)) {
             if (FRANCHISEE == tokenUserSelector) {
                 findFranchiseeById(tokenIndex, request.getRequestURI());

@@ -3,10 +3,7 @@ package com.tpay.domains.auth.application;
 import com.tpay.commons.jwt.AuthToken;
 import com.tpay.commons.jwt.JwtUtils;
 import com.tpay.commons.jwt.TokenType;
-import com.tpay.domains.auth.domain.EmployeeTokenEntity;
-import com.tpay.domains.auth.domain.EmployeeTokenRepository;
-import com.tpay.domains.auth.domain.FranchiseeTokenEntity;
-import com.tpay.domains.auth.domain.FranchiseeTokenRepository;
+import com.tpay.domains.auth.domain.*;
 import com.tpay.domains.employee.domain.EmployeeEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +20,8 @@ public class AuthService {
     private final JwtUtils jwtUtils;
     private final FranchiseeTokenRepository franchiseeTokenRepository;
     private final EmployeeTokenRepository employeeTokenRepository;
+    private final FranchiseeAccessTokenRepository franchiseeAccessTokenRepository;
+    private final EmployeeAccessTokenRepository employeeAccessTokenRepository;
 
     @Transactional
     public void updateOrSave(FranchiseeEntity franchiseeEntity, String refreshToken) {
@@ -52,6 +51,34 @@ public class AuthService {
                     .refreshToken(refreshToken)
                     .build());
 
+    }
+
+    @Transactional
+    public void updateOrSaveAccessToken(FranchiseeEntity franchiseeEntity, String accessToken) {
+        FranchiseeAccessTokenEntity franchiseeTokenEntity =
+                franchiseeAccessTokenRepository.existsByFranchiseeEntityId(franchiseeEntity.getId())
+                ? franchiseeAccessTokenRepository
+                        .findByFranchiseeEntityId(franchiseeEntity.getId())
+                        .get().accessToken(accessToken)
+                : franchiseeAccessTokenRepository.save(
+                        FranchiseeAccessTokenEntity.builder()
+                                .franchiseeEntity(franchiseeEntity)
+                                .accessToken(accessToken)
+                                .build());
+    }
+
+    @Transactional
+    public void updateOrSaveAccessToken(EmployeeEntity employeeEntity, String accessToken) {
+        EmployeeAccessTokenEntity employeeAccessTokenEntity =
+                employeeAccessTokenRepository.existsByEmployeeEntityId(employeeEntity.getId())
+                        ? employeeAccessTokenRepository
+                        .findByEmployeeEntityId(employeeEntity.getId())
+                        .get().accessToken(accessToken)
+                        : employeeAccessTokenRepository.save(
+                        EmployeeAccessTokenEntity.builder()
+                                .employeeEntity(employeeEntity)
+                                .accessToken(accessToken)
+                                .build());
     }
 
     public AuthToken createAccessToken(FranchiseeEntity franchiseeEntity) {

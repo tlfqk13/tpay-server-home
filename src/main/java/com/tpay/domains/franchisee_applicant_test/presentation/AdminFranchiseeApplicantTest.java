@@ -1,14 +1,13 @@
-package com.tpay.domains.franchisee_applicant.presentation;
+package com.tpay.domains.franchisee_applicant_test.presentation;
 
 import com.tpay.domains.franchisee_applicant.application.*;
 import com.tpay.domains.franchisee_applicant.application.dto.*;
+import com.tpay.domains.franchisee_applicant_test.application.FranchiseeApplicantTestFindService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * 가맹점 신청 관련 Admin 페이지 기능
@@ -83,8 +82,13 @@ public class AdminFranchiseeApplicantTest {
      */
     @GetMapping("/{filterSelector}/{value}")
     @ApiOperation(value = "가맹점 신청 내역조회", notes = "가맹점 현황 필터링")
-    public ResponseEntity<List<FranchiseeApplicantInfo>> filter(@PathVariable FilterSelector filterSelector, @PathVariable String value) {
-        List<FranchiseeApplicantInfo> result = franchiseeApplicantTestFindService.applicantFilter(filterSelector, value);
+    public ResponseEntity<FranchiseeApplicantFindResponse> filter(
+            @PathVariable FilterSelector filterSelector,
+            @PathVariable String value,
+            @RequestParam int page,
+            @RequestParam String searchKeyword
+    ) {
+        FranchiseeApplicantFindResponse result = franchiseeApplicantTestFindService.applicantFilter(filterSelector, value, page, searchKeyword);
         return ResponseEntity.ok(result);
     }
 

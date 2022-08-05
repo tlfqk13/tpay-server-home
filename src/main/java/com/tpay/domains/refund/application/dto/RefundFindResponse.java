@@ -16,5 +16,16 @@ public class RefundFindResponse {
     private LocalDateTime createdDate;
     private String totalAmount;
     private String totalRefund;
+    private String actualAmount;
     private RefundStatus refundStatus;
+
+    public RefundFindResponse(RefundFindResponseInterface refundFindResponseInterface){
+        this.refundIndex = refundFindResponseInterface.getRefundIndex();
+        this.orderNumber = refundFindResponseInterface.getOrderNumber();
+        this.createdDate = refundFindResponseInterface.getCreatedDate();
+        this.totalAmount = refundFindResponseInterface.getTotalAmount();
+        this.totalRefund = refundFindResponseInterface.getTotalRefund();
+        this.actualAmount = refundFindResponseInterface.getActualAmount();
+        this.refundStatus = refundFindResponseInterface.getRefundStatus();
+    }
 }
