@@ -1,4 +1,4 @@
-package com.tpay.domains.refund.application;
+package com.tpay.domains.refund_test.application;
 
 import com.tpay.commons.aria.PassportNumberEncryptService;
 import com.tpay.commons.util.DateFilter;
@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -43,34 +42,34 @@ public class RefundTestDetailFindService {
         DateTimeFormatter yyyyMMdd = DateTimeFormatter.ofPattern("yyyyMMdd");
         LocalDate startLocalDate = LocalDate.parse("20" + startDate, yyyyMMdd);
         LocalDate endLocalDate = LocalDate.parse("20" + endDate, yyyyMMdd).plusDays(1);
-        PageRequest pageRequest = PageRequest.of(page, 10);
+        PageRequest pageRequest = PageRequest.of(page, 15);
 
         Page<RefundFindResponseInterface> refundFindResponseInterfaces = null;
         boolean isBusinessNumber = searchKeyword.chars().allMatch(Character::isDigit);
 
         if(refundStatus.equals(RefundStatus.ALL)) {
             if (searchKeyword.isEmpty()) {
-                refundFindResponseInterfaces = refundRepository.findAllNativeQueryTest(pageRequest, startLocalDate, endLocalDate);
+                refundFindResponseInterfaces = refundRepository.findAllNativeQuery(pageRequest, startLocalDate, endLocalDate);
             } else {
                 if (isBusinessNumber) {
                     //사업자 번호로 검색
-                    refundFindResponseInterfaces = searchRefundRepository.SearchFindByBusinessNumberTest(pageRequest, startLocalDate, endLocalDate, searchKeyword);
+                    refundFindResponseInterfaces = searchRefundRepository.SearchFindByBusinessNumber(pageRequest, startLocalDate, endLocalDate, searchKeyword);
                 } else {
                     //가게 이름으로 검색
-                    refundFindResponseInterfaces = searchRefundRepository.SearchFindByStoreNameTest(pageRequest, startLocalDate, endLocalDate, searchKeyword);
+                    refundFindResponseInterfaces = searchRefundRepository.SearchFindByStoreName(pageRequest, startLocalDate, endLocalDate, searchKeyword);
                 }
             }
         }else{
             int ordinal = refundStatus.ordinal();
             if (searchKeyword.isEmpty()) {
-                refundFindResponseInterfaces = refundRepository.findRefundStatusNativeQueryTest(pageRequest, startLocalDate, endLocalDate,ordinal);
+                refundFindResponseInterfaces = refundRepository.findRefundStatusNativeQuery(pageRequest, startLocalDate, endLocalDate,ordinal);
             } else {
                 if (isBusinessNumber) {
                     //사업자 번호로 검색
-                    refundFindResponseInterfaces = searchRefundRepository.SearchFindByBusinessNumberTest(pageRequest, startLocalDate, endLocalDate, searchKeyword,ordinal);
+                    refundFindResponseInterfaces = searchRefundRepository.SearchFindByBusinessNumber(pageRequest, startLocalDate, endLocalDate, searchKeyword,ordinal);
                 } else {
                     //가게 이름으로 검색
-                    refundFindResponseInterfaces = searchRefundRepository.SearchFindByStoreNameTest(pageRequest, startLocalDate, endLocalDate, searchKeyword,ordinal);
+                    refundFindResponseInterfaces = searchRefundRepository.SearchFindByStoreName(pageRequest, startLocalDate, endLocalDate, searchKeyword,ordinal);
                 }
             }
         }
@@ -112,10 +111,30 @@ public class RefundTestDetailFindService {
             .collect(Collectors.toList());
     }
 
-    public List<RefundFindResponseInterface> findAFranchisee(Long franchiseeIndex) {
-        return refundRepository.findAFranchiseeNativeQuery(franchiseeIndex);
-    }
+    public RefundDetailFindResponse findAFranchisee(Long franchiseeIndex, String startDate, String endDate) {
+        DateTimeFormatter yyyyMMdd = DateTimeFormatter.ofPattern("yyyyMMdd");
+        LocalDate startLocalDate = LocalDate.parse("20" + startDate, yyyyMMdd);
+        LocalDate endLocalDate = LocalDate.parse("20" + endDate, yyyyMMdd).plusDays(1);
 
+        List<RefundFindResponseInterface> findAFranchiseeList = refundRepository.findAFranchiseeNativeQuery(franchiseeIndex, startLocalDate, endLocalDate);
+        List<RefundFindResponse> refundList = findAFranchiseeList.stream().map(RefundFindResponse::new).collect(Collectors.toList());
+
+        RefundFindResponseInterface refundDetailList = refundRepository.findAFranchiseeSaleTotalQuery(franchiseeIndex, startLocalDate, endLocalDate);
+        RefundDetailTotalResponse refundDetail = RefundDetailTotalResponse.builder()
+                .totalActualAmount(refundDetailList.getActualAmount())
+                .totalAmount(refundDetailList.getTotalAmount())
+                .totalRefund(refundDetailList.getTotalRefund())
+                .totalCancel(refundDetailList.getCancelCount())
+                .totalCount(refundDetailList.getSaleCount())
+                .build();
+
+        RefundDetailFindResponse refundDetailFindResponse = RefundDetailFindResponse.builder()
+                .totalRefundData(refundDetail)
+                .refundList(refundList)
+                .build();
+
+        return refundDetailFindResponse;
+    }
     public List<RefundByCustomerDateResponse> findRefundsByCustomerInfo(Long franchiseeIndex, RefundCustomerRequest refundCustomerRequest) {
         RefundCustomerInfoRequest refundCustomerInfoRequest = refundCustomerRequest.getRefundCustomerInfoRequest();
         RefundCustomerDateRequest refundCustomerDateRequest = refundCustomerRequest.getRefundCustomerDateRequest();
@@ -197,6 +216,4 @@ public class RefundTestDetailFindService {
             return o2.getCreatedDate().compareTo(o1.getCreatedDate());
         }
     }
-
-
 }

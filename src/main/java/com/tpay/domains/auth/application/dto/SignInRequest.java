@@ -10,4 +10,5 @@ public class SignInRequest {
     private String userId;
     private String password;
     private String pushToken;
+    private boolean forcedCheck;
 }

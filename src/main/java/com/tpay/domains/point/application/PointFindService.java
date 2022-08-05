@@ -79,32 +79,34 @@ public class PointFindService {
         return pointRepository.findPointsTotal(franchiseeIndex, disappearDate);
     }
 
-    public AdminPointResponse findPointsAdmin(Boolean isAll, WithdrawalStatus withdrawalStatus, int page) {
-/*        Page<PointEntity> result;
+    public AdminPointResponse findPointsAdmin(Boolean isAll, WithdrawalStatus withdrawalStatus, int page,String searchKeyword) {
+        Page<PointEntity> result;
         List<Boolean> booleanList = new ArrayList<>(List.of(false));
-        PageRequest pageRequest = PageRequest.of(page,15);
+        Pageable pageRequest = PageRequest.of(page,15);
+        boolean isBusinessNumber = searchKeyword.chars().allMatch(Character::isDigit);
+
         if (isAll) {
             booleanList.add(true);
         }
 
-        result = pointRepository.findByPointStatusInAndIsReadInOrderByIdDesc(
-                withdrawalStatus.getPointStatusList()
-                , booleanList
-                , pageRequest);
+        if(searchKeyword.isEmpty()){
+            result = pointRepository.findByPointStatusInAndIsReadInOrderByIdDesc(withdrawalStatus.getPointStatusList(), booleanList,pageRequest);
+        }else{
+            if(isBusinessNumber){
+                result = pointRepository.findByPointStatusInAndIsReadInAndFranchiseeEntityBusinessNumberContainingOrderByIdDesc(withdrawalStatus.getPointStatusList(),booleanList,pageRequest,searchKeyword);
+            }else{
+                result = pointRepository.findByPointStatusInAndIsReadInAndFranchiseeEntityStoreNameContainingOrderByIdDesc(withdrawalStatus.getPointStatusList(),booleanList,pageRequest,searchKeyword);
+            }
+        }
 
-        List<AdminPointInfo> adminPointResponseList
-                = result.stream().map(AdminPointInfo::new).collect(Collectors.toList());
+        List<AdminPointInfo> adminPointInfoList = result.stream().map(AdminPointInfo::new).collect(Collectors.toList());
 
         AdminPointResponse adminPointResponse = AdminPointResponse.builder()
-                .totalPage(result.getTotalPages() -1 )
-                .adminPointInfoList(adminPointResponseList)
+                .adminPointInfoList(adminPointInfoList)
+                .totalPage(result.getTotalPages()-1)
                 .build();
 
-        if (adminPointResponseList.isEmpty()) {
-            return null;
-        }
-        return adminPointResponse;*/
-        return null;
+        return adminPointResponse;
     }
 
     public PointFindDetailResponse findDetailByIndex(Long pointsIndex) {

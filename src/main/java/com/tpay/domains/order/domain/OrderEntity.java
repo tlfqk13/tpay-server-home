@@ -115,16 +115,12 @@ public class OrderEntity extends BaseTimeEntity {
             .collect(Collectors.toList());
     }
 
+    // TODO: 2022/08/02 환급 금액 버림 ex)30000 -> 1901 ->1900
     public String getTotalRefund() {
         double vat = Double.parseDouble(this.totalVat);
-        int totalRefund = (int) Math.floor((vat * 70) / 100);
-        return Integer.toString(totalRefund);
-    }
-
-    public long getPoints() {
-        double vat = Double.parseDouble(this.totalVat);
-        long points = (long) Math.floor((vat * 30) / 100);
-        return points;
+        double totalRefund = (int) Math.floor((vat*70)/100);
+        int totalRefundResult = (int) (Math.floor(totalRefund/100)) * 100;
+        return Integer.toString(totalRefundResult);
     }
 
     public long getPointsWithPercentage(double balancePercentage){

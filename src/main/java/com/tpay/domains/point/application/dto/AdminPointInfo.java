@@ -20,18 +20,15 @@ public class AdminPointInfo {
         private Long amount;
         private Boolean isRead;
 
-        public static AdminPointInfo toResponse(PointEntity pointEntity){
-                FranchiseeEntity franchiseeEntity = pointEntity.getFranchiseeEntity();
-                return AdminPointInfo.builder()
-                        .pointsIndex(pointEntity.getId())
-                        .pointStatus(pointEntity.getPointStatus())
-                        .businessNumber(franchiseeEntity.getBusinessNumber())
-                        .storeName(franchiseeEntity.getStoreName())
-                        .sellerName(franchiseeEntity.getSellerName())
-                        .requestedDate(pointEntity.getCreatedDate().toString())
-                        .amount(pointEntity.getChange())
-                        .isRead(pointEntity.getIsRead())
-                        .build();
+        public AdminPointInfo(PointEntity pointEntity){
+                this.pointsIndex = pointEntity.getId();
+                this.pointStatus = pointEntity.getPointStatus();
+                this.businessNumber = pointEntity.getFranchiseeEntity().getBusinessNumber();
+                this.storeName = pointEntity.getFranchiseeEntity().getStoreName();
+                this.sellerName = pointEntity.getFranchiseeEntity().getSellerName();
+                this.requestedDate = pointEntity.getCreatedDate().toString();
+                this.isRead = pointEntity.getIsRead();
+                this.amount = pointEntity.getChange();
         }
 }
 

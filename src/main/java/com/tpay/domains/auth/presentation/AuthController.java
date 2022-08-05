@@ -7,8 +7,11 @@ import com.tpay.domains.auth.application.dto.SignInRequest;
 import com.tpay.domains.auth.application.dto.SignInTokenInfo;
 import com.tpay.domains.auth.application.dto.SignOutRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Auth 관련
@@ -36,6 +39,15 @@ public class AuthController {
     @DeleteMapping("/sign-out")
     public ResponseEntity<String> signOut(@RequestBody SignOutRequest signOutRequest) {
         String result = signOutService.signOut(signOutRequest);
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * 중복 로그아웃
+     */
+    @DeleteMapping("/duplicate-sign-out")
+    public ResponseEntity<String> duplicateSignOut(@RequestBody SignOutRequest signOutRequest) {
+        String result = signOutService.duplicateSignOut(signOutRequest);
         return ResponseEntity.ok(result);
     }
 

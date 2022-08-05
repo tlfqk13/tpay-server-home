@@ -2,10 +2,7 @@ package com.tpay.domains.refund.presentation;
 
 import com.tpay.commons.util.DateFilter;
 import com.tpay.domains.refund.application.RefundDetailFindService;
-import com.tpay.domains.refund.application.dto.RefundByCustomerDateResponse;
-import com.tpay.domains.refund.application.dto.RefundCustomerRequest;
-import com.tpay.domains.refund.application.dto.RefundFindResponseInterface;
-import com.tpay.domains.refund.application.dto.RefundPagingFindResponse;
+import com.tpay.domains.refund.application.dto.*;
 import com.tpay.domains.refund.domain.RefundStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -43,19 +40,22 @@ public class RefundFindController {
 
     @GetMapping("/admin/refunds")
     public ResponseEntity<RefundPagingFindResponse> findAll(
-        @RequestParam int page,
-        @RequestParam String startDate,
-        @RequestParam String endDate,
-        @RequestParam RefundStatus refundStatus
+            @RequestParam int page,
+            @RequestParam String startDate,
+            @RequestParam String endDate,
+            @RequestParam RefundStatus refundStatus,
+            @RequestParam String searchKeyword
     ) {
-        RefundPagingFindResponse response = refundDetailFindService.findAll(page,startDate, endDate, refundStatus);
+        RefundPagingFindResponse response = refundDetailFindService.findAll(page,startDate, endDate, refundStatus,searchKeyword);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/admin/refunds/{franchiseeIndex}")
-    public ResponseEntity<List<RefundFindResponseInterface>> findAFranchisee(
-            @PathVariable Long franchiseeIndex) {
-        List<RefundFindResponseInterface> result = refundDetailFindService.findAFranchisee(franchiseeIndex);
+    public ResponseEntity<RefundDetailFindResponse> findAFranchisee(
+            @PathVariable Long franchiseeIndex,
+            @RequestParam String startDate,
+            @RequestParam String endDate) {
+        RefundDetailFindResponse result = refundDetailFindService.findAFranchisee(franchiseeIndex, startDate, endDate);
         return ResponseEntity.ok(result);
     }
 

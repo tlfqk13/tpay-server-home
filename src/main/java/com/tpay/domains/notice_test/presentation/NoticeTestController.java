@@ -1,6 +1,6 @@
-package com.tpay.domains.notice.presentation;
+package com.tpay.domains.notice_test.presentation;
 
-import com.tpay.domains.notice.application.NoticeTestService;
+import com.tpay.domains.notice_test.application.NoticeTestService;
 import com.tpay.domains.notice.application.dto.AppNoticeFindDto;
 import com.tpay.domains.notice.application.dto.CommonNoticeFindDto;
 import com.tpay.domains.notice.application.dto.DataList;

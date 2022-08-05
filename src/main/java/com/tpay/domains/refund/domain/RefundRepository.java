@@ -5,7 +5,6 @@ import com.tpay.domains.refund.application.dto.RefundFindResponseInterface;
 import com.tpay.domains.sale.application.dto.SaleAnalysisFindResponseInterface;
 import com.tpay.domains.sale.application.dto.SaleStatisticsResponseInterface;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -67,8 +66,7 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
                     "         inner join orders o on r.order_id = o.id\n" +
                     "         left join franchisee f on o.franchisee_id = f.id\n" +
                     "where r.created_date between :startLocalDate and :endLocalDate\n" +
-                    // TODO: 2022/07/26 운영에서 김테스 없이 보기 위한 조건문 추가
-                    "and f.store_nm != '김테스'\n" +
+                    "and f.biz_no != 2141582141\n" +
                     "order by refundIndex desc\n",
             countQuery = "select r.id            as refundIndex,\n" +
                     "       o.purchs_sn     as orderNumber,\n" +
@@ -83,41 +81,9 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
                     "         inner join orders o on r.order_id = o.id\n" +
                     "         left join franchisee f on o.franchisee_id = f.id\n" +
                     "where r.created_date between :startLocalDate and :endLocalDate\n" +
-                    "and f.store_nm != '김테스'\n" +
+                    "and f.biz_no != 2141582141\n" +
                     "order by refundIndex desc", nativeQuery = true)
     Page<RefundFindResponseInterface> findAllNativeQuery(Pageable pageable, @Param("startLocalDate") LocalDate startLocalDate, @Param("endLocalDate") LocalDate endLocalDate);
-
-    @Query(value =
-            "select r.id            as refundIndex,\n" +
-                    "       o.purchs_sn     as orderNumber,\n" +
-                    "       r.created_date  as createdDate,\n" +
-                    "       o.tot_amt       as totalAmount,\n" +
-                    "       r.tot_refund    as totalRefund,\n" +
-                    "       o.tot_amt - r.tot_refund    as actualAmount,\n" +
-                    "       r.refund_status as refundStatus,\n" +
-                    "       f.biz_no        as businessNumber,\n" +
-                    "       f.store_nm      as storeName\n" +
-                    "from refund r\n" +
-                    "         inner join orders o on r.order_id = o.id\n" +
-                    "         left join franchisee f on o.franchisee_id = f.id\n" +
-                    "where r.created_date between :startLocalDate and :endLocalDate\n" +
-                    "order by refundIndex desc\n",
-            countQuery = "select r.id            as refundIndex,\n" +
-                    "       o.purchs_sn     as orderNumber,\n" +
-                    "       r.created_date  as createdDate,\n" +
-                    "       o.tot_amt       as totalAmount,\n" +
-                    "       r.tot_refund    as totalRefund,\n" +
-                    "       o.tot_amt - r.tot_refund    as actualAmount,\n" +
-                    "       r.refund_status as refundStatus,\n" +
-                    "       f.biz_no        as businessNumber,\n" +
-                    "       f.store_nm      as storeName\n" +
-                    "from refund r\n" +
-                    "         inner join orders o on r.order_id = o.id\n" +
-                    "         left join franchisee f on o.franchisee_id = f.id\n" +
-                    "where r.created_date between :startLocalDate and :endLocalDate\n" +
-                    "order by refundIndex desc", nativeQuery = true)
-    Page<RefundFindResponseInterface> findAllNativeQueryTest(Pageable pageable, @Param("startLocalDate") LocalDate startLocalDate, @Param("endLocalDate") LocalDate endLocalDate);
-
     @Query(value =
             "select r.id            as refundIndex,\n" +
                     "       o.purchs_sn     as orderNumber,\n" +
@@ -133,25 +99,7 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
                     "         left join franchisee f on o.franchisee_id = f.id\n" +
                     "where r.created_date between :startLocalDate and :endLocalDate\n" +
                     "and refund_status = :ordinal\n" +
-                    "and f.store_nm != '김테스'\n" +
-                    "order by refundIndex desc", nativeQuery = true)
-    List<RefundFindResponseInterface> findRefundStatusNativeQuery(@Param("startLocalDate") LocalDate startLocalDate, @Param("endLocalDate") LocalDate endLocalDate, @Param("ordinal") Integer ordinal);
-
-    @Query(value =
-            "select r.id            as refundIndex,\n" +
-                    "       o.purchs_sn     as orderNumber,\n" +
-                    "       r.created_date  as createdDate,\n" +
-                    "       o.tot_amt       as totalAmount,\n" +
-                    "       r.tot_refund    as totalRefund,\n" +
-                    "       o.tot_amt - r.tot_refund    as actualAmount,\n" +
-                    "       r.refund_status as refundStatus,\n" +
-                    "       f.biz_no        as businessNumber,\n" +
-                    "       f.store_nm      as storeName\n" +
-                    "from refund r\n" +
-                    "         inner join orders o on r.order_id = o.id\n" +
-                    "         left join franchisee f on o.franchisee_id = f.id\n" +
-                    "where r.created_date between :startLocalDate and :endLocalDate\n" +
-                    "and refund_status = :ordinal\n" +
+                    "and f.biz_no != 2141582141\n" +
                     "order by refundIndex desc\n",
             countQuery =  "select r.id            as refundIndex,\n" +
                     "       o.purchs_sn     as orderNumber,\n" +
@@ -167,8 +115,48 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
                     "         left join franchisee f on o.franchisee_id = f.id\n" +
                     "where r.created_date between :startLocalDate and :endLocalDate\n" +
                     "and refund_status = :ordinal\n" +
+                    "and f.biz_no != 2141582141\n" +
                     "order by refundIndex desc", nativeQuery = true)
-    Page<RefundFindResponseInterface> findRefundStatusNativeQueryTest(Pageable pageable,@Param("startLocalDate") LocalDate startLocalDate, @Param("endLocalDate") LocalDate endLocalDate, @Param("ordinal") Integer ordinal);
+    Page<RefundFindResponseInterface> findRefundStatusNativeQuery(Pageable pageable, @Param("startLocalDate") LocalDate startLocalDate, @Param("endLocalDate") LocalDate endLocalDate, @Param("ordinal") Integer ordinal);
+
+    @Query(value = "select\n" +
+            "       r.id             as refundIndex,\n" +
+            "       o.purchs_sn      as orderNumber,\n" +
+            "       r.created_date   as createdDate,\n" +
+            "       o.tot_amt        as totalAmount,\n" +
+            "       r.tot_refund     as totalRefund,\n" +
+            "       cast(o.tot_amt - r.tot_refund as integer) as actualAmount,\n" +
+            "       r.refund_status  as refundStatus,\n" +
+            "       f.biz_no         as businessNumber,\n" +
+            "       f.store_nm       as storeName\n" +
+            "    from refund r inner join orders o on r.order_id = o.id\n" +
+            "                  left join franchisee f on o.franchisee_id = f.id\n" +
+            "    where f.id = :franchiseeIndex\n" +
+            "  and r.created_date between :startDate and :endDate\n" +
+            "    order by refundIndex  desc;", nativeQuery = true)
+    List<RefundFindResponseInterface> findAFranchiseeNativeQuery(
+            @Param("franchiseeIndex") Long franchiseeIndex,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate);
+
+    @Query(
+            value =
+                    "select date(o.created_date)                                                                   as formatDate\n" +
+                            "     , cast(sum(if(r.refund_status = 0, tot_amt, 0)) as integer)                      as totalAmount\n" +
+                            "     , cast(sum(if(r.refund_status = 0, tot_refund, 0)) as integer)                   as totalRefund\n" +
+                            "     , cast(sum(if(r.refund_status = 0, tot_amt, 0)) - sum(if(r.refund_status = 0, tot_refund, 0)) as integer) as actualAmount\n" +
+                            "     , sum(if(r.refund_status = 0, 1, 0))                                                     as saleCount\n" +
+                            "     , sum(if(r.refund_status = 2, 1, 0))                                                     as cancelCount\n" +
+                            "from orders o\n" +
+                            "         left join refund r on o.id = r.order_id\n" +
+                            "where o.franchisee_id = :franchiseeIndex\n" +
+                            "  and r.created_date between :startDate and :endDate\n" +
+                            "order by 1 desc",
+            nativeQuery = true)
+    RefundFindResponseInterface findAFranchiseeSaleTotalQuery(
+            @Param("franchiseeIndex") Long franchiseeIndex,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate);
 
     @Query(value = "select\n" +
             "       r.id             as refundIndex,\n" +
@@ -185,36 +173,6 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
             "    where f.id = :franchiseeIndex\n" +
             "    order by refundIndex  desc;", nativeQuery = true)
     List<RefundFindResponseInterface> findAFranchiseeNativeQuery(Long franchiseeIndex);
-
-    @Query(value = "select\n" +
-            "       r.id             as refundIndex,\n" +
-            "       o.purchs_sn      as orderNumber,\n" +
-            "       r.created_date   as createdDate,\n" +
-            "       o.tot_amt        as totalAmount,\n" +
-            "       r.tot_refund     as totalRefund,\n" +
-            "       o.tot_amt - r.tot_refund    as actualAmount,\n" +
-            "       r.refund_status  as refundStatus,\n" +
-            "       f.biz_no         as businessNumber,\n" +
-            "       f.store_nm       as storeName\n" +
-            "    from refund r inner join orders o on r.order_id = o.id\n" +
-            "                  left join franchisee f on o.franchisee_id = f.id\n" +
-            "    where f.id = :franchiseeIndex\n" +
-            "    order by refundIndex  desc\n",
-            countQuery = "select\n" +
-                    "       r.id             as refundIndex,\n" +
-                    "       o.purchs_sn      as orderNumber,\n" +
-                    "       r.created_date   as createdDate,\n" +
-                    "       o.tot_amt        as totalAmount,\n" +
-                    "       r.tot_refund     as totalRefund,\n" +
-                    "       o.tot_amt - r.tot_refund    as actualAmount,\n" +
-                    "       r.refund_status  as refundStatus,\n" +
-                    "       f.biz_no         as businessNumber,\n" +
-                    "       f.store_nm       as storeName\n" +
-                    "    from refund r inner join orders o on r.order_id = o.id\n" +
-                    "                  left join franchisee f on o.franchisee_id = f.id\n" +
-                    "    where f.id = :franchiseeIndex\n" +
-                    "    order by refundIndex  desc;",nativeQuery = true)
-    List<RefundFindResponseInterface> findAFranchiseeNativeQueryTest(Long franchiseeIndex, Pageable pageable);
 
     @Query(
             value =

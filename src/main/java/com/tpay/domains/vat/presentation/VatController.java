@@ -55,7 +55,7 @@ public class VatController {
         return ResponseEntity.ok("Asdf");
     }
 
-    // API 호출 TEST 용도임
+    // API 호출로 관리자가 한번에 일괄 출력 기능
     @GetMapping("/franchisee/{franchiseeIndex}/vat/monthly-downloads")
     public ResponseEntity<String> vatMonthlyDownloads(
             @PathVariable Long franchiseeIndex,
