@@ -1,10 +1,7 @@
 package com.tpay.domains.auth.domain;
 
 
-import com.tpay.commons.exception.ExceptionState;
-import com.tpay.commons.exception.detail.JwtRuntimeException;
 import com.tpay.domains.employee.domain.EmployeeEntity;
-import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,22 +34,4 @@ public class EmployeeAccessTokenEntity {
         this.accessToken = accessToken;
         return this;
     }
-
-    public void validUser(Long parsedIndex) {
-        if (!this.employeeEntity.getId().equals(parsedIndex)) {
-            throw new JwtRuntimeException(ExceptionState.FORCE_REFRESH);
-        }
-    }
-
-    public void validToken(String accessToken) {
-        if (!this.accessToken.equals(accessToken)) {
-            System.out.println("@@@@@@@@@validToken@@@@@@@@@@");
-        }
-    }
-/*
-    public void validToken(String accessToken) {
-        if (!this.accessToken.equals(accessToken)) {
-            throw new JwtRuntimeException(ExceptionState.FORCE_REFRESH);
-        }
-    }*/
 }

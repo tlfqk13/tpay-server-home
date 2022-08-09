@@ -1,7 +1,5 @@
 package com.tpay.domains.point.domain;
 
-import com.tpay.domains.point.application.dto.AdminPointInfo;
-import com.tpay.domains.point.application.dto.AdminPointResponse;
 import com.tpay.domains.point.application.dto.PointTotalResponseInterface;
 import com.tpay.domains.point.application.dto.WithdrawalFindNextInterface;
 import org.jetbrains.annotations.NotNull;
@@ -53,9 +51,6 @@ public interface PointRepository extends JpaRepository<PointEntity, Long> {
         "Order by id\n" +
         "limit 0, 1", nativeQuery = true)
     WithdrawalFindNextInterface findNext(@Param("franchiseeIndex") Long franchiseeIndex);
-
-    //@EntityGraph(attributePaths = {"franchiseeEntity"})
-    //List<PointEntity> findByPointStatusInAndIsReadInOrderByIdDesc(@Param("pointStatus") List<PointStatus> pointStatus, @Param("isRead") List<Boolean> isRead, Pageable pageable);
 
     @EntityGraph(attributePaths = {"franchiseeEntity"})
     Page<PointEntity> findByPointStatusInAndIsReadInOrderByIdDesc(@Param("pointStatus") List<PointStatus> pointStatus, @Param("isRead") List<Boolean> isRead, Pageable pageable);

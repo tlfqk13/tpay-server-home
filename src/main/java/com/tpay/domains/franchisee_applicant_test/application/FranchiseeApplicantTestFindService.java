@@ -99,12 +99,24 @@ public class FranchiseeApplicantTestFindService {
             if (filterSelector.equals(FRANCHISEE_STATUS)) {
                 booleanList.add(true);
                 franchiseeStatusList.add(FranchiseeStatus.valueOf(value));
-                franchiseeApplicantEntityList = getFranchiseeApplicantEntities(searchKeyword,booleanList,franchiseeStatusList,pageRequest,isBusinessNumber);
+                if (isBusinessNumber) {
+                    franchiseeApplicantEntityList = franchiseeApplicantRepository.filterAndBusinessNumber(booleanList, franchiseeStatusList, pageRequest, searchKeyword);
+                } else {
+                    franchiseeApplicantEntityList = franchiseeApplicantRepository.filterAndStoreName(booleanList, franchiseeStatusList, pageRequest, searchKeyword);
+                }
             } else if (filterSelector.equals(IS_READ)) {
-                franchiseeApplicantEntityList = getFranchiseeApplicantEntities(searchKeyword,booleanList,franchiseeStatusList,pageRequest,isBusinessNumber);
+                if (isBusinessNumber) {
+                    franchiseeApplicantEntityList = franchiseeApplicantRepository.filterIsReadAndBusinessNumber(booleanList.get(0), pageRequest, searchKeyword);
+                } else {
+                    franchiseeApplicantEntityList = franchiseeApplicantRepository.filterIsReadAndStoreName(booleanList.get(0), pageRequest, searchKeyword);
+                }
             } else {
                 franchiseeStatusList.add(FranchiseeStatus.valueOf(value));
-                franchiseeApplicantEntityList = getFranchiseeApplicantEntities(searchKeyword,booleanList,franchiseeStatusList,pageRequest,isBusinessNumber);
+                if (isBusinessNumber) {
+                    franchiseeApplicantEntityList = franchiseeApplicantRepository.filterAndBusinessNumber(booleanList, franchiseeStatusList, pageRequest, searchKeyword);
+                } else {
+                    franchiseeApplicantEntityList = franchiseeApplicantRepository.filterAndStoreName(booleanList, franchiseeStatusList, pageRequest, searchKeyword);
+                }
             }
         }else{
             if (filterSelector.equals(FRANCHISEE_STATUS)) {

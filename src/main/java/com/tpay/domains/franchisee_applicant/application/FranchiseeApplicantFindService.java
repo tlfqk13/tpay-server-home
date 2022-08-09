@@ -9,11 +9,9 @@ import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeApplicant
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantRepository;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeStatus;
-import com.tpay.domains.push.application.dto.AdminPushDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -101,22 +99,22 @@ public class FranchiseeApplicantFindService {
                 booleanList.add(true);
                 franchiseeStatusList.add(FranchiseeStatus.valueOf(value));
                 if (isBusinessNumber) {
-                    franchiseeApplicantEntityList = franchiseeApplicantRepository.findByIsReadInAndFranchiseeStatusInAndFranchiseeEntityBusinessNumberContainingOrderByIdDesc(booleanList, franchiseeStatusList, pageRequest, searchKeyword);
+                    franchiseeApplicantEntityList = franchiseeApplicantRepository.filterAndBusinessNumber(booleanList, franchiseeStatusList, pageRequest, searchKeyword);
                 } else {
-                    franchiseeApplicantEntityList = franchiseeApplicantRepository.findByIsReadInAndFranchiseeStatusInAndFranchiseeEntityStoreNameContainingOrderByIdDesc(booleanList, franchiseeStatusList, pageRequest, searchKeyword);
+                    franchiseeApplicantEntityList = franchiseeApplicantRepository.filterAndStoreName(booleanList, franchiseeStatusList, pageRequest, searchKeyword);
                 }
             } else if (filterSelector.equals(IS_READ)) {
                 if (isBusinessNumber) {
-                    franchiseeApplicantEntityList = franchiseeApplicantRepository.findByIsReadAndFranchiseeEntityBusinessNumberContainingOrderByIdDesc(booleanList.get(0), pageRequest, searchKeyword);
+                    franchiseeApplicantEntityList = franchiseeApplicantRepository.filterIsReadAndBusinessNumber(booleanList.get(0), pageRequest, searchKeyword);
                 } else {
-                    franchiseeApplicantEntityList = franchiseeApplicantRepository.findByIsReadAndFranchiseeEntityStoreNameContainingOrderByIdDesc(booleanList.get(0), pageRequest, searchKeyword);
+                    franchiseeApplicantEntityList = franchiseeApplicantRepository.filterIsReadAndStoreName(booleanList.get(0), pageRequest, searchKeyword);
                 }
             } else {
                 franchiseeStatusList.add(FranchiseeStatus.valueOf(value));
                 if (isBusinessNumber) {
-                    franchiseeApplicantEntityList = franchiseeApplicantRepository.findByIsReadInAndFranchiseeStatusInAndFranchiseeEntityBusinessNumberContainingOrderByIdDesc(booleanList, franchiseeStatusList, pageRequest, searchKeyword);
+                    franchiseeApplicantEntityList = franchiseeApplicantRepository.filterAndBusinessNumber(booleanList, franchiseeStatusList, pageRequest, searchKeyword);
                 } else {
-                    franchiseeApplicantEntityList = franchiseeApplicantRepository.findByIsReadInAndFranchiseeStatusInAndFranchiseeEntityStoreNameContainingOrderByIdDesc(booleanList, franchiseeStatusList, pageRequest, searchKeyword);
+                    franchiseeApplicantEntityList = franchiseeApplicantRepository.filterAndStoreName(booleanList, franchiseeStatusList, pageRequest, searchKeyword);
                 }
             }
         }else{

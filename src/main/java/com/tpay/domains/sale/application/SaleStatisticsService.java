@@ -27,7 +27,7 @@ public class SaleStatisticsService {
 
     public SaleStatisticsResponseInterface saleStatistics(Long franchiseeIndex, String targetDate, DateSelector dateSelector) {
         if (dateSelector.equals(MONTH)) {
-            return refundRepository. findMonthStatistics(franchiseeIndex, targetDate);
+            return refundRepository.findMonthStatistics(franchiseeIndex, targetDate);
         } else if (dateSelector.equals(YEAR)) {
             String targetDateYear = targetDate.substring(0, 4);
             return refundRepository.findYearStatistics(franchiseeIndex, targetDateYear);

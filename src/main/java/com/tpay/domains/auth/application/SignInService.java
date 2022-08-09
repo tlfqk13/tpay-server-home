@@ -12,7 +12,6 @@ import javax.transaction.Transactional;
 
 import static com.tpay.commons.util.UserSelector.EMPLOYEE;
 import static com.tpay.commons.util.UserSelector.FRANCHISEE;
-import static com.tpay.commons.util.converter.NumberFormatConverter.businessNumberReplace;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +23,6 @@ public class SignInService {
 
     @Transactional
     public SignInTokenInfo signIn(SignInRequest signInRequest) {
-
         if(signInRequest.isForcedCheck()){
             if (signInRequest.getUserSelector().equals(FRANCHISEE)) {
                 return franchiseeSignInService.signIn(signInRequest.getBusinessNumber(), signInRequest.getPassword(), signInRequest.getPushToken());
@@ -34,7 +32,6 @@ public class SignInService {
                 throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Parse Failed");
             }
         }else {
-            System.out.println(duplicateSignIn(signInRequest));
             if (duplicateSignIn(signInRequest)) {
                 throw new InvalidParameterException(ExceptionState.DUPLICATE_SIGNIN, "중복 로그인입니다");
             } else {

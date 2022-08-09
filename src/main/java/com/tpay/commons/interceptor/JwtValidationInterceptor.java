@@ -81,17 +81,16 @@ public class JwtValidationInterceptor implements HandlerInterceptor {
 
             AuthToken authFranchiseeToken = jwtUtils.convertAuthToken(latestFranchiseeAccessToken);
             if(!claims.getIssuedAt().equals(authFranchiseeToken.getData().getIssuedAt())){
-                throw new JwtRuntimeException(ExceptionState.FORCE_REFRESH);
+                throw new JwtRuntimeException(ExceptionState.DUPLICATE_SIGNOUT);
             }
         }else{
-            System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             Optional<EmployeeAccessTokenEntity> employeeAccessTokenEntityOptional =
                     accessTokenService.findByEmployeeId(Long.valueOf(tokenIndex));
             String latestEmployeeAccessToken = employeeAccessTokenEntityOptional.get().getAccessToken();
 
             AuthToken authEmployeeToken = jwtUtils.convertAuthToken(latestEmployeeAccessToken);
             if(!claims.getIssuedAt().equals(authEmployeeToken.getData().getIssuedAt())){
-                throw new JwtRuntimeException(ExceptionState.FORCE_REFRESH);
+                throw new JwtRuntimeException(ExceptionState.DUPLICATE_SIGNOUT);
             }
         }
 
