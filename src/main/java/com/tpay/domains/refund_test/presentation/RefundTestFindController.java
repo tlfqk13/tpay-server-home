@@ -1,11 +1,8 @@
-package com.tpay.domains.refund.presentation;
+package com.tpay.domains.refund_test.presentation;
 
 import com.tpay.commons.util.DateFilter;
-import com.tpay.domains.refund.application.RefundTestDetailFindService;
-import com.tpay.domains.refund.application.dto.RefundByCustomerDateResponse;
-import com.tpay.domains.refund.application.dto.RefundCustomerRequest;
-import com.tpay.domains.refund.application.dto.RefundFindResponseInterface;
-import com.tpay.domains.refund.application.dto.RefundPagingFindResponse;
+import com.tpay.domains.refund_test.application.RefundTestDetailFindService;
+import com.tpay.domains.refund.application.dto.*;
 import com.tpay.domains.refund.domain.RefundStatus;
 import com.tpay.domains.sale.application.SaleAnalysisFindService;
 import com.tpay.domains.sale.application.dto.SaleAnalysisFindResponse;
@@ -57,12 +54,14 @@ public class RefundTestFindController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/admin/refunds/{franchiseeIndex}")
-    public ResponseEntity<List<RefundFindResponseInterface>> findAFranchisee(
-            @PathVariable Long franchiseeIndex) {
-        List<RefundFindResponseInterface> result = refundTestDetailFindService.findAFranchisee(franchiseeIndex);
-        return ResponseEntity.ok(result);
-    }
+@GetMapping("/admin/refunds/{franchiseeIndex}")
+public ResponseEntity<RefundDetailFindResponse> findAFranchisee(
+        @PathVariable Long franchiseeIndex,
+        @RequestParam String startDate,
+        @RequestParam String endDate) {
+    RefundDetailFindResponse result = refundTestDetailFindService.findAFranchisee(franchiseeIndex, startDate, endDate);
+    return ResponseEntity.ok(result);
+}
 
     @GetMapping("/admin/refunds/total/{franchiseeIndex}")
     public ResponseEntity<List<SaleAnalysisFindResponse>> findByDateRange(

@@ -1,8 +1,10 @@
 package com.tpay.domains.auth.application;
 
 import com.tpay.commons.jwt.AuthToken;
+import com.tpay.commons.jwt.TokenType;
 import com.tpay.commons.util.UserSelector;
 import com.tpay.domains.auth.application.dto.SignInTokenInfo;
+import com.tpay.domains.auth.domain.FranchiseeAccessTokenEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee_applicant.application.FranchiseeApplicantFindService;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
@@ -39,6 +41,7 @@ public class FranchiseeSignInService {
         AuthToken accessToken = authService.createAccessToken(franchiseeEntity);
         AuthToken refreshToken = authService.createRefreshToken(franchiseeEntity);
         authService.updateOrSave(franchiseeEntity, refreshToken.getValue());
+        authService.updateOrSaveAccessToken(franchiseeEntity,accessToken.getValue());
 
         if(!(pushToken == null)) {
             // 토큰 테이블에 토큰 저장

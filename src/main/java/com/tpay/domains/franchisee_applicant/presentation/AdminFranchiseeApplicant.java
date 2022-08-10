@@ -59,9 +59,10 @@ public class AdminFranchiseeApplicant {
 
     @GetMapping("")
     public ResponseEntity<FranchiseeApplicantFindResponse> findAll(
-            @RequestParam int page
+            @RequestParam int page,
+            @RequestParam String searchKeyword
     ){
-        FranchiseeApplicantFindResponse responseList = franchiseeApplicantFindService.findAll(page);
+        FranchiseeApplicantFindResponse responseList = franchiseeApplicantFindService.findAll(page,searchKeyword);
         return ResponseEntity.ok(responseList);
     }
 
@@ -80,8 +81,13 @@ public class AdminFranchiseeApplicant {
      */
     @GetMapping("/{filterSelector}/{value}")
     @ApiOperation(value = "가맹점 신청 내역조회", notes = "가맹점 현황 필터링")
-    public ResponseEntity<List<FranchiseeApplicantInfo>> filter(@PathVariable FilterSelector filterSelector, @PathVariable String value) {
-        List<FranchiseeApplicantInfo> result = franchiseeApplicantFindService.applicantFilter(filterSelector, value);
+    public ResponseEntity<FranchiseeApplicantFindResponse> filter(
+            @PathVariable FilterSelector filterSelector,
+            @PathVariable String value,
+            @RequestParam int page,
+            @RequestParam String searchKeyword
+    ) {
+        FranchiseeApplicantFindResponse result = franchiseeApplicantFindService.applicantFilter(filterSelector, value, page, searchKeyword);
         return ResponseEntity.ok(result);
     }
 

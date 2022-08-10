@@ -9,4 +9,6 @@ public interface VatTotalResponseInterface {
     String getTotalVat();
 
     String getTotalRefund();
+
+    String getTotalCommission();
 }

@@ -28,8 +28,6 @@ import java.util.stream.Collectors;
 public class AdminSearchService {
 
     private final FranchiseeApplicantRepository franchiseeApplicantRepository;
-    private final RefundRepository refundRepository;
-    private final SearchRefundRepository searchRefundRepository;
 
     public SearchAllResponse searchAllData() {
         List<SearchListInterface> searchList = null;

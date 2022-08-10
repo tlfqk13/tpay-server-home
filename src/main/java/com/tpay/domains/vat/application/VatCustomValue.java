@@ -12,5 +12,6 @@ public class VatCustomValue {
     public static int DETAILRESULT_ORGLEN = 9;
     public static String HOMETAX_FIRST_OF_YEAR = "전반기";
     public static String HOMETAX_SECOND_OF_YEAR = "후반기";
+    public static String SUCCESSMODE_BUSINESSNUMBER = "239-04-01226";
 
 }

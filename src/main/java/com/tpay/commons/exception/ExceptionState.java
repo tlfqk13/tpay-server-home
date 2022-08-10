@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 public enum ExceptionState {
     UNKNOWN(400, HttpStatus.BAD_REQUEST, "Unknown", "Contact Backend Developer"),
     INVALID_PARAMETER(400, HttpStatus.BAD_REQUEST, "P0001", "Invalid Parameter"),
+
     INVALID_PASSWORD(400, HttpStatus.BAD_REQUEST, "P0002", "Invalid Password"),
     INVALID_BUSINESS_NUMBER(400, HttpStatus.BAD_REQUEST, "B0001", "Invalid Business Number"),
     ALREADY_EXISTS(409, HttpStatus.CONFLICT, "R0001", "Already Exists"),
@@ -20,6 +21,8 @@ public enum ExceptionState {
     INVALID_TOKEN(401, HttpStatus.UNAUTHORIZED, "A0002", "Invalid Auth Token"),
     FORCE_REFRESH(401, HttpStatus.UNAUTHORIZED, "A0003", "Sign-in Again"),
     MISMATCH_TOKEN(401, HttpStatus.UNAUTHORIZED, "A0004", "Authentication info not matched"),
+    DUPLICATE_SIGNIN(400, HttpStatus.BAD_REQUEST, "A0005", "Duplicate sign-in"),
+    DUPLICATE_SIGNOUT(400, HttpStatus.UNAUTHORIZED, "A0006", "Duplicate sign-out force"),
     REFUND(400, HttpStatus.BAD_REQUEST, "R0001", "Refund Exception"),
     INVALID_PASSPORT_INFO(400, HttpStatus.BAD_REQUEST, "E0001", "Contact Backend Developer"),
     INVALID_EXTERNAL_REFUND_INDEX(400,HttpStatus.BAD_REQUEST,"G0001","Invalid External Refund Index"),

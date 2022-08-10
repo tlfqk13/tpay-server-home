@@ -48,7 +48,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
             "/test/admin/**",
             "/test/refunds/**",
             "/test/points/**",
-            "/notice/**"));
+            "/notice/**",
+            "/duplicate"));
 
         if (!profileName.equals("deploy")) {
             exclusivePathList.addAll(List.of("/swagger-resources/**",

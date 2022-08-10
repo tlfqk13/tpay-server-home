@@ -1,4 +1,4 @@
-package com.tpay.domains.notice.application;
+package com.tpay.domains.notice_test.application;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tpay.commons.aws.S3FileUploader;

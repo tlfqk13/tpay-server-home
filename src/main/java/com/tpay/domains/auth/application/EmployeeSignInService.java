@@ -42,6 +42,7 @@ public class EmployeeSignInService {
         AuthToken accessToken = authService.createAccessToken(employeeEntity);
         AuthToken refreshToken = authService.createRefreshToken(employeeEntity);
         authService.updateOrSave(employeeEntity, refreshToken.getValue());
+        authService.updateOrSaveAccessToken(employeeEntity,accessToken.getValue());
 
         //직원 로그인시 푸쉬
         nonBatchPushService.nonBatchPushNSave(PushCategoryType.CASE_FOURTEEN, franchiseeApplicantEntity.getFranchiseeEntity().getId(), employeeEntity.getName());
