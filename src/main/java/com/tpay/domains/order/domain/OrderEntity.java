@@ -118,13 +118,11 @@ public class OrderEntity extends BaseTimeEntity {
     // TODO: 2022/08/02 환급 금액 버림 ex)30000 -> 1901 ->1900
     public String getTotalRefund() {
         double vat = Double.parseDouble(this.totalVat);
-        int totalRefund = (int) Math.floor((vat*70)/100);
-        int totalRefundFloor = (int) (Math.floor((double) totalRefund/100)) * 100;
+        double totalRefund = Math.floor(((vat*70)/100)/100)*100;
         // TODO: 2022/08/09 합계 보정을 위해
-        String amount = initOrderLineAmount();
-        int actualAmount = Integer.parseInt(amount) - totalRefundFloor;
-        int actualAmountResult = (int) (Math.ceil((double) actualAmount /100)) * 100;
-        int totalRefundResult = Integer.parseInt(amount) - actualAmountResult;
+        int amount = Integer.parseInt(initOrderLineAmount());
+        double actualAmountResult = (Math.ceil( (amount - totalRefund) /100) * 100);
+        int totalRefundResult = (int) (amount - actualAmountResult);
 
         return Integer.toString(totalRefundResult);
     }

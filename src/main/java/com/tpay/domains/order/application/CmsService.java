@@ -15,8 +15,10 @@ import com.tpay.domains.order.domain.OrderRepository;
 import com.tpay.domains.refund.application.RefundDetailFindService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FileUtils;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -180,7 +182,7 @@ public class CmsService {
     }
     private void secondSection(XSSFWorkbook xssfWorkbook,XSSFSheet sheet, List<String> topSectionInfo) {
         XSSFRow secondSection = sheet.getRow(CmsCustomValue.SECONDSECTION_ROW);
-        CellStyle secondSectionCellStyle = cellStyleCustom(xssfWorkbook);
+        CellStyle secondSectionCellStyle = secondSectionCellStyle(xssfWorkbook);
         secondSection.createCell(CmsCustomValue.SECONDSECTION_CELL).setCellStyle(secondSectionCellStyle);
         secondSection.getCell(CmsCustomValue.SECONDSECTION_CELL).setCellValue(topSectionInfo.get(2) + "대표님의 " +  topSectionInfo.get(4)+" 환급세액 청구서입니다");
     }
@@ -190,7 +192,7 @@ public class CmsService {
             for(int i=0;i<detailMonthlyResult.size();i++) {
                 // TODO: 2022/07/15 엑셀양식 15개 max 라서 건수 많으면 추가로 그릴 시트 요청 필요.
                 XSSFRow detailResultRow = sheet.getRow(i + CmsCustomValue.DETAILRESULT_ROW_PAGING);
-                detailResultRow.createCell(0, STRING);
+                detailResultRow.createCell(0, STRING).setCellStyle(detailResultRowCellStyle);
                 detailResultRow.getCell(0).setCellValue(i + 1);
                 for (int j = CmsCustomValue.DETAILRESULT_STARTCELL; j <= CmsCustomValue.DETAILRESULT_ENDCELL; j += 2) {
                     if (j == 1) {
@@ -213,7 +215,7 @@ public class CmsService {
             for (int i = 0; i < detailMonthlyResult.size(); i++) {
                 // TODO: 2022/07/15 엑셀양식 15개 max 라서 건수 많으면 추가로 그릴 시트 요청 필요.
                 XSSFRow detailResultRow = sheet.getRow(i + CmsCustomValue.DETAILRESULT_ROW);
-                detailResultRow.createCell(0, STRING);
+                detailResultRow.createCell(0, STRING).setCellStyle(detailResultRowCellStyle);
                 detailResultRow.getCell(0).setCellValue(i + 1);
                 for (int j = CmsCustomValue.DETAILRESULT_STARTCELL; j <= CmsCustomValue.DETAILRESULT_ENDCELL; j += 2) {
                     if (j == 1) {
@@ -259,10 +261,9 @@ public class CmsService {
         int yearInt = Integer.parseInt("20" + requestDatePart.substring(0, 2));
         int monthInt = Integer.parseInt(requestDatePart.substring(2).replaceAll("0", ""));
 
-        LocalDate localDate = LocalDate.of(yearInt,monthInt,1);
-        LocalDate localDate1 = localDate.minusMonths(1);
-        String year = String.valueOf(localDate1.getYear());
-        String month = String.valueOf(localDate1.getMonthValue());
+        LocalDate localDate = LocalDate.of(yearInt,monthInt-1,1);
+        String year = String.valueOf(localDate.getYear());
+        String month = String.valueOf(localDate.getMonthValue());
         if(month.length() == 1) {
             month = "0" + month;
         }
@@ -274,7 +275,20 @@ public class CmsService {
     }
     private CellStyle cellStyleCustom(XSSFWorkbook xssfWorkbook){
         CellStyle cellStyle = xssfWorkbook.createCellStyle();
+        cellStyle.setBorderBottom(BorderStyle.THIN);
+        cellStyle.setBorderTop(BorderStyle.THIN);
+        cellStyle.setBorderLeft(BorderStyle.THIN);
+        cellStyle.setBorderRight(BorderStyle.THIN);
+        cellStyle.setAlignment(HorizontalAlignment.CENTER);
+        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        return cellStyle;
+    }
+
+    private CellStyle secondSectionCellStyle(XSSFWorkbook xssfWorkbook){
+        CellStyle cellStyle = xssfWorkbook.createCellStyle();
+        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
         cellStyle.setAlignment(HorizontalAlignment.CENTER);
         return cellStyle;
     }
+
 }

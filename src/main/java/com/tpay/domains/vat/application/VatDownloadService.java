@@ -272,10 +272,9 @@ public class VatDownloadService {
         int yearInt = Integer.parseInt("20" + requestDatePart.substring(0, 2));
         int monthInt = Integer.parseInt(requestDatePart.substring(2).replaceAll("0", ""));
 
-        LocalDate localDate = LocalDate.of(yearInt,monthInt,1);
-        LocalDate localDate1 = localDate.minusMonths(1);
-        String year = String.valueOf(localDate1.getYear());
-        String month = String.valueOf(localDate1.getMonthValue());
+        LocalDate localDate = LocalDate.of(yearInt,monthInt-1,1);
+        String year = String.valueOf(localDate.getYear());
+        String month = String.valueOf(localDate.getMonthValue());
         if(month.length() == 1) {
             month = "0" + month;
         }
