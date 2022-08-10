@@ -75,8 +75,12 @@ public class RefundTestDetailFindService {
         }
 
         List<RefundFindResponseInterface> list = refundFindResponseInterfaces.getContent();
+        int totalPage = refundFindResponseInterfaces.getTotalPages();
+        if(totalPage != 0){
+            totalPage = totalPage -1;
+        }
         return RefundPagingFindResponse.builder()
-                .totalPage(refundFindResponseInterfaces.getTotalPages()-1)
+                .totalPage(totalPage)
                 .refundFindResponseInterfaceList(list)
                 .build();
     }

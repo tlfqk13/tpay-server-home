@@ -1,10 +1,8 @@
 package com.tpay.domains.auth.application;
 
 import com.tpay.commons.jwt.AuthToken;
-import com.tpay.commons.jwt.TokenType;
 import com.tpay.commons.util.UserSelector;
 import com.tpay.domains.auth.application.dto.SignInTokenInfo;
-import com.tpay.domains.auth.domain.FranchiseeAccessTokenEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee_applicant.application.FranchiseeApplicantFindService;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
@@ -12,12 +10,14 @@ import com.tpay.domains.push.application.PushTokenService;
 import com.tpay.domains.push.application.UserPushTokenService;
 import com.tpay.domains.push.domain.PushTokenEntity;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class FranchiseeSignInService {
 
@@ -51,6 +51,11 @@ public class FranchiseeSignInService {
             // 유저-토큰 테이블 세이브 (기존 데이터는 삭제)
             userPushTokenService.deleteIfExistsAndSave(franchiseeEntity, findPushTokenEntity);
         }
+
+        log.trace("==========================로그인===========================");
+        log.trace("[사업자번호] : {}", franchiseeEntity.getBusinessNumber());
+        log.trace("[사업자번호] : {}", franchiseeEntity.getStoreName());
+        log.trace("==========================로그인===========================");
 
         return SignInTokenInfo.builder()
             .franchiseeIndex(franchiseeEntity.getId())
