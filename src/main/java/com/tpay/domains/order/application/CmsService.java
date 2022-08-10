@@ -2,12 +2,11 @@ package com.tpay.domains.order.application;
 
 
 import com.tpay.commons.aws.S3FileUploader;
-import com.tpay.commons.util.converter.NumberFormatConverter;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
+import com.tpay.commons.util.converter.NumberFormatConverter;
 import com.tpay.domains.franchisee.application.FranchiseeFindService;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
-import com.tpay.domains.franchisee_upload.application.FranchiseeUploadFindService;
 import com.tpay.domains.order.application.dto.CmsDetailResponse;
 import com.tpay.domains.order.application.dto.CmsResponse;
 import com.tpay.domains.order.application.dto.CmsResponseDetailInterface;
@@ -16,7 +15,6 @@ import com.tpay.domains.order.domain.OrderRepository;
 import com.tpay.domains.refund.application.RefundDetailFindService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FileUtils;
-import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -25,13 +23,14 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import static org.apache.poi.ss.usermodel.CellType.STRING;
 
@@ -88,7 +87,7 @@ public class CmsService {
         return CmsDetailResponse.builder().commissionInfoList(commissionInfoList).customerInfoList(customerInfoList).build();
     }
 
-    public void cmsDownloads(Long franchiseeIndex, String requestDate) {
+    public String cmsDownloads(Long franchiseeIndex, String requestDate) {
         try {
             ClassPathResource resource = new ClassPathResource("KTP_CMS_Form.xlsx");
             File file1;
@@ -133,14 +132,12 @@ public class CmsService {
 
            StringBuilder fileName = new StringBuilder();
            fileName.append(topSectionInfo.get(2)).append("_").append(month).append("월").append("_cms");
-           boolean isCms = true;
-           String result = s3FileUploader.uploadXlsx(franchiseeIndex, xssfWorkbook,fileName,month,isCms);
-
+           String result = s3FileUploader.uploadXlsx(franchiseeIndex, xssfWorkbook,fileName,month,true);
+            return result;
         } catch (IOException e) {
             throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "File Input Failed");
         }
     }
-
     public void cmsAdminDownloads() {
         String requestYear = String.valueOf(LocalDate.now().getYear()).substring(2);
         String requestMonthly = String.valueOf(LocalDate.now().getMonthValue());
@@ -153,25 +150,6 @@ public class CmsService {
         for (List<String> strings : totalResult) {
             this.cmsDownloads(Long.valueOf(strings.get(0)), requestYearMonthly);
         }
-    }
-
-    public List<String> setUpDate(String requestDatePart) {
-
-        int yearInt = Integer.parseInt("20" + requestDatePart.substring(0, 2));
-        int monthInt = Integer.parseInt(requestDatePart.substring(2).replaceAll("0", ""));
-
-        LocalDate localDate = LocalDate.of(yearInt,monthInt,1);
-        LocalDate localDate1 = localDate.minusMonths(1);
-        String year = String.valueOf(localDate1.getYear());
-        String month = String.valueOf(localDate1.getMonthValue());
-        if(month.length() == 1) {
-            month = "0" + month;
-        }
-
-        List<String> dateList = new ArrayList<>();
-        dateList.add(year);
-        dateList.add(month);
-        return dateList;
     }
     private void topSection(XSSFSheet sheet, List<String> topSectionInfo) {
         for(int i=CmsCustomValue.TOPSECTION_STARTROW; i<=CmsCustomValue.TOPSECTION_ENDROW; i+=2){
@@ -198,7 +176,7 @@ public class CmsService {
         totalResultRow.createCell(CmsCustomValue.TOTALRESULT_FIRSTCELL);
         totalResultRow.createCell(CmsCustomValue.TOTALRESULT_SECONDCELL);
         totalResultRow.getCell(CmsCustomValue.TOTALRESULT_FIRSTCELL).setCellValue(totalResult.get(0));
-        totalResultRow.getCell(CmsCustomValue.TOTALRESULT_SECONDCELL).setCellValue(totalResult.get(3));
+        totalResultRow.getCell(CmsCustomValue.TOTALRESULT_SECONDCELL).setCellValue(totalResult.get(4)); // 청구내역
     }
     private void secondSection(XSSFWorkbook xssfWorkbook,XSSFSheet sheet, List<String> topSectionInfo) {
         XSSFRow secondSection = sheet.getRow(CmsCustomValue.SECONDSECTION_ROW);
@@ -275,6 +253,24 @@ public class CmsService {
         result.add(franchiseeEntity.getStoreName() + month +"월 " + "내국세 환급세액 청구" ); // 제목
         result.add("[ "+ year + "년" + month + "월 01일 ~ " + month + "월 31일 ]" );
         return result;
+    }
+    public List<String> setUpDate(String requestDatePart) {
+
+        int yearInt = Integer.parseInt("20" + requestDatePart.substring(0, 2));
+        int monthInt = Integer.parseInt(requestDatePart.substring(2).replaceAll("0", ""));
+
+        LocalDate localDate = LocalDate.of(yearInt,monthInt,1);
+        LocalDate localDate1 = localDate.minusMonths(1);
+        String year = String.valueOf(localDate1.getYear());
+        String month = String.valueOf(localDate1.getMonthValue());
+        if(month.length() == 1) {
+            month = "0" + month;
+        }
+
+        List<String> dateList = new ArrayList<>();
+        dateList.add(year);
+        dateList.add(month);
+        return dateList;
     }
     private CellStyle cellStyleCustom(XSSFWorkbook xssfWorkbook){
         CellStyle cellStyle = xssfWorkbook.createCellStyle();

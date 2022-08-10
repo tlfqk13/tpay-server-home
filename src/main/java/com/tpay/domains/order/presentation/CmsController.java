@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
-
 @RestController
 @RequiredArgsConstructor
 public class CmsController {
@@ -44,12 +42,12 @@ public class CmsController {
             @PathVariable Long franchiseeIndex,
             @RequestParam String requestDate
     ) {
-        cmsService.cmsDownloads(franchiseeIndex, requestDate);
-        return ResponseEntity.ok("Asdf");
+        String downloadLink = cmsService.cmsDownloads(franchiseeIndex, requestDate);
+        return ResponseEntity.ok(downloadLink);
     }
 
-    // TODO: 2022/07/29 관리자가 한번에 cms 청구서 뽑으려고
-    @GetMapping("/franchisee/{franchiseeIndex}/cms-admin/downloads")
+    // TODO: 2022/07/29 관리자가 한번에 cms 청구서 뽑는 기능
+    @GetMapping("/franchisee/{franchiseeIndex}/admin/cms/downloads")
     public ResponseEntity<String> adminCmsDownloads(
             @PathVariable Long franchiseeIndex
     ) {
