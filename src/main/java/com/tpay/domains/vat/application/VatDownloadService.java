@@ -81,7 +81,9 @@ public class VatDownloadService {
             // 3. 물품판매 명세
             detailMonthlyResultSection(xssfWorkbook,sheet,detailResult);
 
-            String result = s3FileUploader.uploadXlsx(franchiseeIndex, xssfWorkbook);
+            StringBuilder fileName = new StringBuilder();
+            fileName.append(personalInfoResult.get(2)).append("_").append("_실적명세서");
+            String result = s3FileUploader.uploadXlsx(franchiseeIndex, xssfWorkbook,fileName);
             return result;
 
         } catch (IOException e) {

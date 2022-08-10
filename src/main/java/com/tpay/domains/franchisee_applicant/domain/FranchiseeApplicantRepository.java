@@ -40,68 +40,56 @@ public interface FranchiseeApplicantRepository
             @Param("isRead") List<Boolean> isRead, @Param("franchiseeStatus") List<FranchiseeStatus> franchiseeStatus
             ,Pageable pageable,@Param("businessNumber") String businessNumber);
 
-    @Query(value = "select f.id as id,\n"
+    @Query(value = "select f.id,\n"
+            + " fa.franchisee_id,\n"
             + " fa.franchisee_status as franchiseeStatus,\n"
             + " fa.is_read as isRead,\n"
+            + " fa.reject_reason as rejectReason,\n"
             + " f.created_date as createdDate,\n"
             + " f.modified_date as modifiedDate,\n"
             + " f.biz_no as businessNumber,\n"
             + " f.sel_nm as sellerName,\n "
             + " f.store_nm as storeName\n"
             + " from franchisee_applicant fa\n"
-            + " left outer join franchisee f on fa.franchisee_id = f.id\n"
+            + "         left outer join franchisee f on fa.franchisee_id = f.id\n"
             + " where f.biz_no like %:businessNumber%\n"
             + " and fa.is_read in :isRead\n"
             + " and fa.franchisee_status in :franchiseeStatus\n"
             + " order by f.id desc\n",
-          countQuery = "select\n"
-                  + " f.id as id,\n"
-                  + " fa.franchisee_status as franchiseeStatus,\n"
-                  + " fa.is_read as isRead,\n"
-                  + " f.created_date as createdDate,\n"
-                  + " f.modified_date as modifiedDate,\n"
-                  + " f.biz_no as businessNumber,\n"
-                  + " f.sel_nm as sellerName,\n "
-                  + " f.store_nm as storeName\n"
+          countQuery = "select f.id,\n"
+                  + " fa.franchisee_id\n"
                   + " from franchisee_applicant fa\n"
                   + " left outer join franchisee f on fa.franchisee_id = f.id\n"
                   + " where f.biz_no like %:businessNumber%\n"
                   + " and fa.is_read in :isRead\n"
-                  + " and fa.franchisee_status in :franchiseeStatus\n"
-                  + " order by f.id desc\n", nativeQuery = true)
+                  + " and fa.franchisee_status in :franchiseeStatus\n", nativeQuery = true)
     Page<FranchiseeApplicantEntity> filterAndBusinessNumber(
             @Param("isRead") List<Boolean> isRead, @Param("franchiseeStatus") List<FranchiseeStatus> franchiseeStatus
             ,Pageable pageable,@Param("businessNumber") String businessNumber);
 
-    @Query(value = "select f.id as id,\n"
+    @Query(value = "select f.id,\n"
+            + " fa.franchisee_id,\n"
             + " fa.franchisee_status as franchiseeStatus,\n"
             + " fa.is_read as isRead,\n"
+            + " fa.reject_reason as rejectReason,\n"
             + " f.created_date as createdDate,\n"
             + " f.modified_date as modifiedDate,\n"
             + " f.biz_no as businessNumber,\n"
             + " f.sel_nm as sellerName,\n "
             + " f.store_nm as storeName\n"
             + " from franchisee_applicant fa\n"
-            + " left outer join franchisee f on fa.franchisee_id = f.id\n"
+            + "         left outer join franchisee f on fa.franchisee_id = f.id\n"
             + " where f.store_nm like %:storeName%\n"
             + " and fa.is_read in :isRead\n"
             + " and fa.franchisee_status in :franchiseeStatus\n"
             + " order by f.id desc\n",
-            countQuery = "select\n"
-                    + " f.id as id,\n"
-                    + " fa.franchisee_status as franchiseeStatus,\n"
-                    + " fa.is_read as isRead,\n"
-                    + " f.created_date as createdDate,\n"
-                    + " f.modified_date as modifiedDate,\n"
-                    + " f.biz_no as businessNumber,\n"
-                    + " f.sel_nm as sellerName,\n "
-                    + " f.store_nm as storeName\n"
+            countQuery = "select f.id,\n"
+                    + " fa.franchisee_id\n"
                     + " from franchisee_applicant fa\n"
                     + " left outer join franchisee f on fa.franchisee_id = f.id\n"
                     + " where f.store_nm like %:storeName%\n"
                     + " and fa.is_read in :isRead\n"
-                    + " and fa.franchisee_status in :franchiseeStatus\n"
-                    + " order by f.id desc\n", nativeQuery = true)
+                    + " and fa.franchisee_status in :franchiseeStatus\n", nativeQuery = true)
     Page<FranchiseeApplicantEntity> filterAndStoreName(
             @Param("isRead") List<Boolean> isRead, @Param("franchiseeStatus") List<FranchiseeStatus> franchiseeStatus
             ,Pageable pageable,@Param("storeName") String storeName);
@@ -115,9 +103,11 @@ public interface FranchiseeApplicantRepository
     Page<FranchiseeApplicantEntity> findByIsReadOrderByIdDesc(@Param("isRead") Boolean isRead,Pageable pageable);
 
 
-    @Query(value = "select f.id as id,\n"
+    @Query(value = "select f.id,\n"
+            + " fa.franchisee_id,\n"
             + " fa.franchisee_status as franchiseeStatus,\n"
             + " fa.is_read as isRead,\n"
+            + " fa.reject_reason as rejectReason,\n"
             + " f.created_date as createdDate,\n"
             + " f.modified_date as modifiedDate,\n"
             + " f.biz_no as businessNumber,\n"
@@ -130,24 +120,19 @@ public interface FranchiseeApplicantRepository
             + " order by f.id desc\n",
             countQuery = "select\n"
                     + " f.id as id,\n"
-                    + " fa.franchisee_status as franchiseeStatus,\n"
-                    + " fa.is_read as isRead,\n"
-                    + " f.created_date as createdDate,\n"
-                    + " f.modified_date as modifiedDate,\n"
-                    + " f.biz_no as businessNumber,\n"
-                    + " f.sel_nm as sellerName,\n "
-                    + " f.store_nm as storeName\n"
+                    + " fa.franchisee_id\n"
                     + " from franchisee_applicant fa\n"
                     + " left outer join franchisee f on fa.franchisee_id = f.id\n"
                     + " where f.biz_no like %:businessNumber%\n"
-                    + " and fa.is_read = :isRead\n"
-                    + " order by f.id desc\n", nativeQuery = true)
+                    + " and fa.is_read = :isRead\n",nativeQuery = true)
     Page<FranchiseeApplicantEntity> filterIsReadAndBusinessNumber(@Param("isRead") Boolean isRead
             ,Pageable pageable,@Param("businessNumber") String businessNumber);
 
-    @Query(value = "select f.id as id,\n"
+    @Query(value = "select f.id,\n"
+            + " fa.franchisee_id,\n"
             + " fa.franchisee_status as franchiseeStatus,\n"
             + " fa.is_read as isRead,\n"
+            + " fa.reject_reason as rejectReason,\n"
             + " f.created_date as createdDate,\n"
             + " f.modified_date as modifiedDate,\n"
             + " f.biz_no as businessNumber,\n"
@@ -160,18 +145,11 @@ public interface FranchiseeApplicantRepository
             + " order by f.id desc\n",
             countQuery = "select\n"
                     + " f.id as id,\n"
-                    + " fa.franchisee_status as franchiseeStatus,\n"
-                    + " fa.is_read as isRead,\n"
-                    + " f.created_date as createdDate,\n"
-                    + " f.modified_date as modifiedDate,\n"
-                    + " f.biz_no as businessNumber,\n"
-                    + " f.sel_nm as sellerName,\n "
-                    + " f.store_nm as storeName\n"
+                    + " fa.franchisee_id\n"
                     + " from franchisee_applicant fa\n"
                     + " left outer join franchisee f on fa.franchisee_id = f.id\n"
                     + " where f.store_nm like %:storeName%\n"
-                    + " and fa.is_read = :isRead\n"
-                    + " order by f.id desc\n", nativeQuery = true)
+                    + " and fa.is_read = :isRead\n",nativeQuery = true)
     Page<FranchiseeApplicantEntity> filterIsReadAndStoreName(@Param("isRead") Boolean isRead
             ,Pageable pageable,@Param("storeName") String storeName);
     @EntityGraph(attributePaths = {"franchiseeEntity"})

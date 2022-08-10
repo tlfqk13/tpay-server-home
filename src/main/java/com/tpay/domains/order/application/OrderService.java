@@ -8,8 +8,6 @@ import com.tpay.domains.vat.application.dto.VatResponse;
 import com.tpay.domains.vat.application.dto.VatTotalResponseInterface;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -58,6 +56,7 @@ public class OrderService {
         result.add(NumberFormatConverter.addCommaToNumber(vatTotalResponseInterface.getTotalAmount()));
         result.add(NumberFormatConverter.addCommaToNumber(vatTotalResponseInterface.getTotalVat()));
         result.add(NumberFormatConverter.addCommaToNumber(vatTotalResponseInterface.getTotalRefund()));
+        result.add(NumberFormatConverter.addCommaToNumber(vatTotalResponseInterface.getTotalCommission()));
         return result;
     }
 

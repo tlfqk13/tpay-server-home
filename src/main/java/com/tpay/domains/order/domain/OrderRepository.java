@@ -5,8 +5,6 @@ import com.tpay.domains.order.application.dto.CmsResponseInterface;
 import com.tpay.domains.vat.application.dto.VatDetailResponseInterface;
 import com.tpay.domains.vat.application.dto.VatReportResponseInterface;
 import com.tpay.domains.vat.application.dto.VatTotalResponseInterface;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -53,6 +51,7 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
             "      ,IFNULL(sum( cast ( tot_amt  as INTEGER )),0) as totalAmount\n" +
             "      ,IFNULL(sum( cast ( tot_vat  as INTEGER )),0) as totalVat\n" +
             "      ,IFNULL(sum( cast (tot_refund as INTEGER)),0) as totalRefund\n" +
+            "      ,sum(cast( tot_vat - tot_refund as INTEGER )) as totalCommission\n" +
             "      from orders o inner join refund r on o.id = r.order_id\n" +
             "      where franchisee_id = :franchiseeIndex\n" +
             "      and refund_status = 'APPROVAL' and substr(o.created_date,1,4) = :year\n" +

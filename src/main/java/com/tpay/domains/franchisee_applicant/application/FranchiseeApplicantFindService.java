@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.tpay.domains.franchisee_applicant.application.dto.FilterSelector.FRANCHISEE_STATUS;
-import static com.tpay.domains.franchisee_applicant.application.dto.FilterSelector.IS_READ;
 
 @Service
 @RequiredArgsConstructor
@@ -103,18 +102,11 @@ public class FranchiseeApplicantFindService {
                 } else {
                     franchiseeApplicantEntityList = franchiseeApplicantRepository.filterAndStoreName(booleanList, franchiseeStatusList, pageRequest, searchKeyword);
                 }
-            } else if (filterSelector.equals(IS_READ)) {
+            }else {
                 if (isBusinessNumber) {
                     franchiseeApplicantEntityList = franchiseeApplicantRepository.filterIsReadAndBusinessNumber(booleanList.get(0), pageRequest, searchKeyword);
                 } else {
                     franchiseeApplicantEntityList = franchiseeApplicantRepository.filterIsReadAndStoreName(booleanList.get(0), pageRequest, searchKeyword);
-                }
-            } else {
-                franchiseeStatusList.add(FranchiseeStatus.valueOf(value));
-                if (isBusinessNumber) {
-                    franchiseeApplicantEntityList = franchiseeApplicantRepository.filterAndBusinessNumber(booleanList, franchiseeStatusList, pageRequest, searchKeyword);
-                } else {
-                    franchiseeApplicantEntityList = franchiseeApplicantRepository.filterAndStoreName(booleanList, franchiseeStatusList, pageRequest, searchKeyword);
                 }
             }
         }else{
@@ -122,11 +114,8 @@ public class FranchiseeApplicantFindService {
                 booleanList.add(true);
                 franchiseeStatusList.add(FranchiseeStatus.valueOf(value));
                 franchiseeApplicantEntityList = franchiseeApplicantRepository.findByIsReadInAndFranchiseeStatusInOrderByIdDesc(booleanList, franchiseeStatusList,pageRequest);
-            } else if (filterSelector.equals(IS_READ)) {
+            } else{
                 franchiseeApplicantEntityList = franchiseeApplicantRepository.findByIsReadOrderByIdDesc(booleanList.get(0),pageRequest);
-            } else {
-                franchiseeStatusList.add(FranchiseeStatus.valueOf(value));
-                franchiseeApplicantEntityList = franchiseeApplicantRepository.findByIsReadInAndFranchiseeStatusInOrderByIdDesc(booleanList, franchiseeStatusList,pageRequest);
             }
         }
 
