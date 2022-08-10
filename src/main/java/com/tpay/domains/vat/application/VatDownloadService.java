@@ -9,7 +9,6 @@ import com.tpay.domains.franchisee.application.FranchiseeFindService;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee_upload.application.FranchiseeUploadFindService;
 import com.tpay.domains.franchisee_upload.domain.FranchiseeUploadEntity;
-import com.tpay.domains.order.application.CmsService;
 import com.tpay.domains.order.application.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FileUtils;
@@ -37,7 +36,6 @@ import static org.apache.poi.ss.usermodel.CellType.STRING;
 public class VatDownloadService {
 
     private final OrderService orderService;
-    private final CmsService cmsService;
     private final FranchiseeFindService franchiseeFindService;
     private final FranchiseeUploadFindService franchiseeUploadFindService;
     private final S3FileUploader s3FileUploader;
@@ -54,7 +52,7 @@ public class VatDownloadService {
             XSSFWorkbook xssfWorkbook = new XSSFWorkbook(fileInputStream);
             XSSFSheet sheet = xssfWorkbook.getSheetAt(0); // 첫번째 시트를 가져옴
 
-            List<Object> localDates = setUpDate(requestDate);
+            List<Object> localDates = this.setUpQuarterly(requestDate);
             LocalDate startDate = (LocalDate) localDates.get(0);
             LocalDate endDate = (LocalDate) localDates.get(1);
             String saleTerm = (String) localDates.get(2);
@@ -83,7 +81,7 @@ public class VatDownloadService {
 
             StringBuilder fileName = new StringBuilder();
             fileName.append(personalInfoResult.get(2)).append("_").append("_실적명세서");
-            String result = s3FileUploader.uploadXlsx(franchiseeIndex, xssfWorkbook,fileName);
+            String result = s3FileUploader.uploadXlsx(franchiseeIndex, xssfWorkbook,fileName,false);
             return result;
 
         } catch (IOException e) {
@@ -104,7 +102,7 @@ public class VatDownloadService {
             XSSFWorkbook xssfWorkbook = new XSSFWorkbook(fileInputStream);
             XSSFSheet sheet = xssfWorkbook.getSheetAt(0); // 첫번째 시트를 가져옴
 
-            List<String> date = cmsService.setUpDate(requestMonth);
+            List<String> date = this.setUpDate(requestMonth);
             String year = date.get(0);
             String month = date.get(1);
             String saleTerm = year + month;
@@ -242,7 +240,7 @@ public class VatDownloadService {
         return personalInfoResultCellStyle;
     }
 
-    private List<Object> setUpDate(String requestDatePart) {
+    private List<Object> setUpQuarterly(String requestDatePart) {
         List<Object> dateList = new ArrayList<>();
         String requestDate = "20" + requestDatePart;
         String year = requestDate.substring(0, 4);
@@ -266,6 +264,25 @@ public class VatDownloadService {
         dateList.add(startDate);
         dateList.add(endDate);
         dateList.add(saleTerm);
+        return dateList;
+    }
+
+    public List<String> setUpDate(String requestDatePart) {
+
+        int yearInt = Integer.parseInt("20" + requestDatePart.substring(0, 2));
+        int monthInt = Integer.parseInt(requestDatePart.substring(2).replaceAll("0", ""));
+
+        LocalDate localDate = LocalDate.of(yearInt,monthInt,1);
+        LocalDate localDate1 = localDate.minusMonths(1);
+        String year = String.valueOf(localDate1.getYear());
+        String month = String.valueOf(localDate1.getMonthValue());
+        if(month.length() == 1) {
+            month = "0" + month;
+        }
+
+        List<String> dateList = new ArrayList<>();
+        dateList.add(year);
+        dateList.add(month);
         return dateList;
     }
 

@@ -51,12 +51,12 @@ public class VatController {
             @PathVariable Long franchiseeIndex,
             @RequestParam String requestDate
     ){
-        String result = vatDownloadService.vatDownloads(franchiseeIndex,requestDate);
-        return ResponseEntity.ok("Asdf");
+        String downloadLink = vatDownloadService.vatDownloads(franchiseeIndex,requestDate);
+        return ResponseEntity.ok(downloadLink);
     }
 
     // API 호출로 관리자가 한번에 일괄 출력 기능
-    @GetMapping("/franchisee/{franchiseeIndex}/vat/monthly-downloads")
+    @GetMapping("/franchisee/{franchiseeIndex}/admin/vat/downloads")
     public ResponseEntity<String> vatMonthlyDownloads(
             @PathVariable Long franchiseeIndex,
             @RequestParam String requestMonth // ?requestMonth = 225

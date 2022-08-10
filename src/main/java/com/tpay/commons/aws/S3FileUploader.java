@@ -142,7 +142,8 @@ public class S3FileUploader {
     /**
      * 엑셀파일 업로드
      */
-    public String uploadXlsx(Long franchiseeIndex, XSSFWorkbook xssfWorkbook) throws IOException {
+    public String uploadXlsx(Long franchiseeIndex, XSSFWorkbook xssfWorkbook
+                            ,StringBuilder fileName,boolean isCms) throws IOException {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         xssfWorkbook.write(byteArrayOutputStream);
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
@@ -151,14 +152,19 @@ public class S3FileUploader {
         objectMetaData.setContentLength((long) byteArrayOutputStream.toByteArray().length);
         byteArrayOutputStream.close();
         objectMetaData.setContentDisposition("attachment; filename=\"" + franchiseeIndex + ".xlsx\"");
-        String key = profileName + "/" + franchiseeIndex + "excelTest";
+        StringBuilder key = new StringBuilder();
+        if(isCms){
+            key.append("CmsDownloads/").append(fileName);
+        }else{
+            key.append("VatDownloads/").append(fileName);
+        }
         try {
-            s3Client.putObject(new PutObjectRequest(bucket, key, byteArrayInputStream, objectMetaData)
+            s3Client.putObject(new PutObjectRequest(bucket, String.valueOf(key), byteArrayInputStream, objectMetaData)
                     .withCannedAcl(CannedAccessControlList.PublicRead));
         } finally {
             byteArrayInputStream.close();
         }
-        return s3Client.getUrl(bucket, key).toString();
+        return s3Client.getUrl(bucket, String.valueOf(key)).toString();
     }
 
     public String uploadXlsx(Long franchiseeIndex, XSSFWorkbook xssfWorkbook
@@ -176,7 +182,6 @@ public class S3FileUploader {
         }else{
             key.append("VatMonthlyReport/").append(month).append("/").append(fileName);
         }
-        //String key = "monthlyReport/" + month + "/" + fileName;
         try {
             s3Client.putObject(new PutObjectRequest(bucket, String.valueOf(key), byteArrayInputStream, objectMetaData)
                     .withCannedAcl(CannedAccessControlList.PublicRead));

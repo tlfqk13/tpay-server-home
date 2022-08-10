@@ -119,16 +119,16 @@ public class OrderEntity extends BaseTimeEntity {
     public String getTotalRefund() {
         double vat = Double.parseDouble(this.totalVat);
         int totalRefund = (int) Math.floor((vat*70)/100);
-        int totalRefundResult = (int) (Math.floor((double) totalRefund/100)) * 100;
-
+        int totalRefundFloor = (int) (Math.floor((double) totalRefund/100)) * 100;
         // TODO: 2022/08/09 합계 보정을 위해
         String amount = initOrderLineAmount();
-        int actualAmount = Integer.parseInt(amount) - totalRefundResult;
+        int actualAmount = Integer.parseInt(amount) - totalRefundFloor;
         int actualAmountResult = (int) (Math.ceil((double) actualAmount /100)) * 100;
-        totalRefund = actualAmount - actualAmountResult;
+        int totalRefundResult = Integer.parseInt(amount) - actualAmountResult;
 
-        return Integer.toString(totalRefund);
+        return Integer.toString(totalRefundResult);
     }
+
 
     public long getPointsWithPercentage(double balancePercentage){
         double vat = Double.parseDouble(this.totalVat);
@@ -139,7 +139,6 @@ public class OrderEntity extends BaseTimeEntity {
         this.orderNumber = orderNumber;
         return this;
     }
-
     public void setRefundEntity(RefundEntity refundEntity) {
         this.refundEntity = refundEntity;
     }
