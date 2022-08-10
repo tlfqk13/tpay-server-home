@@ -58,8 +58,12 @@ public class FranchiseeApplicantFindService {
         }
 
         List<FranchiseeApplicantInfo> franchiseeApplicantInfoList = franchiseeApplicantEntityPage.stream().map(FranchiseeApplicantInfo::toResponse).collect(Collectors.toList());
+        int totalPage = franchiseeApplicantEntityPage.getTotalPages();
+        if(totalPage != 0){
+            totalPage = totalPage -1;
+        }
         FranchiseeApplicantFindResponse franchiseeApplicantFindResponse = FranchiseeApplicantFindResponse.builder()
-                .totalPage(franchiseeApplicantEntityPage.getTotalPages()-1)
+                .totalPage(totalPage)
                 .franchiseeApplicantInfoList(franchiseeApplicantInfoList)
                 .build();
 
@@ -120,8 +124,12 @@ public class FranchiseeApplicantFindService {
         }
 
         List<FranchiseeApplicantInfo> franchiseeApplicantInfoList = franchiseeApplicantEntityList.stream().map(FranchiseeApplicantInfo::toResponse).collect(Collectors.toList());
+        int totalPage = franchiseeApplicantEntityList.getTotalPages();
+        if(totalPage != 0){
+            totalPage = totalPage -1;
+        }
         FranchiseeApplicantFindResponse franchiseeApplicantFindResponse = FranchiseeApplicantFindResponse.builder()
-                .totalPage(franchiseeApplicantEntityList.getTotalPages()-1)
+                .totalPage(totalPage)
                 .franchiseeApplicantInfoList(franchiseeApplicantInfoList)
                 .build();
 

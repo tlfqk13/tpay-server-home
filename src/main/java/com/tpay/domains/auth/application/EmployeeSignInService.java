@@ -12,12 +12,14 @@ import com.tpay.domains.franchisee_applicant.application.FranchiseeApplicantFind
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
 import com.tpay.domains.push.application.NonBatchPushService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class EmployeeSignInService {
 
@@ -46,6 +48,11 @@ public class EmployeeSignInService {
 
         //직원 로그인시 푸쉬
         nonBatchPushService.nonBatchPushNSave(PushCategoryType.CASE_FOURTEEN, franchiseeApplicantEntity.getFranchiseeEntity().getId(), employeeEntity.getName());
+
+        log.trace("==========================로그인===========================");
+        log.trace("[사업자번호] : {}", employeeEntity.getName());
+        log.trace("[사업자번호] : {}", employeeEntity.getFranchiseeEntity().getBusinessNumber());
+        log.trace("==========================로그인===========================");
 
         return SignInTokenInfo.builder()
             .employeeIndex(employeeEntity.getId())

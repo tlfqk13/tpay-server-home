@@ -100,10 +100,13 @@ public class PointFindService {
         }
 
         List<AdminPointInfo> adminPointInfoList = result.stream().map(AdminPointInfo::new).collect(Collectors.toList());
-
+        int totalPage = result.getTotalPages();
+        if(totalPage != 0){
+            totalPage = totalPage -1;
+        }
         AdminPointResponse adminPointResponse = AdminPointResponse.builder()
                 .adminPointInfoList(adminPointInfoList)
-                .totalPage(result.getTotalPages()-1)
+                .totalPage(totalPage)
                 .build();
 
         return adminPointResponse;
