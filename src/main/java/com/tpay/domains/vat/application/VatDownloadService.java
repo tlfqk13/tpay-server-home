@@ -21,10 +21,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -81,8 +78,14 @@ public class VatDownloadService {
 
             StringBuilder fileName = new StringBuilder();
             fileName.append(personalInfoResult.get(2)).append("_").append("_실적명세서");
-            String result = s3FileUploader.uploadXlsx(franchiseeIndex, xssfWorkbook,fileName,false);
-            return result;
+    /*        String result = s3FileUploader.uploadXlsx(franchiseeIndex, xssfWorkbook,fileName,false);
+            return result;*/
+
+            FileOutputStream fileOutputStream = new FileOutputStream("/home/success/vatDownloads/" + fileName +".xlsx");
+            xssfWorkbook.write(fileOutputStream);
+            fileOutputStream.flush();
+            fileOutputStream.close();
+            return "ok";
 
         } catch (IOException e) {
             throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "File Input Failed");
