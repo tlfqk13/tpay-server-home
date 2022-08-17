@@ -91,11 +91,11 @@ spring:
     password: ENC(YBmOxehPGVqDcKl79oiEEvefewVUQFFB)
     driver-class-name: org.mariadb.jdbc.Driver
   jpa:
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL5InnoDBDialect
-        format_sql: false
+        format_sql: true
     hibernate:
       ddl-auto: none
 custom:
@@ -122,7 +122,7 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL5InnoDBDialect
-        format_sql: false
+        format_sql: true
     hibernate:
       ddl-auto: none
 custom:

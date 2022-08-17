@@ -76,7 +76,6 @@ public class RefundApproveService {
         String uri = CustomValue.REFUND_SERVER + "/refund/approval";
         try {
             RefundResponse refundResponse = webRequestUtil.post(uri, refundApproveRequest);
-            log.debug("Refund approve response = {} ", refundResponse);
 
             // TODO : 응답코드 "0000" 아닐시 테스트 필요
             RefundEntity refundEntity =
@@ -90,7 +89,6 @@ public class RefundApproveService {
             //2022/03/25 여권 스캔을 바코드모드로하고, 앱으로 승인진행할 때 이 플로우 탐
             Optional<ExternalRefundEntity> optionalExternalRefundEntity = externalRepository.findByRefundEntity(refundEntity);
             optionalExternalRefundEntity.ifPresent(externalRefundEntity -> externalRefundEntity.changeStatus(ExternalRefundStatus.APPROVE));
-
 
             pointScheduledChangeService.change(refundEntity, SignType.POSITIVE, franchiseeEntity.getBalancePercentage());
 
