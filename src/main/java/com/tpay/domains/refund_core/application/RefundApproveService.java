@@ -25,6 +25,7 @@ import com.tpay.domains.refund.domain.RefundEntity;
 import com.tpay.domains.refund_core.application.dto.RefundApproveRequest;
 import com.tpay.domains.refund_core.application.dto.RefundResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -35,6 +36,7 @@ import static com.tpay.commons.util.UserSelector.FRANCHISEE;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class RefundApproveService {
 
     private final OrderSaveService orderSaveService;
@@ -60,6 +62,7 @@ public class RefundApproveService {
         }
 
         OrderEntity orderEntity = orderSaveService.save(request);
+        log.debug("Order saved Id = {} ", orderEntity.getId());
 
         if (request.getUserSelector().equals(EMPLOYEE)) {
             EmployeeEntity employeeEntity = employeeFindService.findById(request.getEmployeeIndex())
@@ -73,6 +76,7 @@ public class RefundApproveService {
         String uri = CustomValue.REFUND_SERVER + "/refund/approval";
         try {
             RefundResponse refundResponse = webRequestUtil.post(uri, refundApproveRequest);
+            log.debug("Refund approve response = {} ", refundResponse);
 
             // TODO : 응답코드 "0000" 아닐시 테스트 필요
             RefundEntity refundEntity =
@@ -81,6 +85,7 @@ public class RefundApproveService {
                     refundResponse.getPurchaseSequenceNumber(),
                     refundResponse.getTakeoutNumber(),
                     orderEntity);
+            log.debug("Refund approve entity id = {} ", refundEntity.getId());
 
             //2022/03/25 여권 스캔을 바코드모드로하고, 앱으로 승인진행할 때 이 플로우 탐
             Optional<ExternalRefundEntity> optionalExternalRefundEntity = externalRepository.findByRefundEntity(refundEntity);

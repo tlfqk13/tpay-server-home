@@ -4,7 +4,7 @@ import com.tpay.commons.custom.CustomValue;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.webClient.WebRequestUtil;
-import com.tpay.domains.customer.application.CustomerFindService;
+import com.tpay.domains.customer.application.CustomerUpdateService;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.external.domain.ExternalRefundEntity;
 import com.tpay.domains.external.domain.ExternalRepository;
@@ -24,7 +24,7 @@ import java.util.Optional;
 @Service
 public class RefundCancelService {
 
-    private final CustomerFindService customerFindService;
+    private final CustomerUpdateService customerUpdateService;
     private final RefundFindService refundFindService;
     private final PointScheduledChangeService pointScheduledChangeService;
     private final ExternalRepository externalRepository;
@@ -32,7 +32,7 @@ public class RefundCancelService {
 
     @Transactional
     public RefundResponse cancel(Long customerIndex, Long refundIndex) {
-        CustomerEntity customerEntity = customerFindService.findByIndex(customerIndex);
+        CustomerEntity customerEntity = customerUpdateService.findByIndex(customerIndex);
         RefundEntity refundEntity = refundFindService.findById(refundIndex);
         RefundCancelRequest refundCancelRequest = RefundCancelRequest.of(customerEntity, refundEntity);
 

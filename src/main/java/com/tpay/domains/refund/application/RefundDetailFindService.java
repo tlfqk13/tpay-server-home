@@ -2,8 +2,9 @@ package com.tpay.domains.refund.application;
 
 import com.tpay.commons.aria.PassportNumberEncryptService;
 import com.tpay.commons.util.DateFilter;
-import com.tpay.domains.customer.application.CustomerFindService;
+import com.tpay.domains.customer.application.CustomerUpdateService;
 import com.tpay.domains.customer.application.dto.CustomerInfo;
+import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.refund.application.dto.*;
 import com.tpay.domains.refund.domain.RefundEntity;
 import com.tpay.domains.refund.domain.RefundRepository;
@@ -27,7 +28,7 @@ public class RefundDetailFindService {
 
     private final PassportNumberEncryptService passportNumberEncryptService;
     private final RefundRepository refundRepository;
-    private final CustomerFindService customerFindService;
+    private final CustomerUpdateService customerUpdateService;
     private final SearchRefundRepository searchRefundRepository;
 
     public List<RefundFindResponseInterface> findList(Long franchiseeIndex, LocalDate startDate, LocalDate endDate) {
@@ -151,7 +152,11 @@ public class RefundDetailFindService {
         String name = refundCustomerInfoRequest.getName();
         String nation = refundCustomerInfoRequest.getNationality();
         String passportNumber = refundCustomerInfoRequest.getPassportNumber();
-        Long customerIndex = customerFindService.findByNationAndPassportNumber(name, passportNumber, nation).getId();
+        Optional<CustomerEntity> customerEntityOptional = customerUpdateService.findCustomerByNationAndPassportNumber(passportNumber, nation);
+        if(customerEntityOptional.isEmpty()) {
+            return Collections.emptyList();
+        }
+        Long customerIndex = customerEntityOptional.get().getId();
         List<RefundFindResponseInterface> refundsByCustomerInfo = refundRepository.findRefundsByCustomerInfo(franchiseeIndex, startDate, endDate, customerIndex);
 
         if (refundsByCustomerInfo.isEmpty()) {
