@@ -4,6 +4,9 @@ import lombok.*;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString
+@Builder
+@AllArgsConstructor
 public class RefundLimitRequest {
     private String name;
     private String passportNumber;

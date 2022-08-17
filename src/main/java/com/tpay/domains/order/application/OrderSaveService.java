@@ -1,6 +1,6 @@
 package com.tpay.domains.order.application;
 
-import com.tpay.domains.customer.application.CustomerFindService;
+import com.tpay.domains.customer.application.CustomerUpdateService;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.external.domain.ExternalRefundEntity;
 import com.tpay.domains.franchisee.application.FranchiseeFindService;
@@ -22,7 +22,7 @@ public class OrderSaveService {
 
     private final OrderRepository orderRepository;
     private final FranchiseeFindService franchiseeFindService;
-    private final CustomerFindService customerFindService;
+    private final CustomerUpdateService customerUpdateService;
     private final ProductFindService productFindService;
     private final OrderLineSaveService orderLineSaveService;
 
@@ -31,7 +31,7 @@ public class OrderSaveService {
         FranchiseeEntity franchiseeEntity =
             franchiseeFindService.findByIndex(request.getFranchiseeIndex());
 
-        CustomerEntity customerEntity = customerFindService.findByIndex(request.getCustomerIndex());
+        CustomerEntity customerEntity = customerUpdateService.findByIndex(request.getCustomerIndex());
 
         ProductEntity productEntity =
             productFindService.findOrElseSave(
@@ -43,7 +43,7 @@ public class OrderSaveService {
     @Transactional
     public OrderEntity save(ExternalRefundEntity externalRefundEntity, String amount) {
         FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(externalRefundEntity.getFranchiseeIndex());
-        CustomerEntity customerEntity = customerFindService.findByIndex(externalRefundEntity.getCustomerIndex());
+        CustomerEntity customerEntity = customerUpdateService.findByIndex(externalRefundEntity.getCustomerIndex());
         ProductEntity productEntity = productFindService.findOrElseSave(franchiseeEntity.getProductCategory(), amount);
         return this.save(franchiseeEntity, customerEntity, productEntity);
 

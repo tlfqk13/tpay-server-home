@@ -18,7 +18,7 @@ public class PassportNumberEncryptService {
             return ARIAEngine.encrypt(passportNumber);
 
         } catch (Exception exception) {
-            throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Decryption Failed");
+            throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Encryption Failed");
         }
     }
 }
