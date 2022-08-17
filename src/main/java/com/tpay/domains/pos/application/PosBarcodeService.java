@@ -1,7 +1,7 @@
 package com.tpay.domains.pos.application;
 
 import com.tpay.commons.webClient.WebRequestUtil;
-import com.tpay.domains.customer.application.CustomerFindService;
+import com.tpay.domains.customer.application.CustomerUpdateService;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.external.application.ExternalService;
 import com.tpay.domains.external.domain.ExternalRefundEntity;
@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
+import java.util.Optional;
+
 import static com.tpay.commons.custom.CustomValue.REFUND_SERVER;
 
 @Slf4j
@@ -21,7 +23,7 @@ import static com.tpay.commons.custom.CustomValue.REFUND_SERVER;
 @RequiredArgsConstructor
 public class PosBarcodeService {
 
-    private final CustomerFindService customerFindService;
+    private final CustomerUpdateService customerUpdateService;
     private final ExternalService externalService;
     private final WebRequestUtil webRequestUtil;
     private final BarcodeService barcodeService;
@@ -33,7 +35,13 @@ public class PosBarcodeService {
         RefundResponse refundResponse = webRequestUtil.post(uri, request);
 
         //외국인 정보 업데이트
-        CustomerEntity customerEntity = customerFindService.findByNationAndPassportNumber(request.getName(), request.getPassportNumber(), request.getNationality());
+        Optional<CustomerEntity> customerEntityOptional = customerUpdateService.findCustomerByNationAndPassportNumber(request.getPassportNumber(), request.getNationality());
+        CustomerEntity customerEntity;
+        if(customerEntityOptional.isEmpty()){
+            customerEntity = customerUpdateService.updateCustomerInfo(request.getName(), request.getPassportNumber(), request.getNationality());
+        } else {
+            customerEntity = customerEntityOptional.get();
+        }
 
         //ExternalRepository 등록
         ExternalRefundEntity save = externalService.save(franchiseeIndex, customerEntity.getId(), refundResponse.getBeforeDeduction());

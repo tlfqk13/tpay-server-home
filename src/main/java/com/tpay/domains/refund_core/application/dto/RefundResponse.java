@@ -1,14 +1,12 @@
 package com.tpay.domains.refund_core.application.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Builder
 @AllArgsConstructor
 @Getter
 @NoArgsConstructor
+@ToString
 public class RefundResponse {
     private String responseCode; // '0000': 정상
     private String message; // 환급 통신 에러일 경우 에러 메시지 반환

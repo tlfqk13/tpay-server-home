@@ -8,6 +8,7 @@ import com.tpay.domains.refund_core.application.RefundCancelService;
 import com.tpay.domains.refund_core.application.dto.RefundLimitRequest;
 import com.tpay.domains.refund_core.application.dto.RefundResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 @RequestMapping("/refund")
 public class RefundCoreController {
 
@@ -33,7 +35,9 @@ public class RefundCoreController {
         @RequestBody RefundSaveRequest request,
         @PathVariable UserSelector userSelector,
         @PathVariable Long index) {
+        log.trace("Refund Approval Start = {}", request);
         RefundResponse response = refundApproveService.approve(request);
+        log.trace("Refund Approval Finish = {}", response);
         return ResponseEntity.ok(response);
     }
 
@@ -58,7 +62,9 @@ public class RefundCoreController {
     @PostMapping("/limit")
     private ResponseEntity<RefundResponse> find(
         @RequestBody RefundLimitRequest request) {
+        log.trace("Refund Limit Find Start = {}", request);
         RefundResponse response = limitFindService.find(request);
+        log.trace("Refund Limit Find Finish = {}", request);
         return ResponseEntity.ok(response);
     }
 }

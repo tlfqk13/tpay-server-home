@@ -8,7 +8,7 @@ import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.logger.CommonLogger;
 import com.tpay.commons.push.PushCategoryType;
 import com.tpay.commons.webClient.WebRequestUtil;
-import com.tpay.domains.customer.application.CustomerFindService;
+import com.tpay.domains.customer.application.CustomerUpdateService;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.external.application.dto.ExternalRefundCancelRequest;
 import com.tpay.domains.external.application.dto.ExternalRefundResponse;
@@ -32,7 +32,7 @@ import javax.transaction.Transactional;
 public class ExternalRefundCancelService {
 
     private final ExternalRefundFindService externalRefundFindService;
-    private final CustomerFindService customerFindService;
+    private final CustomerUpdateService customerUpdateService;
     private final PointScheduledChangeService pointScheduledChangeService;
     private final FranchiseeFindService franchiseeFindService;
     private final NonBatchPushService nonBatchPushService;
@@ -56,7 +56,7 @@ public class ExternalRefundCancelService {
                 return ExternalRefundResponse.builder().responseCode("K9100").payment(0).message("[K9100] 이미 취소된 건입니다.").build();
             }
 
-            CustomerEntity customerEntity = customerFindService.findByIndex(externalRefundEntity.getCustomerIndex());
+            CustomerEntity customerEntity = customerUpdateService.findByIndex(externalRefundEntity.getCustomerIndex());
             RefundEntity refundEntity = externalRefundEntity.getRefundEntity();
             RefundCancelRequest refundCancelRequest = RefundCancelRequest.of(customerEntity, refundEntity);
 
