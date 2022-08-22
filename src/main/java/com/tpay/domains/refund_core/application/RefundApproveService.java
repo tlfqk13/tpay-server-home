@@ -100,7 +100,7 @@ public class RefundApproveService {
 
         } catch (WebfluxGeneralException e) {
             orderService.deleteByIndex(orderEntity.getId());
-            throw new WebfluxGeneralException(ExceptionState.WEBFLUX_GENERAL, "통신 에러입니다.");
+            throw new WebfluxGeneralException(ExceptionState.WEBFLUX_GENERAL, e.getMessage());
         }
     }
 }
