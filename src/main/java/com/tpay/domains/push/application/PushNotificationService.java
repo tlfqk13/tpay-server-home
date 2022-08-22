@@ -86,10 +86,11 @@ public class PushNotificationService {
 
     private void addHighPriority(Message.Builder builder) {
         builder.setApnsConfig(
-                ApnsConfig.builder()
-                        .putHeader("apns-priority", "5")
-                        .build()
-        )
+                        ApnsConfig.builder()
+                                .putHeader("apns-priority", "5")
+                                .setAps(Aps.builder().build())
+                                .build()
+                )
                 .setAndroidConfig(
                         AndroidConfig.builder()
                                 .setPriority(AndroidConfig.Priority.HIGH)
