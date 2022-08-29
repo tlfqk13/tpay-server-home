@@ -12,7 +12,7 @@ Configuration:
       name: Console_Appender
       target: SYSTEM_OUT
       PatternLayout:
-        pattern: "%highlight{[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t][TID-%T] %c{1} - %msg%n}"
+        pattern: "%highlight{[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n}"
     #    File:
     #      name: File_Appender
     #      fileName: ${log-path}/logfile.log
@@ -23,7 +23,7 @@ Configuration:
       fileName: ${log-path}/rollingfile.log
       filePattern: "${log-path}/archive/rollingfile.log_%d{yyyy-MM-dd}.gz"
       PatternLayout:
-        pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%-22t][TID-%T] %-30c{1} - %msg%n"
+        pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%-22t] %-30c{1} - %msg%n"
       Policies:
         TimeBasedTriggeringPolicy:
           Interval: 1
