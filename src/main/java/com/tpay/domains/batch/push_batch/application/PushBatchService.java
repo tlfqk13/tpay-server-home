@@ -1,5 +1,6 @@
 package com.tpay.domains.batch.push_batch.application;
 
+import com.tpay.commons.logger.NotDebugMethod;
 import com.tpay.commons.push.PushCategoryType;
 import com.tpay.commons.push.PushType;
 import com.tpay.commons.util.DisappearDate;
@@ -49,6 +50,7 @@ public class PushBatchService {
     private final PointRepository pointRepository;
     private final RefundRepository refundRepository;
 
+    @NotDebugMethod
     public void batchPush() {
         caseOne();
         caseFour();
@@ -75,7 +77,7 @@ public class PushBatchService {
     }
 
     @Scheduled(cron = "0 1 16 * * *")
-    private void caseFour() {
+    protected void caseFour() {
         TopicType topic = TopicType.REJECTED;
         List<FranchiseeApplicantEntity> franchiseeApplicantEntityList = franchiseeApplicantFindService.findByFranchiseeStatus(FranchiseeStatus.REJECTED);
 
@@ -90,7 +92,7 @@ public class PushBatchService {
     }
 
     @Scheduled(cron = "0 1 15 * * *")
-    private void caseEight() {
+    protected void caseEight() {
         TopicType topic = TopicType.DISAPPEAR;
         List<PointEntity> pointEntityList = pointRepository.findByCreatedDateBefore(DisappearDate.getDisappearDate());
         if (isApplicationInitBeforeOneMinute()) {
@@ -104,7 +106,7 @@ public class PushBatchService {
     }
 
     @Scheduled(cron = "0 0 20 L * ?")
-    private void caseNine() {
+    protected void caseNine() {
         TopicType topic = TopicType.STAT_MONTH;
         LocalDateTime startDate = LocalDate.now().minusMonths(1).withDayOfMonth(1).atStartOfDay();
         LocalDateTime endDate = LocalDate.now().withDayOfMonth(1).atStartOfDay();
@@ -120,7 +122,7 @@ public class PushBatchService {
     }
 
     @Scheduled(cron = "0 10 20 31 12 *")
-    private void caseTen() {
+    protected void caseTen() {
         TopicType topic = TopicType.STAT_YEAR;
         LocalDateTime startDate = LocalDate.now().minusYears(1).withDayOfYear(1).atStartOfDay();
         LocalDateTime endDate = LocalDate.now().withDayOfYear(1).atStartOfDay();
@@ -136,7 +138,7 @@ public class PushBatchService {
     }
 
     @Scheduled(cron = "0 0 13 1 7,1 *")
-    private void caseEleven() {
+    protected void caseEleven() {
         TopicType topic = TopicType.VAT;
         LocalDateTime startDate = LocalDate.now().minusMonths(6).withDayOfMonth(1).atStartOfDay();
         LocalDateTime endDate = LocalDate.now().withDayOfMonth(1).atStartOfDay();
@@ -156,7 +158,7 @@ public class PushBatchService {
 
     // TODO: 2022/04/19 CASE 12랑 13 만들어야함
     @Scheduled(cron = "0 0 0 4,9,14,19,24,29 * *")
-    private void caseTwelve() {
+    protected void caseTwelve() {
         TopicType topic = TopicType.CMS_BEFORE;
         int targetDay = LocalDate.now().plusDays(1).getDayOfMonth();
 
