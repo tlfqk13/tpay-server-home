@@ -99,8 +99,11 @@ public class RefundApproveService {
             return refundResponse;
 
         } catch (WebfluxGeneralException e) {
+            log.debug("Refund delete orderEntity id = {} ", orderEntity.getId());
             orderService.deleteByIndex(orderEntity.getId());
-            throw new WebfluxGeneralException(ExceptionState.WEBFLUX_GENERAL, "통신 에러입니다.");
+            log.debug("WEBFLUX_GENERAL_ERROR");
+            throw new WebfluxGeneralException(ExceptionState.WEBFLUX_GENERAL, e.getMessage());
+
         }
     }
 }

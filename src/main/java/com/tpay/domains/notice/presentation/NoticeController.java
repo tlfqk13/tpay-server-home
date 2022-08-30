@@ -29,11 +29,10 @@ public class NoticeController {
         noticeService.registration(dataListString, mainImg, subImg1, subImg2, subImg3);
     }
 
-    @GetMapping("/admin/notice/list/{page}")
+    @GetMapping("/admin/notice")
     public ResponseEntity<List<CommonNoticeFindDto.FindAllResponse>> getAll(
-            @PathVariable int page
     ) {
-        List<CommonNoticeFindDto.FindAllResponse> all = noticeService.getAll(page);
+        List<CommonNoticeFindDto.FindAllResponse> all = noticeService.getAll();
         return ResponseEntity.ok(all);
     }
 

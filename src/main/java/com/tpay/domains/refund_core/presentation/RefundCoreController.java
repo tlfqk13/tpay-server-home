@@ -56,6 +56,17 @@ public class RefundCoreController {
         return ResponseEntity.ok(response);
     }
 
+    // TODO: 2022/08/18 관리자가 직접 가맹점 환급 취소시 사용
+    @PatchMapping("/admin-cancel/{userSelector}/{index}")
+    public ResponseEntity<RefundResponse> refundCancelFromAdmin(
+            @RequestParam Long customerIndex, @RequestParam Long refundIndex,
+            @PathVariable UserSelector userSelector,
+            @PathVariable Long index
+    ) {
+        RefundResponse response = refundCancelService.cancel(customerIndex, refundIndex);
+        return ResponseEntity.ok(response);
+    }
+
     /**
      * 한도조회
      */

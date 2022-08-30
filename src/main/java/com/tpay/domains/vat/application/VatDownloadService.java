@@ -78,14 +78,8 @@ public class VatDownloadService {
 
             StringBuilder fileName = new StringBuilder();
             fileName.append(personalInfoResult.get(2)).append("_").append("_실적명세서");
-    /*        String result = s3FileUploader.uploadXlsx(franchiseeIndex, xssfWorkbook,fileName,false);
-            return result;*/
-
-            FileOutputStream fileOutputStream = new FileOutputStream("/home/success/vatDownloads/" + fileName +".xlsx");
-            xssfWorkbook.write(fileOutputStream);
-            fileOutputStream.flush();
-            fileOutputStream.close();
-            return "ok";
+            String result = s3FileUploader.uploadXlsx(franchiseeIndex, xssfWorkbook,fileName,false);
+            return result;
 
         } catch (IOException e) {
             throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "File Input Failed");
@@ -306,4 +300,62 @@ public class VatDownloadService {
         result.add(franchiseeUploadEntity.getTaxFreeStoreNumber()); // 면세 판매장 지정번호
         return result;
     }
+
+    public String vatDownloadsTest(Long franchiseeIndex, String requestDate) {
+        try {
+            ClassPathResource resource = new ClassPathResource("KTP_REFUND_Form.xlsx");
+            File file;
+            try (InputStream inputStream = resource.getInputStream()) {
+                file = File.createTempFile("KTP_REFUND_Form", "xlsx");
+                FileUtils.copyInputStreamToFile(inputStream, file);
+            }
+            FileInputStream fileInputStream = new FileInputStream(file);
+            XSSFWorkbook xssfWorkbook = new XSSFWorkbook(fileInputStream);
+            XSSFSheet sheet = xssfWorkbook.getSheetAt(0); // 첫번째 시트를 가져옴
+
+            List<Object> localDates = this.setUpQuarterly(requestDate);
+            LocalDate startDate = (LocalDate) localDates.get(0);
+            LocalDate endDate = (LocalDate) localDates.get(1);
+            String saleTerm = (String) localDates.get(2);
+            //연월일
+            //1. 제출자 인적사항
+            boolean isMonthly = false;
+            List<String> personalInfoResult = this.findPersonalInfo(franchiseeIndex, saleTerm,isMonthly);
+            //2. 물품판매 총합계
+            List<String> totalResult = orderService.findQuarterlyTotal(franchiseeIndex, startDate, endDate);
+            //3. 물품판매 명세 (반기)
+            List<List<String>> detailResult = orderService.findQuarterlyDetail(franchiseeIndex, startDate, endDate);
+
+            // 최상단 (년 기(월))
+            topSection(xssfWorkbook,sheet,requestDate,isMonthly);
+
+            // 1. 제출자 인적사항
+            // 데이터 ex ) sellerName, businessNumber, storeName, address, saleTerm, taxFreeStoreNumber
+            personalInfoResultSection(xssfWorkbook,sheet,personalInfoResult);
+
+            // 2. 물품판매 총합계
+            // 데이터 ex ) totalCount, totalAmount, totalVat totalRefund
+            totalResultSection(xssfWorkbook,sheet,totalResult);
+
+            // 3. 물품판매 명세
+            detailMonthlyResultSection(xssfWorkbook,sheet,detailResult);
+
+            StringBuilder fileName = new StringBuilder();
+            fileName.append(personalInfoResult.get(2)).append("_").append("_실적명세서");
+           /* String result = s3FileUploader.uploadXlsx(franchiseeIndex, xssfWorkbook,fileName,false);
+            return result;*/
+
+            String filePath = "/home/success/downloads/" + fileName + "_vat" +".xlsx";
+            FileOutputStream fileOutputStream = new FileOutputStream(filePath);
+            xssfWorkbook.write(fileOutputStream);
+            fileOutputStream.flush();
+            fileOutputStream.close();
+
+            return filePath;
+
+        } catch (IOException e) {
+            throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "File Input Failed");
+        }
+    }
+
 }

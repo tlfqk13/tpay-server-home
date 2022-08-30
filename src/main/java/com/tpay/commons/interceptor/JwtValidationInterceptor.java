@@ -65,7 +65,7 @@ public class JwtValidationInterceptor implements HandlerInterceptor {
 
     // 벨리데이션 체크는 헤더의 Authorization 의 jwt AT로 나온 index와 URI의 index를 비교하는 책임
     private boolean validationCheck(HttpServletRequest request) {
-
+        log.trace("Duplicate _ Validation Check Start");
         Claims claims = getClaims(request);
         IndexInfo tokenInfo = getIndexFromClaims(claims);
         IndexInfo uriInfo = getIndexFromUri(request);
@@ -77,20 +77,29 @@ public class JwtValidationInterceptor implements HandlerInterceptor {
         if(FRANCHISEE == tokenUserSelector){
             Optional<FranchiseeAccessTokenEntity> franchiseeAccessTokenEntityOptional =
                     accessTokenService.findByFranchiseeId(Long.valueOf(tokenIndex));
-            String latestFranchiseeAccessToken  = franchiseeAccessTokenEntityOptional.get().getAccessToken();
+            if(franchiseeAccessTokenEntityOptional.isEmpty()){
+                log.trace("Franchisee AccessToken_NULL");
+                throw new NullPointerException();
+            }else {
+                String latestFranchiseeAccessToken = franchiseeAccessTokenEntityOptional.get().getAccessToken();
 
-            AuthToken authFranchiseeToken = jwtUtils.convertAuthToken(latestFranchiseeAccessToken);
-            if(!claims.getIssuedAt().equals(authFranchiseeToken.getData().getIssuedAt())){
-                throw new JwtRuntimeException(ExceptionState.DUPLICATE_SIGNOUT);
+                AuthToken authFranchiseeToken = jwtUtils.convertAuthToken(latestFranchiseeAccessToken);
+                if (!claims.getIssuedAt().equals(authFranchiseeToken.getData().getIssuedAt())) {
+                    throw new JwtRuntimeException(ExceptionState.DUPLICATE_SIGNOUT);
+                }
             }
         }else{
             Optional<EmployeeAccessTokenEntity> employeeAccessTokenEntityOptional =
                     accessTokenService.findByEmployeeId(Long.valueOf(tokenIndex));
-            String latestEmployeeAccessToken = employeeAccessTokenEntityOptional.get().getAccessToken();
-
-            AuthToken authEmployeeToken = jwtUtils.convertAuthToken(latestEmployeeAccessToken);
-            if(!claims.getIssuedAt().equals(authEmployeeToken.getData().getIssuedAt())){
-                throw new JwtRuntimeException(ExceptionState.DUPLICATE_SIGNOUT);
+            if(employeeAccessTokenEntityOptional.isEmpty()) {
+                log.trace("Employee AccessToken_NULL");
+                throw new NullPointerException();
+            }else {
+                String latestEmployeeAccessToken = employeeAccessTokenEntityOptional.get().getAccessToken();
+                AuthToken authEmployeeToken = jwtUtils.convertAuthToken(latestEmployeeAccessToken);
+                if (!claims.getIssuedAt().equals(authEmployeeToken.getData().getIssuedAt())) {
+                    throw new JwtRuntimeException(ExceptionState.DUPLICATE_SIGNOUT);
+                }
             }
         }
 
