@@ -3,7 +3,6 @@ package com.tpay.domains.vat.application;
 
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
-import com.tpay.commons.util.DateFilter;
 import com.tpay.commons.util.converter.NumberFormatConverter;
 import com.tpay.domains.franchisee.application.FranchiseeFindService;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;

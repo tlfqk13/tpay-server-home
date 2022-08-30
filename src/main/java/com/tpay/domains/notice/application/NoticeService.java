@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tpay.commons.aws.S3FileUploader;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
-import com.tpay.domains.notice.application.dto.CommonNoticeFindDto;
 import com.tpay.domains.notice.application.dto.AppNoticeFindDto;
+import com.tpay.domains.notice.application.dto.CommonNoticeFindDto;
 import com.tpay.domains.notice.application.dto.DataList;
 import com.tpay.domains.notice.application.dto.InvisibleUpdateDto;
 import com.tpay.domains.notice.domain.NoticeEntity;
@@ -13,7 +13,7 @@ import com.tpay.domains.notice.domain.NoticeRepository;
 import com.tpay.domains.push.application.dto.PushNoticeDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -59,10 +59,8 @@ public class NoticeService {
         }
     }
 
-    public List<CommonNoticeFindDto.FindAllResponse> getAll(int page) {
-        PageRequest pageRequest = PageRequest.of(page,15);
-        //List<NoticeEntity> noticeEntityList = noticeRepository.findAll(Sort.by("id").descending());
-        List<NoticeEntity> noticeEntityList = noticeRepository.findAllByOrderByIdDesc(pageRequest);
+    public List<CommonNoticeFindDto.FindAllResponse> getAll() {
+        List<NoticeEntity> noticeEntityList = noticeRepository.findAll(Sort.by("id").descending());
         return noticeEntityList.stream().map(CommonNoticeFindDto.FindAllResponse::new).collect(Collectors.toList());
     }
 
