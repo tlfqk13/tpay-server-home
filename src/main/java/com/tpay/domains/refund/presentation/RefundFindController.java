@@ -67,4 +67,11 @@ public class RefundFindController {
         List<RefundByCustomerDateResponse> result = refundDetailFindService.findRefundsByCustomerInfo(franchiseeIndex, refundCustomerRequest);
         return ResponseEntity.ok(result);
     }
+
+    // TODO: 2022/08/25 중복 로그인 이슈 환급하기 눌러서 가짜 요청 날리기?
+    @GetMapping("/refunds/duplicate-check")
+    public ResponseEntity<String> refundDuplicateCheck(){
+        return ResponseEntity.ok("ok");
+    }
+
 }

@@ -30,7 +30,7 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
                             "left join orders o on r.order_id = o.id\n" +
                             "left join point_scheduled p on o.id = p.order_id\n" +
                             "where o.franchisee_id = :franchiseeIndex and r.created_date between :startDate and :endDate \n" +
-                            "group by r.created_date desc",
+                            "group by r.id desc",
             nativeQuery = true)
     List<RefundFindResponseInterface> findAllByFranchiseeIndex(
             @Param("franchiseeIndex") Long franchiseeIndex,

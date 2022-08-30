@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
 import java.io.IOException;
 
 @RestController
@@ -54,7 +55,6 @@ public class VatController {
         String downloadLink = vatDownloadService.vatDownloads(franchiseeIndex,requestDate);
         return ResponseEntity.ok(downloadLink);
     }
-
     // API 호출로 관리자가 한번에 일괄 출력 기능
     @GetMapping("/franchisee/{franchiseeIndex}/admin/vat/downloads")
     public ResponseEntity<String> vatMonthlyDownloads(
@@ -71,5 +71,4 @@ public class VatController {
         VatHomeTaxDto.Response homeTaxResponse = homeTaxService.createHomeTaxUploadFile(franchiseeIndex, requestDate);
         return ResponseEntity.ok(homeTaxResponse);
     }
-
 }
