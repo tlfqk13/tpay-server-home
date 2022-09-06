@@ -1,0 +1,134 @@
+### Default ###
+spring:
+  profiles:
+    active: local
+  servlet:
+    multipart:
+      max-file-size: 2MB
+jasypt:
+  encryptor:
+    iv-generator-classname: org.jasypt.iv.NoIvGenerator
+    property:
+      prefix: ENC(
+      suffix: )
+    algorithm: PBEWithMD5AndDES
+custom:
+  iamport:
+    api-key: ENC(3kgXokKn0qTHPo1G2BjET160prUBcKuaqPgY6Qq8PTw==)
+    secret: ENC(Ee+LkQqPvpJyYyppl12TgAAd1on8a0VWyz2nEIDhq/2vaN+hlT8NFPaUhy8UTs+w7daRAcj19dSJCxqVyEdwqB+MjRqadMeglzQJK0aDRPZISsO1smXSr6zmSxoaLHGu)
+  jwt:
+    secret: ENC(JvO/H7QvecwZnzmStZ9mSMwA82V3PxSSbwrw6FQdsl6Z9zTN9/DovZ2P3eE5azmhJDPlgZcRYWnIhBeZwBOa1sf7E2xX7ZG8lSSIg1EzEcxFjOR/4zMbtA==)
+  refund:
+    application:
+      code: 990
+  upload:
+    business: ENC(yYudqWBEsFG2igWHyrciIu5qRjB0S6FWEU9yAp2dNSEf3v6umpsoxOL0CAQtApDXbj2YK6wMYdHcWxpyJ0y206nK1EVrKCH6GIGnOp1oVkpMsge7B0y72lgYon3Hx/HlNKKc72KDCCwJ7wedbrVItw==)
+    bank:
+      client-id: ENC(Yksp5cuMZ9sfTjThjIRxn3bTIuY5JTJOFclCIr8J2jSEgN+EgxnUx7ATv3L15BXj)
+      client-secret: ENC(huu6kX1rSeH606lK6OFtbl2GTLS6PTKuHxTvJWlBiTIYeWHcgWom7VWHVAgf1UZe)
+  push:
+    api-url: ENC(EK0psBYCIQ1nspH+7y+/oCF/NxRFddm0lEsD6plj4+QVjjcx0aZhQO8HWZVjR6c6KpiByMMBktfQ4FCjuxLGPDA2x1+9X2jn1P2+mmoRrPc=)
+    config-path: ENC(3+P8THcqeMZ9JwZbWonegl0tLhkqrHNC4/ILBBvyH+cOEzEOFJsOkuhX3SAsfPY0ToWU+5ajYhWtbS/dzbinbg==)
+    sdk-path: ENC(0m0F9EX+lh13N6+ZF8Y8n91G0REtGQQ768jdolj9J41rPDcrVbFPz2oLBhe5F4vOmyDWzftP+FcsgnOZ9rH74Q==)
+  barcode:
+    save-path: ENC(eYDNkT5cu7xnhdT895ea0Rl9ZSZRpxqT5dpWEmDiE4g=)
+  s3:
+    base-uri: ENC(XdSikIGy5Xl70+0BXM8scfYUK3jA4Y7Oj/9AM4K55jfHXeTp/hepZdGKWOPKGjkJwZgcQaqwI10AH/IC4ngDKA==)
+cloud:
+  aws:
+    credentials:
+      accessKey: ENC(CFM0Qhk08A7Fzmrj70ZyHiUqBkX3BqVxv2UP7HqlB40=)
+      secretKey: ENC(YddPKtalywKnXs8JRDVrVUJQcUgnLzG1YBVGBzEQa+uV/WCUBKXYuqXfg0Km1UlB9P7QvQ8yYvA=)
+    s3:
+      bucket: ktp-image
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+
+---
+
+### Local Environment ###
+spring:
+  config:
+    activate:
+      on-profile: local #, security
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: true
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+        format_sql: false
+    hibernate:
+      ddl-auto: update
+custom:
+  refund:
+    server: ENC(vIOoRRzJSa0iqX39B4ogkiYcB9p++ieiU4J6sGZXUAXXWm4/TDvC6A==)
+server:
+  port: 80
+
+---
+
+### Test (on-premise) 이름은 profile 이름은 operation 임. S3 버킷 이름수정이 불가하여 우선 그대로 사용  ###
+spring:
+  config:
+    activate:
+      on-profile: operation
+  datasource:
+    url: ENC(m+tIJT88xq9Qm4pH+hYNVlTu6QltKfPj4ALvpicZmgcJdcsrNxe6xOGTXUyZEqRWb/UAoyPb8G/IXqcr5Aa/Nrs8MiXroluIbtaznn1aiT2KxP219+HGpYwEFOK0oeFVOwQ7j3RaPhvz6fbLAhbHu3KOjzFYovTr91tmVrtNtAxHB9+0BCm3kv56Dp0jMS0y)
+    username: ENC(0Jwk1Hd6bYJexLqbNVfZAA==)
+    password: ENC(YBmOxehPGVqDcKl79oiEEvefewVUQFFB)
+    driver-class-name: org.mariadb.jdbc.Driver
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+        format_sql: false
+    hibernate:
+      ddl-auto: none
+custom:
+  refund:
+    server: ENC(1G1Em0TfqKIRa78TPL1+wmAhlykscw4z7FmXUHFKlXmovCBJ/yQdMQ==)
+server:
+  port: 50921
+
+
+---
+### Deploy (EC2) ###
+spring:
+  config:
+    activate:
+      on-profile: deploy
+  datasource:
+    url: ENC(ObZrFlFGQOYWEcnUVXAYfB0VkHa/T0cqmq4KarP0MAMk3vkxRWrQXD6wZz6XRX1T58+qjAjwIFL6kcEZrKQVknAQ3aCeihBjhvYbwO8NiKo7rHd8kUfSXryYwHD7x9K63t5KttOl4KQt6qFTuFT3Lz+/caZTsOPxNWwzhKkssuPFA15/Wjocng==)
+#    url: ENC(Jo9TE80vtpkY/I4wKW4fII+5DWTbh/vpfnBvdMyafCfquQ3H/Jj1p8rBqARA0DAFvCtUr/4MDtT1cVAw9gkaYZXdMHwPbi+JvaBJiZavLX+wJK4qYEDM9HYaGVIccVxV+UyF8sWzI04LPiXnOLRzVg1gXg2LV1ryjayIYyitqjCYhO0RA1Przg==) # brett test instance
+    username: ENC(0Jwk1Hd6bYJexLqbNVfZAA==)
+    password: ENC(YBmOxehPGVqDcKl79oiEEvefewVUQFFB)
+    driver-class-name: org.mariadb.jdbc.Driver
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+        format_sql: false
+    hibernate:
+      ddl-auto: none
+custom:
+  refund:
+    server: ENC(+eRtO+doK/ahXZabjbGduz7tXusuG3GA45CehnBbNjGPSYBXFrg5JA==)
+server:
+  port: 50921
+logging:
+  config: classpath:log4j2.yml
