@@ -44,7 +44,7 @@ public class TokenUpdateService {
             try {
                 System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@_3");
                 //parsedIndex = Long.parseLong(String.valueOf(refreshToken.getData()));
-                parsedIndex = 1L;
+                parsedIndex = signInTokenInfo.getFranchiseeIndex();
                 System.out.println(parsedIndex);
                 System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
             } catch (Exception exception) {
@@ -60,6 +60,9 @@ public class TokenUpdateService {
             AuthToken accessToken =
                 authService.createAccessToken(franchiseeTokenEntity.getFranchiseeEntity());
             System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@_7");
+            System.out.println("**********************************");
+            System.out.println(accessToken.getValue());
+            System.out.println("**********************************");
             return SignInTokenInfo.builder()
                 .signUpDate(signInTokenInfo.getSignUpDate())
                 .franchiseeStatus(signInTokenInfo.getFranchiseeStatus())
@@ -87,6 +90,7 @@ public class TokenUpdateService {
             employeeTokenEntity.validToken(refreshToken.getValue());
 
             AuthToken accessToken = authService.createAccessToken(employeeEntity);
+
             return SignInTokenInfo.builder()
                 .employeeIndex(signInTokenInfo.getEmployeeIndex())
                 .userId(signInTokenInfo.getUserId())
@@ -96,6 +100,7 @@ public class TokenUpdateService {
                 .refreshToken(signInTokenInfo.getRefreshToken())
                 .userSelector(EMPLOYEE)
                 .build();
+
         } else {
             throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Parse Failed");
         }

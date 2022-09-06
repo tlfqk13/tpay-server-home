@@ -46,6 +46,6 @@ public class JwtUtils {
 
     public Date createExpiredDate(long minutes) {
         return Date.from(
-            LocalDateTime.now().plusSeconds(15).atZone(ZoneId.systemDefault()).toInstant());
+            LocalDateTime.now().plusMinutes(1).atZone(ZoneId.systemDefault()).toInstant());
     }
 }
