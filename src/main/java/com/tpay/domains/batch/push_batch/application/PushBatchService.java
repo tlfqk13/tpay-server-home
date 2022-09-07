@@ -65,6 +65,7 @@ public class PushBatchService {
     @Scheduled(cron = "0 0 14 * * *")
     public void caseOne() {
         TopicType topic = TopicType.INIT;
+        log.trace("CASE_ONE 호출");
         List<FranchiseeApplicantEntity> franchiseeApplicantEntityList = franchiseeApplicantFindService.findByFranchiseeStatus(FranchiseeStatus.INIT);
         if (isApplicationInitBeforeOneMinute()) {
             log.trace("First Call - CASE_ONE");

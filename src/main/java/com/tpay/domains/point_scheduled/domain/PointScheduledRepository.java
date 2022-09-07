@@ -21,4 +21,5 @@ public interface PointScheduledRepository extends JpaRepository<PointScheduledEn
     List<PointScheduledEntity> findByCreatedDateBeforeAndPointStatus(LocalDateTime localDateTime, PointStatus pointStatus);
 
     Optional<PointScheduledEntity> findByOrderEntity(OrderEntity orderEntity);
+    void deleteByFranchiseeEntityId(Long franchiseeIndex);
 }

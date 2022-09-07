@@ -5,7 +5,6 @@ import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.domains.auth.application.dto.SignOutRequest;
 import com.tpay.domains.auth.domain.EmployeeTokenRepository;
-import com.tpay.domains.auth.domain.FranchiseeAccessTokenRepository;
 import com.tpay.domains.auth.domain.FranchiseeTokenRepository;
 import com.tpay.domains.franchisee.application.FranchiseeFindService;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
@@ -29,7 +28,6 @@ public class SignOutService {
     private final UserPushTokenRepository userPushTokenRepository;
     private final FranchiseeFindService franchiseeFindService;
     private final AccessTokenService accessTokenService;
-    private final FranchiseeAccessTokenRepository franchiseeAccessTokenRepository;
 
     @Transactional
     public String signOut(SignOutRequest signOutRequest) {

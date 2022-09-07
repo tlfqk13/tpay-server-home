@@ -50,10 +50,10 @@ public class OrderEntity extends BaseTimeEntity {
     @JoinColumn(name = "franchisee_id", nullable = false)
     private FranchiseeEntity franchiseeEntity;
 
-    @OneToOne(mappedBy = "orderEntity")
+    @OneToOne(mappedBy = "orderEntity", cascade = CascadeType.REMOVE)
     private RefundEntity refundEntity;
 
-    @OneToMany(mappedBy = "orderEntity", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "orderEntity", cascade = CascadeType.REMOVE)
     private List<OrderLineEntity> orderLineEntityList;
 
     @ManyToOne

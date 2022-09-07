@@ -14,6 +14,8 @@ import java.util.Optional;
 
 public interface FranchiseeApplicantRepository
     extends JpaRepository<FranchiseeApplicantEntity, Long> {
+
+    void deleteByFranchiseeEntity(FranchiseeEntity franchiseeEntity);
     Optional<FranchiseeApplicantEntity> findByFranchiseeEntityBusinessNumber(String businessNumber);
 
     Optional<FranchiseeApplicantEntity> findByFranchiseeEntity(FranchiseeEntity franchiseeEntity);

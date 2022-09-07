@@ -18,6 +18,7 @@ import java.util.Optional;
 @Repository
 public interface PointRepository extends JpaRepository<PointEntity, Long> {
 
+    void deleteByFranchiseeEntityId(Long franchiseeIndex);
     @EntityGraph(attributePaths = {"orderEntity", "franchiseeEntity"})
     List<PointEntity> findAllByPointStatusInAndFranchiseeEntityIdAndCreatedDateBetween(
         List<PointStatus> pointStatus, Long franchiseeId, LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
