@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
+
+    void deleteByFranchiseeEntityId(Long franchiseeIndex);
     @Query(value = "select franchisee_id                           as franchiseeIndex\n" +
         "     , sum(cast(tot_amt as INTEGER))           as totalAmount\n" +
 //      "     , cast(sum(tot_amt - tot_vat) as INTEGER) as totalSupply\n" +

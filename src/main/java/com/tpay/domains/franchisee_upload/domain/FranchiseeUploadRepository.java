@@ -1,5 +1,6 @@
 package com.tpay.domains.franchisee_upload.domain;
 
+import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,4 +15,6 @@ public interface FranchiseeUploadRepository extends JpaRepository<FranchiseeUplo
     FranchiseeUploadEntity findByFranchiseeIndexAndImageCategory(Long franchiseeIndex, String imageCategory);
 
     Optional<FranchiseeUploadEntity> findByFranchiseeIndex(Long franchiseeIndex);
+
+    void deleteByFranchiseeEntity(FranchiseeEntity franchiseeEntity);
 }

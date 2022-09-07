@@ -28,6 +28,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
         List<String> exclusivePathList = new ArrayList<>(List.of("/sign-in",
             "/sign-up",
             "/sign-out",
+            // TODO: 2022/09/07 계정 삭제 건 추가
+            "/delete-account",
             "/refresh",
             "/categories",
             "/certifications/**",

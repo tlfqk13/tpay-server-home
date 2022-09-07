@@ -24,7 +24,9 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.Optional;
 
 import static com.tpay.commons.util.UserSelector.EMPLOYEE;
@@ -63,6 +65,11 @@ public class JwtValidationInterceptor implements HandlerInterceptor {
         return validationCheck(request);
     }
 
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+        log.trace("JwtValidationInterceptor afterCompletion");
+    }
+
     // 벨리데이션 체크는 헤더의 Authorization 의 jwt AT로 나온 index와 URI의 index를 비교하는 책임
     private boolean validationCheck(HttpServletRequest request) {
         log.trace("Duplicate _ Validation Check Start");
@@ -73,26 +80,38 @@ public class JwtValidationInterceptor implements HandlerInterceptor {
         UserSelector tokenUserSelector = tokenInfo.getUserSelector();
         String tokenIndex = tokenInfo.getIndex();
         String uriIndex = uriInfo.getIndex();
-
+        Date claimsIssuedAt = claims.getIssuedAt();
+        log.trace(" token 비교 시작점 ");
+        
         if(FRANCHISEE == tokenUserSelector){
             Optional<FranchiseeAccessTokenEntity> franchiseeAccessTokenEntityOptional =
                     accessTokenService.findByFranchiseeId(Long.valueOf(tokenIndex));
 
-            franchiseeAccessTokenEntityOptional.orElseThrow(NullPointerException::new);
-
+            FranchiseeAccessTokenEntity franchiseeAccessTokenEntity = franchiseeAccessTokenEntityOptional.orElseThrow(NullPointerException::new);
             String latestFranchiseeAccessToken = franchiseeAccessTokenEntityOptional.get().getAccessToken();
-
             AuthToken authFranchiseeToken = jwtUtils.convertAuthToken(latestFranchiseeAccessToken);
-            if (!claims.getIssuedAt().equals(authFranchiseeToken.getData().getIssuedAt())) {
+
+            LocalDate claimLocalDate = claimsIssuedAt.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            LocalDate authLocalDate= authFranchiseeToken.getData().getIssuedAt().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+            boolean dateCompare = claimLocalDate.equals(authLocalDate);
+            log.trace("dateCompare = {}", dateCompare);
+            if(!dateCompare){
+                log.trace("DUPLICATE_SIGNOUT");
                 throw new JwtRuntimeException(ExceptionState.DUPLICATE_SIGNOUT);
             }
         }else{
             Optional<EmployeeAccessTokenEntity> employeeAccessTokenEntityOptional =
                     accessTokenService.findByEmployeeId(Long.valueOf(tokenIndex));
-            employeeAccessTokenEntityOptional.orElseThrow(NullPointerException::new);
+
+            EmployeeAccessTokenEntity employeeAccessTokenEntity = employeeAccessTokenEntityOptional.orElseThrow(NullPointerException::new);
             String latestEmployeeAccessToken = employeeAccessTokenEntityOptional.get().getAccessToken();
             AuthToken authEmployeeToken = jwtUtils.convertAuthToken(latestEmployeeAccessToken);
-            if (!claims.getIssuedAt().equals(authEmployeeToken.getData().getIssuedAt())) {
+
+            LocalDate claimLocalDate = claimsIssuedAt.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            LocalDate authLocalDate= authEmployeeToken.getData().getIssuedAt().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+            if(!claimsIssuedAt.equals(authEmployeeToken.getData().getIssuedAt())){
                 throw new JwtRuntimeException(ExceptionState.DUPLICATE_SIGNOUT);
             }
         }
@@ -159,6 +178,7 @@ public class JwtValidationInterceptor implements HandlerInterceptor {
     private Claims getClaims(HttpServletRequest request) {
         String header = request.getHeader(HttpHeaders.AUTHORIZATION);
         AuthToken authToken = jwtUtils.convertAuthToken(header);
+        log.trace("authToken.getValue() = {}", authToken.getValue());
         return authToken.getData();
     }
 

@@ -3,16 +3,21 @@ package com.tpay.domains.franchisee_applicant_test.application;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
-import com.tpay.domains.franchisee_applicant.application.dto.FilterSelector;
-import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeApplicantFindResponse;
-import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeApplicantInfo;
+import com.tpay.domains.franchisee_applicant.application.FranchiseeApplicantFindService;
+import com.tpay.domains.franchisee_applicant.application.dto.*;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantRepository;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeStatus;
+import com.tpay.domains.franchisee_upload.application.FranchiseeBankFindService;
+import com.tpay.domains.franchisee_upload.application.FranchiseeUploadFindService;
+import com.tpay.domains.franchisee_upload.domain.FranchiseeBankEntity;
+import com.tpay.domains.franchisee_upload.domain.FranchiseeUploadEntity;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,9 +27,13 @@ import static com.tpay.domains.franchisee_applicant.application.dto.FilterSelect
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class FranchiseeApplicantTestFindService {
 
     private final FranchiseeApplicantRepository franchiseeApplicantRepository;
+    private final FranchiseeApplicantFindService franchiseeApplicantFindService;
+    private final FranchiseeBankFindService franchiseeBankFindService;
+    private final FranchiseeUploadFindService franchiseeUploadFindService;
 
     public FranchiseeApplicantEntity findByIndex(Long franchiseeApplicantIndex) {
         FranchiseeApplicantEntity franchiseeApplicantEntity =
@@ -145,5 +154,28 @@ public class FranchiseeApplicantTestFindService {
             franchiseeApplicantEntityList = franchiseeApplicantRepository.findByIsReadInAndFranchiseeStatusInAndFranchiseeEntityStoreNameContainingOrderByIdDesc(booleanList, franchiseeStatusList, pageRequest, searchKeyword);
         }
         return franchiseeApplicantEntityList;
+    }
+
+    @Transactional
+    public FranchiseeApplicantDetailUpdateResponse updateFranchiseeApplicantInfo(Long franchiseeApplicantIndex, FranchiseeApplicantDetailUpdateRequest request) {
+        FranchiseeApplicantEntity franchiseeApplicantEntity = franchiseeApplicantFindService.findByIndex(franchiseeApplicantIndex);
+        FranchiseeEntity franchiseeEntity = franchiseeApplicantEntity.getFranchiseeEntity();
+        FranchiseeBankEntity franchiseeBankEntity;
+        FranchiseeUploadEntity franchiseeUploadEntity;
+        String taxFreeStoreNumberUpdate = null;
+        FranchiseeEntity franchiseeEntityUpdate = franchiseeEntity.updateFranchisee(request);
+
+        try {
+            franchiseeBankEntity = franchiseeBankFindService.findByFranchiseeEntity(franchiseeEntity);
+            franchiseeBankEntity = franchiseeBankEntity.updateBankInfoFromAdmin(request);
+            franchiseeUploadEntity = franchiseeUploadFindService.findByFranchiseeIndex(franchiseeEntity.getId());
+            taxFreeStoreNumberUpdate = franchiseeUploadEntity.updateTaxFreeStoreNumber(request.getTaxFreeStoreNumber());
+        } catch (InvalidParameterException e) {
+            franchiseeBankEntity = FranchiseeBankEntity.builder().build();
+        }
+
+        log.trace("Franchisee Update : {} ", franchiseeEntityUpdate.getStoreName());
+        return new FranchiseeApplicantDetailUpdateResponse(franchiseeEntityUpdate,franchiseeBankEntity,taxFreeStoreNumberUpdate);
+
     }
 }

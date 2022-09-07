@@ -14,6 +14,7 @@ import com.tpay.domains.order.application.dto.CmsResponseInterface;
 import com.tpay.domains.order.domain.OrderRepository;
 import com.tpay.domains.refund.application.RefundDetailFindService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -35,6 +36,7 @@ import static org.apache.poi.ss.usermodel.CellType.STRING;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CmsService {
 
     private final OrderRepository orderRepository;
@@ -118,6 +120,9 @@ public class CmsService {
             secondSection(xssfWorkbook,sheet,topSectionInfo);
             // 총 건수 . 청구 금액
             totalResultRow(sheet,totalResult);
+
+            log.trace("detailMonthlyResult.size() : {} ", detailMonthlyResult.size());
+            log.trace("franchiseeIndex : {} ", franchiseeIndex);
 
             if(detailMonthlyResult.size() == 15){
                 // 물품상세 내역

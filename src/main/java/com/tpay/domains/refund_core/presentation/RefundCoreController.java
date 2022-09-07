@@ -52,7 +52,9 @@ public class RefundCoreController {
         @PathVariable UserSelector userSelector,
         @PathVariable Long index
     ) {
+        log.trace("Refund Cancel Start = {}", customerIndex);
         RefundResponse response = refundCancelService.cancel(customerIndex, refundIndex);
+        log.trace("Refund Cancel Finish = {}", customerIndex);
         return ResponseEntity.ok(response);
     }
 
@@ -66,16 +68,16 @@ public class RefundCoreController {
         RefundResponse response = refundCancelService.cancel(customerIndex, refundIndex);
         return ResponseEntity.ok(response);
     }
-
     /**
      * 한도조회
      */
     @PostMapping("/limit")
-    private ResponseEntity<RefundResponse> find(
-        @RequestBody RefundLimitRequest request) {
+    public ResponseEntity<RefundResponse> find(
+            @RequestBody RefundLimitRequest request) {
         log.trace("Refund Limit Find Start = {}", request);
         RefundResponse response = limitFindService.find(request);
         log.trace("Refund Limit Find Finish = {}", request);
         return ResponseEntity.ok(response);
     }
+
 }

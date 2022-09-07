@@ -7,6 +7,7 @@ import com.tpay.domains.auth.domain.*;
 import com.tpay.domains.employee.domain.EmployeeEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -15,6 +16,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthService {
 
     private final JwtUtils jwtUtils;
@@ -26,30 +28,30 @@ public class AuthService {
     @Transactional
     public void updateOrSave(FranchiseeEntity franchiseeEntity, String refreshToken) {
         FranchiseeTokenEntity franchiseeTokenEntity =
-            franchiseeTokenRepository.existsByFranchiseeEntityId(franchiseeEntity.getId())
-                ? franchiseeTokenRepository
-                .findByFranchiseeEntityId(franchiseeEntity.getId())
-                .get()
-                .refreshToken(refreshToken)
-                : franchiseeTokenRepository.save(
-                FranchiseeTokenEntity.builder()
-                    .franchiseeEntity(franchiseeEntity)
-                    .refreshToken(refreshToken)
-                    .build());
+                franchiseeTokenRepository.existsByFranchiseeEntityId(franchiseeEntity.getId())
+                        ? franchiseeTokenRepository
+                        .findByFranchiseeEntityId(franchiseeEntity.getId())
+                        .get()
+                        .refreshToken(refreshToken)
+                        : franchiseeTokenRepository.save(
+                        FranchiseeTokenEntity.builder()
+                                .franchiseeEntity(franchiseeEntity)
+                                .refreshToken(refreshToken)
+                                .build());
     }
 
     @Transactional
     public void updateOrSave(EmployeeEntity employeeEntity, String refreshToken) {
         EmployeeTokenEntity employeeTokenEntity =
-            employeeTokenRepository.existsByEmployeeEntity(employeeEntity)
-                ? employeeTokenRepository.findByEmployeeEntity(employeeEntity)
-                .get()
-                .refreshToken(refreshToken)
-                : employeeTokenRepository.save(
-                EmployeeTokenEntity.builder()
-                    .employeeEntity(employeeEntity)
-                    .refreshToken(refreshToken)
-                    .build());
+                employeeTokenRepository.existsByEmployeeEntity(employeeEntity)
+                        ? employeeTokenRepository.findByEmployeeEntity(employeeEntity)
+                        .get()
+                        .refreshToken(refreshToken)
+                        : employeeTokenRepository.save(
+                        EmployeeTokenEntity.builder()
+                                .employeeEntity(employeeEntity)
+                                .refreshToken(refreshToken)
+                                .build());
 
     }
 
@@ -57,10 +59,10 @@ public class AuthService {
     public void updateOrSaveAccessToken(FranchiseeEntity franchiseeEntity, String accessToken) {
         FranchiseeAccessTokenEntity franchiseeTokenEntity =
                 franchiseeAccessTokenRepository.existsByFranchiseeEntityId(franchiseeEntity.getId())
-                ? franchiseeAccessTokenRepository
+                        ? franchiseeAccessTokenRepository
                         .findByFranchiseeEntityId(franchiseeEntity.getId())
                         .get().accessToken(accessToken)
-                : franchiseeAccessTokenRepository.save(
+                        : franchiseeAccessTokenRepository.save(
                         FranchiseeAccessTokenEntity.builder()
                                 .franchiseeEntity(franchiseeEntity)
                                 .accessToken(accessToken)

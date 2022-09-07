@@ -4,6 +4,7 @@ package com.tpay.domains.vat.application;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.util.converter.NumberFormatConverter;
+import com.tpay.domains.auth.domain.FranchiseeAccessTokenRepository;
 import com.tpay.domains.franchisee.application.FranchiseeFindService;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee_upload.application.FranchiseeUploadFindService;
@@ -26,6 +27,8 @@ public class VatService {
     private final OrderService orderService;
     private final FranchiseeFindService franchiseeFindService;
     private final FranchiseeUploadFindService franchiseeUploadFindService;
+
+    private final FranchiseeAccessTokenRepository franchiseeAccessTokenRepository;
 
     public VatResponse vatReport(Long franchiseeIndex, String requestDate) {
         List<Object> localDates = setUpDate(requestDate);

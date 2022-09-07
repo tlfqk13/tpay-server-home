@@ -1,17 +1,16 @@
 package com.tpay.domains.auth.presentation;
 
+import com.tpay.domains.auth.application.AccountDeleteService;
 import com.tpay.domains.auth.application.SignInService;
 import com.tpay.domains.auth.application.SignOutService;
 import com.tpay.domains.auth.application.TokenUpdateService;
+import com.tpay.domains.auth.application.dto.AccountDeleteDto;
 import com.tpay.domains.auth.application.dto.SignInRequest;
 import com.tpay.domains.auth.application.dto.SignInTokenInfo;
 import com.tpay.domains.auth.application.dto.SignOutRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * Auth 관련
@@ -23,6 +22,8 @@ public class AuthController {
     private final SignOutService signOutService;
     private final TokenUpdateService tokenUpdateService;
     private final SignInService signInService;
+
+    private final AccountDeleteService accountDeleteService;
 
     /**
      * 로그인
@@ -58,5 +59,16 @@ public class AuthController {
     public ResponseEntity<SignInTokenInfo> refresh(
         @RequestBody SignInTokenInfo signInTokenInfo) {
         return ResponseEntity.ok(tokenUpdateService.refresh(signInTokenInfo));
+    }
+
+    /**
+     * 계정 삭제
+     */
+    @DeleteMapping("/delete-account")
+    public ResponseEntity<String> accountDelete(
+            @RequestBody AccountDeleteDto.Request accountDeleteDto
+    ){
+        String result = accountDeleteService.deleteAccount(accountDeleteDto);
+        return ResponseEntity.ok(result);
     }
 }

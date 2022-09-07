@@ -9,4 +9,6 @@ public interface FranchiseeBankRepository extends JpaRepository<FranchiseeBankEn
     boolean existsByFranchiseeEntity(FranchiseeEntity franchiseeEntity);
 
     Optional<FranchiseeBankEntity> findByFranchiseeEntity(FranchiseeEntity franchiseeEntity);
+
+    void deleteByFranchiseeEntityId(Long franchiseeIndex);
 }
