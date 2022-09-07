@@ -6,6 +6,9 @@ import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.exception.detail.WebfluxGeneralException;
 import com.tpay.commons.push.PushCategoryType;
 import com.tpay.commons.webClient.WebRequestUtil;
+import com.tpay.domains.auth.application.AccessTokenService;
+import com.tpay.domains.auth.domain.EmployeeAccessTokenRepository;
+import com.tpay.domains.auth.domain.FranchiseeAccessTokenRepository;
 import com.tpay.domains.employee.application.EmployeeFindService;
 import com.tpay.domains.employee.domain.EmployeeEntity;
 import com.tpay.domains.external.domain.ExternalRefundEntity;
@@ -49,6 +52,10 @@ public class RefundApproveService {
 
     private final EmployeeFindService employeeFindService;
     private final NonBatchPushService nonBatchPushService;
+
+    private final AccessTokenService accessTokenService;
+    private final FranchiseeAccessTokenRepository franchiseeAccessTokenRepository;
+    private final EmployeeAccessTokenRepository employeeAccessTokenRepository;
 
     @Transactional
     public RefundResponse approve(RefundSaveRequest request) {

@@ -46,17 +46,17 @@ public class AuthToken {
             throw new JwtRuntimeException(ExceptionState.INVALID_TOKEN, "Unsupported JWT token");
         } catch (IllegalArgumentException e) {
             throw new JwtRuntimeException(
-                ExceptionState.INVALID_TOKEN, "JWT token compact of handler are invalid");
+                    ExceptionState.INVALID_TOKEN, "JWT token compact of handler are invalid");
         }
     }
 
     private Optional<String> createJwtAuthToken(Map<String, Object> payload) {
         String token =
-            Jwts.builder()
-                .setHeader(createHeaders())
-                .setClaims(payload)
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
+                Jwts.builder()
+                        .setHeader(createHeaders())
+                        .setClaims(payload)
+                        .signWith(key, SignatureAlgorithm.HS256)
+                        .compact();
 
         return Optional.ofNullable(token);
     }

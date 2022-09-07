@@ -15,8 +15,9 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.Optional;
 
-@Service
+
 @RequiredArgsConstructor
+@Service
 @Slf4j
 public class LimitFindService {
 
@@ -38,9 +39,11 @@ public class LimitFindService {
                 log.trace("Customer Not exists.");
                 CustomerEntity customerEntity = customerUpdateService.updateCustomerInfo(request.getName(), request.getPassportNumber(), request.getNationality());
                 customerEntityId = customerEntity.getId();
+                log.trace("Refund Limit customerID = {}", customerEntityId);
             } else {
                 log.trace("Customer already exists.");
                 customerEntityId = customerEntityOptional.get().getId();
+                log.trace("Refund Limit customerID = {}", customerEntityId);
             }
 
             return refundResponse.addCustomerInfo(customerEntityId);

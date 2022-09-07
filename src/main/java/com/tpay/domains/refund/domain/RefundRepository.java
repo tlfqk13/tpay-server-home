@@ -295,6 +295,7 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
             "      where substr(o.created_date, 1, 4) = :year\n" +
             "        and substr(o.created_date, 6, 2) = :month\n"+
             "        and refund_status = 0\n" +
+            "        and f.id != 152\n" +
             "group by f.id", nativeQuery = true)
     List<RefundFindResponseInterface> findFranchiseeId(
             @Param("year") String year,

@@ -1,6 +1,7 @@
 package com.tpay.domains.auth.domain;
 
 
+import com.tpay.domains.BaseTimeEntity;
 import com.tpay.domains.employee.domain.EmployeeEntity;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,7 +13,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Table(name = "employee_accesstoken")
 @Entity
-public class EmployeeAccessTokenEntity {
+public class EmployeeAccessTokenEntity extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

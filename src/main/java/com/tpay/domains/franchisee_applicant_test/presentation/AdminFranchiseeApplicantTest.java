@@ -77,6 +77,14 @@ public class AdminFranchiseeApplicantTest {
         return ResponseEntity.ok(result);
     }
 
+    // TODO: 2022/08/19 가맹점 상세보기 > 회원정보 수정
+    @PatchMapping("/update/{franchiseeApplicantIndex}")
+    public ResponseEntity<FranchiseeApplicantDetailUpdateResponse> updateFranchiseeInfo(
+            @PathVariable Long franchiseeApplicantIndex,
+            @RequestBody FranchiseeApplicantDetailUpdateRequest request){
+        FranchiseeApplicantDetailUpdateResponse result = franchiseeApplicantTestFindService.updateFranchiseeApplicantInfo(franchiseeApplicantIndex,request);
+        return ResponseEntity.ok(result);
+    }
     /**
      * 가맹점 신청 내역 필터링
      */

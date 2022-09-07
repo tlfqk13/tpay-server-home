@@ -3,6 +3,7 @@ package com.tpay.domains.auth.domain;
 
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.JwtRuntimeException;
+import com.tpay.domains.BaseTimeEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,7 +15,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Table(name = "franchisee_accesstoken")
 @Entity
-public class FranchiseeAccessTokenEntity {
+public class FranchiseeAccessTokenEntity extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

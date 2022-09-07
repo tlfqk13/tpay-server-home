@@ -1,10 +1,8 @@
 package com.tpay.commons.aria;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class PassportNumberEncryptServiceTest {
 
@@ -23,7 +21,7 @@ class PassportNumberEncryptServiceTest {
 
     @Test
     void passportDecryptionTest() {
-        String encryptPassportNumber = "34F88CCCB3BCE4014CFF56764447DEFD";
+        String encryptPassportNumber = "4A9A739C81906A536C4ABEC2A1C8EE64";
         String decryptPassportNumber = decryptService.decrypt(encryptPassportNumber);
         System.out.println("decryptPassportNumber = " + decryptPassportNumber);
     }
