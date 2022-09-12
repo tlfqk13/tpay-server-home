@@ -1,6 +1,8 @@
 package com.tpay.commons.exception;
 
 import com.tpay.commons.exception.detail.*;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -11,13 +13,14 @@ import javax.servlet.http.HttpServletRequest;
  * Exception 발생시 각 로직 수행하는 RestControllerAdvice 클래스
  */
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(InvalidParameterException.class)
     public ResponseEntity<ExceptionResponse> handleInvalidParameterException(
         HttpServletRequest request, InvalidParameterException exception) {
 
-        System.out.println("handleInvalidParameterException() : " + exception.getMessage());
+        log.error("handleInvalidParameterException() : {}", exception.getMessage());
         ExceptionResponse response = ExceptionResponse.of(request, exception);
 
         return ResponseEntity.status(response.getValue()).body(response);
@@ -27,7 +30,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ExceptionResponse> handleJwtRuntimeException(
         HttpServletRequest request, JwtRuntimeException exception) {
 
-        System.out.println("handleJwtRuntimeException() : " + exception.getMessage());
+        log.error("handleJwtRuntimeException() : {}", exception.getMessage());
         ExceptionResponse response = ExceptionResponse.of(request, exception);
 
         return ResponseEntity.status(response.getValue()).body(response);
@@ -37,7 +40,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ExceptionResponse> handleFranchiseeAuthenticationException(
         HttpServletRequest request, FranchiseeAuthenticationException exception) {
 
-        System.out.println("handleFranchiseeAuthenticationException() : " + exception.getMessage());
+        log.error("handleFranchiseeAuthenticationException() : {}" , exception.getMessage());
         ExceptionResponse response = ExceptionResponse.of(request, exception);
 
         return ResponseEntity.status(response.getValue()).body(response);
@@ -47,7 +50,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ExceptionResponse> handleAlreadyExistsException(
         HttpServletRequest request, AlreadyExistsException exception) {
 
-        System.out.println("handleAlreadyExistsException() : " + exception.getMessage());
+        log.error("handleAlreadyExistsException() : {}", exception.getMessage());
         ExceptionResponse response = ExceptionResponse.of(request, exception);
 
         return ResponseEntity.status(response.getValue()).body(response);
@@ -57,7 +60,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ExceptionResponse> handleInvalidPasswordException(
         HttpServletRequest request, InvalidPasswordException exception) {
 
-        System.out.println("handleInvalidPasswordException() : " + exception.getMessage());
+        log.error("handleInvalidPasswordException() : {}", exception.getMessage());
         ExceptionResponse response = ExceptionResponse.of(request, exception);
 
         return ResponseEntity.status(response.getValue()).body(response);
@@ -67,7 +70,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ExceptionResponse> handleInvalidBusinessNumberException(
         HttpServletRequest request, InvalidBusinessNumberException exception) {
 
-        System.out.println("handleInvalidBusinessNumberException() : " + exception.getMessage());
+        log.error("handleInvalidBusinessNumberException() : {}", exception.getMessage());
         ExceptionResponse response = ExceptionResponse.of(request, exception);
 
         return ResponseEntity.status(response.getValue()).body(response);
@@ -76,7 +79,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidPassportInfoException.class)
     public ResponseEntity<ExceptionResponse> handleInvalidPassportInfoException(
         HttpServletRequest request, InvalidPassportInfoException exception) {
-        System.out.println("handleInvalidPassportInfoException() : " + exception.getMessage());
+        log.error("handleInvalidPassportInfoException() : {}", exception.getMessage());
         ExceptionResponse response = ExceptionResponse.of(request, exception);
         return ResponseEntity.status(response.getValue()).body(response);
     }
@@ -84,7 +87,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidExternalRefundIndexException.class)
     public ResponseEntity<ExceptionResponse> handleInvalidExternalRefundIndexException(
         HttpServletRequest request, InvalidExternalRefundIndexException exception){
-        System.out.println("handleInvalidExternalRefundIndexException() : "+ exception.getMessage());
+        log.error("handleInvalidExternalRefundIndexException() : {}", exception.getMessage());
         ExceptionResponse response = ExceptionResponse.of(request, exception);
         return ResponseEntity.status(response.getValue()).body(response);
     }
@@ -92,7 +95,15 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(WebfluxGeneralException.class)
     public ResponseEntity<ExceptionResponse> handleWebfluxGeneralException(
         HttpServletRequest request, WebfluxGeneralException exception) {
-        System.out.println("handleWebfluxGeneralException() : "+ exception.getMessage());
+        log.error("handleWebfluxGeneralException() : {}", exception.getMessage());
+        ExceptionResponse response = ExceptionResponse.of(request, exception);
+        return ResponseEntity.status(response.getValue()).body(response);
+    }
+
+    @ExceptionHandler(OptimisticLockingFailureException.class)
+    public ResponseEntity<ExceptionResponse> updateFailureHandler(
+            HttpServletRequest request, WebfluxGeneralException exception) {
+        log.error("OptimisticLockingFailureException() : {}", "OptimisticLockingFailureException, Update Failed");
         ExceptionResponse response = ExceptionResponse.of(request, exception);
         return ResponseEntity.status(response.getValue()).body(response);
     }

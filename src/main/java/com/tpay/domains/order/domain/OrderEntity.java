@@ -53,7 +53,7 @@ public class OrderEntity extends BaseTimeEntity {
     @OneToOne(mappedBy = "orderEntity", cascade = CascadeType.REMOVE)
     private RefundEntity refundEntity;
 
-    @OneToMany(mappedBy = "orderEntity", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "orderEntity", cascade = CascadeType.ALL)
     private List<OrderLineEntity> orderLineEntityList;
 
     @ManyToOne
