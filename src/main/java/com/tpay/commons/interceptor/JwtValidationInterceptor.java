@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.Optional;
 
 import static com.tpay.commons.util.UserSelector.EMPLOYEE;
 import static com.tpay.commons.util.UserSelector.FRANCHISEE;
@@ -38,13 +37,13 @@ import static com.tpay.commons.util.UserSelector.FRANCHISEE;
  * K1 프로젝트 이후 URI 변경 또는 기능추가가 많이 없을 것으로 예상
  * ====용어정리====
  * [firstDomain] - URI의 가장 첫 도메인, 해당 도메인을 기준으로 개별 파싱
- *
+ * <p>
  * [trim] - 개별 파싱의 가장 첫 도메인을 잘라낸 나머지 문자열
- *
+ * <p>
  * [NstDomainEnd] - substring하기 위해 만들어짐
  * - n번째 도메인의 끝+1 위치. 어디서부터 카운트할지는 각각 다름. 단 변수명은 전체 도메인 기준으로 함. 아래 예시 참고
  * 예시) /franchisee/example/test 라는 URI에서 secondDomainEnd 는 example의 e부터 test의 t앞의 '/' 까지의 index를 센다.
- *
+ * <p>
  * [NstTrim] - 전체 URI 기준으로 n번째 도메인까지 잘라낸 나머지 문자열
  * ================
  */
@@ -68,50 +67,47 @@ public class JwtValidationInterceptor implements HandlerInterceptor {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         log.trace("JwtValidationInterceptor afterCompletion");
+        if(ex != null) {
+            log.error("ex = {} ", ex.toString());
+        }
     }
 
     // 벨리데이션 체크는 헤더의 Authorization 의 jwt AT로 나온 index와 URI의 index를 비교하는 책임
     private boolean validationCheck(HttpServletRequest request) {
+        log.debug("URI = {}", request.getRequestURI());
+        log.debug("Header - Authentication = {}" , request.getHeader(HttpHeaders.AUTHORIZATION));
         log.trace("Duplicate _ Validation Check Start");
-        Claims claims = getClaims(request);
+
+        AuthToken authToken = getAuthToken(request);
+        Claims claims = authToken.getData();
         IndexInfo tokenInfo = getIndexFromClaims(claims);
         IndexInfo uriInfo = getIndexFromUri(request);
 
         UserSelector tokenUserSelector = tokenInfo.getUserSelector();
         String tokenIndex = tokenInfo.getIndex();
         String uriIndex = uriInfo.getIndex();
-        Date claimsIssuedAt = claims.getIssuedAt();
         log.trace(" token 비교 시작점 ");
-        
-        if(FRANCHISEE == tokenUserSelector){
-            Optional<FranchiseeAccessTokenEntity> franchiseeAccessTokenEntityOptional =
-                    accessTokenService.findByFranchiseeId(Long.valueOf(tokenIndex));
 
-            FranchiseeAccessTokenEntity franchiseeAccessTokenEntity = franchiseeAccessTokenEntityOptional.orElseThrow(NullPointerException::new);
-            String latestFranchiseeAccessToken = franchiseeAccessTokenEntityOptional.get().getAccessToken();
-            AuthToken authFranchiseeToken = jwtUtils.convertAuthToken(latestFranchiseeAccessToken);
+        if (FRANCHISEE == tokenUserSelector) {
+            FranchiseeAccessTokenEntity franchiseeAccessTokenEntity =
+                    accessTokenService.findByFranchiseeId(Long.valueOf(tokenIndex))
+                            .orElseThrow(NullPointerException::new);
 
-            LocalDate claimLocalDate = claimsIssuedAt.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            LocalDate authLocalDate= authFranchiseeToken.getData().getIssuedAt().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            String latestFranchiseeAccessToken = franchiseeAccessTokenEntity.getAccessToken();
 
-            boolean dateCompare = claimLocalDate.equals(authLocalDate);
-            log.trace("dateCompare = {}", dateCompare);
-            if(!dateCompare){
+            log.trace("authToken = {}, latest = {} ", authToken.getValue(), latestFranchiseeAccessToken);
+            if (isDifferentTokenValue(authToken.getValue(), latestFranchiseeAccessToken)) {
                 log.trace("DUPLICATE_SIGNOUT");
                 throw new JwtRuntimeException(ExceptionState.DUPLICATE_SIGNOUT);
             }
-        }else{
-            Optional<EmployeeAccessTokenEntity> employeeAccessTokenEntityOptional =
-                    accessTokenService.findByEmployeeId(Long.valueOf(tokenIndex));
+        } else {
+            EmployeeAccessTokenEntity employeeAccessTokenEntity =
+                    accessTokenService.findByEmployeeId(Long.valueOf(tokenIndex))
+                            .orElseThrow(NullPointerException::new);
 
-            EmployeeAccessTokenEntity employeeAccessTokenEntity = employeeAccessTokenEntityOptional.orElseThrow(NullPointerException::new);
-            String latestEmployeeAccessToken = employeeAccessTokenEntityOptional.get().getAccessToken();
-            AuthToken authEmployeeToken = jwtUtils.convertAuthToken(latestEmployeeAccessToken);
-
-            LocalDate claimLocalDate = claimsIssuedAt.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            LocalDate authLocalDate= authEmployeeToken.getData().getIssuedAt().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-
-            if(!claimsIssuedAt.equals(authEmployeeToken.getData().getIssuedAt())){
+            String latestEmployeeAccessToken = employeeAccessTokenEntity.getAccessToken();
+            log.trace("authToken = {}, latest = {} ", authToken.getValue(), latestEmployeeAccessToken);
+            if (isDifferentTokenValue(authToken.getValue(), latestEmployeeAccessToken)) {
                 throw new JwtRuntimeException(ExceptionState.DUPLICATE_SIGNOUT);
             }
         }
@@ -120,21 +116,17 @@ public class JwtValidationInterceptor implements HandlerInterceptor {
             if (FRANCHISEE == tokenUserSelector) {
                 findFranchiseeById(tokenIndex, request.getRequestURI());
             } else {
-                Optional<EmployeeEntity> employeeEntityOptional = employeeFindService.findById(Long.parseLong(tokenIndex));
-                if(employeeEntityOptional.isPresent()){
-                    EmployeeEntity employeeEntity = employeeEntityOptional.get();
-                    FranchiseeEntity franchiseeEntity = employeeEntity.getFranchiseeEntity();
-                    findFranchiseeById(franchiseeEntity.getId(), request.getRequestURI());
-                } else {
-                    throw new JwtRuntimeException(ExceptionState.INVALID_TOKEN, "jwt A Error : Authorization & URIInfo mismatch");
-                }
+                EmployeeEntity employeeEntity = employeeFindService.findById(Long.parseLong(tokenIndex))
+                        .orElseThrow(() -> new JwtRuntimeException(ExceptionState.INVALID_TOKEN, "jwt A Error : Authorization & URIInfo mismatch"));
+                FranchiseeEntity franchiseeEntity = employeeEntity.getFranchiseeEntity();
+                findFranchiseeById(franchiseeEntity.getId(), request.getRequestURI());
             }
             return true;
-        } else if(tokenInfo.getUserSelector().equals(EMPLOYEE) && uriInfo.getUserSelector().equals(FRANCHISEE)) {
+        } else if (tokenInfo.getUserSelector().equals(EMPLOYEE) && uriInfo.getUserSelector().equals(FRANCHISEE)) {
             Long id = employeeFindService.findById(Long.parseLong(tokenIndex)).get().getFranchiseeEntity().getId();
             String franchiseeIndexFromEmployee = String.valueOf(id);
 
-            if(franchiseeIndexFromEmployee.equals(uriIndex)){
+            if (franchiseeIndexFromEmployee.equals(uriIndex)) {
                 return true;
             }
             log.warn("REQUEST URI : {}", request.getRequestURI());
@@ -180,6 +172,11 @@ public class JwtValidationInterceptor implements HandlerInterceptor {
         AuthToken authToken = jwtUtils.convertAuthToken(header);
         log.trace("authToken.getValue() = {}", authToken.getValue());
         return authToken.getData();
+    }
+
+    private AuthToken getAuthToken(HttpServletRequest request) {
+        String header = request.getHeader(HttpHeaders.AUTHORIZATION);
+        return jwtUtils.convertAuthToken(header);
     }
 
     // URI index 파싱 - 도메인별 개별작업
@@ -257,9 +254,9 @@ public class JwtValidationInterceptor implements HandlerInterceptor {
 
         int secondDomainEnd = trim.indexOf("/");
         if (secondDomainEnd == -1) {
-            if(request.getMethod().equals("GET")){
+            if (request.getMethod().equals("GET")) {
                 FranchiseeApplicantEntity franchiseeApplicantEntity = franchiseeApplicantFindService.findByIndex(Long.parseLong(trim));
-                return new IndexInfo(FRANCHISEE,franchiseeApplicantEntity.getFranchiseeEntity().getId().toString());
+                return new IndexInfo(FRANCHISEE, franchiseeApplicantEntity.getFranchiseeEntity().getId().toString());
             } else {
                 FranchiseeApplicantEntity franchiseeApplicantEntity = franchiseeApplicantFindService.findByBusinessNumber(trim);
                 String index = franchiseeApplicantEntity.getFranchiseeEntity().getId().toString();
@@ -308,10 +305,10 @@ public class JwtValidationInterceptor implements HandlerInterceptor {
         String trim = request.getRequestURI().substring(9);
         int secondDomainEnd = request.getRequestURI().indexOf("/", 9);
         String secondTrim = "";
-        if(trim.contains(UriType.REFUNDS_DETAIL.getKeyword())){
+        if (trim.contains(UriType.REFUNDS_DETAIL.getKeyword())) {
             secondTrim = trim.substring(18);
-            return new IndexInfo(FRANCHISEE,secondTrim);
-        }else {
+            return new IndexInfo(FRANCHISEE, secondTrim);
+        } else {
             return new IndexInfo(FRANCHISEE, request.getRequestURI().substring(secondDomainEnd + 1));
         }
     }
@@ -342,9 +339,13 @@ public class JwtValidationInterceptor implements HandlerInterceptor {
             return new IndexInfo(FRANCHISEE, thirdTrim);
         } else {
             int secondDomainEnd = trim.indexOf("/");
-            String secondTrim = trim.substring(secondDomainEnd+1);
+            String secondTrim = trim.substring(secondDomainEnd + 1);
             return new IndexInfo(FRANCHISEE, secondTrim);
         }
+    }
+
+    private boolean isDifferentTokenValue(String tokenFromRequest, String tokenFromDB) {
+        return !tokenFromRequest.equals(tokenFromDB);
     }
 
     private IndexInfo getTest(HttpServletRequest request) {

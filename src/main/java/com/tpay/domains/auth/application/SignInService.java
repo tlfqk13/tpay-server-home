@@ -7,8 +7,7 @@ import com.tpay.domains.auth.application.dto.SignInRequest;
 import com.tpay.domains.auth.application.dto.SignInTokenInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.tpay.commons.util.UserSelector.EMPLOYEE;
 import static com.tpay.commons.util.UserSelector.FRANCHISEE;
@@ -23,7 +22,7 @@ public class SignInService {
 
     @Transactional
     public SignInTokenInfo signIn(SignInRequest signInRequest) {
-        if(signInRequest.isForcedCheck()){
+        if (signInRequest.isForcedCheck()) {
             if (signInRequest.getUserSelector().equals(FRANCHISEE)) {
                 return franchiseeSignInService.signIn(signInRequest.getBusinessNumber(), signInRequest.getPassword(), signInRequest.getPushToken());
             } else if (signInRequest.getUserSelector().equals(EMPLOYEE)) {
@@ -31,7 +30,7 @@ public class SignInService {
             } else {
                 throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Parse Failed");
             }
-        }else {
+        } else {
             if (duplicateSignIn(signInRequest)) {
                 throw new InvalidParameterException(ExceptionState.DUPLICATE_SIGNIN, "중복 로그인입니다");
             } else {
@@ -46,13 +45,13 @@ public class SignInService {
         }
     }
 
-    @Transactional
-    public Boolean duplicateSignIn(SignInRequest signInRequest){
-        if(signInRequest.getUserSelector().equals(FRANCHISEE)){
+    @Transactional(readOnly = true)
+    public Boolean duplicateSignIn(SignInRequest signInRequest) {
+        if (signInRequest.getUserSelector().equals(FRANCHISEE)) {
             String businessNumber = signInRequest.getBusinessNumber();
             businessNumber = businessNumber.replaceAll("-", "");
             return accessTokenService.findByBusinessNumber(businessNumber);
-        }else{
+        } else {
             return accessTokenService.findByEmployeeEntity_UserId(signInRequest.getUserId());
         }
     }
