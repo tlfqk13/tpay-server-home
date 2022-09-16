@@ -34,7 +34,7 @@ public class SignUpService {
     private final PushTokenService pushTokenService;
 
     @Transactional
-    public void signUp(FranchiseeSignUpRequest request) {
+    public Long signUp(FranchiseeSignUpRequest request) {
 
         String businessNumber = request.getBusinessNumber();
         if (!regExUtils.validate(RegExType.BUSINESS_NUMBER, businessNumber)) {
@@ -92,6 +92,6 @@ public class SignUpService {
         } else{
             log.trace("===================토큰없이 회원가입 완료====================");
         }
-
+        return franchiseeEntity.getId();
     }
 }

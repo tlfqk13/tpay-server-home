@@ -52,7 +52,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
             "/test/refunds/**",
             "/test/points/**",
             "/notice/**",
-            "/duplicate"));
+            "/duplicate",
+            // TODO: 2022/09/15 tourCash 환급 전용
+            "/refund/approval/tour-cash/**"
+                ));
 
         if (!profileName.equals("deploy")) {
             exclusivePathList.addAll(List.of("/swagger-resources/**",
