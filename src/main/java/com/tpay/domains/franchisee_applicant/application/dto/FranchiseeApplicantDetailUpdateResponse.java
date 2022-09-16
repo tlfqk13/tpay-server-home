@@ -44,6 +44,7 @@ public class FranchiseeApplicantDetailUpdateResponse {
         this.bankAccount = franchiseeBankEntity.getAccountNumber();
         this.withdrawalDate = franchiseeBankEntity.getWithdrawalDate();
         this.balancePercentage = franchiseeEntity.getBalancePercentage();
+
     }
     
 

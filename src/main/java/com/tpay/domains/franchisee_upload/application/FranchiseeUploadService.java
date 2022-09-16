@@ -99,6 +99,30 @@ public class FranchiseeUploadService {
         return message;
     }
 
+    @Transactional
+    public String uploadImageAndBankInfo(Long franchiseeIndex,String imageCategory, MultipartFile uploadImage) {
+        FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
+        boolean checkExistBank = franchiseeBankRepository.existsByFranchiseeEntity(franchiseeEntity);
+        boolean checkUploadImage = franchiseeUploadRepository.existsByFranchiseeIndexAndImageCategory(franchiseeIndex, imageCategory);
+        String s3Path;
+        if (checkExistBank || checkUploadImage) {
+            throw new AlreadyExistsException(ExceptionState.ALREADY_EXISTS, "This franchisee Already Exists [Bank Info] or [S3-Image]");
+        }
+        try {
+            printNewFranchisee();
+            s3Path = s3FileUploader.uploadJpg(franchiseeIndex, imageCategory, uploadImage);
+            FranchiseeUploadEntity franchiseeUploadEntity = FranchiseeUploadEntity.builder().franchiseeIndex(franchiseeIndex).imageCategory(imageCategory).s3Path(s3Path).franchiseeEntity(franchiseeEntity).build();
+            franchiseeUploadRepository.save(franchiseeUploadEntity);
+        } catch (Exception e) {
+            throw new UnknownException(ExceptionState.UNKNOWN, "[Bank Info] or [S3-Image] save fail");
+        }
+
+        FranchiseeApplicantEntity franchiseeApplicantEntity = franchiseeApplicantFindService.findByFranchiseeEntity(franchiseeEntity);
+        franchiseeApplicantEntity.apply();
+        return s3Path;
+
+    }
+
     void printNewFranchisee() {
         System.out.println("========================");
         System.out.println("=====      New     =====");

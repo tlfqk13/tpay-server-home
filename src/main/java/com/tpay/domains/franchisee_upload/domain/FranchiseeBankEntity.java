@@ -36,9 +36,9 @@ public class FranchiseeBankEntity {
     private FranchiseeEntity franchiseeEntity;
 
     public FranchiseeBankEntity updateBankInfoFromAdmin(FranchiseeApplicantDetailUpdateRequest request) {
-        this.accountNumber = request.getBankAccount();
-        this.bankName = request.getBankName();
-        this.withdrawalDate = request.getWithdrawalDate().replaceAll("일", "");
+        this.accountNumber = request.getDetailFranchiseeInfo().getBankAccount();
+        this.bankName = request.getDetailFranchiseeInfo().getBankName();
+        this.withdrawalDate = request.getDetailFranchiseeInfo().getWithdrawalDate().replaceAll("일", "");
         return this;
     }
 

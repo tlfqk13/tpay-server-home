@@ -10,6 +10,7 @@ import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantRepositor
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeStatus;
 import com.tpay.domains.franchisee_upload.application.FranchiseeBankFindService;
 import com.tpay.domains.franchisee_upload.application.FranchiseeUploadFindService;
+import com.tpay.domains.franchisee_upload.application.FranchiseeUploadService;
 import com.tpay.domains.franchisee_upload.domain.FranchiseeBankEntity;
 import com.tpay.domains.franchisee_upload.domain.FranchiseeUploadEntity;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,7 @@ public class FranchiseeApplicantTestFindService {
     private final FranchiseeApplicantFindService franchiseeApplicantFindService;
     private final FranchiseeBankFindService franchiseeBankFindService;
     private final FranchiseeUploadFindService franchiseeUploadFindService;
+    private final FranchiseeUploadService franchiseeUploadService;
 
     public FranchiseeApplicantEntity findByIndex(Long franchiseeApplicantIndex) {
         FranchiseeApplicantEntity franchiseeApplicantEntity =
@@ -169,7 +171,11 @@ public class FranchiseeApplicantTestFindService {
             franchiseeBankEntity = franchiseeBankFindService.findByFranchiseeEntity(franchiseeEntity);
             franchiseeBankEntity = franchiseeBankEntity.updateBankInfoFromAdmin(request);
             franchiseeUploadEntity = franchiseeUploadFindService.findByFranchiseeIndex(franchiseeEntity.getId());
-            taxFreeStoreNumberUpdate = franchiseeUploadEntity.updateTaxFreeStoreNumber(request.getTaxFreeStoreNumber());
+            taxFreeStoreNumberUpdate = franchiseeUploadEntity.updateTaxFreeStoreNumber(request.getDetailFranchiseeInfo().getTaxFreeStoreNumber());
+            if(!request.isNewUploadedImg()){
+                //Long franchiseeIndex, String franchiseeBankInfoString, String imageCategory, MultipartFile uploadImage)
+                String s3path = franchiseeUploadService.uploadImageAndBankInfo(franchiseeEntity.getId(),"T", request.getUploadImage());
+            }
         } catch (InvalidParameterException e) {
             franchiseeBankEntity = FranchiseeBankEntity.builder().build();
         }

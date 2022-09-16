@@ -209,17 +209,17 @@ public class FranchiseeEntity extends BaseTimeEntity {
 
     // TODO: 2022/08/19 어드민 상세보기 > 수정하기
     public FranchiseeEntity updateFranchisee(FranchiseeApplicantDetailUpdateRequest request){
-        this.storeName = request.getStoreName();
-        this.sellerName = request.getSellerName();
-        this.businessNumber = request.getBusinessNumber().replaceAll("-", "");
-        this.storeTel = request.getStoreTel().replaceAll("-", "");
-        this.storeNumber = request.getStoreNumber().replaceAll("-", "");
-        this.email = request.getEmail();
-        this.signboard = request.getSignboard();
-        this.productCategory = request.getProductCategory();
-        this.storeAddressBasic = request.getStoreAddressBasic();
-        this.storeAddressDetail = request.getStoreAddressDetail();
-        this.balancePercentage = request.getBalancePercentage();
+        this.storeName = request.getDetailFranchiseeInfo().getStoreName();
+        this.sellerName = request.getDetailFranchiseeInfo().getSellerName();
+        this.businessNumber = request.getDetailFranchiseeInfo().getBusinessNumber().replaceAll("-", "");
+        this.storeTel = request.getDetailFranchiseeInfo().getStoreTel().replaceAll("-", "");
+        this.storeNumber = request.getDetailFranchiseeInfo().getStoreNumber().replaceAll("-", "");
+        this.email = request.getDetailFranchiseeInfo().getEmail();
+        this.signboard = request.getDetailFranchiseeInfo().getSignboard();
+        this.productCategory = request.getDetailFranchiseeInfo().getProductCategory();
+        this.storeAddressBasic = request.getDetailFranchiseeInfo().getStoreAddressBasic();
+        this.storeAddressDetail = request.getDetailFranchiseeInfo().getStoreAddressDetail();
+        this.balancePercentage = request.getDetailFranchiseeInfo().getBalancePercentage();
         return this;
     }
 
