@@ -101,26 +101,29 @@ public class FranchiseeUploadService {
 
     @Transactional
     public String uploadImageAndBankInfo(Long franchiseeIndex,String imageCategory, MultipartFile uploadImage) {
+        printUpdateFranchisee();
+        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@");
+        String message;
         FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
         boolean checkExistBank = franchiseeBankRepository.existsByFranchiseeEntity(franchiseeEntity);
-        boolean checkUploadImage = franchiseeUploadRepository.existsByFranchiseeIndexAndImageCategory(franchiseeIndex, imageCategory);
-        String s3Path;
-        if (checkExistBank || checkUploadImage) {
-            throw new AlreadyExistsException(ExceptionState.ALREADY_EXISTS, "This franchisee Already Exists [Bank Info] or [S3-Image]");
+        if (!(checkExistBank)) {
+            throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "[Bank Info] doesn't exist.");
         }
+
         try {
-            printNewFranchisee();
-            s3Path = s3FileUploader.uploadJpg(franchiseeIndex, imageCategory, uploadImage);
-            FranchiseeUploadEntity franchiseeUploadEntity = FranchiseeUploadEntity.builder().franchiseeIndex(franchiseeIndex).imageCategory(imageCategory).s3Path(s3Path).franchiseeEntity(franchiseeEntity).build();
-            franchiseeUploadRepository.save(franchiseeUploadEntity);
+
+            if (imageCategory.equals("X")) {
+                message = "Bank Info Updated Only";
+            } else {
+                String delete = s3FileUploader.deleteJpg(franchiseeIndex, imageCategory);
+                System.out.println(delete);
+                message = s3FileUploader.uploadJpg(franchiseeIndex, imageCategory, uploadImage);
+            }
         } catch (Exception e) {
-            throw new UnknownException(ExceptionState.UNKNOWN, "[Bank Info] or [S3-Image] save fail");
+            throw new UnknownException(ExceptionState.UNKNOWN, "Contact Backend Developer");
         }
-
-        FranchiseeApplicantEntity franchiseeApplicantEntity = franchiseeApplicantFindService.findByFranchiseeEntity(franchiseeEntity);
-        franchiseeApplicantEntity.apply();
-        return s3Path;
-
+        franchiseeApplicantFindService.findByFranchiseeEntity(franchiseeEntity).reapply();
+        return message;
     }
 
     void printNewFranchisee() {

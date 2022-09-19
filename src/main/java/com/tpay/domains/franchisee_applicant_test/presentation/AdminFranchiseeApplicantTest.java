@@ -84,8 +84,12 @@ public class AdminFranchiseeApplicantTest {
     @PatchMapping("/update/{franchiseeApplicantIndex}")
     public ResponseEntity<FranchiseeApplicantDetailUpdateResponse> updateFranchiseeInfo(
             @PathVariable Long franchiseeApplicantIndex,
-            @RequestBody FranchiseeApplicantDetailUpdateRequest request){
-        FranchiseeApplicantDetailUpdateResponse result = franchiseeApplicantTestFindService.updateFranchiseeApplicantInfo(franchiseeApplicantIndex,request);
+            @RequestParam String imageCategory,
+            @RequestParam("detailFranchiseeInfo") String detailFranchiseeInfo,
+            @RequestParam MultipartFile uploadImage,
+            @RequestParam String isNewUploadedImg){
+        FranchiseeApplicantDetailUpdateResponse result =
+                franchiseeApplicantTestFindService.updateFranchiseeApplicantInfo(franchiseeApplicantIndex,imageCategory,detailFranchiseeInfo,uploadImage,isNewUploadedImg);
         return ResponseEntity.ok(result);
     }
     /**
