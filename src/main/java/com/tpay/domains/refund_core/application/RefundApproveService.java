@@ -7,7 +7,9 @@ import com.tpay.commons.exception.detail.WebfluxGeneralException;
 import com.tpay.commons.push.PushCategoryType;
 import com.tpay.commons.webClient.WebRequestUtil;
 import com.tpay.domains.auth.application.AccessTokenService;
+import com.tpay.domains.auth.domain.EmployeeAccessTokenEntity;
 import com.tpay.domains.auth.domain.EmployeeAccessTokenRepository;
+import com.tpay.domains.auth.domain.FranchiseeAccessTokenEntity;
 import com.tpay.domains.auth.domain.FranchiseeAccessTokenRepository;
 import com.tpay.domains.employee.application.EmployeeFindService;
 import com.tpay.domains.employee.domain.EmployeeEntity;
@@ -73,10 +75,36 @@ public class RefundApproveService {
 
         if (request.getUserSelector().equals(EMPLOYEE)) {
             EmployeeEntity employeeEntity = employeeFindService.findById(request.getEmployeeIndex())
-                .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Employee not exists"));
+                    .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Employee not exists"));
             orderEntity.setEmployeeEntity(employeeEntity);
-        }
 
+            Optional<EmployeeAccessTokenEntity> employeeAccessTokenEntityOptional =
+                    employeeAccessTokenRepository.findByEmployeeEntityId(request.getFranchiseeIndex());
+
+            employeeAccessTokenEntityOptional.orElseThrow(NullPointerException::new);
+            if (request.getDevice() == null) {
+                log.trace("Employee Device info no save Device is Null");
+            } else {
+                employeeAccessTokenEntityOptional.get().updateDeviceInfo(
+                        request.getDevice().getName(),
+                        request.getDevice().getOs(),
+                        request.getDevice().getAppVersion());
+                log.trace("Employee Device info save");
+            }
+        }
+        Optional<FranchiseeAccessTokenEntity> franchiseeTokenEntity =
+        franchiseeAccessTokenRepository.findByFranchiseeEntityId(request.getFranchiseeIndex());
+
+        franchiseeTokenEntity.orElseThrow(NullPointerException::new);
+        if (request.getDevice() == null) {
+            log.trace("Employee Device info no save Device is Null");
+        }else {
+            franchiseeTokenEntity.get().updateDeviceInfo(
+                    request.getDevice().getName(),
+                    request.getDevice().getOs(),
+                    request.getDevice().getAppVersion());
+            log.trace("Franchisee Device info save");
+        }
         FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(request.getFranchiseeIndex());
         RefundApproveRequest refundApproveRequest = RefundApproveRequest.of(orderEntity);
 

@@ -15,8 +15,8 @@ public class SignUpController {
     private final SignUpService signUpService;
 
     @PostMapping("/sign-up")
-    public ResponseEntity signUp(@RequestBody FranchiseeSignUpRequest request) {
-        signUpService.signUp(request);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Long> signUp(@RequestBody FranchiseeSignUpRequest request) {
+        Long franchiseeId = signUpService.signUp(request);
+        return ResponseEntity.ok(franchiseeId);
     }
 }

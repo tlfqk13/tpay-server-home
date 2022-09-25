@@ -25,10 +25,23 @@ public class EmployeeAccessTokenEntity extends BaseTimeEntity {
 
     private String accessToken;
 
+    private String name;
+    private String os;
+    private String appVersion;
+
     @Builder
-    public EmployeeAccessTokenEntity(EmployeeEntity employeeEntity, String accessToken) {
+    public EmployeeAccessTokenEntity(EmployeeEntity employeeEntity, String accessToken, String name, String os, String appVersion) {
         this.employeeEntity = employeeEntity;
         this.accessToken = accessToken;
+        this.name = name;
+        this.os = os;
+        this.appVersion = appVersion;
+    }
+
+    public void updateDeviceInfo(String name, String os, String appVersion){
+        this.name = name;
+        this.os = os;
+        this.appVersion = appVersion;
     }
 
     public EmployeeAccessTokenEntity accessToken(String accessToken){
