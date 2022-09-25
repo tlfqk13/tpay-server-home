@@ -24,6 +24,7 @@ public class DetailFranchiseeInfo {
     private String storeNumber;
     private String storeAddressBasic;
     private String storeAddressDetail;
+    private String createdDate;
     private Boolean isRead;
     // Applicants
     private String imageUrl;

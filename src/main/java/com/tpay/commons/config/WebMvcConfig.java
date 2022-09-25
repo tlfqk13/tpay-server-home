@@ -53,6 +53,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
             "/test/points/**",
             "/notice/**",
             "/duplicate",
+            // TODO: 2022/09/26 NICE_VAN 관련 데이터 로직
+            "/order/**",
             // TODO: 2022/09/15 tourCash 환급 전용
             "/refund/approval/tour-cash/**"
                 ));

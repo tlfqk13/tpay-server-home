@@ -32,6 +32,8 @@ public class AdminFranchiseeApplicant {
     private final FranchiseeApplicantSetBalancePerService franchiseeApplicantSetBalancePerService;
     private final FranchiseeUploadService franchiseeUploadService;
 
+    private final FranchiseeApplicantUpdateService franchiseeApplicantUpdateService;
+
     /**
      * 가맹점 신청 수락
      */
@@ -74,6 +76,18 @@ public class AdminFranchiseeApplicant {
     @ApiOperation(value = "가맹점 신청 내역조회", notes = "가맹점 현황 내 상세보기")
     public ResponseEntity<FranchiseeApplicantDetailResponse> findOne(@PathVariable Long franchiseeApplicantIndex) {
         FranchiseeApplicantDetailResponse result = franchiseeApplicantDetailService.detail(franchiseeApplicantIndex);
+        return ResponseEntity.ok(result);
+    }
+
+    @PatchMapping("/update/{franchiseeApplicantIndex}")
+    public ResponseEntity<FranchiseeApplicantDetailUpdateResponse> updateFranchiseeInfo(
+            @PathVariable Long franchiseeApplicantIndex,
+            @RequestParam String imageCategory,
+            @RequestParam("detailFranchiseeInfo") String detailFranchiseeInfo,
+            @RequestParam MultipartFile uploadImage,
+            @RequestParam String isNewUploadedImg){
+        FranchiseeApplicantDetailUpdateResponse result =
+                franchiseeApplicantUpdateService.updateFranchiseeApplicantInfo(franchiseeApplicantIndex,imageCategory,detailFranchiseeInfo,uploadImage,isNewUploadedImg);
         return ResponseEntity.ok(result);
     }
 

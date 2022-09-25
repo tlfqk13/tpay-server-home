@@ -54,7 +54,7 @@ public class FranchiseeUploadService {
             franchiseeBankRepository.save(franchiseeBankEntity);
             printNewFranchisee();
             s3Path = s3FileUploader.uploadJpg(franchiseeIndex, imageCategory, uploadImage);
-            FranchiseeUploadEntity franchiseeUploadEntity = FranchiseeUploadEntity.builder().franchiseeIndex(franchiseeIndex).imageCategory(imageCategory).s3Path(s3Path).franchiseeEntity(franchiseeEntity).build();
+            FranchiseeUploadEntity franchiseeUploadEntity = FranchiseeUploadEntity.builder().franchiseeIndex(franchiseeIndex).imageCategory(imageCategory).taxFreeStoreNumber("").s3Path(s3Path).franchiseeEntity(franchiseeEntity).build();
             franchiseeUploadRepository.save(franchiseeUploadEntity);
         } catch (Exception e) {
             throw new UnknownException(ExceptionState.UNKNOWN, "[Bank Info] or [S3-Image] save fail");
@@ -102,7 +102,6 @@ public class FranchiseeUploadService {
     @Transactional
     public String uploadImageAndBankInfo(Long franchiseeIndex,String imageCategory, MultipartFile uploadImage) {
         printUpdateFranchisee();
-        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@");
         String message;
         FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
         boolean checkExistBank = franchiseeBankRepository.existsByFranchiseeEntity(franchiseeEntity);

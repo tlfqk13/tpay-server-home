@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -52,13 +53,12 @@ public class FranchiseeApplicantDetailService {
             .createdDate(franchiseeEntity.getCreatedDate())
             .isRead(franchiseeApplicantEntity.getIsRead())
 
-            .imageUrl(franchiseeUploadEntity.getS3Path())
-            .taxFreeStoreNumber(franchiseeUploadEntity.getTaxFreeStoreNumber())
-            .bankName(franchiseeBankEntity.getBankName())
-            .bankAccount(franchiseeBankEntity.getAccountNumber())
-            .withdrawalDate(franchiseeBankEntity.getWithdrawalDate())
-            .rejectReason(franchiseeApplicantEntity.getRejectReason())
-
+            .imageUrl((Optional.ofNullable(franchiseeUploadEntity.getS3Path()).orElse("")))
+            .taxFreeStoreNumber((Optional.ofNullable(franchiseeUploadEntity.getTaxFreeStoreNumber()).orElse("")))
+            .bankName((Optional.ofNullable(franchiseeBankEntity.getBankName()).orElse("")))
+            .bankAccount((Optional.ofNullable(franchiseeBankEntity.getAccountNumber()).orElse("")))
+            .withdrawalDate((Optional.ofNullable(franchiseeBankEntity.getWithdrawalDate()).orElse("")))
+            .rejectReason((Optional.ofNullable(franchiseeApplicantEntity.getRejectReason()).orElse("")))
             .balancePercentage(franchiseeEntity.getBalancePercentage())
 
             .employeeFindResponseInterfaceList(employeeResponse)

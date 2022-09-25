@@ -1,12 +1,10 @@
 package com.tpay.domains.franchisee_applicant_test.application;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.exception.detail.UnknownException;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
-import com.tpay.domains.franchisee_applicant.application.FranchiseeApplicantFindService;
 import com.tpay.domains.franchisee_applicant.application.dto.*;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantRepository;
@@ -36,7 +34,6 @@ import static com.tpay.domains.franchisee_applicant.application.dto.FilterSelect
 public class FranchiseeApplicantTestFindService {
 
     private final FranchiseeApplicantRepository franchiseeApplicantRepository;
-    private final FranchiseeApplicantFindService franchiseeApplicantFindService;
     private final FranchiseeBankFindService franchiseeBankFindService;
     private final FranchiseeUploadFindService franchiseeUploadFindService;
     private final FranchiseeUploadService franchiseeUploadService;
@@ -166,7 +163,7 @@ public class FranchiseeApplicantTestFindService {
     public FranchiseeApplicantDetailUpdateResponse updateFranchiseeApplicantInfo(Long franchiseeApplicantIndex, String imageCategory
             , String detailFranchiseeInfo, MultipartFile uploadImage, String isNewUploadedImg) {
 
-        FranchiseeApplicantEntity franchiseeApplicantEntity = franchiseeApplicantFindService.findByIndex(franchiseeApplicantIndex);
+        FranchiseeApplicantEntity franchiseeApplicantEntity = this.findByIndex(franchiseeApplicantIndex);
         FranchiseeEntity franchiseeEntity = franchiseeApplicantEntity.getFranchiseeEntity();
         FranchiseeBankEntity franchiseeBankEntity;
         FranchiseeUploadEntity franchiseeUploadEntity;
@@ -175,16 +172,15 @@ public class FranchiseeApplicantTestFindService {
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             DetailFranchiseeInfo request = objectMapper.readValue(detailFranchiseeInfo, DetailFranchiseeInfo.class);
             franchiseeEntityUpdate = franchiseeEntity.updateFranchisee(request);
-
             franchiseeBankEntity = franchiseeBankFindService.findByFranchiseeEntity(franchiseeEntity);
             franchiseeBankEntity = franchiseeBankEntity.updateBankInfoFromAdmin(request);
             franchiseeUploadEntity = franchiseeUploadFindService.findByFranchiseeIndex(franchiseeEntity.getId());
-            taxFreeStoreNumberUpdate = franchiseeUploadEntity.updateTaxFreeStoreNumber(request.getTaxFreeStoreNumber());
+            if(!request.getTaxFreeStoreNumber().isEmpty()){
+                taxFreeStoreNumberUpdate = franchiseeUploadEntity.updateTaxFreeStoreNumber(request.getTaxFreeStoreNumber());
+            }
             if (isNewUploadedImg.equals("true") || isNewUploadedImg.equals("TRUE")) {
-                log.trace("NewUploadImg Start____________");
                 String s3path = franchiseeUploadService.uploadImageAndBankInfo(franchiseeEntity.getId(), imageCategory, uploadImage);
             }
         } catch (InvalidParameterException e) {

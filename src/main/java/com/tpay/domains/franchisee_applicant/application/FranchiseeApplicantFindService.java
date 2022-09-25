@@ -28,39 +28,39 @@ public class FranchiseeApplicantFindService {
 
     public FranchiseeApplicantEntity findByIndex(Long franchiseeApplicantIndex) {
         FranchiseeApplicantEntity franchiseeApplicantEntity =
-            franchiseeApplicantRepository
-                .findById(franchiseeApplicantIndex)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid Franchisee Applicant Index"));
+                franchiseeApplicantRepository
+                        .findById(franchiseeApplicantIndex)
+                        .orElseThrow(() -> new IllegalArgumentException("Invalid Franchisee Applicant Index"));
 
         return franchiseeApplicantEntity;
     }
 
     public FranchiseeApplicantEntity findByFranchiseeEntity(FranchiseeEntity franchiseeEntity) {
         FranchiseeApplicantEntity franchiseeApplicantEntity = franchiseeApplicantRepository.findByFranchiseeEntity(franchiseeEntity)
-            .orElseThrow(() -> new IllegalArgumentException("Invalid Franchisee Entity"));
+                .orElseThrow(() -> new IllegalArgumentException("Invalid Franchisee Entity"));
         return franchiseeApplicantEntity;
     }
 
     // TODO: 2022/07/21 관리자페이지 페이징 기능 개발
-    public FranchiseeApplicantFindResponse findAll(int page,String searchKeyword){
-        PageRequest pageRequest = PageRequest.of(page,15);
+    public FranchiseeApplicantFindResponse findAll(int page, String searchKeyword) {
+        PageRequest pageRequest = PageRequest.of(page, 15);
         Page<FranchiseeApplicantEntity> franchiseeApplicantEntityPage;
 
-        if(!searchKeyword.isEmpty()){
+        if (!searchKeyword.isEmpty()) {
             boolean isBusinessNumber = searchKeyword.chars().allMatch(Character::isDigit);
             if (isBusinessNumber) {
-                franchiseeApplicantEntityPage = franchiseeApplicantRepository.findByFranchiseeEntityBusinessNumberContaining(pageRequest,searchKeyword);
-            }else{
-                franchiseeApplicantEntityPage = franchiseeApplicantRepository.findByFranchiseeEntityStoreNameContaining(pageRequest,searchKeyword);
+                franchiseeApplicantEntityPage = franchiseeApplicantRepository.findByFranchiseeEntityBusinessNumberContaining(pageRequest, searchKeyword);
+            } else {
+                franchiseeApplicantEntityPage = franchiseeApplicantRepository.findByFranchiseeEntityStoreNameContaining(pageRequest, searchKeyword);
             }
-        }else {
+        } else {
             franchiseeApplicantEntityPage = franchiseeApplicantRepository.findAllByOrderByIdDesc(pageRequest);
         }
 
         List<FranchiseeApplicantInfo> franchiseeApplicantInfoList = franchiseeApplicantEntityPage.stream().map(FranchiseeApplicantInfo::toResponse).collect(Collectors.toList());
         int totalPage = franchiseeApplicantEntityPage.getTotalPages();
-        if(totalPage != 0){
-            totalPage = totalPage -1;
+        if (totalPage != 0) {
+            totalPage = totalPage - 1;
         }
         FranchiseeApplicantFindResponse franchiseeApplicantFindResponse = FranchiseeApplicantFindResponse.builder()
                 .totalPage(totalPage)
@@ -73,12 +73,12 @@ public class FranchiseeApplicantFindService {
         businessNumber = businessNumber.replaceAll("-", "");
 
         FranchiseeApplicantEntity franchiseeApplicantEntity =
-            franchiseeApplicantRepository
-                .findByFranchiseeEntityBusinessNumber(businessNumber)
-                .orElseThrow(
-                    () ->
-                        new InvalidParameterException(
-                            ExceptionState.INVALID_PARAMETER, "가입 내역이 존재하지 않습니다. 다시 입력해주세요."));
+                franchiseeApplicantRepository
+                        .findByFranchiseeEntityBusinessNumber(businessNumber)
+                        .orElseThrow(
+                                () ->
+                                        new InvalidParameterException(
+                                                ExceptionState.INVALID_PARAMETER, "가입 내역이 존재하지 않습니다. 다시 입력해주세요."));
 
         return franchiseeApplicantEntity;
     }
@@ -94,10 +94,10 @@ public class FranchiseeApplicantFindService {
         List<Boolean> booleanList = new ArrayList<>(List.of(false));
         List<FranchiseeStatus> franchiseeStatusList = new ArrayList<>();
         Page<FranchiseeApplicantEntity> franchiseeApplicantEntityList;
-        PageRequest pageRequest = PageRequest.of(page,15);
+        PageRequest pageRequest = PageRequest.of(page, 15);
         boolean isBusinessNumber = searchKeyword.chars().allMatch(Character::isDigit);
 
-        if(!searchKeyword.isEmpty()) {
+        if (!searchKeyword.isEmpty()) {
             if (filterSelector.equals(FRANCHISEE_STATUS)) {
                 booleanList.add(true);
                 franchiseeStatusList.add(FranchiseeStatus.valueOf(value));
@@ -106,27 +106,27 @@ public class FranchiseeApplicantFindService {
                 } else {
                     franchiseeApplicantEntityList = franchiseeApplicantRepository.filterAndStoreName(booleanList, franchiseeStatusList, pageRequest, searchKeyword);
                 }
-            }else {
+            } else {
                 if (isBusinessNumber) {
                     franchiseeApplicantEntityList = franchiseeApplicantRepository.filterIsReadAndBusinessNumber(booleanList.get(0), pageRequest, searchKeyword);
                 } else {
                     franchiseeApplicantEntityList = franchiseeApplicantRepository.filterIsReadAndStoreName(booleanList.get(0), pageRequest, searchKeyword);
                 }
             }
-        }else{
+        } else {
             if (filterSelector.equals(FRANCHISEE_STATUS)) {
                 booleanList.add(true);
                 franchiseeStatusList.add(FranchiseeStatus.valueOf(value));
-                franchiseeApplicantEntityList = franchiseeApplicantRepository.findByIsReadInAndFranchiseeStatusInOrderByIdDesc(booleanList, franchiseeStatusList,pageRequest);
-            } else{
-                franchiseeApplicantEntityList = franchiseeApplicantRepository.findByIsReadOrderByIdDesc(booleanList.get(0),pageRequest);
+                franchiseeApplicantEntityList = franchiseeApplicantRepository.findByIsReadInAndFranchiseeStatusInOrderByIdDesc(booleanList, franchiseeStatusList, pageRequest);
+            } else {
+                franchiseeApplicantEntityList = franchiseeApplicantRepository.findByIsReadOrderByIdDesc(booleanList.get(0), pageRequest);
             }
         }
 
         List<FranchiseeApplicantInfo> franchiseeApplicantInfoList = franchiseeApplicantEntityList.stream().map(FranchiseeApplicantInfo::toResponse).collect(Collectors.toList());
         int totalPage = franchiseeApplicantEntityList.getTotalPages();
-        if(totalPage != 0){
-            totalPage = totalPage -1;
+        if (totalPage != 0) {
+            totalPage = totalPage - 1;
         }
         FranchiseeApplicantFindResponse franchiseeApplicantFindResponse = FranchiseeApplicantFindResponse.builder()
                 .totalPage(totalPage)

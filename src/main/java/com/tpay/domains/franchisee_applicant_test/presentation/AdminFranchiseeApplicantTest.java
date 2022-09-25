@@ -86,7 +86,7 @@ public class AdminFranchiseeApplicantTest {
             @PathVariable Long franchiseeApplicantIndex,
             @RequestParam String imageCategory,
             @RequestParam("detailFranchiseeInfo") String detailFranchiseeInfo,
-            @RequestParam MultipartFile uploadImage,
+            @RequestParam(required = false) MultipartFile uploadImage,
             @RequestParam String isNewUploadedImg){
         FranchiseeApplicantDetailUpdateResponse result =
                 franchiseeApplicantTestFindService.updateFranchiseeApplicantInfo(franchiseeApplicantIndex,imageCategory,detailFranchiseeInfo,uploadImage,isNewUploadedImg);
@@ -147,7 +147,7 @@ public class AdminFranchiseeApplicantTest {
             @PathVariable Long franchiseeIndex,
             @RequestParam String imageCategory,
             @RequestParam("franchiseeBankInfo") String franchiseeBankInfoString,
-            @RequestParam MultipartFile uploadImage) {
+            @RequestParam(required = false) MultipartFile uploadImage) {
         String s3Path = franchiseeUploadService.uploadImageAndBankInfo(franchiseeIndex, franchiseeBankInfoString, imageCategory, uploadImage);
         return ResponseEntity.ok(s3Path);
     }

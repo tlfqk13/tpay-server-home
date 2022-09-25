@@ -55,7 +55,7 @@ public class FranchiseeApplicantEntity extends BaseTimeEntity {
 
     public FranchiseeApplicantEntity reapply() {
         this.franchiseeStatus = FranchiseeStatus.REAPPLIED;
-        this.isRead = false;
+        this.isRead = true;
         return this;
     }
 
@@ -63,5 +63,4 @@ public class FranchiseeApplicantEntity extends BaseTimeEntity {
         this.isRead = !isRead;
         return this.isRead;
     }
-
 }

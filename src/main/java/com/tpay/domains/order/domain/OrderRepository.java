@@ -2,6 +2,7 @@ package com.tpay.domains.order.domain;
 
 import com.tpay.domains.order.application.dto.CmsResponseDetailInterface;
 import com.tpay.domains.order.application.dto.CmsResponseInterface;
+import com.tpay.domains.order.application.dto.OrdersDtoInterface;
 import com.tpay.domains.vat.application.dto.VatDetailResponseInterface;
 import com.tpay.domains.vat.application.dto.VatReportResponseInterface;
 import com.tpay.domains.vat.application.dto.VatTotalResponseInterface;
@@ -155,5 +156,16 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
 
     Optional<OrderEntity> findByFranchiseeEntityId(Long franchiseeIndex);
 
-
+    @Query(value =  "select\n " +
+            "  o.purchs_sn as docId\n" +
+            " ,f.store_nm as shopNm\n" +
+            " ,f.prd_nm as shopTypeCcd\n" +
+            " ,o.sale_datm as purchsDate\n" +
+            " ,o.tot_amt as totPurchsAmt\n" +
+            " ,o.tot_vat as vat\n" +
+            " from orders o inner join franchisee f on o.franchisee_id = f.id\n" +
+            "               left join customer c on c.id = o.customer_id\n" +
+            " where c.cus_pass_no = :passportNumber" ,nativeQuery = true
+    )
+    List<OrdersDtoInterface> findOrdersDetail(String passportNumber);
 }
