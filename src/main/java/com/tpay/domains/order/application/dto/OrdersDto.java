@@ -13,6 +13,6 @@ public class OrdersDto {
 
     @Getter
     public static class Request{
-        String passportNumber;
+        String encryptPassportNumber;
     }
 }

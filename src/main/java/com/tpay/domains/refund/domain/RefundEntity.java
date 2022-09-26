@@ -30,6 +30,10 @@ public class RefundEntity extends BaseTimeEntity {
     @JoinColumn(name = "order_id")
     private OrderEntity orderEntity;
 
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+    @JoinColumn(name = "refund_after_id")
+    private RefundAfterEntity refundAfterEntity;
+
     @Builder
     public RefundEntity(String responseCode, String orderNumber, String takeOutNumber, OrderEntity orderEntity) {
         this.orderEntity = orderEntity;
@@ -45,5 +49,9 @@ public class RefundEntity extends BaseTimeEntity {
         if (responseCode.equals("0000")) {
             this.refundStatus = RefundStatus.CANCEL;
         }
+    }
+
+    public void addRefundAfterEntity(RefundAfterEntity refundAfterEntity) {
+        this.refundAfterEntity = refundAfterEntity;
     }
 }

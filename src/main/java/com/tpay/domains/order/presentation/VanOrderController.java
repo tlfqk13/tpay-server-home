@@ -9,18 +9,18 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/order")
+@RequestMapping("/van")
 @Slf4j
-public class OrderController {
+public class VanOrderController {
 
     private final OrderService orderService;
 
-    @GetMapping()
+    @GetMapping("/order/passport")
     public ResponseEntity<OrdersDto.Response> ordersDetail(
             @RequestBody OrdersDto.Request request
-    ){
-        log.trace("passportNumber = {}", request.getPassportNumber());
-        OrdersDto.Response response = orderService.ordersDetail(request.getPassportNumber());
+    ) {
+        log.trace("passportNumber = {}", request.getEncryptPassportNumber());
+        OrdersDto.Response response = orderService.ordersDetail(request.getEncryptPassportNumber());
         return ResponseEntity.ok(response);
     }
 }

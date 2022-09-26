@@ -151,8 +151,7 @@ public class OrderService {
         return orderRepository.findQuarterlyTotal(franchiseeIndex, startDate, endDate);
     }
 
-    public OrdersDto.Response ordersDetail(String passportNumber) {
-        String encryptedPassportNumber = passportNumberEncryptService.encrypt(passportNumber);
+    public OrdersDto.Response ordersDetail(String encryptedPassportNumber) {
         List<OrdersDtoInterface> ordersDtoInterfaceList =  orderRepository.findOrdersDetail(encryptedPassportNumber);
 
         List<OrderDtoInfo> baseList = new ArrayList<>();

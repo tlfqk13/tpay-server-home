@@ -168,4 +168,6 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
             " where c.cus_pass_no = :passportNumber" ,nativeQuery = true
     )
     List<OrdersDtoInterface> findOrdersDetail(String passportNumber);
+
+    Optional<OrderEntity> findByOrderNumber(String docId);
 }
