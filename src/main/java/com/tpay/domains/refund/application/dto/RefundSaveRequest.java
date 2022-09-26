@@ -11,7 +11,7 @@ public class RefundSaveRequest {
     private Long customerIndex;
     private String price;
     private UserSelector userSelector;
-    //private Device device;
+    private Device device;
 
     public void updateFranchiseeIndex(EmployeeEntity employeeEntity) {
         this.franchiseeIndex = employeeEntity.getFranchiseeEntity().getId();

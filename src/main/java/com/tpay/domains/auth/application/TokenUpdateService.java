@@ -36,7 +36,7 @@ public class TokenUpdateService {
     public SignInTokenInfo refresh(SignInTokenInfo signInTokenInfo) {
         AuthToken refreshToken = jwtUtils.convertAuthToken(signInTokenInfo.getRefreshToken());
         Long parsedIndex;
-
+        log.trace("Refresh Token Start");
         if (signInTokenInfo.getUserSelector().equals(FRANCHISEE)) {
             FranchiseeTokenEntity franchiseeTokenEntity =
                     franchiseeTokenRepository

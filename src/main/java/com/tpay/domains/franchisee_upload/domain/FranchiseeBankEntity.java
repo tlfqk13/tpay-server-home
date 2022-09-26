@@ -2,7 +2,7 @@ package com.tpay.domains.franchisee_upload.domain;
 
 
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
-import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeApplicantDetailUpdateRequest;
+import com.tpay.domains.franchisee_applicant.application.dto.DetailFranchiseeInfo;
 import com.tpay.domains.franchisee_upload.application.dto.FranchiseeBankInfo;
 import lombok.*;
 
@@ -35,7 +35,7 @@ public class FranchiseeBankEntity {
     @JoinColumn(name = "franchisee_id")
     private FranchiseeEntity franchiseeEntity;
 
-    public FranchiseeBankEntity updateBankInfoFromAdmin(FranchiseeApplicantDetailUpdateRequest request) {
+    public FranchiseeBankEntity updateBankInfoFromAdmin(DetailFranchiseeInfo request) {
         this.accountNumber = request.getBankAccount();
         this.bankName = request.getBankName();
         this.withdrawalDate = request.getWithdrawalDate().replaceAll("일", "");

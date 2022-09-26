@@ -1,6 +1,9 @@
 package com.tpay.domains.order.application;
 
+import com.tpay.commons.aria.PassportNumberEncryptService;
 import com.tpay.commons.util.converter.NumberFormatConverter;
+import com.tpay.domains.order.application.dto.OrdersDto;
+import com.tpay.domains.order.application.dto.OrdersDtoInterface;
 import com.tpay.domains.order.domain.OrderRepository;
 import com.tpay.domains.vat.application.dto.VatDetailResponseInterface;
 import com.tpay.domains.vat.application.dto.VatReportResponseInterface;
@@ -22,6 +25,7 @@ import java.util.Optional;
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final PassportNumberEncryptService passportNumberEncryptService;
 
     public VatResponse findQuarterlyVatReport(Long franchiseeIndex, LocalDate startDate, LocalDate endDate) {
 
@@ -144,5 +148,30 @@ public class OrderService {
 
     public VatTotalResponseInterface findTotalBetweenDates(Long franchiseeIndex, LocalDate startDate, LocalDate endDate) {
         return orderRepository.findQuarterlyTotal(franchiseeIndex, startDate, endDate);
+    }
+
+    public OrdersDto.Response ordersDetail(String passportNumber) {
+        String encryptedPassportNumber = passportNumberEncryptService.encrypt(passportNumber);
+        List<OrdersDtoInterface> OrdersDtoInterfaceList =  orderRepository.findOrdersDetail(encryptedPassportNumber);
+
+        List<List<String>> response = new ArrayList<>();
+        for (OrdersDtoInterface OrdersDtoInterface : OrdersDtoInterfaceList) {
+            List<String> baseList = new ArrayList<>();
+            baseList.add(OrdersDtoInterface.getDocId());
+            baseList.add(OrdersDtoInterface.getShopNm());
+            //baseList.add(OrdersDtoInterface.getShopTypeCcd());
+            baseList.add("1");
+            baseList.add(OrdersDtoInterface.getPurchsDate());
+            baseList.add(OrdersDtoInterface.getTotPurchsAmt());
+            baseList.add(OrdersDtoInterface.getVat());
+            //baseList.add(OrdersDtoInterface.getRfndAvailableYn());
+            baseList.add("Y");
+            //baseList.add(OrdersDtoInterface.getEarlyRfndYn());
+            baseList.add("N");
+            //baseList.add(OrdersDtoInterface.getCustomsCleanceYn());
+            baseList.add("N");
+            response.add(baseList);
+        }
+        return OrdersDto.Response.builder().ordersDtoList(response).build();
     }
 }

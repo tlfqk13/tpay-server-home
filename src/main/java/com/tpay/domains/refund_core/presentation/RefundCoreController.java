@@ -1,5 +1,7 @@
 package com.tpay.domains.refund_core.presentation;
 
+import com.tpay.commons.exception.ExceptionState;
+import com.tpay.commons.exception.detail.FranchiseeAuthenticationException;
 import com.tpay.commons.util.UserSelector;
 import com.tpay.domains.refund.application.dto.RefundSaveRequest;
 import com.tpay.domains.refund_core.application.LimitFindService;
@@ -80,4 +82,20 @@ public class RefundCoreController {
         return ResponseEntity.ok(response);
     }
 
+    // TODO: 2022/09/15 tourCash_Admin 전용 RefundApprove
+    @PostMapping("/approval/tourcash/{userSelector}/{index}")
+    public ResponseEntity<RefundResponse> tourCashRefundApproval(
+            @RequestBody RefundSaveRequest request,
+            @PathVariable UserSelector userSelector,
+            @PathVariable Long index) {
+        // tour_cash 가맹점 franchiseeIndex 가 아니면 예외처리
+        if(request.getFranchiseeIndex() != 95L){
+            throw new FranchiseeAuthenticationException(
+                    ExceptionState.AUTHENTICATION_FAILED, "Token not exists");
+        }
+        log.trace("Refund Approval Start = {}", request);
+        RefundResponse response = refundApproveService.approve(request);
+        log.trace("Refund Approval Finish = {}", response);
+        return ResponseEntity.ok(response);
+    }
 }

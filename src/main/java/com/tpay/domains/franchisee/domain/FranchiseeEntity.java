@@ -2,7 +2,7 @@ package com.tpay.domains.franchisee.domain;
 
 import com.tpay.domains.BaseTimeEntity;
 import com.tpay.domains.franchisee.application.dto.FranchiseeUpdateDtoRequest;
-import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeApplicantDetailUpdateRequest;
+import com.tpay.domains.franchisee_applicant.application.dto.DetailFranchiseeInfo;
 import com.tpay.domains.point.domain.SignType;
 import com.tpay.domains.pos.domain.PosType;
 import lombok.*;
@@ -208,7 +208,7 @@ public class FranchiseeEntity extends BaseTimeEntity {
     }
 
     // TODO: 2022/08/19 어드민 상세보기 > 수정하기
-    public FranchiseeEntity updateFranchisee(FranchiseeApplicantDetailUpdateRequest request){
+    public FranchiseeEntity updateFranchisee(DetailFranchiseeInfo request){
         this.storeName = request.getStoreName();
         this.sellerName = request.getSellerName();
         this.businessNumber = request.getBusinessNumber().replaceAll("-", "");

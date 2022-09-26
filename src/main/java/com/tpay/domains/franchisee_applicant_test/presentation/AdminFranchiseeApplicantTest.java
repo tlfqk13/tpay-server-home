@@ -3,11 +3,13 @@ package com.tpay.domains.franchisee_applicant_test.presentation;
 import com.tpay.domains.franchisee_applicant.application.*;
 import com.tpay.domains.franchisee_applicant.application.dto.*;
 import com.tpay.domains.franchisee_applicant_test.application.FranchiseeApplicantTestFindService;
+import com.tpay.domains.franchisee_upload.application.FranchiseeUploadService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 가맹점 신청 관련 Admin 페이지 기능
@@ -29,6 +31,7 @@ public class AdminFranchiseeApplicantTest {
     private final FranchiseeApplicantReadService franchiseeApplicantReadService;
     private final FranchiseeApplicantRejectService franchiseeApplicantRejectService;
     private final FranchiseeApplicantSetBalancePerService franchiseeApplicantSetBalancePerService;
+    private final FranchiseeUploadService franchiseeUploadService;
 
     /**
      * 가맹점 신청 수락
@@ -81,8 +84,12 @@ public class AdminFranchiseeApplicantTest {
     @PatchMapping("/update/{franchiseeApplicantIndex}")
     public ResponseEntity<FranchiseeApplicantDetailUpdateResponse> updateFranchiseeInfo(
             @PathVariable Long franchiseeApplicantIndex,
-            @RequestBody FranchiseeApplicantDetailUpdateRequest request){
-        FranchiseeApplicantDetailUpdateResponse result = franchiseeApplicantTestFindService.updateFranchiseeApplicantInfo(franchiseeApplicantIndex,request);
+            @RequestParam String imageCategory,
+            @RequestParam("detailFranchiseeInfo") String detailFranchiseeInfo,
+            @RequestParam(required = false) MultipartFile uploadImage,
+            @RequestParam String isNewUploadedImg){
+        FranchiseeApplicantDetailUpdateResponse result =
+                franchiseeApplicantTestFindService.updateFranchiseeApplicantInfo(franchiseeApplicantIndex,imageCategory,detailFranchiseeInfo,uploadImage,isNewUploadedImg);
         return ResponseEntity.ok(result);
     }
     /**
@@ -130,5 +137,18 @@ public class AdminFranchiseeApplicantTest {
             ,@RequestBody FranchiseeApplicantSetBalancePerRequest franchiseeApplicantSetBalancePerRequest) {
         String result = String.valueOf(franchiseeApplicantSetBalancePerService.updateBalancePercentage(franchiseeApplicantIndex, franchiseeApplicantSetBalancePerRequest));
         return ResponseEntity.ok(result);
+    }
+
+    /**
+     * 어드민에서 지정증 및 은행 정보 기입
+     */
+    @PostMapping("/franchiseeUpload/{franchiseeIndex}")
+    public ResponseEntity<String> uploadImageAndBankInfo(
+            @PathVariable Long franchiseeIndex,
+            @RequestParam String imageCategory,
+            @RequestParam("franchiseeBankInfo") String franchiseeBankInfoString,
+            @RequestParam(required = false) MultipartFile uploadImage) {
+        String s3Path = franchiseeUploadService.uploadImageAndBankInfo(franchiseeIndex, franchiseeBankInfoString, imageCategory, uploadImage);
+        return ResponseEntity.ok(s3Path);
     }
 }

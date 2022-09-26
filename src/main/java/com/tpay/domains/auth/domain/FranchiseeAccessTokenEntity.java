@@ -5,6 +5,7 @@ import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.JwtRuntimeException;
 import com.tpay.domains.BaseTimeEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
+import com.tpay.domains.refund.application.dto.Device;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,15 +27,28 @@ public class FranchiseeAccessTokenEntity extends BaseTimeEntity {
     private FranchiseeEntity franchiseeEntity;
 
     private String accessToken;
+    private String name;
+    private String os;
+    private String appVersion;
 
     @Builder
-    public FranchiseeAccessTokenEntity(FranchiseeEntity franchiseeEntity, String accessToken) {
+    public FranchiseeAccessTokenEntity(FranchiseeEntity franchiseeEntity, String accessToken, Device device) {
         this.franchiseeEntity = franchiseeEntity;
         this.accessToken = accessToken;
+        this.name = device.getName();
+        this.os = device.getOs();
+        this.appVersion = device.getAppVersion();
     }
 
     public FranchiseeAccessTokenEntity accessToken(String accessToken){
         this.accessToken = accessToken;
+        return this;
+    }
+
+    public FranchiseeAccessTokenEntity updateDeviceInfo(String name, String os, String appVersion){
+        this.name = name;
+        this.os = os;
+        this.appVersion = appVersion;
         return this;
     }
 

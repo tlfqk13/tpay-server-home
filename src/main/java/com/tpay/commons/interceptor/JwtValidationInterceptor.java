@@ -24,9 +24,6 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
 
 import static com.tpay.commons.util.UserSelector.EMPLOYEE;
 import static com.tpay.commons.util.UserSelector.FRANCHISEE;
@@ -64,13 +61,13 @@ public class JwtValidationInterceptor implements HandlerInterceptor {
         return validationCheck(request);
     }
 
-    @Override
+/*    @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         log.trace("JwtValidationInterceptor afterCompletion");
         if(ex != null) {
             log.error("ex = {} ", ex.toString());
         }
-    }
+    }*/
 
     // 벨리데이션 체크는 헤더의 Authorization 의 jwt AT로 나온 index와 URI의 index를 비교하는 책임
     private boolean validationCheck(HttpServletRequest request) {

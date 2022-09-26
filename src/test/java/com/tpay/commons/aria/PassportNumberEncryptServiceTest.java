@@ -21,7 +21,7 @@ class PassportNumberEncryptServiceTest {
 
     @Test
     void passportDecryptionTest() {
-        String encryptPassportNumber = "4A9A739C81906A536C4ABEC2A1C8EE64";
+        String encryptPassportNumber = "B7242243FEF3C4744B9A828CFBEB85A7";
         String decryptPassportNumber = decryptService.decrypt(encryptPassportNumber);
         System.out.println("decryptPassportNumber = " + decryptPassportNumber);
     }

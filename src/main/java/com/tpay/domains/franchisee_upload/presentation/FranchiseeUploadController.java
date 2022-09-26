@@ -3,6 +3,7 @@ package com.tpay.domains.franchisee_upload.presentation;
 
 import com.tpay.domains.franchisee_upload.application.FranchiseeUploadService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/franchiseeUpload")
 @RequiredArgsConstructor
+@Slf4j
 public class FranchiseeUploadController {
 
     private final FranchiseeUploadService franchiseeUploadService;
@@ -26,7 +28,7 @@ public class FranchiseeUploadController {
         @RequestParam String imageCategory,
         @RequestParam("franchiseeBankInfo") String franchiseeBankInfoString,
         @RequestParam MultipartFile uploadImage) {
-
+        log.trace("franchiseeBankInfoString = {}", franchiseeBankInfoString);
         String s3Path = franchiseeUploadService.uploadImageAndBankInfo(franchiseeIndex, franchiseeBankInfoString, imageCategory, uploadImage);
         return ResponseEntity.ok(s3Path);
     }
