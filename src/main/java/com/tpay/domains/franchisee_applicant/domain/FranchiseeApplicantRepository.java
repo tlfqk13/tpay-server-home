@@ -22,7 +22,6 @@ public interface FranchiseeApplicantRepository
 
     @EntityGraph(attributePaths = {"franchiseeEntity"})
     List<FranchiseeApplicantEntity> findAllByOrderByIdDesc();
-
     @EntityGraph(attributePaths = {"franchiseeEntity"})
     Page<FranchiseeApplicantEntity> findAllByOrderByIdDesc(Pageable pageable);
     @EntityGraph(attributePaths = {"franchiseeEntity"})

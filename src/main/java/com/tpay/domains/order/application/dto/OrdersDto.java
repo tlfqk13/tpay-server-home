@@ -8,7 +8,7 @@ public class OrdersDto {
     @Getter
     @Builder
     public static class Response{
-        List<List<String>> ordersDtoList;
+        List<OrderDtoInfo> ordersDtoList;
     }
 
     @Getter
