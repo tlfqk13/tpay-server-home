@@ -97,7 +97,7 @@ public class RefundApproveService {
 
         franchiseeTokenEntity.orElseThrow(NullPointerException::new);
         if (request.getDevice() == null) {
-            log.trace("Employee Device info no save Device is Null");
+            log.trace("Franchisee Device info no save Device is Null");
         }else {
             franchiseeTokenEntity.get().updateDeviceInfo(
                     request.getDevice().getName(),

@@ -83,7 +83,7 @@ public class RefundCoreController {
     }
 
     // TODO: 2022/09/15 tourCash_Admin 전용 RefundApprove
-    @PostMapping("/approval/tour-cash/{userSelector}/{index}")
+    @PostMapping("/approval/tourcash/{userSelector}/{index}")
     public ResponseEntity<RefundResponse> tourCashRefundApproval(
             @RequestBody RefundSaveRequest request,
             @PathVariable UserSelector userSelector,

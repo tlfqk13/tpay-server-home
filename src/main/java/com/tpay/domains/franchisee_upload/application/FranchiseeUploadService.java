@@ -115,7 +115,6 @@ public class FranchiseeUploadService {
                 message = "Bank Info Updated Only";
             } else {
                 String delete = s3FileUploader.deleteJpg(franchiseeIndex, imageCategory);
-                System.out.println(delete);
                 message = s3FileUploader.uploadJpg(franchiseeIndex, imageCategory, uploadImage);
             }
         } catch (Exception e) {

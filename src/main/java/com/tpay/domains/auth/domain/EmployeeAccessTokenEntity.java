@@ -3,6 +3,7 @@ package com.tpay.domains.auth.domain;
 
 import com.tpay.domains.BaseTimeEntity;
 import com.tpay.domains.employee.domain.EmployeeEntity;
+import com.tpay.domains.refund.application.dto.Device;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,12 +31,12 @@ public class EmployeeAccessTokenEntity extends BaseTimeEntity {
     private String appVersion;
 
     @Builder
-    public EmployeeAccessTokenEntity(EmployeeEntity employeeEntity, String accessToken, String name, String os, String appVersion) {
+    public EmployeeAccessTokenEntity(EmployeeEntity employeeEntity, String accessToken, Device device) {
         this.employeeEntity = employeeEntity;
         this.accessToken = accessToken;
-        this.name = name;
-        this.os = os;
-        this.appVersion = appVersion;
+        this.name = device.getName();
+        this.os = device.getOs();
+        this.appVersion = device.getAppVersion();
     }
 
     public void updateDeviceInfo(String name, String os, String appVersion){
