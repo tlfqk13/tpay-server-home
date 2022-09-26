@@ -2,6 +2,7 @@ package com.tpay.domains.order.application;
 
 import com.tpay.commons.aria.PassportNumberEncryptService;
 import com.tpay.commons.util.converter.NumberFormatConverter;
+import com.tpay.domains.order.application.dto.OrderDtoInfo;
 import com.tpay.domains.order.application.dto.OrdersDto;
 import com.tpay.domains.order.application.dto.OrdersDtoInterface;
 import com.tpay.domains.order.domain.OrderRepository;
@@ -152,26 +153,25 @@ public class OrderService {
 
     public OrdersDto.Response ordersDetail(String passportNumber) {
         String encryptedPassportNumber = passportNumberEncryptService.encrypt(passportNumber);
-        List<OrdersDtoInterface> OrdersDtoInterfaceList =  orderRepository.findOrdersDetail(encryptedPassportNumber);
+        List<OrdersDtoInterface> ordersDtoInterfaceList =  orderRepository.findOrdersDetail(encryptedPassportNumber);
 
-        List<List<String>> response = new ArrayList<>();
-        for (OrdersDtoInterface OrdersDtoInterface : OrdersDtoInterfaceList) {
-            List<String> baseList = new ArrayList<>();
-            baseList.add(OrdersDtoInterface.getDocId());
-            baseList.add(OrdersDtoInterface.getShopNm());
-            //baseList.add(OrdersDtoInterface.getShopTypeCcd());
-            baseList.add("1");
-            baseList.add(OrdersDtoInterface.getPurchsDate());
-            baseList.add(OrdersDtoInterface.getTotPurchsAmt());
-            baseList.add(OrdersDtoInterface.getVat());
-            //baseList.add(OrdersDtoInterface.getRfndAvailableYn());
-            baseList.add("Y");
-            //baseList.add(OrdersDtoInterface.getEarlyRfndYn());
-            baseList.add("N");
-            //baseList.add(OrdersDtoInterface.getCustomsCleanceYn());
-            baseList.add("N");
-            response.add(baseList);
+        List<OrderDtoInfo> baseList = new ArrayList<>();
+        for (OrdersDtoInterface OrdersDtoInterface : ordersDtoInterfaceList) {
+            baseList.add(OrderDtoInfo.builder()
+                            .docId(OrdersDtoInterface.getDocId())
+                            .shopNm(OrdersDtoInterface.getShopNm())
+                            .shopTypeCcd(OrdersDtoInterface.getShopTypeCcd())
+                            .purchsDate(OrdersDtoInterface.getPurchsDate())
+                            .totPurchsAmt(OrdersDtoInterface.getTotPurchsAmt())
+                            .vat(OrdersDtoInterface.getVat())
+                            //.rfndAvailableYn(OrdersDtoInterface.getRfndAvailableYn())
+                            .rfndAvailableYn("Y")
+                            //.earlyRfndYn(OrdersDtoInterface.getEarlyRfndYn())
+                            .earlyRfndYn("N")
+                            //.customsCleanceYn(OrdersDtoInterface.getCustomsCleanceYn())
+                            .customsCleanceYn("N")
+                    .build());
         }
-        return OrdersDto.Response.builder().ordersDtoList(response).build();
+        return OrdersDto.Response.builder().ordersDtoList(baseList).build();
     }
 }
