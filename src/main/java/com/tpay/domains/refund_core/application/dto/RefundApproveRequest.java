@@ -4,10 +4,13 @@ import com.tpay.commons.custom.CustomValue;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.order.domain.OrderEntity;
+import com.tpay.domains.refund.domain.RefundAfterMethod;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.util.List;
+
+import static com.tpay.domains.refund.domain.RefundAfterMethod.*;
 
 @Getter
 @Builder
@@ -50,7 +53,7 @@ public class RefundApproveRequest {
     private boolean cityYn;
     private boolean kioskYn;
 
-    public static RefundApproveRequest of(OrderEntity orderEntity, boolean isAfterRefund) {
+    public static RefundApproveRequest of(OrderEntity orderEntity, RefundAfterDto.Request refundAfterDto) {
         List<RefundProductInfo> refundProductInfo = orderEntity.getRefundProductInfoList();
         CustomerEntity customerEntity = orderEntity.getCustomerEntity();
         FranchiseeEntity franchiseeEntity = orderEntity.getFranchiseeEntity();
@@ -79,22 +82,22 @@ public class RefundApproveRequest {
                 .totalStr("0")
                 .totalVat(orderEntity.getTotalVat());
 
-        if(isAfterRefund) {
+        if(null != refundAfterDto) {
             refundApproveRequestBuilder
-                    .cusCode("")
-                    .purchaseSerialNumber("")
-                    .locaCode("")
-                    .kioskBsnmCode("")
-                    .kioskCode("")
-                    .cityRefundCenterCode("")
-                    .manualYn(false)
-                    .cityYn(false)
-                    .kioskYn(false);
+                    .cusCode(refundAfterDto.getRefundAfterInfo().getCusCode())
+                    .locaCode(refundAfterDto.getRefundAfterInfo().getLocaCode())
+                    .purchaseSerialNumber(refundAfterDto.getRefundItem().getDocId())
+                    .kioskBsnmCode(refundAfterDto.getRefundAfterInfo().getKioskBsnmCode())
+                    .kioskCode(refundAfterDto.getRefundAfterInfo().getKioskCode())
+                    .cityRefundCenterCode(refundAfterDto.getRefundAfterInfo().getCounterTypeCode())
+                    .manualYn(MANUAL == refundAfterDto.getRefundAfterInfo().getRefundAfterMethod())
+                    .cityYn(CITY == refundAfterDto.getRefundAfterInfo().getRefundAfterMethod())
+                    .kioskYn(KIOSK == refundAfterDto.getRefundAfterInfo().getRefundAfterMethod());
         }
 
         return refundApproveRequestBuilder.build();
     }
     public static RefundApproveRequest of(OrderEntity orderEntity) {
-        return of(orderEntity, false);
+        return of(orderEntity, null);
     }
 }

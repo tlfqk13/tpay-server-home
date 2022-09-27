@@ -1,5 +1,6 @@
 package com.tpay.domains.refund.domain;
 
+import com.tpay.domains.van.domain.PaymentEntity;
 import lombok.*;
 
 import javax.persistence.*;
@@ -16,6 +17,7 @@ public class RefundAfterEntity {
     @Column(name = "refund_after_id")
     private Long id;
 
+    private String cusCode;
     private String localCode;
     private String kioskBsnmCode;
     private String kioskCode;
@@ -23,4 +25,12 @@ public class RefundAfterEntity {
 
     @Enumerated(EnumType.STRING)
     private RefundAfterMethod refundAfterMethod;
+
+    @OneToOne
+    @JoinColumn(name = "payment_id")
+    private PaymentEntity payment;
+
+    public void addPayment(PaymentEntity payment) {
+        this.payment = payment;
+    }
 }

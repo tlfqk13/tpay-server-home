@@ -30,7 +30,7 @@ public class RefundEntity extends BaseTimeEntity {
     @JoinColumn(name = "order_id")
     private OrderEntity orderEntity;
 
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+    @OneToOne
     @JoinColumn(name = "refund_after_id")
     private RefundAfterEntity refundAfterEntity;
 
@@ -42,6 +42,16 @@ public class RefundEntity extends BaseTimeEntity {
         this.takeOutNumber = takeOutNumber;
 
         orderEntity.setOrderNumber(orderNumber);
+        orderEntity.setRefundEntity(this);
+    }
+
+    @Builder
+    public RefundEntity(String responseCode, String takeOutNumber, OrderEntity orderEntity) {
+        this.orderEntity = orderEntity;
+        this.totalRefund = orderEntity.getTotalRefund();
+        this.refundStatus = responseCode.equals("0000") ? RefundStatus.APPROVAL : RefundStatus.REJECT;
+        this.takeOutNumber = takeOutNumber;
+
         orderEntity.setRefundEntity(this);
     }
 

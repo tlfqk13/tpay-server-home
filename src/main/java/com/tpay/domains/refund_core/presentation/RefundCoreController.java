@@ -7,6 +7,7 @@ import com.tpay.domains.refund.application.dto.RefundSaveRequest;
 import com.tpay.domains.refund_core.application.LimitFindService;
 import com.tpay.domains.refund_core.application.RefundApproveService;
 import com.tpay.domains.refund_core.application.RefundCancelService;
+import com.tpay.domains.refund_core.application.dto.RefundAfterDto;
 import com.tpay.domains.refund_core.application.dto.RefundLimitRequest;
 import com.tpay.domains.refund_core.application.dto.RefundResponse;
 import lombok.RequiredArgsConstructor;
@@ -97,5 +98,12 @@ public class RefundCoreController {
         RefundResponse response = refundApproveService.approve(request);
         log.trace("Refund Approval Finish = {}", response);
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/approval/after")
+    public ResponseEntity<RefundResponse> refundAfterApproval(
+            @RequestBody RefundAfterDto.Request request
+            ) {
+        return ResponseEntity.ok(refundApproveService.approveAfter(request));
     }
 }

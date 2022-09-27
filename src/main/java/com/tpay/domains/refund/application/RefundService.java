@@ -15,14 +15,26 @@ public class RefundService {
     private final RefundRepository refundRepository;
 
     @Transactional
-    public RefundEntity save(String responseCode, String orderNumber, String takeOutNumber, OrderEntity orderEntity) {
+    public RefundEntity save(String responseCode, String purchaseSn, String takeOutNumber, OrderEntity orderEntity) {
         RefundEntity refundEntity =
             RefundEntity.builder()
                 .responseCode(responseCode)
-                .orderNumber(orderNumber)
+                .orderNumber(purchaseSn)
                 .takeOutNumber(takeOutNumber)
                 .orderEntity(orderEntity)
                 .build();
+
+        return refundRepository.save(refundEntity);
+    }
+
+    @Transactional
+    public RefundEntity save(String responseCode, String takeOutNumber, OrderEntity orderEntity) {
+        RefundEntity refundEntity =
+                RefundEntity.builder()
+                        .orderEntity(orderEntity)
+                        .takeOutNumber(takeOutNumber)
+                        .responseCode(responseCode)
+                        .build();
 
         return refundRepository.save(refundEntity);
     }

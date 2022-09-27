@@ -3,6 +3,7 @@ package com.tpay.domains.order.application;
 import com.tpay.commons.aria.PassportNumberEncryptService;
 import com.tpay.commons.util.converter.NumberFormatConverter;
 import com.tpay.domains.order.application.dto.OrderDto;
+import com.tpay.domains.order.domain.OrderEntity;
 import com.tpay.domains.order.domain.OrderRepository;
 import com.tpay.domains.vat.application.dto.VatDetailResponseInterface;
 import com.tpay.domains.vat.application.dto.VatReportResponseInterface;
@@ -148,5 +149,10 @@ public class OrderService {
 
     public VatTotalResponseInterface findTotalBetweenDates(Long franchiseeIndex, LocalDate startDate, LocalDate endDate) {
         return orderRepository.findQuarterlyTotal(franchiseeIndex, startDate, endDate);
+    }
+
+    public OrderEntity findOrderByPurchaseSn(String purchaseSn) {
+        return orderRepository.findByOrderNumber(purchaseSn)
+                .orElseThrow(NullPointerException::new);
     }
 }

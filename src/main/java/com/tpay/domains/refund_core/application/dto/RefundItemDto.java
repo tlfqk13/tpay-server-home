@@ -1,9 +1,8 @@
 package com.tpay.domains.refund_core.application.dto;
 
-import lombok.Getter;
 import lombok.Value;
 
-public class VanDocumentDto {
+public class RefundItemDto {
 
     @Value
     public static class Request {
