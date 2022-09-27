@@ -10,6 +10,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Builder
 @Getter
+@Table(name = "refundafter")
 public class RefundAfterEntity {
 
     @Id
@@ -26,7 +27,7 @@ public class RefundAfterEntity {
     @Enumerated(EnumType.STRING)
     private RefundAfterMethod refundAfterMethod;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "payment_id")
     private PaymentEntity payment;
 

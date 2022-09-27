@@ -1,14 +1,15 @@
-package com.tpay.domains.order.application.dto;
+package com.tpay.domains.van.domain.dto;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
 
 import java.util.List;
 
-public class OrdersDto {
+public class VanOrdersDto {
     @Getter
     @Builder
     public static class Response{
-        List<OrderDtoInfo> ordersDtoList;
+        List<VanOrderDetail> vanOrderDetails;
     }
 
     @Getter

@@ -5,6 +5,7 @@ import com.tpay.domains.order.domain.OrderEntity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -30,7 +31,7 @@ public class RefundEntity extends BaseTimeEntity {
     @JoinColumn(name = "order_id")
     private OrderEntity orderEntity;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "refund_after_id")
     private RefundAfterEntity refundAfterEntity;
 
@@ -45,12 +46,15 @@ public class RefundEntity extends BaseTimeEntity {
         orderEntity.setRefundEntity(this);
     }
 
+    /**
+     * 사후 환급 시, 사용되는 RefundEntity
+     */
     @Builder
     public RefundEntity(String responseCode, String takeOutNumber, OrderEntity orderEntity) {
         this.orderEntity = orderEntity;
         this.totalRefund = orderEntity.getTotalRefund();
-        this.refundStatus = responseCode.equals("0000") ? RefundStatus.APPROVAL : RefundStatus.REJECT;
         this.takeOutNumber = takeOutNumber;
+        this.refundStatus = getResponseCode(responseCode, takeOutNumber);
 
         orderEntity.setRefundEntity(this);
     }
@@ -63,5 +67,23 @@ public class RefundEntity extends BaseTimeEntity {
 
     public void addRefundAfterEntity(RefundAfterEntity refundAfterEntity) {
         this.refundAfterEntity = refundAfterEntity;
+    }
+
+    private RefundStatus getResponseCode(String responseCode, String takeOutNumber) {
+        List<String> preApprovalList = List.of("1005", "1010");
+        if (takeOutNumber.contains("acpt") || preApprovalList.contains(responseCode)) {
+            return RefundStatus.PRE_APPROVAL;
+        }
+
+        if (responseCode.equals("0000")) {
+            return RefundStatus.APPROVAL;
+        }
+
+        return RefundStatus.REJECT;
+    }
+
+    public void updateTakeOutInfo(String takeOutNumber) {
+        this.takeOutNumber = takeOutNumber;
+        this.refundStatus = RefundStatus.APPROVAL;
     }
 }

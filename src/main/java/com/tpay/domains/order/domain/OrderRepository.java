@@ -163,8 +163,12 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
             " ,o.sale_datm as purchsDate\n" +
             " ,o.tot_amt as totPurchsAmt\n" +
             " ,o.tot_vat as vat\n" +
+            " ,rf.refundAfterMethod as earlyRfndYn" +
+            " ,r.refund_status as customsCleanceYn" +
             " from orders o inner join franchisee f on o.franchisee_id = f.id\n" +
             "               left join customer c on c.id = o.customer_id\n" +
+            "               left join refund r on o.id = r.order_id" +
+            "               left join refundafter rf on r.refund_after_id = rf.id\n" +
             " where c.cus_pass_no = :passportNumber" ,nativeQuery = true
     )
     List<OrdersDtoInterface> findOrdersDetail(String passportNumber);

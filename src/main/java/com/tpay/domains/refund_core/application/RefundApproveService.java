@@ -30,14 +30,13 @@ import com.tpay.domains.refund.domain.RefundAfterEntity;
 import com.tpay.domains.refund.domain.RefundEntity;
 import com.tpay.domains.refund_core.application.dto.RefundAfterDto;
 import com.tpay.domains.refund_core.application.dto.RefundApproveRequest;
-import com.tpay.domains.refund_core.application.dto.RefundItemDto;
 import com.tpay.domains.refund_core.application.dto.RefundResponse;
+import com.tpay.domains.van.domain.PaymentEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 import static com.tpay.commons.util.UserSelector.EMPLOYEE;
@@ -151,7 +150,7 @@ public class RefundApproveService {
     }
 
     @Transactional
-    public RefundResponse approveAfter(RefundAfterDto.Request refundAfterDto) {
+    public RefundResponse approveAfter(RefundAfterDto.Request refundAfterDto, PaymentEntity payment) {
         OrderEntity orderEntity = orderService.findOrderByPurchaseSn(refundAfterDto.getRefundItem().getDocId());
         RefundApproveRequest refundApproveRequest = RefundApproveRequest.of(orderEntity, refundAfterDto);
 
@@ -162,6 +161,13 @@ public class RefundApproveService {
         } catch (WebfluxGeneralException e) {
             log.debug("WEBFLUX_GENERAL_ERROR");
             throw new WebfluxGeneralException(ExceptionState.WEBFLUX_GENERAL, e.getMessage());
+        }
+
+        // 기존 PRE_APPROVAL 환급 상태에서 재전송을 통해 반출번호와 상태 변경
+        if (refundAfterDto.getRefundAfterInfo().isRetry()) {
+            RefundEntity existRefundEntity = orderEntity.getRefundEntity();
+            existRefundEntity.updateTakeOutInfo(refundResponse.getTakeoutNumber());
+            return refundResponse;
         }
 
         RefundEntity refundEntity =
@@ -179,7 +185,16 @@ public class RefundApproveService {
                 .refundAfterMethod(refundAfterDto.getRefundAfterInfo().getRefundAfterMethod())
                 .build();
 
+        if (null != payment) {
+            refundAfterEntity.addPayment(payment);
+        }
+
         refundEntity.addRefundAfterEntity(refundAfterEntity);
         return refundResponse;
+    }
+
+    @Transactional
+    public RefundResponse approveAfter(RefundAfterDto.Request refundAfterDto) {
+        return approveAfter(refundAfterDto, null);
     }
 }

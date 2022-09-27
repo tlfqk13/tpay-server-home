@@ -1,4 +1,4 @@
-package com.tpay.domains.order.application.dto;
+package com.tpay.domains.van.domain.dto;
 
 import lombok.*;
 
@@ -6,7 +6,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class OrderDtoInfo {
+public class VanOrderDetail {
 
     private String docId;
     private String shopNm;

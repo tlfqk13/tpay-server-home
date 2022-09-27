@@ -11,4 +11,5 @@ public class RefundAfterBaseDto {
     String kioskCode;
     String counterTypeCode;
     RefundAfterMethod refundAfterMethod;
+    boolean retry;
 }
