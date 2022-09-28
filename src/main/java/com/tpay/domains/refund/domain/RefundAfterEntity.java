@@ -10,7 +10,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Builder
 @Getter
-@Table(name = "refundafter")
+@Table(name = "refund_after")
 public class RefundAfterEntity {
 
     @Id
@@ -23,15 +23,20 @@ public class RefundAfterEntity {
     private String kioskBsnmCode;
     private String kioskCode;
     private String cityRefundCenterCode;
+    private String approvalFinishDate;
 
     @Enumerated(EnumType.STRING)
     private RefundAfterMethod refundAfterMethod;
 
-    @OneToOne(cascade = CascadeType.PERSIST)
+    @OneToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_id")
     private PaymentEntity payment;
 
     public void addPayment(PaymentEntity payment) {
         this.payment = payment;
+    }
+
+    public void updateApprovalFinishDate(String approvalFinishDate) {
+        this.approvalFinishDate = approvalFinishDate;
     }
 }

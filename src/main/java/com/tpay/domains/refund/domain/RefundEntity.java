@@ -5,6 +5,8 @@ import com.tpay.domains.order.domain.OrderEntity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Getter
@@ -31,7 +33,7 @@ public class RefundEntity extends BaseTimeEntity {
     @JoinColumn(name = "order_id")
     private OrderEntity orderEntity;
 
-    @OneToOne(cascade = CascadeType.PERSIST)
+    @OneToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinColumn(name = "refund_after_id")
     private RefundAfterEntity refundAfterEntity;
 
@@ -85,5 +87,7 @@ public class RefundEntity extends BaseTimeEntity {
     public void updateTakeOutInfo(String takeOutNumber) {
         this.takeOutNumber = takeOutNumber;
         this.refundStatus = RefundStatus.APPROVAL;
+        // VAN 에서 요청들어오면 그 시간으로 넣어줘야함
+        this.refundAfterEntity.updateApprovalFinishDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
     }
 }

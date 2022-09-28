@@ -14,6 +14,7 @@ public class VanOrderDetail {
     private String purchsDate;
     private String totPurchsAmt;
     private String vat;
+    private String totalRefund;
     private String rfndAvailableYn;
     private String earlyRfndYn;
     private String customsCleanceYn;

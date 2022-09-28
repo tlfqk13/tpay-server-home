@@ -19,7 +19,7 @@ public class VanOrderService {
     private final OrderRepository orderRepository;
 
     public VanOrdersDto.Response findVanOrder(String encryptedPassportNumber) {
-        List<OrdersDtoInterface> ordersDtoInterfaceList =  orderRepository.findOrdersDetail(encryptedPassportNumber);
+        List<OrdersDtoInterface> ordersDtoInterfaceList = orderRepository.findOrdersDetail(encryptedPassportNumber);
 
         List<VanOrderDetail> baseList = new ArrayList<>();
         for (OrdersDtoInterface orderDto : ordersDtoInterfaceList) {
@@ -30,10 +30,13 @@ public class VanOrderService {
                     .purchsDate(orderDto.getPurchsDate())
                     .totPurchsAmt(orderDto.getTotPurchsAmt())
                     .vat(orderDto.getVat())
+                    .totalRefund(orderDto.getTotalRefund())
                     //.rfndAvailableYn(orderDto.getRfndAvailableYn())
                     .rfndAvailableYn("Y")
-                    .earlyRfndYn(checkCityRefund(orderDto.getEarlyRfndYn()))
-                    .customsCleanceYn(checkRefundStatus(orderDto.getCustomsCleanceYn()))
+//                    .earlyRfndYn(checkCityRefund(orderDto.getEarlyRfndYn()))
+//                    .customsCleanceYn(checkRefundStatus(orderDto.getCustomsCleanceYn()))
+                    .earlyRfndYn("N")
+                    .customsCleanceYn("N")
                     .build());
         }
         return VanOrdersDto.Response.builder().vanOrderDetails(baseList).build();
@@ -45,17 +48,20 @@ public class VanOrderService {
     }
 
     private String checkCityRefund(String earlyRefundYn) {
-        if(earlyRefundYn.equals("CITY")) {
+        if (earlyRefundYn.equals("CITY")) {
             return "Y";
         }
         return "N";
     }
 
     private String checkRefundStatus(String customCleanceYn) {
-        if(customCleanceYn.equals("0")) {  // APPROVAL
-            return "Y";
-        } else if (customCleanceYn.equals("1")) { // REJECT
-            return "C";
+        switch (customCleanceYn) {
+            case "0":   // APPROVAL
+                return "Y";
+            case "1":  // REJECT
+                return "C";
+            case "4":  // PRE_APPROVAL
+                return "N";
         }
         return "N";
     }
