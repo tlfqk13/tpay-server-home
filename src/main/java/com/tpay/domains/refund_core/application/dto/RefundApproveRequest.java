@@ -4,10 +4,13 @@ import com.tpay.commons.custom.CustomValue;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.order.domain.OrderEntity;
+import com.tpay.domains.refund.domain.RefundAfterMethod;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.util.List;
+
+import static com.tpay.domains.refund.domain.RefundAfterMethod.*;
 
 @Getter
 @Builder
@@ -38,34 +41,63 @@ public class RefundApproveRequest {
     private String indListNow;
     List<RefundProductInfo> productInfoList;
 
-    public static RefundApproveRequest of(OrderEntity orderEntity) {
+    //After Refund Info
+
+    private String cusCode;
+    private String purchaseSerialNumber;
+    private String locaCode;
+    private String kioskBsnmCode;
+    private String kioskCode;
+    private String cityRefundCenterCode;
+    private boolean manualYn;
+    private boolean cityYn;
+    private boolean kioskYn;
+
+    public static RefundApproveRequest of(OrderEntity orderEntity, RefundAfterDto.Request refundAfterDto) {
         List<RefundProductInfo> refundProductInfo = orderEntity.getRefundProductInfoList();
         CustomerEntity customerEntity = orderEntity.getCustomerEntity();
         FranchiseeEntity franchiseeEntity = orderEntity.getFranchiseeEntity();
 
-        return RefundApproveRequest.builder()
-            .serviceName(CustomValue.APPLICATION_CODE)
-            .nationality(customerEntity.getNation())
-            .totalAmount(orderEntity.getTotalAmount())
-            .businessNumber(franchiseeEntity.getBusinessNumber())
-            .franchiseeName(franchiseeEntity.getStoreName())
-            .franchiseeNumber(franchiseeEntity.getMemberNumber())
-            .name(customerEntity.getCustomerName())
-            .passportNumber(customerEntity.getPassportNumber())
-            .indList("1")
-            .indListNow("1")
-            .productInfoList(refundProductInfo)
-            .sellerName(franchiseeEntity.getSellerName())
-            .storeAddress(franchiseeEntity.getStoreAddressBasic() + " " + franchiseeEntity.getStoreAddressDetail())
-            .storeName(franchiseeEntity.getStoreName())
-            .storeTel(franchiseeEntity.getStoreTel())
-            .totalEdut("0")
-            .totalIct("0")
-            .totalQuantity(orderEntity.getTotalQuantity())
-            .saleDate(orderEntity.getSaleDate())
-            .totalRefund(orderEntity.getTotalRefund())
-            .totalStr("0")
-            .totalVat(orderEntity.getTotalVat())
-            .build();
+        RefundApproveRequestBuilder refundApproveRequestBuilder = RefundApproveRequest.builder()
+                .serviceName(CustomValue.APPLICATION_CODE)
+                .nationality(customerEntity.getNation())
+                .totalAmount(orderEntity.getTotalAmount())
+                .businessNumber(franchiseeEntity.getBusinessNumber())
+                .franchiseeName(franchiseeEntity.getStoreName())
+                .franchiseeNumber(franchiseeEntity.getMemberNumber())
+                .name(customerEntity.getCustomerName())
+                .passportNumber(customerEntity.getPassportNumber())
+                .indList("1")
+                .indListNow("1")
+                .productInfoList(refundProductInfo)
+                .sellerName(franchiseeEntity.getSellerName())
+                .storeAddress(franchiseeEntity.getStoreAddressBasic() + " " + franchiseeEntity.getStoreAddressDetail())
+                .storeName(franchiseeEntity.getStoreName())
+                .storeTel(franchiseeEntity.getStoreTel())
+                .totalEdut("0")
+                .totalIct("0")
+                .totalQuantity(orderEntity.getTotalQuantity())
+                .saleDate(orderEntity.getSaleDate())
+                .totalRefund(orderEntity.getTotalRefund())
+                .totalStr("0")
+                .totalVat(orderEntity.getTotalVat());
+
+        if(null != refundAfterDto) {
+            refundApproveRequestBuilder
+                    .cusCode(refundAfterDto.getRefundAfterInfo().getCusCode())
+                    .locaCode(refundAfterDto.getRefundAfterInfo().getLocaCode())
+                    .purchaseSerialNumber(refundAfterDto.getRefundItem().getDocId())
+                    .kioskBsnmCode(refundAfterDto.getRefundAfterInfo().getKioskBsnmCode())
+                    .kioskCode(refundAfterDto.getRefundAfterInfo().getKioskCode())
+                    .cityRefundCenterCode(refundAfterDto.getRefundAfterInfo().getCounterTypeCode())
+                    .manualYn(MANUAL == refundAfterDto.getRefundAfterInfo().getRefundAfterMethod())
+                    .cityYn(CITY == refundAfterDto.getRefundAfterInfo().getRefundAfterMethod())
+                    .kioskYn(KIOSK == refundAfterDto.getRefundAfterInfo().getRefundAfterMethod());
+        }
+
+        return refundApproveRequestBuilder.build();
+    }
+    public static RefundApproveRequest of(OrderEntity orderEntity) {
+        return of(orderEntity, null);
     }
 }

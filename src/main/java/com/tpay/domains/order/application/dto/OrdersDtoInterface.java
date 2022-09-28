@@ -8,6 +8,7 @@ public interface OrdersDtoInterface {
     String getPurchsDate();
     String getTotPurchsAmt();
     String getVat();
+    String getTotalRefund();
     String getRfndAvailableYn();
     String getEarlyRfndYn();
     String getCustomsCleanceYn();
