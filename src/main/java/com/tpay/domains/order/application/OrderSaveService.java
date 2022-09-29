@@ -19,6 +19,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import static com.tpay.commons.util.UserSelector.EMPLOYEE;
 
 @Service
@@ -43,7 +46,7 @@ public class OrderSaveService {
             productFindService.findOrElseSave(
                 franchiseeEntity.getProductCategory(), request.getPrice());
 
-        return this.save(franchiseeEntity, customerEntity, productEntity);
+        return this.save(franchiseeEntity, customerEntity, productEntity, null);
     }
 
     @Transactional
@@ -51,7 +54,7 @@ public class OrderSaveService {
         FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(externalRefundEntity.getFranchiseeIndex());
         CustomerEntity customerEntity = customerUpdateService.findByIndex(externalRefundEntity.getCustomerIndex());
         ProductEntity productEntity = productFindService.findOrElseSave(franchiseeEntity.getProductCategory(), amount);
-        return this.save(franchiseeEntity, customerEntity, productEntity);
+        return this.save(franchiseeEntity, customerEntity, productEntity, null);
 
     }
 
@@ -59,13 +62,15 @@ public class OrderSaveService {
     public OrderEntity save(
         FranchiseeEntity franchiseeEntity,
         CustomerEntity customerEntity,
-        ProductEntity productEntity
+        ProductEntity productEntity,
+        String purchaseSn
     ) {
 
         OrderEntity orderEntity =
             OrderEntity.builder()
                 .franchiseeEntity(franchiseeEntity)
                 .customerEntity(customerEntity)
+                    .purchaseSn(purchaseSn)
                 .build();
 
         orderRepository.save(orderEntity);
@@ -92,8 +97,12 @@ public class OrderSaveService {
                 productFindService.findOrElseSave(
                         franchisee.getProductCategory(), orderDto.getPrice());
 
-        OrderEntity savedOrder = save(franchisee, customer, productEntity);
+        OrderEntity savedOrder = save(franchisee, customer, productEntity, createPurchaseSn());
 
         return new OrderDto.Response(savedOrder.getOrderNumber());
+    }
+
+    private String createPurchaseSn() {
+        return "990" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS"));
     }
 }

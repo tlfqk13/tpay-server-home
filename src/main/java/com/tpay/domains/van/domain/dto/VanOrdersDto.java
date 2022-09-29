@@ -14,6 +14,7 @@ public class VanOrdersDto {
 
     @Getter
     public static class Request{
+        VanRefundAfterBaseDto refundAfterBaseDto;
         String encryptPassportNumber;
     }
 }

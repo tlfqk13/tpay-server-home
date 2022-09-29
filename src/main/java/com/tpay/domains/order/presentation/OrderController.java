@@ -1,6 +1,5 @@
 package com.tpay.domains.order.presentation;
 
-import com.tpay.commons.interceptor.JwtValidationInterceptor;
 import com.tpay.commons.jwt.AuthToken;
 import com.tpay.commons.jwt.JwtUtils;
 import com.tpay.commons.util.IndexInfo;
@@ -36,7 +35,8 @@ public class OrderController {
      */
     @PostMapping
     public ResponseEntity<OrderDto.Response> order(HttpServletRequest request, @RequestBody OrderDto.Request orderDto) {
-        AuthToken authToken = jwtUtils.convertAuthToken(request.getHeader(HttpHeaders.AUTHORIZATION));
+        String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);
+        AuthToken authToken = jwtUtils.convertAuthToken(bearerToken.substring(7));
         IndexInfo indexInfo = getIndexFromClaims(authToken.getData());
 
         return ResponseEntity.ok(orderService.createOrder(orderDto, indexInfo));

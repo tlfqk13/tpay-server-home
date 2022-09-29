@@ -19,7 +19,7 @@ public class RefundAfterEntity {
     private Long id;
 
     private String cusCode;
-    private String localCode;
+    private String locaCode;
     private String kioskBsnmCode;
     private String kioskCode;
     private String cityRefundCenterCode;

@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 @Table(name = "orders")
 @Entity
 @AllArgsConstructor
-@Builder
 public class OrderEntity extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,11 +40,11 @@ public class OrderEntity extends BaseTimeEntity {
     @Column(name = "purchsSn", length = 20)
     private String orderNumber;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false)
     private CustomerEntity customerEntity;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "franchisee_id", nullable = false)
     private FranchiseeEntity franchiseeEntity;
 
@@ -60,10 +59,11 @@ public class OrderEntity extends BaseTimeEntity {
     private EmployeeEntity employeeEntity;
 
     @Builder
-    public OrderEntity(CustomerEntity customerEntity, FranchiseeEntity franchiseeEntity) {
+    public OrderEntity(CustomerEntity customerEntity, FranchiseeEntity franchiseeEntity, String purchaseSn) {
         this.customerEntity = customerEntity;
         this.franchiseeEntity = franchiseeEntity;
         this.orderLineEntityList = new LinkedList<>();
+        this.orderNumber = purchaseSn;
         this.initialize();
     }
 

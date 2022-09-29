@@ -177,4 +177,8 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
 
     @EntityGraph(attributePaths = {"refundEntity", "refundAfterEntity"})
     Optional<OrderEntity> findByOrderNumber(String docId);
+
+    @Query(value = "select o from OrderEntity o  join fetch o.customerEntity " +
+            "where o.customerEntity.id = :customerId and o.orderNumber is not null")
+    List<OrderEntity> findOrders(@Param("customerId")Long customerId);
 }

@@ -6,8 +6,8 @@ import com.tpay.domains.refund.domain.RefundRepository;
 import com.tpay.domains.refund_core.application.dto.RefundResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +33,7 @@ public class RefundService {
         RefundEntity refundEntity =
                 RefundEntity.builder()
                         .orderEntity(orderEntity)
+                        .orderNumber(orderEntity.getOrderNumber())
                         .takeOutNumber(takeOutNumber)
                         .responseCode(responseCode)
                         .build();
