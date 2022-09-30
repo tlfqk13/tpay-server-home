@@ -84,10 +84,14 @@ public class RefundEntity extends BaseTimeEntity {
         return RefundStatus.REJECT;
     }
 
-    public void updateTakeOutInfo(String takeOutNumber) {
+    public void updateTakeOutInfo(String takeOutNumber, String approvalFinishDate) {
         this.takeOutNumber = takeOutNumber;
         this.refundStatus = RefundStatus.APPROVAL;
         // VAN 에서 요청들어오면 그 시간으로 넣어줘야함
-        this.refundAfterEntity.updateApprovalFinishDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
+        this.refundAfterEntity.updateApprovalFinishDate(approvalFinishDate);
+    }
+
+    public void updateTakeOutInfo(String takeOutNumber) {
+        updateTakeOutInfo(takeOutNumber, LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
     }
 }
