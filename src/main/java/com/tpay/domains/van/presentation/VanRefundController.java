@@ -1,10 +1,13 @@
 package com.tpay.domains.van.presentation;
 
+import com.tpay.commons.exception.detail.WebfluxGeneralException;
 import com.tpay.domains.refund_core.application.RefundApproveService;
 import com.tpay.domains.refund_core.application.dto.RefundAfterDto;
 import com.tpay.domains.refund_core.application.dto.RefundItemDto;
+import com.tpay.domains.refund_core.application.dto.RefundResponse;
 import com.tpay.domains.van.domain.PaymentEntity;
-import com.tpay.domains.van.domain.dto.VanRefundDto;
+import com.tpay.domains.van.domain.dto.VanRefundAfterDto;
+import com.tpay.domains.van.domain.dto.VanRefundFinalDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +27,8 @@ public class VanRefundController {
     private final RefundApproveService refundService;
 
     @PostMapping("/approval")
-    public ResponseEntity<String> vanRefundAfter(@RequestBody VanRefundDto.Request vanRefundDto) {
-
+    public ResponseEntity<String> vanRefundAfter(@RequestBody VanRefundAfterDto vanRefundDto) {
+        log.debug("vanRefundDto = {}", vanRefundDto);
         PaymentEntity payment = PaymentEntity.builder()
                 .paymentMethod(vanRefundDto.getPaymentMethod())
                 .paymentBrand(vanRefundDto.getPaymentBrand())
@@ -34,11 +37,35 @@ public class VanRefundController {
 
         // 전표일련번호로 구매내역 확인
         List<RefundItemDto.Request> refundItems = vanRefundDto.getRefundItems();
+        String responseCode = "0000";
         for (RefundItemDto.Request refundItem : refundItems) {
-            RefundAfterDto.Request refundAfterDto = new RefundAfterDto.Request(vanRefundDto.getRefundAfterBaseInfo(), refundItem);
+            RefundAfterDto.Request refundAfterDto = RefundAfterDto.Request.of(vanRefundDto.getRefundAfterBaseInfo(), refundItem);
 
             // payment info refund after 와 엮음
-            refundService.approveAfter(refundAfterDto, payment);
+            try {
+                RefundResponse refundResponse = refundService.approveAfter(refundAfterDto, payment);
+                responseCode = refundResponse.getResponseCode();
+            } catch (WebfluxGeneralException e) {
+                // VAN 의 예외처리는 throw 가 아닌 에러코드와 함께 결과를 반환시킴
+                String message = e.getMessage();
+                String[] split = message.split(":");
+                log.debug("split[0] = {}", split[0]);
+                responseCode = split[0];
+            }
+        }
+
+        return ResponseEntity.ok(responseCode);
+    }
+
+    @PostMapping("/approval/final")
+    public ResponseEntity<String> vanRefundFinal(@RequestBody VanRefundFinalDto.Request vanFinalDto) {
+
+        // 전표일련번호로 구매내역 확인
+        List<RefundItemDto.Request> refundItems = vanFinalDto.getRefundItems();
+        for (RefundItemDto.Request refundItem : refundItems) {
+            RefundAfterDto.Request refundAfterDto = RefundAfterDto.Request.of(vanFinalDto, refundItem);
+
+            refundService.approveAfter(refundAfterDto);
         }
 
         return ResponseEntity.ok("ok");

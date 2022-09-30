@@ -1,7 +1,8 @@
 package com.tpay.domains.van.presentation;
 
-import com.tpay.domains.van.application.VanOrderService;
+import com.tpay.domains.van.application.VanService;
 import com.tpay.domains.van.domain.dto.VanOrdersDto;
+import com.tpay.domains.van.domain.dto.VanRefundAfterBaseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -16,14 +17,18 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class VanOrderController {
 
-    private final VanOrderService vanOrderService;
+    private final VanService vanService;
+
 
     @PostMapping("/order")
     public ResponseEntity<VanOrdersDto.Response> ordersDetail(
             @RequestBody VanOrdersDto.Request request
     ) {
-        log.trace("passportNumber = {}", request.getEncryptPassportNumber());
-        VanOrdersDto.Response response = vanOrderService.findVanOrder(request.getEncryptPassportNumber());
+        VanRefundAfterBaseDto refundAfterBaseDto = request.getRefundAfterBaseDto();
+        // VAN 의 경우 환급 정보 생성 후 조회
+        vanService.createRefundAfter(request.getEncryptPassportNumber(), refundAfterBaseDto);
+        //조회
+        VanOrdersDto.Response response = vanService.findVanOrder(request.getEncryptPassportNumber());
         return ResponseEntity.ok(response);
     }
 }
