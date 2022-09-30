@@ -8,12 +8,12 @@ import java.util.List;
 public class VanOrdersDto {
     @Getter
     @Builder
-    public static class Response{
+    public static class Response {
         List<VanOrderDetail> vanOrderDetails;
     }
 
     @Getter
-    public static class Request{
+    public static class Request {
         VanRefundAfterBaseDto refundAfterBaseDto;
         String encryptPassportNumber;
     }

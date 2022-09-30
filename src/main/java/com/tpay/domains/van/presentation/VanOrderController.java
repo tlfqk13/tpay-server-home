@@ -24,9 +24,10 @@ public class VanOrderController {
     public ResponseEntity<VanOrdersDto.Response> ordersDetail(
             @RequestBody VanOrdersDto.Request request
     ) {
-        log.trace("passportNumber = {}", request.getEncryptPassportNumber());
         VanRefundAfterBaseDto refundAfterBaseDto = request.getRefundAfterBaseDto();
+        // VAN 의 경우 환급 정보 생성 후 조회
         vanService.createRefundAfter(request.getEncryptPassportNumber(), refundAfterBaseDto);
+        //조회
         VanOrdersDto.Response response = vanService.findVanOrder(request.getEncryptPassportNumber());
         return ResponseEntity.ok(response);
     }

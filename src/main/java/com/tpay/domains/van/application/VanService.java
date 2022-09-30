@@ -44,7 +44,7 @@ public class VanService {
                 continue;
             }
 
-            RefundAfterDto.Request refundAfterDto = new RefundAfterDto.Request(refundAfterBaseDto);
+            RefundAfterDto.Request refundAfterDto = RefundAfterDto.Request.of(refundAfterBaseDto, null);
 
             RefundEntity refundEntity =
                     refundService.save(
@@ -67,7 +67,7 @@ public class VanService {
     }
 
     public VanOrdersDto.Response findVanOrder(String encryptedPassportNumber) {
-        List<OrdersDtoInterface> ordersDtoInterfaceList = orderRepository.findOrdersDetail(encryptedPassportNumber);
+        List<OrdersDtoInterface> ordersDtoInterfaceList = orderRepository.findVanOrdersDetail(encryptedPassportNumber);
 
         List<VanOrderDetail> baseList = new ArrayList<>();
         for (OrdersDtoInterface orderDto : ordersDtoInterfaceList) {
@@ -79,8 +79,8 @@ public class VanService {
                     .totPurchsAmt(orderDto.getTotPurchsAmt())
                     .vat(orderDto.getVat())
                     .totalRefund(orderDto.getTotalRefund())
-                    .rfndAvailableYn(orderDto.getRfndAvailableYn())
-//                    .rfndAvailableYn("Y")
+//                    .rfndAvailableYn(orderDto.getRfndAvailableYn())
+                    .rfndAvailableYn("Y")
                     .earlyRfndYn(checkCityRefund(orderDto.getEarlyRfndYn()))
                     .customsCleanceYn(checkRefundStatus(orderDto.getCustomsCleanceYn()))
                     .build());

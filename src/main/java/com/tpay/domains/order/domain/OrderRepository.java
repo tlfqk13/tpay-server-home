@@ -171,11 +171,11 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
             "               left join customer c on c.id = o.customer_id\n" +
             "               left join refund r on o.id = r.order_id" +
             "               left join refund_after rf on r.refund_after_id = rf.refund_after_id\n" +
-            " where c.cus_pass_no = :passportNumber" ,nativeQuery = true
+            " where c.cus_pass_no = :passportNumber and r.refund_after_id is not null" ,nativeQuery = true
     )
-    List<OrdersDtoInterface> findOrdersDetail(String passportNumber);
+    List<OrdersDtoInterface> findVanOrdersDetail(@Param("passportNumber") String passportNumber);
 
-    @EntityGraph(attributePaths = {"refundEntity", "refundAfterEntity"})
+    @EntityGraph(attributePaths = {"refundEntity"})
     Optional<OrderEntity> findByOrderNumber(String docId);
 
     @Query(value = "select o from OrderEntity o  join fetch o.customerEntity " +
