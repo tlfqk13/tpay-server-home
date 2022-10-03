@@ -31,6 +31,13 @@ public class FranchiseeAccessTokenEntity extends BaseTimeEntity {
     private String os;
     private String appVersion;
 
+
+    @Builder
+    public FranchiseeAccessTokenEntity(FranchiseeEntity franchiseeEntity, String accessToken) {
+        this.franchiseeEntity = franchiseeEntity;
+        this.accessToken = accessToken;
+    }
+
     @Builder
     public FranchiseeAccessTokenEntity(FranchiseeEntity franchiseeEntity, String accessToken, Device device) {
         this.franchiseeEntity = franchiseeEntity;
