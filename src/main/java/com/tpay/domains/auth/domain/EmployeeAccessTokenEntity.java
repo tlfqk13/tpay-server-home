@@ -31,6 +31,11 @@ public class EmployeeAccessTokenEntity extends BaseTimeEntity {
     private String appVersion;
 
     @Builder
+    public EmployeeAccessTokenEntity(EmployeeEntity employeeEntity, String accessToken) {
+        this.employeeEntity = employeeEntity;
+        this.accessToken = accessToken;
+    }
+    @Builder
     public EmployeeAccessTokenEntity(EmployeeEntity employeeEntity, String accessToken, Device device) {
         this.employeeEntity = employeeEntity;
         this.accessToken = accessToken;

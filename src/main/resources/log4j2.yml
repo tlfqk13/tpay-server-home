@@ -19,21 +19,36 @@ Configuration:
     #      PatternLayout:
     #        pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
     RollingFile:
-      name: RollingFile_Appender
-      fileName: ${log-path}/rollingfile.log
-      filePattern: "${log-path}/archive/rollingfile.log_%d{yyyy-MM-dd}.gz"
-      PatternLayout:
-        pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%-22t] %-30c{1} - %msg%n"
-      Policies:
-        TimeBasedTriggeringPolicy:
-          Interval: 1
-          modulate: true
-      DefaultRollOverStrategy:
-        Delete:
-          basePath: "${log-path}/archive"
-          maxDepth: "1"
-          IfAccumulatedFileCount:
-            exceeds: 31
+      - name: RollingFile_Appender
+        fileName: ${log-path}/rollingfile.log
+        filePattern: "${log-path}/archive/rollingfile.log_%d{yyyy-MM-dd}.gz"
+        PatternLayout:
+          pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%-22t] %-30c{1} - %msg%n"
+        Policies:
+          TimeBasedTriggeringPolicy:
+            Interval: 1
+            modulate: true
+        DefaultRollOverStrategy:
+          Delete:
+            basePath: "${log-path}/archive"
+            maxDepth: "1"
+            IfAccumulatedFileCount:
+              exceeds: 31
+      - name: RollingFile_Appender_Error
+        fileName: ${log-path}/rollingfile-error.log
+        filePattern: "${log-path}/archive/rollingfile-error.log_%d{yyyy-MM-dd}.gz"
+        PatternLayout:
+          pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%-22t] %-30c{1} - %msg%n"
+        Policies:
+          TimeBasedTriggeringPolicy:
+            Interval: 1
+            modulate: true
+        DefaultRollOverStrategy:
+          Delete:
+            basePath: "${log-path}/archive"
+            maxDepth: "1"
+            IfAccumulatedFileCount:
+              exceeds: 31
   Loggers:
     Root:
       level: info
@@ -57,4 +72,10 @@ Configuration:
         level: debug
         AppenderRef:
           - ref: RollingFile_Appender
+          - ref: Console_Appender
+      - name: com.tpay
+        additivity: false
+        level: warn
+        AppenderRef:
+          - ref: RollingFile_Appender_Error
           - ref: Console_Appender
