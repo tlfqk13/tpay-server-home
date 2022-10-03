@@ -26,64 +26,66 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         List<String> exclusivePathList = new ArrayList<>(List.of("/sign-in",
-            "/sign-up",
-            "/sign-out",
-            "/duplicate-sign-out",
-            // TODO: 2022/09/07 계정 삭제 건 추가
-            "/delete-account",
-            "/refresh",
-            "/categories",
-            "/certifications/**",
-            "/franchisee/password/exists/**",
-            "/franchisee/password/selfCertification",
-            "/franchisee/password/out",
-            "/admin/**",
-            "/validate/**",
-            "/points/batch",
-            "/external/**",
-            "/push/batch/**",
-            "/refund/limit",
-            "/error",
-            "/h2-console/**",
-            "/favicon.ico",
-            "/push/**",
-            // TODO: 2022/07/26 test url 권한 추가
-            "/test/admin/**",
-            "/test/refunds/**",
-            "/test/points/**",
-            "/notice/**",
-            "/duplicate",
-            // TODO: 2022/09/26 NICE_VAN 관련 데이터 로직
-            "/order/**",
-            // TODO: 2022/09/15 tourCash 환급 전용
-            "/refund/approval/tourcash/**"
-                ));
+                "/sign-up",
+                "/sign-out",
+                "/duplicate-sign-out",
+                // TODO: 2022/09/07 계정 삭제 건 추가
+                "/delete-account",
+                "/refresh",
+                "/categories",
+                "/certifications/**",
+                "/franchisee/password/exists/**",
+                "/franchisee/password/selfCertification",
+                "/franchisee/password/out",
+                "/admin/**",
+                "/validate/**",
+                "/points/batch",
+                "/external/**",
+                "/push/batch/**",
+                "/refund/limit",
+                "/error",
+                "/h2-console/**",
+                "/favicon.ico",
+                "/push/**",
+                // TODO: 2022/07/26 test url 권한 추가
+                "/test/admin/**",
+                "/test/refunds/**",
+                "/test/points/**",
+                "/notice/**",
+                "/duplicate",
+                // TODO: 2022/09/26 NICE_VAN 관련 데이터 로직
+                "/order/**",
+                // TODO: 2022/09/15 tourCash 환급 전용
+                "/refund/approval/tourcash/**",
+                // NICE VAN 관련
+                "/van/**"
+        ));
 
         if (!profileName.equals("deploy")) {
             exclusivePathList.addAll(List.of("/swagger-resources/**",
-                "/swagger-ui.html/**",
-                "/swagger-ui/**",
-                "/webjars/**",
-                "/v2/**",
-                "/fcm/**"));
+                    "/swagger-ui.html/**",
+                    "/swagger-ui/**",
+                    "/webjars/**",
+                    "/v2/**",
+                    "/fcm/**"));
         }
 
         registry
-            .addInterceptor(jwtValidationInterceptor)
-            .addPathPatterns("/**")
-            .excludePathPatterns(exclusivePathList);
+                .addInterceptor(jwtValidationInterceptor)
+                .addPathPatterns("/**")
+                .excludePathPatterns(exclusivePathList);
         registry
-            .addInterceptor(authInterceptor)
-            .addPathPatterns("/**")
-            .excludePathPatterns(exclusivePathList);
+                .addInterceptor(authInterceptor)
+                .addPathPatterns("/**")
+                .excludePathPatterns(exclusivePathList);
         registry.addInterceptor(printRequestInterceptor).addPathPatterns("/**");
     }
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry
-            .addMapping("/**")
-            .allowedOriginPatterns("*")
-            .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH");
+                .addMapping("/**")
+                .allowedOriginPatterns("*")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH");
     }
 }

@@ -2,9 +2,8 @@ package com.tpay.domains.order.application;
 
 import com.tpay.commons.aria.PassportNumberEncryptService;
 import com.tpay.commons.util.converter.NumberFormatConverter;
-import com.tpay.domains.order.application.dto.OrderDtoInfo;
-import com.tpay.domains.order.application.dto.OrdersDto;
-import com.tpay.domains.order.application.dto.OrdersDtoInterface;
+import com.tpay.domains.order.application.dto.OrderDto;
+import com.tpay.domains.order.domain.OrderEntity;
 import com.tpay.domains.order.domain.OrderRepository;
 import com.tpay.domains.vat.application.dto.VatDetailResponseInterface;
 import com.tpay.domains.vat.application.dto.VatReportResponseInterface;
@@ -13,8 +12,8 @@ import com.tpay.domains.vat.application.dto.VatTotalResponseInterface;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +22,7 @@ import java.util.Optional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class OrderService {
 
     private final OrderRepository orderRepository;
@@ -151,27 +151,8 @@ public class OrderService {
         return orderRepository.findQuarterlyTotal(franchiseeIndex, startDate, endDate);
     }
 
-    public OrdersDto.Response ordersDetail(String passportNumber) {
-        String encryptedPassportNumber = passportNumberEncryptService.encrypt(passportNumber);
-        List<OrdersDtoInterface> ordersDtoInterfaceList =  orderRepository.findOrdersDetail(encryptedPassportNumber);
-
-        List<OrderDtoInfo> baseList = new ArrayList<>();
-        for (OrdersDtoInterface OrdersDtoInterface : ordersDtoInterfaceList) {
-            baseList.add(OrderDtoInfo.builder()
-                            .docId(OrdersDtoInterface.getDocId())
-                            .shopNm(OrdersDtoInterface.getShopNm())
-                            .shopTypeCcd(OrdersDtoInterface.getShopTypeCcd())
-                            .purchsDate(OrdersDtoInterface.getPurchsDate())
-                            .totPurchsAmt(OrdersDtoInterface.getTotPurchsAmt())
-                            .vat(OrdersDtoInterface.getVat())
-                            //.rfndAvailableYn(OrdersDtoInterface.getRfndAvailableYn())
-                            .rfndAvailableYn("Y")
-                            //.earlyRfndYn(OrdersDtoInterface.getEarlyRfndYn())
-                            .earlyRfndYn("N")
-                            //.customsCleanceYn(OrdersDtoInterface.getCustomsCleanceYn())
-                            .customsCleanceYn("N")
-                    .build());
-        }
-        return OrdersDto.Response.builder().ordersDtoList(baseList).build();
+    public OrderEntity findOrderByPurchaseSn(String purchaseSn) {
+        return orderRepository.findByOrderNumber(purchaseSn)
+                .orElseThrow(NullPointerException::new);
     }
 }

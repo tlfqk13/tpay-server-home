@@ -6,6 +6,7 @@ import com.tpay.domains.order.application.dto.OrdersDtoInterface;
 import com.tpay.domains.vat.application.dto.VatDetailResponseInterface;
 import com.tpay.domains.vat.application.dto.VatReportResponseInterface;
 import com.tpay.domains.vat.application.dto.VatTotalResponseInterface;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -163,9 +164,21 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
             " ,o.sale_datm as purchsDate\n" +
             " ,o.tot_amt as totPurchsAmt\n" +
             " ,o.tot_vat as vat\n" +
+            " ,r.tot_refund as totalRefund\n" +
+            " ,r.refund_status as customsCleanceYn" +
+            " ,rf.refund_after_method as earlyRfndYn" +
             " from orders o inner join franchisee f on o.franchisee_id = f.id\n" +
             "               left join customer c on c.id = o.customer_id\n" +
-            " where c.cus_pass_no = :passportNumber" ,nativeQuery = true
+            "               left join refund r on o.id = r.order_id" +
+            "               left join refund_after rf on r.refund_after_id = rf.refund_after_id\n" +
+            " where c.cus_pass_no = :passportNumber and r.refund_after_id is not null" ,nativeQuery = true
     )
-    List<OrdersDtoInterface> findOrdersDetail(String passportNumber);
+    List<OrdersDtoInterface> findVanOrdersDetail(@Param("passportNumber") String passportNumber);
+
+    @EntityGraph(attributePaths = {"refundEntity"})
+    Optional<OrderEntity> findByOrderNumber(String docId);
+
+    @Query(value = "select o from OrderEntity o  join fetch o.customerEntity " +
+            "where o.customerEntity.id = :customerId and o.orderNumber is not null")
+    List<OrderEntity> findOrders(@Param("customerId")Long customerId);
 }

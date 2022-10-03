@@ -4,5 +4,6 @@ public enum RefundStatus {
     APPROVAL,
     REJECT,
     CANCEL,
-    ALL
+    ALL,
+    PRE_APPROVAL,
 }

@@ -6,10 +6,7 @@ import com.tpay.domains.employee.domain.EmployeeEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.refund.domain.RefundEntity;
 import com.tpay.domains.refund_core.application.dto.RefundProductInfo;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -22,6 +19,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "orders")
 @Entity
+@AllArgsConstructor
 public class OrderEntity extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,11 +40,11 @@ public class OrderEntity extends BaseTimeEntity {
     @Column(name = "purchsSn", length = 20)
     private String orderNumber;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false)
     private CustomerEntity customerEntity;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "franchisee_id", nullable = false)
     private FranchiseeEntity franchiseeEntity;
 
@@ -61,16 +59,16 @@ public class OrderEntity extends BaseTimeEntity {
     private EmployeeEntity employeeEntity;
 
     @Builder
-    public OrderEntity(CustomerEntity customerEntity, FranchiseeEntity franchiseeEntity) {
+    public OrderEntity(CustomerEntity customerEntity, FranchiseeEntity franchiseeEntity, String purchaseSn) {
         this.customerEntity = customerEntity;
         this.franchiseeEntity = franchiseeEntity;
         this.orderLineEntityList = new LinkedList<>();
+        this.orderNumber = purchaseSn;
         this.initialize();
     }
 
     public void initialize() {
-        String saleDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-        this.saleDate = saleDate;
+        this.saleDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
         this.employeeEntity = null;
     }
 

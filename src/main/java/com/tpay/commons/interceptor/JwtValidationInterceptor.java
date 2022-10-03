@@ -4,6 +4,7 @@ import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.JwtRuntimeException;
 import com.tpay.commons.jwt.AuthToken;
 import com.tpay.commons.jwt.JwtUtils;
+import com.tpay.commons.util.IndexInfo;
 import com.tpay.commons.util.UserSelector;
 import com.tpay.domains.auth.application.AccessTokenService;
 import com.tpay.domains.auth.domain.EmployeeAccessTokenEntity;
@@ -109,7 +110,7 @@ public class JwtValidationInterceptor implements HandlerInterceptor {
             }
         }
 
-        if (tokenInfo.getUserSelector().equals(uriInfo.userSelector) && tokenIndex.equals(uriIndex)) {
+        if (tokenInfo.getUserSelector().equals(uriInfo.getUserSelector()) && tokenIndex.equals(uriIndex)) {
             if (FRANCHISEE == tokenUserSelector) {
                 findFranchiseeById(tokenIndex, request.getRequestURI());
             } else {
@@ -352,15 +353,6 @@ public class JwtValidationInterceptor implements HandlerInterceptor {
         Long id = franchiseeApplicantEntity.getFranchiseeEntity().getId();
         return new IndexInfo(FRANCHISEE, id.toString());
     }
-
-    @Getter
-    @AllArgsConstructor
-    @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    private static class IndexInfo {
-        private UserSelector userSelector;
-        private String index;
-    }
-
 
     @Getter
     @AllArgsConstructor
