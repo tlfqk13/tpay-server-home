@@ -54,7 +54,6 @@ public class FranchiseeApplicantUpdateService {
                 taxFreeStoreNumberUpdate = franchiseeUploadEntity.updateTaxFreeStoreNumber(request.getTaxFreeStoreNumber());
             }
             if (isNewUploadedImg.equals("true") || isNewUploadedImg.equals("TRUE")) {
-                log.trace("NewUploadImg Start____________");
                 String s3path = franchiseeUploadService.uploadImageAndBankInfo(franchiseeEntity.getId(), imageCategory, uploadImage);
             }
         } catch (InvalidParameterException e) {

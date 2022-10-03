@@ -84,7 +84,7 @@ public class AdminFranchiseeApplicant {
             @PathVariable Long franchiseeApplicantIndex,
             @RequestParam String imageCategory,
             @RequestParam("detailFranchiseeInfo") String detailFranchiseeInfo,
-            @RequestParam MultipartFile uploadImage,
+            @RequestParam(required = false) MultipartFile uploadImage,
             @RequestParam String isNewUploadedImg){
         FranchiseeApplicantDetailUpdateResponse result =
                 franchiseeApplicantUpdateService.updateFranchiseeApplicantInfo(franchiseeApplicantIndex,imageCategory,detailFranchiseeInfo,uploadImage,isNewUploadedImg);
