@@ -261,7 +261,12 @@ public class CmsService {
     public List<String> setUpDate(String requestDatePart) {
 
         int yearInt = Integer.parseInt("20" + requestDatePart.substring(0, 2));
-        int monthInt = Integer.parseInt(requestDatePart.substring(2).replaceAll("0", ""));
+        int monthInt = Integer.parseInt(requestDatePart.substring(2));
+
+        if(monthInt <10){
+            System.out.println("$$");
+            monthInt = Integer.parseInt(requestDatePart.substring(2).replaceAll("0", ""));
+        }
 
         LocalDate localDate = LocalDate.of(yearInt,monthInt-1,1);
         String year = String.valueOf(localDate.getYear());
