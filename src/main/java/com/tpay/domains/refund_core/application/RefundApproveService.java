@@ -3,7 +3,6 @@ package com.tpay.domains.refund_core.application;
 import com.tpay.commons.custom.CustomValue;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
-import com.tpay.commons.exception.detail.JwtRuntimeException;
 import com.tpay.commons.exception.detail.WebfluxGeneralException;
 import com.tpay.commons.push.PushCategoryType;
 import com.tpay.commons.webClient.WebRequestUtil;
@@ -71,7 +70,7 @@ public class RefundApproveService {
         int checkMinPrice = Integer.parseInt(request.getPrice());
         if(checkMinPrice < 30000){
             log.debug(" @@ Item Price = {}", request.getPrice());
-            throw new JwtRuntimeException(ExceptionState.CHECK_ITEM_PRICE);
+            throw new InvalidParameterException(ExceptionState.CHECK_ITEM_PRICE);
         }
 
         if (request.getUserSelector().equals(EMPLOYEE)) {

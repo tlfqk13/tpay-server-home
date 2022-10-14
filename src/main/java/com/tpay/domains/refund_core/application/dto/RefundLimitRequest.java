@@ -14,7 +14,7 @@ public class RefundLimitRequest {
     private String totalAmount;
     private String saleDate;
 
-    public RefundLimitRequest nationalUpdate(String nationality){
+    public RefundLimitRequest nationUpdate(String nationality){
         this.nationality = nationality;
         return this;
     }
