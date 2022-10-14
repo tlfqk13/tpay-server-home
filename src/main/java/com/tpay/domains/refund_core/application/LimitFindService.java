@@ -6,6 +6,7 @@ import com.tpay.commons.exception.detail.InvalidPassportInfoException;
 import com.tpay.commons.webClient.WebRequestUtil;
 import com.tpay.domains.customer.application.CustomerUpdateService;
 import com.tpay.domains.customer.domain.CustomerEntity;
+import com.tpay.domains.refund_core.application.dto.NationalCheckValue;
 import com.tpay.domains.refund_core.application.dto.RefundLimitRequest;
 import com.tpay.domains.refund_core.application.dto.RefundResponse;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,9 @@ public class LimitFindService {
     @Transactional
     public RefundResponse find(RefundLimitRequest request) {
         String uri = CustomValue.REFUND_SERVER + "/refund/limit";
+
+        // TODO: 2022/10/11 독일 여권일 경우, D -> DEU
+        nationalCheck(request);
 
         // 한도 조회 요청
         RefundResponse refundResponse = webRequestUtil.post(uri, request);
@@ -50,6 +54,13 @@ public class LimitFindService {
 
         } else {
             throw new InvalidPassportInfoException(ExceptionState.INVALID_PASSPORT_INFO, "한도조회 실패");
+        }
+    }
+
+    private void nationalCheck(RefundLimitRequest request) {
+        if(NationalCheckValue.NATIONAL_GERMANY_D.equals(request.getNationality())){
+            request.nationalUpdate(NationalCheckValue.NATIONAL_GERMANY_DEU);
+            log.error(" @@ nationalCheck = {}", request.getNationality());
         }
     }
 }

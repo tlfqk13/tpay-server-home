@@ -27,7 +27,9 @@ public enum PushCategoryType {
      * 개발용, 사용자 노출이 아닌 back 에서 front 로 알림이 필요한 경우
      * pushCategory 9000번대 부터 사용
      */
-    REFUND_CANCEL_SCREEN_REFRESH_WITH_EXTERNAL("9000", "", "", "")
+    REFUND_CANCEL_SCREEN_REFRESH_WITH_EXTERNAL("9000", "", "", ""),
+
+    FORCE_UPDATE_FOR_KILL_APP("9001","","","")
     ;
 
     private final String pushCategory;

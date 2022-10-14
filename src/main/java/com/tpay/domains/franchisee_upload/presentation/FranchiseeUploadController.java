@@ -26,9 +26,8 @@ public class FranchiseeUploadController {
     public ResponseEntity<String> uploadImageAndBankInfo(
         @PathVariable Long franchiseeIndex,
         @RequestParam String imageCategory,
-        @RequestParam("franchiseeBankInfo") String franchiseeBankInfoString,
+        @RequestParam(required = false, value = "franchiseeBankInfo") String franchiseeBankInfoString,
         @RequestParam MultipartFile uploadImage) {
-        log.trace("franchiseeBankInfoString = {}", franchiseeBankInfoString);
         String s3Path = franchiseeUploadService.uploadImageAndBankInfo(franchiseeIndex, franchiseeBankInfoString, imageCategory, uploadImage);
         return ResponseEntity.ok(s3Path);
     }

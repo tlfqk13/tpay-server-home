@@ -17,6 +17,7 @@ public enum ExceptionState {
     INVALID_PASSWORD(400, HttpStatus.BAD_REQUEST, "P0002", "Invalid Password"),
     INVALID_BUSINESS_NUMBER(400, HttpStatus.BAD_REQUEST, "B0001", "Invalid Business Number"),
     ALREADY_EXISTS(409, HttpStatus.CONFLICT, "R0001", "Already Exists"),
+    CHECK_ITEM_PRICE(400, HttpStatus.BAD_REQUEST, "R0002", "Check Item Price Over 30,000"),
     AUTHENTICATION_FAILED(401, HttpStatus.UNAUTHORIZED, "A0001", "Invalid Authentication"),
     INVALID_TOKEN(401, HttpStatus.UNAUTHORIZED, "A0002", "Invalid Auth Token"),
     FORCE_REFRESH(401, HttpStatus.UNAUTHORIZED, "A0003", "Sign-in Again"),

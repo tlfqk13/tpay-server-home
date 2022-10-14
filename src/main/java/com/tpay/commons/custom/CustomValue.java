@@ -16,7 +16,6 @@ public class CustomValue {
     public static String FIREBASE_SDK_PATH;
     public static String S3_BASE_URI;
 
-
     @Value("${custom.push.sdk-path}")
     public void setFirebaseSdkPath(String firebaseSdkPath) {FIREBASE_SDK_PATH = firebaseSdkPath;}
 
