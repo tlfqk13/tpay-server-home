@@ -19,6 +19,9 @@ public class RefundResponse {
     private String beforeDeduction;
     private String afterDeduction;
 
+    private String passportNumber;
+    private String nationality;
+
     private Long customerIndex;
 
     public RefundResponse addCustomerInfo(Long customerIndex) {

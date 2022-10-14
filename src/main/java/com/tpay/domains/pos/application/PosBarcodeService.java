@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-
 import java.util.Optional;
 
 import static com.tpay.commons.custom.CustomValue.REFUND_SERVER;
@@ -35,10 +34,10 @@ public class PosBarcodeService {
         RefundResponse refundResponse = webRequestUtil.post(uri, request);
 
         //외국인 정보 업데이트
-        Optional<CustomerEntity> customerEntityOptional = customerUpdateService.findCustomerByNationAndPassportNumber(request.getPassportNumber(), request.getNationality());
+        Optional<CustomerEntity> customerEntityOptional = customerUpdateService.findCustomerByNationAndPassportNumber(refundResponse.getPassportNumber(), request.getNationality());
         CustomerEntity customerEntity;
         if(customerEntityOptional.isEmpty()){
-            customerEntity = customerUpdateService.updateCustomerInfo(request.getName(), request.getPassportNumber(), request.getNationality());
+            customerEntity = customerUpdateService.updateCustomerInfo(request.getName(), refundResponse.getPassportNumber(), request.getNationality());
         } else {
             customerEntity = customerEntityOptional.get();
         }

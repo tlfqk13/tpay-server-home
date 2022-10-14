@@ -36,14 +36,21 @@ public class LimitFindService {
 
         // 한도 조회 요청
         RefundResponse refundResponse = webRequestUtil.post(uri, request);
+        log.debug("request.passportNumber = {} , refundResponse.getPassportNumber() = {}"
+                , request.getPassportNumber()
+                , refundResponse.getPassportNumber());
+
+        log.debug("request.nation = {} , refundResponse.getNation() = {}"
+                , request.getNationality()
+                , refundResponse.getNationality());
 
         // 한도 조회 요청 후, 성공되면 고객 정보 등록
         if(refundResponse.getResponseCode().equals("0000")) {
             Long customerEntityId;
-            Optional<CustomerEntity> customerEntityOptional = customerUpdateService.findCustomerByNationAndPassportNumber(request.getPassportNumber(), request.getNationality());
+            Optional<CustomerEntity> customerEntityOptional = customerUpdateService.findCustomerByNationAndPassportNumber(refundResponse.getPassportNumber(), refundResponse.getNationality());
             if (customerEntityOptional.isEmpty()) {
                 log.trace("Customer Not exists.");
-                CustomerEntity customerEntity = customerUpdateService.updateCustomerInfo(request.getName(), request.getPassportNumber(), request.getNationality());
+                CustomerEntity customerEntity = customerUpdateService.updateCustomerInfo(request.getName(), refundResponse.getPassportNumber(), refundResponse.getNationality());
                 customerEntityId = customerEntity.getId();
                 log.trace("Refund Limit customerID = {}", customerEntityId);
             } else {
