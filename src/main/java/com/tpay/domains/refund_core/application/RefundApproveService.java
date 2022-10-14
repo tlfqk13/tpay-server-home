@@ -66,6 +66,13 @@ public class RefundApproveService {
     @Transactional
     public RefundResponse approve(RefundSaveRequest request) {
 
+        // TODO: 2022/10/11 가격 조회 - 30,000 미만일 경우 알기 위해서
+        int checkMinPrice = Integer.parseInt(request.getPrice());
+        if(checkMinPrice < 30000){
+            log.debug(" @@ Item Price = {}", request.getPrice());
+            throw new InvalidParameterException(ExceptionState.CHECK_ITEM_PRICE);
+        }
+
         if (request.getUserSelector().equals(EMPLOYEE)) {
             EmployeeEntity employeeEntity = employeeFindService.findById(request.getEmployeeIndex())
                     .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Employee not exists"));
@@ -196,7 +203,7 @@ public class RefundApproveService {
                             .orElseThrow(NullPointerException::new);
 
             if (request.getDevice() == null) {
-                log.trace("Employee Device info no save Device is Null");
+                log.warn("Employee Device info no save Device is Null");
             } else {
                 employeeAccessTokenEntity.updateDeviceInfo(
                         request.getDevice().getName(),
@@ -210,7 +217,7 @@ public class RefundApproveService {
                     .orElseThrow(NullPointerException::new);
 
             if (request.getDevice() == null) {
-                log.trace("Franchisee Device info no save Device is Null");
+                log.warn("Franchisee Device info no save Device is Null");
             }else {
                 franchiseeTokenEntity.updateDeviceInfo(
                         request.getDevice().getName(),

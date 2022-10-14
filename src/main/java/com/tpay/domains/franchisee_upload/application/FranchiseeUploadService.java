@@ -16,6 +16,7 @@ import com.tpay.domains.franchisee_upload.domain.FranchiseeBankRepository;
 import com.tpay.domains.franchisee_upload.domain.FranchiseeUploadEntity;
 import com.tpay.domains.franchisee_upload.domain.FranchiseeUploadRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,6 +25,7 @@ import javax.transaction.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class FranchiseeUploadService {
 
     private final S3FileUploader s3FileUploader;
@@ -45,16 +47,23 @@ public class FranchiseeUploadService {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             FranchiseeBankInfo franchiseeBankInfo = objectMapper.readValue(franchiseeBankInfoString, FranchiseeBankInfo.class);
-            FranchiseeBankEntity franchiseeBankEntity = FranchiseeBankEntity.builder()
-                .accountNumber(franchiseeBankInfo.getAccountNumber().replaceAll("-", ""))
-                .bankName(franchiseeBankInfo.getBankName())
-                .withdrawalDate(franchiseeBankInfo.getWithdrawalDate().replaceAll("일", ""))
-                .franchiseeEntity(franchiseeEntity)
-                .build();
-            franchiseeBankRepository.save(franchiseeBankEntity);
-            printNewFranchisee();
+            if(franchiseeBankInfo.getBankName().isEmpty()) {
+                FranchiseeBankEntity franchiseeBankEntity = FranchiseeBankEntity.builder()
+                        .accountNumber(franchiseeBankInfo.getAccountNumber().replaceAll("-", ""))
+                        .bankName(franchiseeBankInfo.getBankName())
+                        .withdrawalDate(franchiseeBankInfo.getWithdrawalDate().replaceAll("일", ""))
+                        .franchiseeEntity(franchiseeEntity)
+                        .build();
+                franchiseeBankRepository.save(franchiseeBankEntity);
+                printNewFranchisee();
+            }
             s3Path = s3FileUploader.uploadJpg(franchiseeIndex, imageCategory, uploadImage);
-            FranchiseeUploadEntity franchiseeUploadEntity = FranchiseeUploadEntity.builder().franchiseeIndex(franchiseeIndex).imageCategory(imageCategory).taxFreeStoreNumber("").s3Path(s3Path).franchiseeEntity(franchiseeEntity).build();
+            FranchiseeUploadEntity franchiseeUploadEntity = FranchiseeUploadEntity.builder()
+                    .franchiseeIndex(franchiseeIndex).imageCategory(imageCategory)
+                    .taxFreeStoreNumber("")
+                    .s3Path(s3Path)
+                    .franchiseeEntity(franchiseeEntity)
+                    .build();
             franchiseeUploadRepository.save(franchiseeUploadEntity);
         } catch (Exception e) {
             throw new UnknownException(ExceptionState.UNKNOWN, "[Bank Info] or [S3-Image] save fail");
@@ -69,7 +78,7 @@ public class FranchiseeUploadService {
 
     @Transactional
     public String uploadUpdateImageAndBankInfo(Long franchiseeIndex, String franchiseeBankInfoString, String imageCategory, MultipartFile uploadImage) {
-
+        log.trace(" 가맹점 회원 계정 생성 " );
         printUpdateFranchisee();
         String message;
         FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);

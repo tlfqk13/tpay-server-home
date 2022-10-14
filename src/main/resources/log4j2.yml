@@ -55,7 +55,7 @@ Configuration:
       AppenderRef:
         ref: Console_Appender
     Logger:
-      - name: com.tpay
+      - name: com.tpay.domains
         additivity: false
         level: trace
         AppenderRef:
@@ -69,7 +69,7 @@ Configuration:
           - ref: Console_Appender
       - name: org.springframework.transaction
         additivity: false
-        level: debug
+        level: warn
         AppenderRef:
           - ref: RollingFile_Appender
           - ref: Console_Appender

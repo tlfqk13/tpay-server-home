@@ -14,7 +14,8 @@ public interface SearchRefundRepository extends JpaRepository<RefundEntity, Long
 
     @Query(value =
             "select r.id            as refundIndex,\n" +
-                    "       o.purchs_sn     as orderNumber,\n" +
+                    "       c.cus_nm        as customerName,\n" +
+                    "       c.cus_natn      as customerNational,\n" +
                     "       r.created_date  as createdDate,\n" +
                     "       o.tot_amt       as totalAmount,\n" +
                     "       r.tot_refund    as totalRefund,\n" +
@@ -25,12 +26,14 @@ public interface SearchRefundRepository extends JpaRepository<RefundEntity, Long
                     "from refund r\n" +
                     "         inner join orders o on r.order_id = o.id\n" +
                     "         left join franchisee f on o.franchisee_id = f.id\n" +
+                    "         left join customer c on c.id = o.customer_id\n" +
                     "where r.created_date between :startLocalDate and :endLocalDate\n" +
                     "           and f.biz_no like %:searchKeyword%\n" +
-                    "and f.biz_no != 2141582141\n" +
+                    "and f.store_nm != '석세스모드'\n" +
                     "order by refundIndex desc\n",
             countQuery = "select r.id            as refundIndex,\n" +
-                    "       o.purchs_sn     as orderNumber,\n" +
+                    "       c.cus_nm        as customerName,\n" +
+                    "       c.cus_natn      as customerNational,\n" +
                     "       r.created_date  as createdDate,\n" +
                     "       o.tot_amt       as totalAmount,\n" +
                     "       r.tot_refund    as totalRefund,\n" +
@@ -41,9 +44,10 @@ public interface SearchRefundRepository extends JpaRepository<RefundEntity, Long
                     "from refund r\n" +
                     "         inner join orders o on r.order_id = o.id\n" +
                     "         left join franchisee f on o.franchisee_id = f.id\n" +
+                    "         left join customer c on c.id = o.customer_id\n" +
                     "where r.created_date between :startLocalDate and :endLocalDate\n" +
                     "           and f.biz_no like %:searchKeyword%\n" +
-                    "and f.biz_no != 2141582141\n" +
+                    "and f.store_nm != '석세스모드'\n" +
                     "order by refundIndex desc", nativeQuery = true)
     Page<RefundFindResponseInterface> SearchFindByBusinessNumber(Pageable pageable, @Param("startLocalDate") LocalDate startLocalDate, @Param("endLocalDate") LocalDate endLocalDate, @Param("searchKeyword") String searchKeyword);
 
@@ -60,10 +64,11 @@ public interface SearchRefundRepository extends JpaRepository<RefundEntity, Long
                     "from refund r\n" +
                     "         inner join orders o on r.order_id = o.id\n" +
                     "         left join franchisee f on o.franchisee_id = f.id\n" +
+                    "         left join customer c on c.id = o.customer_id\n" +
                     "where r.created_date between :startLocalDate and :endLocalDate\n" +
                     "           and f.biz_no like %:searchKeyword%\n" +
                     "and refund_status = :ordinal\n" +
-                    "and f.biz_no != 2141582141\n" +
+                    "and f.store_nm != '석세스모드'\n" +
                     "order by refundIndex desc\n",
             countQuery = "select r.id            as refundIndex,\n" +
                     "       o.purchs_sn     as orderNumber,\n" +
@@ -77,10 +82,11 @@ public interface SearchRefundRepository extends JpaRepository<RefundEntity, Long
                     "from refund r\n" +
                     "         inner join orders o on r.order_id = o.id\n" +
                     "         left join franchisee f on o.franchisee_id = f.id\n" +
+                    "         left join customer c on c.id = o.customer_id\n" +
                     "where r.created_date between :startLocalDate and :endLocalDate\n" +
                     "           and f.biz_no like %:searchKeyword%\n" +
                     "and refund_status = :ordinal\n" +
-                    "and f.biz_no != 2141582141\n" +
+                    "and f.store_nm != '석세스모드'\n" +
                     "order by refundIndex desc", nativeQuery = true)
     Page<RefundFindResponseInterface> SearchFindByBusinessNumber(Pageable pageable, @Param("startLocalDate") LocalDate startLocalDate, @Param("endLocalDate") LocalDate endLocalDate
             , @Param("searchKeyword") String searchKeyword, @Param("ordinal") Integer ordinal);
@@ -88,7 +94,8 @@ public interface SearchRefundRepository extends JpaRepository<RefundEntity, Long
 
     @Query(value =
             "select r.id            as refundIndex,\n" +
-                    "       o.purchs_sn     as orderNumber,\n" +
+                    "       c.cus_nm        as customerName,\n" +
+                    "       c.cus_natn      as customerNational,\n" +
                     "       r.created_date  as createdDate,\n" +
                     "       o.tot_amt       as totalAmount,\n" +
                     "       r.tot_refund    as totalRefund,\n" +
@@ -99,12 +106,14 @@ public interface SearchRefundRepository extends JpaRepository<RefundEntity, Long
                     "from refund r\n" +
                     "         inner join orders o on r.order_id = o.id\n" +
                     "         left join franchisee f on o.franchisee_id = f.id\n" +
+                    "         left join customer c on c.id = o.customer_id\n" +
                     "where r.created_date between :startLocalDate and :endLocalDate\n" +
                     "           and f.store_nm like %:searchKeyword%\n" +
                     "and f.biz_no != 2141582141\n" +
                     "order by refundIndex desc\n",
             countQuery = "select r.id            as refundIndex,\n" +
-                    "       o.purchs_sn     as orderNumber,\n" +
+                    "       c.cus_nm        as customerName,\n" +
+                    "       c.cus_natn      as customerNational,\n" +
                     "       r.created_date  as createdDate,\n" +
                     "       o.tot_amt       as totalAmount,\n" +
                     "       r.tot_refund    as totalRefund,\n" +
@@ -115,6 +124,7 @@ public interface SearchRefundRepository extends JpaRepository<RefundEntity, Long
                     "from refund r\n" +
                     "         inner join orders o on r.order_id = o.id\n" +
                     "         left join franchisee f on o.franchisee_id = f.id\n" +
+                    "         left join customer c on c.id = o.customer_id\n" +
                     "where r.created_date between :startLocalDate and :endLocalDate\n" +
                     "           and f.store_nm like %:searchKeyword%\n" +
                     "and f.biz_no != 2141582141\n" +
