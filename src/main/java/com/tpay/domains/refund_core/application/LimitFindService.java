@@ -6,7 +6,7 @@ import com.tpay.commons.exception.detail.InvalidPassportInfoException;
 import com.tpay.commons.webClient.WebRequestUtil;
 import com.tpay.domains.customer.application.CustomerUpdateService;
 import com.tpay.domains.customer.domain.CustomerEntity;
-import com.tpay.domains.refund_core.application.dto.NationCheckValue;
+import com.tpay.domains.refund_core.application.dto.CheckNationValue;
 import com.tpay.domains.refund_core.application.dto.RefundLimitRequest;
 import com.tpay.domains.refund_core.application.dto.RefundResponse;
 import lombok.RequiredArgsConstructor;
@@ -60,8 +60,8 @@ public class LimitFindService {
     }
 
     private boolean checkNation(RefundLimitRequest request) {
-        if(NationCheckValue.NATION_GERMANY_D.equals(request.getNationality())){
-            log.debug(" @@ nationalCheck = {}", request.getNationality());
+        if(CheckNationValue.NATION_GERMANY_D.equals(request.getNationality())){
+            log.debug(" @@ CheckNationValue = {}", request.getNationality());
             return true;
         }else{
             return false;
@@ -69,6 +69,6 @@ public class LimitFindService {
     }
 
     private void nationUpdate(RefundLimitRequest request){
-        request.nationUpdate(NationCheckValue.NATION_GERMANY_DEU);
+        request.nationUpdate(CheckNationValue.NATION_GERMANY_DEU);
     }
 }
