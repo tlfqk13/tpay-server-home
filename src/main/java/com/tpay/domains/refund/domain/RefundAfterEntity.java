@@ -19,10 +19,10 @@ public class RefundAfterEntity extends BaseTimeEntity {
     @Column(name = "refund_after_id")
     private Long id;
 
-    private String cusCode;
-    private String locaCode;
-    private String kioskBsnmCode;
-    private String kioskCode;
+    private String cusCode; //세관코드
+    private String locaCode; //공항만코드
+    private String kioskBsnmCode; //키오스크사업자코드
+    private String kioskCode; //키오스크관리번호
     private String cityRefundCenterCode;
     private String approvalFinishDate;
 

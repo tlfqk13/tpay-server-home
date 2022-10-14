@@ -252,7 +252,7 @@ public class CmsService {
         FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
         List<String> result = new ArrayList<>();
         result.add("KTP 제 " + year + month); // 문서 번호
-        result.add(year + nowMonth + "15");
+        result.add(year + nowMonth + "05"); // 발송일자
         result.add(franchiseeEntity.getStoreName()); //수신
         result.add(franchiseeEntity.getStoreName() + month +"월 " + "내국세 환급세액 청구" ); // 제목
         result.add("[ "+ year + "년" + month + "월 01일 ~ " + month + "월 31일 ]" );

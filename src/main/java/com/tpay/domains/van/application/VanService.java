@@ -38,7 +38,6 @@ public class VanService {
                 .orElseThrow(NullPointerException::new);
 
         List<OrderEntity> orders = orderRepository.findOrders(customerEntity.getId());
-        log.debug("order Size = {}", orders.size());
         for (OrderEntity order : orders) {
             if(null != order.getRefundEntity()) {
                 continue;
