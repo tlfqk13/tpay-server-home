@@ -151,7 +151,18 @@ public class RefundTestDetailFindService {
         String name = refundCustomerInfoRequest.getName();
         String nation = refundCustomerInfoRequest.getNationality();
         String passportNumber = refundCustomerInfoRequest.getPassportNumber();
-        Optional<CustomerEntity> customerEntityOptional = customerUpdateService.findCustomerByNationAndPassportNumber(passportNumber, nation);
+        Optional<CustomerEntity> customerEntityOptional = Optional.empty();
+        if (includeZeroInPassportNumber(passportNumber)) {
+            List<String> availPassportNumbers = getAvailPassportNumberList(passportNumber);
+            for (String passportNum : availPassportNumbers) {
+                customerEntityOptional = customerUpdateService.findCustomerByNationAndPassportNumber(passportNum, nation);
+                if(customerEntityOptional.isPresent()) {
+                    log.debug("Applied passport Number = {}", passportNum);
+                    break;
+                }
+            }
+        }
+
         if(customerEntityOptional.isEmpty()) {
             return Collections.emptyList();
         }
@@ -223,5 +234,27 @@ public class RefundTestDetailFindService {
         public int compare(RefundByCustomerResponse o1, RefundByCustomerResponse o2) {
             return o2.getCreatedDate().compareTo(o1.getCreatedDate());
         }
+    }
+
+    private boolean includeZeroInPassportNumber(String passportNumber) {
+        String secondCharInPassport = passportNumber.substring(1, 2);
+        return secondCharInPassport.equals("0") ||
+                secondCharInPassport.equals("O");
+    }
+
+    private List<String> getAvailPassportNumberList(String passportNumber) {
+        List<String> passportNumList = new ArrayList<>();
+        passportNumList.add(passportNumber);
+
+        StringBuilder stringBuilder = new StringBuilder(passportNumber);
+        char secondChar = stringBuilder.charAt(1);
+        if (secondChar == '0') {
+            stringBuilder.setCharAt(1, 'O');
+        } else {
+            stringBuilder.setCharAt(1, '0');
+        }
+
+        passportNumList.add(stringBuilder.toString());
+        return passportNumList;
     }
 }
