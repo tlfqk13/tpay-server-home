@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public interface RefundRepository extends JpaRepository<RefundEntity, Long> {
+public interface RefundRepository extends JpaRepository<RefundEntity, Long>, RefundRepositoryCustom {
     @Query(
             value =
                     "select r.id           as refundIndex,\n" +

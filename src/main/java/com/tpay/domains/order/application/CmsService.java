@@ -264,7 +264,6 @@ public class CmsService {
         int monthInt = Integer.parseInt(requestDatePart.substring(2));
 
         if(monthInt <10){
-            System.out.println("$$");
             monthInt = Integer.parseInt(requestDatePart.substring(2).replaceAll("0", ""));
         }
 
