@@ -34,6 +34,9 @@ Configuration:
             maxDepth: "1"
             IfAccumulatedFileCount:
               exceeds: 31
+        Filters:
+          ThresholdFilter:
+            level: debug
       - name: RollingFile_Appender_Error
         fileName: ${log-path}/rollingfile-error.log
         filePattern: "${log-path}/archive/rollingfile-error.log_%d{yyyy-MM-dd}.gz"
@@ -49,6 +52,10 @@ Configuration:
             maxDepth: "1"
             IfAccumulatedFileCount:
               exceeds: 31
+        Filters:
+          ThresholdFilter:
+            level: error
+            onMismatch: deny
   Loggers:
     Root:
       level: info
@@ -61,6 +68,7 @@ Configuration:
         AppenderRef:
           - ref: RollingFile_Appender
           - ref: Console_Appender
+          - ref: RollingFile_Appender_Error
       - name: org.hibernate.SQL
         additivity: false
         level: debug
@@ -72,10 +80,4 @@ Configuration:
         level: warn
         AppenderRef:
           - ref: RollingFile_Appender
-          - ref: Console_Appender
-      - name: com.tpay
-        additivity: false
-        level: warn
-        AppenderRef:
-          - ref: RollingFile_Appender_Error
           - ref: Console_Appender
