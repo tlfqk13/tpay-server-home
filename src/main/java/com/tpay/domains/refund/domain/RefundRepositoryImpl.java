@@ -20,10 +20,10 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
     public RefundRepositoryImpl(EntityManager em){this.queryFactory = new JPAQueryFactory(em);}
 
     @Override
-    public List<RefundReceiptDto.Response> findRefundReceipt(String passportNumber) {
+    public List<RefundReceiptDto.Response> findRefundReceipt(String encryptPassportNumber) {
         List<RefundReceiptDto.Response> content = queryFactory
                 .select(new QRefundReceiptDto_Response(
-                        franchiseeEntity.storeName,
+                        franchiseeUploadEntity.taxFreeStoreNumber,
                         orderEntity.saleDate,
                         franchiseeEntity.storeName,
                         franchiseeEntity.sellerName,
@@ -32,15 +32,14 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
                         franchiseeEntity.storeNumber,
                         orderEntity.totalAmount,
                         orderEntity.totalVat,
-                        refundEntity.totalRefund,
-                        customerEntity.passportNumber
+                        refundEntity.totalRefund
                 ))
                 .from(orderEntity)
                 .leftJoin(orderEntity.refundEntity,refundEntity)
                 .leftJoin(orderEntity.franchiseeEntity,franchiseeEntity)
                 .leftJoin(orderEntity.customerEntity,customerEntity)
                 .leftJoin(franchiseeUploadEntity).on(franchiseeEntity.id.eq(franchiseeUploadEntity.franchiseeIndex))
-                .where(customerEntity.passportNumber.eq(passportNumber))
+                .where(customerEntity.passportNumber.eq(encryptPassportNumber))
                 .fetch();
 
         return content;

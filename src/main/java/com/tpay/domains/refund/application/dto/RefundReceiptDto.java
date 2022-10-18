@@ -1,10 +1,12 @@
 package com.tpay.domains.refund.application.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
+import lombok.Builder;
 import lombok.Getter;
 
 public class RefundReceiptDto {
     @Getter
+    @Builder
     public static class Response{
         private final String taxFreeStoreNumber;//사후면세판매자 지정번호
         private final String sellerName;//판매자
@@ -20,13 +22,12 @@ public class RefundReceiptDto {
         private final String totalVat;//부가가치세 (VAT)
         private final String totalRefund;//즉시환급상당액
         //결제금액 = 금액
-        private final String passportNumber;//여권번호
 
         @QueryProjection
         public Response(String texFreeStoreNumber,String saleDate,String sellerName
                 ,String franchiseeName,String businessNumber,String storeAddress
                 ,String storeTelNumber,String totalAmount,String totalVat
-        ,String totalRefund, String passportNumber){
+        ,String totalRefund){
 
             this.taxFreeStoreNumber = texFreeStoreNumber;
             this.saleDate = saleDate;
@@ -38,7 +39,6 @@ public class RefundReceiptDto {
             this.totalAmount = totalAmount;
             this.totalVat = totalVat;
             this.totalRefund = totalRefund;
-            this.passportNumber = passportNumber;
         }
     }
 

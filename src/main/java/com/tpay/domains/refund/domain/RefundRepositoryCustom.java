@@ -5,5 +5,5 @@ import com.tpay.domains.refund.application.dto.RefundReceiptDto;
 import java.util.List;
 
 public interface RefundRepositoryCustom {
-    List<RefundReceiptDto.Response> findRefundReceipt(String passportNumber);
+    List<RefundReceiptDto.Response> findRefundReceipt(String encryptPassportNumber);
 }
