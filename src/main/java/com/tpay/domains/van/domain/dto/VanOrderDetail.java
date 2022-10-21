@@ -10,7 +10,7 @@ public class VanOrderDetail {
 
     private String docId;
     private String shopNm;
-    private String shopTypeCcd;
+    private int shopTypeCcd;
     private String purchsDate;
     private String totPurchsAmt;
     private String vat;

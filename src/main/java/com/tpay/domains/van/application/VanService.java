@@ -70,10 +70,18 @@ public class VanService {
 
         List<VanOrderDetail> baseList = new ArrayList<>();
         for (OrdersDtoInterface orderDto : ordersDtoInterfaceList) {
+            int shopTypeCcd = 0;
+            if(orderDto.getShopTypeCcd().equals("호텔")){
+                shopTypeCcd = 2;
+            }else if(orderDto.getShopTypeCcd().equals("의료")){
+                shopTypeCcd = 3;
+            }else{
+                shopTypeCcd = 1;
+            }
             baseList.add(VanOrderDetail.builder()
                     .docId(orderDto.getDocId())
                     .shopNm(orderDto.getShopNm())
-                    .shopTypeCcd(orderDto.getShopTypeCcd())
+                    .shopTypeCcd(shopTypeCcd)
                     .purchsDate(orderDto.getPurchsDate())
                     .totPurchsAmt(orderDto.getTotPurchsAmt())
                     .vat(orderDto.getVat())
