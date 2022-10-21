@@ -3,6 +3,9 @@ package com.tpay.domains.refund.application;
 import com.tpay.commons.aria.PassportNumberEncryptService;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
+import com.tpay.commons.exception.detail.InvalidPassportInfoException;
+import com.tpay.domains.customer.domain.CustomerEntity;
+import com.tpay.domains.customer.domain.CustomerRepository;
 import com.tpay.domains.refund.application.dto.RefundReceiptDto;
 import com.tpay.domains.refund.domain.RefundEntity;
 import com.tpay.domains.refund.domain.RefundRepository;
@@ -19,6 +22,7 @@ public class RefundReceiptFindService {
 
     private final RefundRepository refundRepository;
     private final PassportNumberEncryptService encryptService;
+    private final CustomerRepository customerRepository;
 
     public RefundEntity findById(Long refundIndex) {
 
@@ -29,7 +33,11 @@ public class RefundReceiptFindService {
     public List<RefundReceiptDto.Response> findRefundReceiptDetail(String passportNumber){
         log.trace(" @@ passportNumber = {}", passportNumber);
         String encryptPassportNumber = encryptService.encrypt(passportNumber);
-        List<RefundReceiptDto.Response> response = refundRepository.findRefundReceipt(encryptPassportNumber);
+
+        CustomerEntity customerEntity = customerRepository.findByPassportNumber(encryptPassportNumber)
+                .orElseThrow(()->new InvalidPassportInfoException(ExceptionState.INVALID_PASSPORT_INFO, "여권 조회 실패"));
+
+        List<RefundReceiptDto.Response> response = refundRepository.findRefundReceipt(customerEntity.getPassportNumber());
         return response;
     }
 }
