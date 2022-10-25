@@ -44,4 +44,30 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
 
         return content;
     }
+    @Override
+    public List<RefundReceiptDto.Response> findRefundAfterReceipt(String encryptPassportNumber) {
+        List<RefundReceiptDto.Response> content = queryFactory
+                .select(new QRefundReceiptDto_Response(
+                        franchiseeUploadEntity.taxFreeStoreNumber,
+                        orderEntity.createdDate,
+                        franchiseeEntity.storeName,
+                        franchiseeEntity.sellerName,
+                        franchiseeEntity.businessNumber,
+                        franchiseeEntity.storeAddressBasic.concat(franchiseeEntity.storeAddressDetail),
+                        franchiseeEntity.storeNumber,
+                        orderEntity.totalAmount,
+                        orderEntity.totalVat,
+                        refundEntity.totalRefund
+                ))
+                .from(orderEntity)
+                .leftJoin(orderEntity.refundEntity,refundEntity)
+                .leftJoin(orderEntity.franchiseeEntity,franchiseeEntity)
+                .leftJoin(orderEntity.customerEntity,customerEntity)
+                .leftJoin(franchiseeUploadEntity).on(franchiseeEntity.id.eq(franchiseeUploadEntity.franchiseeIndex))
+                .where(customerEntity.passportNumber.eq(encryptPassportNumber)
+                        .and(refundEntity.refundAfterEntity.isNotNull()))
+                .fetch();
+
+        return content;
+    }
 }

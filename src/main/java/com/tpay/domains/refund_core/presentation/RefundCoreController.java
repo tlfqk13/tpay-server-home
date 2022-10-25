@@ -38,9 +38,9 @@ public class RefundCoreController {
         @RequestBody RefundSaveRequest request,
         @PathVariable UserSelector userSelector,
         @PathVariable Long index) {
-        log.trace("Refund Approval Start = {}", request);
+        log.debug("Refund Approval Start = {}", request);
         RefundResponse response = refundApproveService.approve(request);
-        log.trace("Refund Approval Finish = {}", response);
+        log.debug("Refund Approval Finish = {}", response);
         return ResponseEntity.ok(response);
     }
 
@@ -55,9 +55,9 @@ public class RefundCoreController {
         @PathVariable UserSelector userSelector,
         @PathVariable Long index
     ) {
-        log.trace("Refund Cancel Start = {}", customerIndex);
+        log.debug("Refund Cancel Start = {}", customerIndex);
         RefundResponse response = refundCancelService.cancel(customerIndex, refundIndex);
-        log.trace("Refund Cancel Finish = {}", customerIndex);
+        log.debug("Refund Cancel Finish = {}", customerIndex);
         return ResponseEntity.ok(response);
     }
 
@@ -77,13 +77,17 @@ public class RefundCoreController {
     @PostMapping("/limit")
     public ResponseEntity<RefundResponse> find(
             @RequestBody RefundLimitRequest request) {
-        log.trace("Refund Limit Find Start = {}", request);
+        log.debug("Refund Limit Find Start = {}", request);
         RefundResponse response = limitFindService.find(request);
-        log.trace("Refund Limit Find Finish = {}", request);
+        log.debug("Refund Limit Find Finish = {}", request);
         return ResponseEntity.ok(response);
     }
 
     // TODO: 2022/09/15 tourCash_Admin 전용 RefundApprove
+    /**
+     * TourCash - 환급 승인 요청
+     * URL에 있는 userSelector와 index는 jwt 추가검증 때문에 삽입. 서비스단에 사용되진 않음
+     */
     @PostMapping("/approval/tourcash/{userSelector}/{index}")
     public ResponseEntity<RefundResponse> tourCashRefundApproval(
             @RequestBody RefundSaveRequest request,
@@ -94,12 +98,15 @@ public class RefundCoreController {
             throw new FranchiseeAuthenticationException(
                     ExceptionState.AUTHENTICATION_FAILED, "Token not exists");
         }
-        log.trace("Refund Approval Start = {}", request);
+        log.debug("Refund Approval Start = {}", request);
         RefundResponse response = refundApproveService.approve(request);
-        log.trace("Refund Approval Finish = {}", response);
+        log.debug("Refund Approval Finish = {}", response);
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * 사후 환급 승인
+     */
     @PostMapping("/approval/after")
     public ResponseEntity<RefundResponse> refundAfterApproval(
             @RequestBody RefundAfterDto.Request request

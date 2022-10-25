@@ -39,9 +39,14 @@ public class RefundReceiptFindService {
         CustomerEntity customerEntity = customerRepository.findByPassportNumber(encryptPassportNumber)
                 .orElseThrow(()->new InvalidPassportInfoException(ExceptionState.INVALID_PASSPORT_INFO, "여권 조회 실패"));
 
-        List<RefundReceiptDto.Response> response = refundRepository.findRefundReceipt(customerEntity.getPassportNumber());
-        if(request.isLatest()) {
-            // 최신순, 과거순
+        List<RefundReceiptDto.Response> response;
+        // 최신순, 과거순
+        if(request.isRefundAfter()){
+            response = refundRepository.findRefundAfterReceipt(customerEntity.getPassportNumber());
+        }else {
+            response = refundRepository.findRefundReceipt(customerEntity.getPassportNumber());
+        }
+        if(request.isLatest()){
             response = response.stream().sorted(Comparator.comparing(RefundReceiptDto.Response::getSaleDate).reversed()).collect(Collectors.toList());
         }
         return response;

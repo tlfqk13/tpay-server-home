@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface RefundRepositoryCustom {
     List<RefundReceiptDto.Response> findRefundReceipt(String encryptPassportNumber);
+    List<RefundReceiptDto.Response> findRefundAfterReceipt(String encryptPassportNumber);
 }

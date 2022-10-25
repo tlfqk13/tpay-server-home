@@ -6,7 +6,6 @@ import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.exception.detail.WebfluxGeneralException;
 import com.tpay.commons.push.PushCategoryType;
 import com.tpay.commons.webClient.WebRequestUtil;
-import com.tpay.domains.auth.application.AccessTokenService;
 import com.tpay.domains.auth.domain.EmployeeAccessTokenEntity;
 import com.tpay.domains.auth.domain.EmployeeAccessTokenRepository;
 import com.tpay.domains.auth.domain.FranchiseeAccessTokenEntity;
@@ -55,11 +54,8 @@ public class RefundApproveService {
     private final ExternalRepository externalRepository;
     private final OrderService orderService;
     private final WebRequestUtil webRequestUtil;
-
     private final EmployeeFindService employeeFindService;
     private final NonBatchPushService nonBatchPushService;
-
-    private final AccessTokenService accessTokenService;
     private final FranchiseeAccessTokenRepository franchiseeAccessTokenRepository;
     private final EmployeeAccessTokenRepository employeeAccessTokenRepository;
 
@@ -73,18 +69,11 @@ public class RefundApproveService {
             throw new InvalidParameterException(ExceptionState.CHECK_ITEM_PRICE);
         }
 
-        if (request.getUserSelector().equals(EMPLOYEE)) {
-            EmployeeEntity employeeEntity = employeeFindService.findById(request.getEmployeeIndex())
-                    .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Employee not exists"));
-            request.updateFranchiseeIndex(employeeEntity);
-        } else if (!request.getUserSelector().equals(FRANCHISEE)) {
-            throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "UserSelector must FRANCHISEE or EMPLOYEE");
-        }
+        validationCheckEmployee(request);
 
         OrderEntity orderEntity = orderSaveService.save(request);
         log.debug("Order saved Id = {} ", orderEntity.getId());
 
-        // TODO: 2022/09/29 user 기기정보 업데이트 로직 함수화
         updateUserDeviceInfo(request, orderEntity);
 
         FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(request.getFranchiseeIndex());
@@ -226,6 +215,16 @@ public class RefundApproveService {
                 log.trace("Franchisee Device info save");
             }
         }else {
+            throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "UserSelector must FRANCHISEE or EMPLOYEE");
+        }
+    }
+
+    private void validationCheckEmployee(RefundSaveRequest request) {
+        if (request.getUserSelector().equals(EMPLOYEE)) {
+            EmployeeEntity employeeEntity = employeeFindService.findById(request.getEmployeeIndex())
+                    .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Employee not exists"));
+            request.updateFranchiseeIndex(employeeEntity);
+        } else if (!request.getUserSelector().equals(FRANCHISEE)) {
             throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "UserSelector must FRANCHISEE or EMPLOYEE");
         }
     }
