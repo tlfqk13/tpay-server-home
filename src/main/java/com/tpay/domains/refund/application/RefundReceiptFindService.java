@@ -13,7 +13,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -30,14 +32,18 @@ public class RefundReceiptFindService {
             .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid RefundIndex"));
     }
 
-    public List<RefundReceiptDto.Response> findRefundReceiptDetail(String passportNumber){
-        log.trace(" @@ passportNumber = {}", passportNumber);
-        String encryptPassportNumber = encryptService.encrypt(passportNumber);
+    public List<RefundReceiptDto.Response> findRefundReceiptDetail(RefundReceiptDto.Request request){
+
+        String encryptPassportNumber = encryptService.encrypt(request.getPassportNumber());
 
         CustomerEntity customerEntity = customerRepository.findByPassportNumber(encryptPassportNumber)
                 .orElseThrow(()->new InvalidPassportInfoException(ExceptionState.INVALID_PASSPORT_INFO, "여권 조회 실패"));
 
         List<RefundReceiptDto.Response> response = refundRepository.findRefundReceipt(customerEntity.getPassportNumber());
+        if(request.isLatest()) {
+            // 최신순, 과거순
+            response = response.stream().sorted(Comparator.comparing(RefundReceiptDto.Response::getSaleDate).reversed()).collect(Collectors.toList());
+        }
         return response;
     }
 }

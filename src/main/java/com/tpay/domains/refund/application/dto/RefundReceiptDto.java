@@ -45,6 +45,9 @@ public class RefundReceiptDto {
     @Getter
     public static class Request{
         private String passportNumber;
+        // TODO: 2022/10/21 사후 환급 전표만 출력.
+        private boolean refundAfter;
+        private boolean latest;
     }
 }
 
