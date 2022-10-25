@@ -49,14 +49,14 @@ public class LimitFindService {
             Long customerEntityId;
             Optional<CustomerEntity> customerEntityOptional = customerUpdateService.findCustomerByNationAndPassportNumber(refundResponse.getPassportNumber(), refundResponse.getNationality());
             if (customerEntityOptional.isEmpty()) {
-                log.trace("Customer Not exists.");
+                log.debug("Customer Not exists.");
                 CustomerEntity customerEntity = customerUpdateService.updateCustomerInfo(request.getName(), refundResponse.getPassportNumber(), refundResponse.getNationality());
                 customerEntityId = customerEntity.getId();
-                log.trace("Refund Limit customerID = {}", customerEntityId);
+                log.debug("Refund Limit customerID = {}", customerEntityId);
             } else {
-                log.trace("Customer already exists.");
+                log.debug("Customer already exists.");
                 customerEntityId = customerEntityOptional.get().getId();
-                log.trace("Refund Limit customerID = {}", customerEntityId);
+                log.debug("Refund Limit customerID = {}", customerEntityId);
             }
 
             return refundResponse.addCustomerInfo(customerEntityId);
