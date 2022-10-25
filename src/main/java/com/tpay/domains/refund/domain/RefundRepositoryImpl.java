@@ -24,7 +24,7 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
         List<RefundReceiptDto.Response> content = queryFactory
                 .select(new QRefundReceiptDto_Response(
                         franchiseeUploadEntity.taxFreeStoreNumber,
-                        orderEntity.saleDate,
+                        orderEntity.createdDate,
                         franchiseeEntity.storeName,
                         franchiseeEntity.sellerName,
                         franchiseeEntity.businessNumber,

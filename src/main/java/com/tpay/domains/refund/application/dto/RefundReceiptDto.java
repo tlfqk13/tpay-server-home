@@ -1,12 +1,12 @@
 package com.tpay.domains.refund.application.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
-import lombok.Builder;
 import lombok.Getter;
+
+import java.time.LocalDateTime;
 
 public class RefundReceiptDto {
     @Getter
-    @Builder
     public static class Response{
         private final String taxFreeStoreNumber;//사후면세판매자 지정번호
         private final String sellerName;//판매자
@@ -15,7 +15,7 @@ public class RefundReceiptDto {
         private final String storeAddress;//주소
         private final String storeTelNumber;// 연락처
 
-        private final String saleDate;//판매일
+        private final LocalDateTime saleDate;//판매일
         //단가= 금액 - 부가가치세
         private final String totalAmount;//금액
         //판매총액 = 금액
@@ -24,7 +24,7 @@ public class RefundReceiptDto {
         //결제금액 = 금액
 
         @QueryProjection
-        public Response(String texFreeStoreNumber,String saleDate,String sellerName
+        public Response(String texFreeStoreNumber,LocalDateTime saleDate,String sellerName
                 ,String franchiseeName,String businessNumber,String storeAddress
                 ,String storeTelNumber,String totalAmount,String totalVat
         ,String totalRefund){
@@ -45,6 +45,9 @@ public class RefundReceiptDto {
     @Getter
     public static class Request{
         private String passportNumber;
+        // TODO: 2022/10/21 사후 환급 전표만 출력.
+        private boolean refundAfter;
+        private boolean latest;
     }
 }
 

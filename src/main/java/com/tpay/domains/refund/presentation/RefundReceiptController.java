@@ -20,7 +20,7 @@ public class RefundReceiptController {
     public ResponseEntity<List<RefundReceiptDto.Response>> findRefundReceipt(
             @RequestBody RefundReceiptDto.Request request
     ){
-        List<RefundReceiptDto.Response> refundReceiptList = refundReceiptFindService.findRefundReceiptDetail(request.getPassportNumber());
+        List<RefundReceiptDto.Response> refundReceiptList = refundReceiptFindService.findRefundReceiptDetail(request);
         return ResponseEntity.ok(refundReceiptList);
     }
 }
