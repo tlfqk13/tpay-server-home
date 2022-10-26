@@ -42,9 +42,9 @@ public class RefundReceiptFindService {
         List<RefundReceiptDto.Response> response;
         // 최신순, 과거순
         if(request.isRefundAfter()){
-            response = refundRepository.findRefundAfterReceipt(customerEntity.getPassportNumber());
+            response = refundRepository.findRefundReceipt(customerEntity.getPassportNumber(),true);
         }else {
-            response = refundRepository.findRefundReceipt(customerEntity.getPassportNumber());
+            response = refundRepository.findRefundReceipt(customerEntity.getPassportNumber(),false);
         }
         if(request.isLatest()){
             response = response.stream().sorted(Comparator.comparing(RefundReceiptDto.Response::getSaleDate).reversed()).collect(Collectors.toList());
