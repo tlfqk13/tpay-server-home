@@ -1,7 +1,6 @@
 package com.tpay.domains.refund.domain;
 
 import com.tpay.domains.refund.application.dto.RefundReceiptDto;
-import com.tpay.domains.refund_test.dto.RefundFindDto;
 
 import java.util.List;
 
