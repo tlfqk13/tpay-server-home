@@ -26,7 +26,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -143,17 +146,16 @@ public class CmsService {
         }
     }
     public void cmsAdminDownloads() {
-        String requestYear = String.valueOf(LocalDate.now().getYear()).substring(2);
-        String requestMonthly = String.valueOf(LocalDate.now().getMonthValue());
-        String requestYearMonthly = requestYear + requestMonthly;
+        LocalDate startDate = LocalDate.now().minusDays(LocalDate.now().getDayOfMonth()-1);
+        LocalDate endDate = LocalDate.now().minusDays(LocalDate.now().getDayOfMonth()).plusMonths(1);
+        String requestYearMonthly =  String.valueOf(startDate.getYear()).substring(2) + startDate.getMonthValue();
+        log.trace(" @@ requestYearMonthly = {}", requestYearMonthly);
 
-        List<String> date = this.setUpDate(requestYearMonthly);
-        String year = date.get(0);
-        String month = date.get(1);
-        List<List<String>> totalResult = refundDetailFindService.findFranchiseeId(year, month);
+        List<List<String>> totalResult = refundDetailFindService.findFranchiseeId(startDate,endDate);
         for (List<String> strings : totalResult) {
             this.cmsDownloads(Long.valueOf(strings.get(0)), requestYearMonthly);
         }
+
     }
     private void topSection(XSSFSheet sheet, List<String> topSectionInfo) {
         for(int i=CmsCustomValue.TOPSECTION_STARTROW; i<=CmsCustomValue.TOPSECTION_ENDROW; i+=2){

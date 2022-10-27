@@ -47,10 +47,8 @@ public class CmsController {
     }
 
     // TODO: 2022/07/29 관리자가 한번에 cms 청구서 뽑는 기능
-    @GetMapping("/franchisee/{franchiseeIndex}/admin/cms/downloads")
-    public ResponseEntity<String> adminCmsDownloads(
-            @PathVariable Long franchiseeIndex
-    ) {
+    @GetMapping("/franchisee/admin/cms/downloads")
+    public ResponseEntity<String> adminCmsDownloads(){
         cmsService.cmsAdminDownloads();
         return ResponseEntity.ok("Asdf");
     }

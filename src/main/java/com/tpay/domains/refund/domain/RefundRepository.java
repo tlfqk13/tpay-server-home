@@ -161,26 +161,10 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long>, Ref
                             "  and r.created_date between :startDate and :endDate\n" +
                             "order by 1 desc",
             nativeQuery = true)
-    RefundFindResponseInterface findAFranchiseeSaleTotalQuery(
+    RefundFindResponseInterface findRefundDetailSaleTotalQuery(
             @Param("franchiseeIndex") Long franchiseeIndex,
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate);
-
-    @Query(value = "select\n" +
-            "       r.id             as refundIndex,\n" +
-            "       o.purchs_sn      as orderNumber,\n" +
-            "       r.created_date   as createdDate,\n" +
-            "       o.tot_amt        as totalAmount,\n" +
-            "       r.tot_refund     as totalRefund,\n" +
-            "       o.tot_amt - r.tot_refund    as actualAmount,\n" +
-            "       r.refund_status  as refundStatus,\n" +
-            "       f.biz_no         as businessNumber,\n" +
-            "       f.store_nm       as storeName\n" +
-            "    from refund r inner join orders o on r.order_id = o.id\n" +
-            "                  left join franchisee f on o.franchisee_id = f.id\n" +
-            "    where f.id = :franchiseeIndex\n" +
-            "    order by refundIndex  desc;", nativeQuery = true)
-    List<RefundFindResponseInterface> findAFranchiseeNativeQuery(Long franchiseeIndex);
 
     @Query(
             value =
@@ -273,27 +257,9 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long>, Ref
             @Param("franchiseeIndex") Long franchiseeIndex
     );
 
-
     @EntityGraph(attributePaths = {"orderEntity"})
     List<RefundEntity> findByCreatedDateBetween(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 
-    @Query(value = "select\n" +
-            "   r.id as refundIndex,\n" +
-            "   o.franchisee_id as franchiseeIndex,\n" +
-            "   o.created_date as createdDate,\n" +
-            "   o.tot_amt as totalAmount,\n" +
-            "   r.tot_refund as totalRefund,\n" +
-            "   o.tot_amt - r.tot_refund as actualAmount,\n" +
-            "   p.value as point\n" +
-            "from refund r\n "
-            + "left join orders o on o.id = r.order_id\n"
-            + "left join point_scheduled p on o.id = p.order_id\n" +
-            "where o.id = :refundIndex\n" +
-            "and p.order_id = :refundIndex\n" +
-            "and o.franchisee_id = :franchiseeIndex\n", nativeQuery = true)
-    List<RefundFindResponseInterface> findDetailNativeQuery(
-            @Param("franchiseeIndex") Long franchiseeIndex,
-            @Param("refundIndex") Long refundIndex);
 
     @Query(value = "select\n" +
             " f.id as franchiseeId\n" +
