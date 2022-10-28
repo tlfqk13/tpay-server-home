@@ -207,16 +207,7 @@ public class RefundDetailFindService {
         return refundByCustomerDateResponseList;
     }
 
-    public List<List<String>> findFranchiseeId(String year, String month) {
-        List<RefundFindResponseInterface> refundFindResponseInterfaceList = refundRepository.findFranchiseeId(year, month);
-        List<List<String>> result = new ArrayList<>();
-        for(RefundFindResponseInterface refundFindResponseInterface : refundFindResponseInterfaceList ){
-            List<String> baseList = new ArrayList<>();
-            baseList.add(refundFindResponseInterface.getFranchiseeId());
-            result.add(baseList);
-        }
-        return result;
-    }
+
 
     public List<List<String>> findFranchiseeId(LocalDate startDate, LocalDate endDate) {
         List<CmsDto.Response> refundFindResponseInterfaceList = refundRepository.findFranchiseeIdCmsService(startDate,endDate);

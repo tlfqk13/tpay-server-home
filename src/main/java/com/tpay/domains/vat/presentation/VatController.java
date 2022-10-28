@@ -1,7 +1,6 @@
 package com.tpay.domains.vat.presentation;
 
 
-import com.tpay.domains.batch.vat_batch.application.VatMonthlySendService;
 import com.tpay.domains.vat.application.VatDownloadService;
 import com.tpay.domains.vat.application.VatHomeTaxService;
 import com.tpay.domains.vat.application.VatService;
@@ -22,8 +21,6 @@ import java.io.IOException;
 public class VatController {
 
     private final VatService vatService;
-    private final VatMonthlySendService vatMonthlySendService;
-
     private final VatDownloadService vatDownloadService;
     private final VatHomeTaxService homeTaxService;
 
@@ -56,13 +53,11 @@ public class VatController {
         return ResponseEntity.ok(downloadLink);
     }
     // API 호출로 관리자가 한번에 일괄 출력 기능
-    @GetMapping("/franchisee/{franchiseeIndex}/admin/vat/downloads")
-    public ResponseEntity<String> vatMonthlyDownloads(
-            @PathVariable Long franchiseeIndex,
-            @RequestParam String requestMonth // ?requestMonth = 225
-    ){
-        vatMonthlySendService.vatMonthlyFile();
-        return ResponseEntity.ok("vatMonthlySendMailFile");
+    @GetMapping("/franchisee/admin/vat/downloads")
+    public ResponseEntity<String> vatAdminDownloads()
+    {
+        vatDownloadService.vatAdminDownloads();
+        return ResponseEntity.ok("ok");
     }
 
     @GetMapping("/franchisee/{franchiseeIndex}/vat/hometax")

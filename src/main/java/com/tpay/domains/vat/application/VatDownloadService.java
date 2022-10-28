@@ -10,6 +10,7 @@ import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee_upload.application.FranchiseeUploadFindService;
 import com.tpay.domains.franchisee_upload.domain.FranchiseeUploadEntity;
 import com.tpay.domains.order.application.OrderService;
+import com.tpay.domains.refund.application.RefundDetailFindService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.ss.usermodel.BorderStyle;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +37,7 @@ public class VatDownloadService {
     private final OrderService orderService;
     private final FranchiseeFindService franchiseeFindService;
     private final FranchiseeUploadFindService franchiseeUploadFindService;
+    private final RefundDetailFindService refundDetailFindService;
     private final S3FileUploader s3FileUploader;
 
     public String vatDownloads(Long franchiseeIndex, String requestDate) {
@@ -50,20 +53,23 @@ public class VatDownloadService {
             XSSFSheet sheet = xssfWorkbook.getSheetAt(0); // 첫번째 시트를 가져옴
 
             List<Object> localDates = this.setUpQuarterly(requestDate);
-            LocalDate startDate = (LocalDate) localDates.get(0);
-            LocalDate endDate = (LocalDate) localDates.get(1);
+            LocalDate startLocalDate = (LocalDate) localDates.get(0);
+            LocalDate endLocalDate = (LocalDate) localDates.get(1);
             String saleTerm = (String) localDates.get(2);
+
+            boolean isVat = true;
+
             //연월일
             //1. 제출자 인적사항
             boolean isMonthly = false;
-            List<String> personalInfoResult = this.findPersonalInfo(franchiseeIndex, saleTerm,isMonthly);
+            List<String> personalInfoResult = this.findPersonalInfo(franchiseeIndex, startLocalDate,isMonthly);
             //2. 물품판매 총합계
-            List<String> totalResult = orderService.findQuarterlyTotal(franchiseeIndex, startDate, endDate);
+            List<String> totalResult = orderService.findMonthlyTotal(franchiseeIndex, startLocalDate, endLocalDate,isVat);
             //3. 물품판매 명세 (반기)
-            List<List<String>> detailResult = orderService.findQuarterlyDetail(franchiseeIndex, startDate, endDate);
+            List<List<String>> detailResult = orderService.findMonthlyCmsDetail(franchiseeIndex, startLocalDate, endLocalDate,false);
 
             // 최상단 (년 기(월))
-            topSection(xssfWorkbook,sheet,requestDate,isMonthly);
+            topSection(xssfWorkbook,sheet,startLocalDate,isMonthly);
 
             // 1. 제출자 인적사항
             // 데이터 ex ) sellerName, businessNumber, storeName, address, saleTerm, taxFreeStoreNumber
@@ -86,7 +92,18 @@ public class VatDownloadService {
         }
     }
 
-    // TODO: 2022/07/08 가정 6월의 매출내역 메일을 7월 15일 새벽에 생성
+    public void vatAdminDownloads() {
+        LocalDate startDate = LocalDate.now().minusDays(LocalDate.now().getDayOfMonth() - 1);
+        LocalDate endDate = LocalDate.now().minusDays(LocalDate.now().getDayOfMonth()).plusMonths(1);
+        String requestYearMonthly = String.valueOf(startDate.getYear()).substring(2) + startDate.getMonthValue();
+
+        List<List<String>> totalResult = refundDetailFindService.findFranchiseeId(startDate, endDate);
+        for (List<String> strings : totalResult) {
+            this.vatMonthlySendMailFile(Long.valueOf(strings.get(0)), requestYearMonthly);
+        }
+    }
+
+        // TODO: 2022/07/08 가정 6월의 매출내역 메일을 7월 15일 새벽에 생성
     public void vatMonthlySendMailFile(Long franchiseeIndex, String requestMonth) {
         try {
             ClassPathResource resource = new ClassPathResource("KTP_REFUND_Form.xlsx");
@@ -99,21 +116,20 @@ public class VatDownloadService {
             XSSFWorkbook xssfWorkbook = new XSSFWorkbook(fileInputStream);
             XSSFSheet sheet = xssfWorkbook.getSheetAt(0); // 첫번째 시트를 가져옴
 
-            List<String> date = this.setUpDate(requestMonth);
-            String year = date.get(0);
-            String month = date.get(1);
-            String saleTerm = year + month;
+            List<LocalDate> date = setUpDate(requestMonth);
+            LocalDate startLocalDate = date.get(0);
+            LocalDate endLocalDate = date.get(1);
 
             //1. 제출자 인적사항
             boolean isMonthly = true;
-            List<String> personalInfoResult = this.findPersonalInfo(franchiseeIndex,saleTerm,isMonthly);
+            List<String> personalInfoResult = this.findPersonalInfo(franchiseeIndex,startLocalDate,isMonthly);
             //2. 물품판매 총합계
-            List<String> totalResult = orderService.findMonthlyTotal(franchiseeIndex, year, month);
+            List<String> totalResult = orderService.findMonthlyTotal(franchiseeIndex, startLocalDate, endLocalDate,false);
             //3. 물품판매 명세 (월)
-            List<List<String>> detailMonthlyResult = orderService.findMonthlyDetail(franchiseeIndex, year, month);
+            List<List<String>> detailMonthlyResult = orderService.findMonthlyCmsDetail(franchiseeIndex, startLocalDate, endLocalDate,true);
 
             // 최상단 (년 기(월))
-            topSection(xssfWorkbook,sheet,month,isMonthly);
+            topSection(xssfWorkbook,sheet,startLocalDate,isMonthly);
 
             // 1. 제출자 인적사항
             // 데이터 ex ) sellerName, businessNumber, storeName, address, saleTerm, taxFreeStoreNumber
@@ -127,23 +143,21 @@ public class VatDownloadService {
             detailMonthlyResultSection(xssfWorkbook,sheet,detailMonthlyResult);
 
             StringBuilder fileName = new StringBuilder();
-            fileName.append(personalInfoResult.get(2)).append("_").append(month).append("월").append("_실적명세서");
-            String result = s3FileUploader.uploadXlsx(franchiseeIndex, xssfWorkbook,fileName,month,false);
+            fileName.append(personalInfoResult.get(2)).append("_").append(startLocalDate.getMonthValue()).append("월").append("_실적명세서");
+            String result = s3FileUploader.uploadXlsx(franchiseeIndex, xssfWorkbook,fileName, String.valueOf(startLocalDate.getMonthValue()),false);
 
         } catch (IOException e) {
             throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "File Input Failed");
         }
     }
-    private void topSection(XSSFWorkbook xssfWorkbook, XSSFSheet sheet, String requestDate,boolean isMonthly){
+    private void topSection(XSSFWorkbook xssfWorkbook, XSSFSheet sheet, LocalDate startDate,boolean isMonthly){
         XSSFRow topSectionRow = sheet.getRow(VatCustomValue.TOPSECTION_ROW);
         CellStyle topSectionCellStyle = cellStyleCustom(xssfWorkbook, false);
         topSectionRow.createCell(VatCustomValue.TOPSECTION_COLUMN, STRING).setCellStyle(topSectionCellStyle);
         if(isMonthly){
-            topSectionRow.getCell(VatCustomValue.TOPSECTION_COLUMN).setCellValue("( 2022년" + requestDate + "기(월))");
+            topSectionRow.getCell(VatCustomValue.TOPSECTION_COLUMN).setCellValue("( 2022년" + startDate.getMonthValue() + "기(월))");
         }else{
-            String year = requestDate.substring(0, 2);
-            String month = requestDate.substring(2);
-            topSectionRow.getCell(VatCustomValue.TOPSECTION_COLUMN).setCellValue("( 20" + year + "년" + month + "기(월))");
+            topSectionRow.getCell(VatCustomValue.TOPSECTION_COLUMN).setCellValue("( 20" + startDate.getYear() + "년" + startDate.getMonthValue() + "기(월))");
         }
     }
     private void personalInfoResultSection(XSSFWorkbook xssfWorkbook, XSSFSheet sheet, List<String> personalInfoResult) {
@@ -264,29 +278,27 @@ public class VatDownloadService {
         return dateList;
     }
 
-    public List<String> setUpDate(String requestDatePart) {
+    public List<LocalDate> setUpDate(String requestDate) {
 
-        int yearInt = Integer.parseInt("20" + requestDatePart.substring(0, 2));
-        int monthInt = Integer.parseInt(requestDatePart.substring(2));
+        int yearInt = Integer.parseInt("20" + requestDate.substring(0, 2));
+        int monthInt = Integer.parseInt(requestDate.substring(2));
 
         if(monthInt <10){
-            System.out.println("$$");
-            monthInt = Integer.parseInt(requestDatePart.substring(2).replaceAll("0", ""));
-        }
-        LocalDate localDate = LocalDate.of(yearInt,monthInt-1,1);
-        String year = String.valueOf(localDate.getYear());
-        String month = String.valueOf(localDate.getMonthValue());
-        if(month.length() == 1) {
-            month = "0" + month;
+            monthInt = Integer.parseInt(requestDate.substring(2).replaceAll("0", ""));
         }
 
-        List<String> dateList = new ArrayList<>();
-        dateList.add(year);
-        dateList.add(month);
+        LocalDate startDate = LocalDate.of(yearInt,monthInt-1,1);
+        LocalDate endDate = LocalDate.of(yearInt,monthInt,1);
+        startDate.format(DateTimeFormatter.BASIC_ISO_DATE);
+        endDate.format(DateTimeFormatter.BASIC_ISO_DATE);
+
+        List<LocalDate> dateList = new ArrayList<>();
+        dateList.add(startDate);
+        dateList.add(endDate);
         return dateList;
     }
 
-    private List<String> findPersonalInfo(Long franchiseeIndex, String saleTerm, boolean isMonthly) {
+    private List<String> findPersonalInfo(Long franchiseeIndex, LocalDate startDate, boolean isMonthly) {
         FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
         FranchiseeUploadEntity franchiseeUploadEntity = franchiseeUploadFindService.findByFranchiseeIndex(franchiseeIndex);
         List<String> result = new ArrayList<>();
@@ -295,11 +307,11 @@ public class VatDownloadService {
         result.add(franchiseeEntity.getStoreName());
         result.add(franchiseeEntity.getStoreAddressBasic() + " " + franchiseeEntity.getStoreAddressDetail());
         if(isMonthly){
-            result.add("20" + saleTerm.substring(2,4) + "년"
-                    + saleTerm.substring(4,6) + "월 01일 ~ "
-                    + saleTerm.substring(4,6) + "월 31일 " );
+            result.add(startDate.getYear() + "년"
+                    + startDate.getMonthValue() + "월 01일 ~ "
+                    + startDate.getMonthValue() + "월 31일 " );
         }else{
-            result.add(saleTerm); // 거래기간
+            result.add(String.valueOf(startDate)); // 거래기간
         }
         result.add(franchiseeUploadEntity.getTaxFreeStoreNumber()); // 면세 판매장 지정번호
         return result;

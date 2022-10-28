@@ -61,7 +61,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 "/refund/approval/tourcash/**",
                 // NICE VAN 관련
                 "/van/**",
-                "/franchisee/admin/cms/downloads"
+                "/franchisee/admin/cms/downloads",
+                "/franchisee/admin/vat/downloads"
         ));
 
         if (!profileName.equals("deploy")) {
