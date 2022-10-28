@@ -63,7 +63,6 @@ public class FranchiseeEntity extends BaseTimeEntity {
     @Column(name = "prdNm", length = 100, nullable = false)
     private String productCategory;
 
-    @NotNull
     private String password;
 
     private long balance;
