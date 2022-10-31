@@ -60,7 +60,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 // TODO: 2022/09/15 tourCash 환급 전용
                 "/refund/approval/tourcash/**",
                 // NICE VAN 관련
-                "/van/**"
+                "/van/**",
+                "/franchisee/admin/cms/downloads",
+                "/franchisee/admin/vat/downloads"
         ));
 
         if (!profileName.equals("deploy")) {

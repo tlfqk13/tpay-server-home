@@ -5,6 +5,7 @@ import com.tpay.commons.util.DateFilter;
 import com.tpay.domains.customer.application.CustomerUpdateService;
 import com.tpay.domains.customer.application.dto.CustomerInfo;
 import com.tpay.domains.customer.domain.CustomerEntity;
+import com.tpay.domains.order.application.dto.CmsDto;
 import com.tpay.domains.refund.application.dto.*;
 import com.tpay.domains.refund.domain.RefundEntity;
 import com.tpay.domains.refund.domain.RefundRepository;
@@ -124,7 +125,7 @@ public class RefundDetailFindService {
         List<RefundFindResponseInterface> findAFranchiseeList = refundRepository.findAFranchiseeNativeQuery(franchiseeIndex, startLocalDate, endLocalDate);
         List<RefundFindResponse> refundList = findAFranchiseeList.stream().map(RefundFindResponse::new).collect(Collectors.toList());
 
-        RefundFindResponseInterface refundDetailList = refundRepository.findAFranchiseeSaleTotalQuery(franchiseeIndex, startLocalDate, endLocalDate);
+        RefundFindResponseInterface refundDetailList = refundRepository.findRefundDetailSaleTotalQuery(franchiseeIndex, startLocalDate, endLocalDate);
         RefundDetailTotalResponse refundDetail = RefundDetailTotalResponse.builder()
                 .totalActualAmount(refundDetailList.getActualAmount())
                 .totalAmount(refundDetailList.getTotalAmount())
@@ -206,16 +207,14 @@ public class RefundDetailFindService {
         return refundByCustomerDateResponseList;
     }
 
-    public List<RefundFindResponseInterface> findDetail(Long franchiseeIndex,Long refundIndex) {
-        return refundRepository.findDetailNativeQuery(franchiseeIndex,refundIndex);
-    }
 
-    public List<List<String>> findFranchiseeId(String year, String month) {
-        List<RefundFindResponseInterface> refundFindResponseInterfaceList = refundRepository.findFranchiseeId(year, month);
+
+    public List<List<String>> findFranchiseeId(LocalDate startDate, LocalDate endDate) {
+        List<CmsDto.Response> refundFindResponseInterfaceList = refundRepository.findFranchiseeIdCmsService(startDate,endDate);
         List<List<String>> result = new ArrayList<>();
-        for(RefundFindResponseInterface refundFindResponseInterface : refundFindResponseInterfaceList ){
+        for(CmsDto.Response refundFindResponseInterface : refundFindResponseInterfaceList ){
             List<String> baseList = new ArrayList<>();
-            baseList.add(refundFindResponseInterface.getFranchiseeId());
+            baseList.add(String.valueOf(refundFindResponseInterface.getFranchiseeIndex()));
             result.add(baseList);
         }
         return result;

@@ -14,7 +14,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 public class RefundFindController {
-
     private final RefundDetailFindService refundDetailFindService;
 
     @GetMapping("/refunds/franchisee/{franchiseeIndex}")
@@ -27,15 +26,6 @@ public class RefundFindController {
         List<RefundFindResponseInterface> responseList =
             refundDetailFindService.findList(franchiseeIndex, startDate, endDate);
         return ResponseEntity.ok(responseList);
-    }
-
-    @GetMapping("/refunds/franchisee/detail/{franchiseeIndex}")
-    public ResponseEntity<List<RefundFindResponseInterface>> findDetail(
-            @PathVariable Long franchiseeIndex,
-            @RequestParam Long refundIndex) {
-        List<RefundFindResponseInterface> responseDetail =
-                refundDetailFindService.findDetail(franchiseeIndex,refundIndex);
-        return ResponseEntity.ok(responseDetail);
     }
 
     @GetMapping("/admin/refunds")
