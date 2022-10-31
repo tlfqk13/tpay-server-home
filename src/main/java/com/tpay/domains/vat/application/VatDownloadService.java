@@ -64,9 +64,9 @@ public class VatDownloadService {
             boolean isMonthly = false;
             List<String> personalInfoResult = this.findPersonalInfo(franchiseeIndex, startLocalDate,isMonthly);
             //2. 물품판매 총합계
-            List<String> totalResult = orderService.findMonthlyTotal(franchiseeIndex, startLocalDate, endLocalDate,isVat);
+            List<String> totalResult = orderService.findCmsVatTotal(franchiseeIndex, startLocalDate, endLocalDate);
             //3. 물품판매 명세 (반기)
-            List<List<String>> detailResult = orderService.findMonthlyCmsDetail(franchiseeIndex, startLocalDate, endLocalDate,false);
+            List<List<String>> detailResult = orderService.findCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate,false);
 
             // 최상단 (년 기(월))
             topSection(xssfWorkbook,sheet,startLocalDate,isMonthly);
@@ -124,9 +124,9 @@ public class VatDownloadService {
             boolean isMonthly = true;
             List<String> personalInfoResult = this.findPersonalInfo(franchiseeIndex,startLocalDate,isMonthly);
             //2. 물품판매 총합계
-            List<String> totalResult = orderService.findMonthlyTotal(franchiseeIndex, startLocalDate, endLocalDate,false);
+            List<String> totalResult = orderService.findCmsVatTotal(franchiseeIndex, startLocalDate, endLocalDate);
             //3. 물품판매 명세 (월)
-            List<List<String>> detailMonthlyResult = orderService.findMonthlyCmsDetail(franchiseeIndex, startLocalDate, endLocalDate,true);
+            List<List<String>> detailMonthlyResult = orderService.findCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate,true);
 
             // 최상단 (년 기(월))
             topSection(xssfWorkbook,sheet,startLocalDate,isMonthly);

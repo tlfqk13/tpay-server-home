@@ -9,9 +9,9 @@ import java.util.List;
 
 public interface OrderRepositoryCustom {
 
-    List<VatDetailDto.Response> findMonthlyCmsDetailDsl(Long franchiseeIndex, LocalDate startLocalDate, LocalDate endLocalDate, int pageData);
+    List<VatDetailDto.Response> findMonthlyCmsVatDetail(Long franchiseeIndex, LocalDate startLocalDate, LocalDate endLocalDate, int pageData);
 
-    VatTotalDto.Response findMonthlyTotalDsl(Long franchiseeIndex, LocalDate startLocalDate, LocalDate endLocalDate,boolean isVat);
+    VatTotalDto.Response findMonthlyTotal(Long franchiseeIndex, LocalDate startLocalDate, LocalDate endLocalDate);
 
-    CmsDetailDto.Response findCmsDetail(Long franchiseeIndex);
+    CmsDetailDto.Response findCmsBankInfo(Long franchiseeIndex);
 }

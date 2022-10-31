@@ -6,7 +6,7 @@ import com.tpay.domains.vat.application.VatHomeTaxService;
 import com.tpay.domains.vat.application.VatService;
 import com.tpay.domains.vat.application.dto.VatDetailResponse;
 import com.tpay.domains.vat.application.dto.VatHomeTaxDto;
-import com.tpay.domains.vat.application.dto.VatResponse;
+import com.tpay.domains.vat.application.dto.VatTotalDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,11 +26,11 @@ public class VatController {
 
 
     @GetMapping("/franchisee/{franchiseeIndex}/vat")
-    public ResponseEntity<VatResponse> vatReport(
+    public ResponseEntity<VatTotalDto.Response> vatReport(
         @PathVariable Long franchiseeIndex,
         @RequestParam String requestDate
     ) {
-        VatResponse result = vatService.vatReport(franchiseeIndex, requestDate);
+        VatTotalDto.Response result = vatService.vatReport(franchiseeIndex, requestDate);
         return ResponseEntity.ok(result);
     }
 

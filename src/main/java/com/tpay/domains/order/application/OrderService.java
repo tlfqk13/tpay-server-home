@@ -1,6 +1,5 @@
 package com.tpay.domains.order.application;
 
-import com.tpay.commons.aria.PassportNumberEncryptService;
 import com.tpay.commons.util.converter.NumberFormatConverter;
 import com.tpay.domains.order.domain.OrderEntity;
 import com.tpay.domains.order.domain.OrderRepository;
@@ -22,7 +21,6 @@ import java.util.Optional;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final PassportNumberEncryptService passportNumberEncryptService;
 
     public VatResponse findQuarterlyVatReport(Long franchiseeIndex, LocalDate startDate, LocalDate endDate) {
 
@@ -50,9 +48,9 @@ public class OrderService {
         return result;
     }
 
-    public List<String> findMonthlyTotal(Long franchiseeIndex,LocalDate startLocalDate, LocalDate endLocalDate,boolean isVat) {
+    public List<String> findCmsVatTotal(Long franchiseeIndex, LocalDate startLocalDate, LocalDate endLocalDate) {
 
-      VatTotalDto.Response vatTotalResponse = orderRepository.findMonthlyTotalDsl(franchiseeIndex, startLocalDate, endLocalDate,isVat);
+      VatTotalDto.Response vatTotalResponse = orderRepository.findMonthlyTotal(franchiseeIndex, startLocalDate, endLocalDate);
 
       List<String> result = new ArrayList<>();
       result.add(NumberFormatConverter.addCommaToNumber(vatTotalResponse.getTotalCount()));
@@ -64,61 +62,20 @@ public class OrderService {
       return result;
     }
 
-    public List<List<String>> findQuarterlyDetail(Long franchiseeIndex, LocalDate startDate, LocalDate endDate) {
-        List<VatDetailResponseInterface> vatDetailResponseInterfaceList
-                = orderRepository.findQuarterlyVatDetail(franchiseeIndex, startDate, endDate);
-
-        List<List<String>> detailResult = new ArrayList<>();
-        for (VatDetailResponseInterface vatDetailResponseInterface : vatDetailResponseInterfaceList) {
-            List<String> baseList = new ArrayList<>();
-            baseList.add(vatDetailResponseInterface.getPurchaseSerialNumber());
-            baseList.add(String.valueOf(vatDetailResponseInterface.getSaleDate()));
-            baseList.add(vatDetailResponseInterface.getTakeoutConfirmNumber());
-            baseList.add(NumberFormatConverter.addCommaToNumber(vatDetailResponseInterface.getAmount()));
-            baseList.add(NumberFormatConverter.addCommaToNumber(vatDetailResponseInterface.getVat()));
-            baseList.add(NumberFormatConverter.addCommaToNumber(vatDetailResponseInterface.getRefundAmount()));
-            baseList.add(vatDetailResponseInterface.getCustomerName());
-            baseList.add(vatDetailResponseInterface.getCustomerNational());
-            detailResult.add(baseList);
-        }
-        return detailResult;
-    }
-
-    public List<List<String>> findMonthlyVatDetail(Long franchiseeIndex, String year, String month) {
-        List<VatDetailResponseInterface> vatDetailResponseInterfaceList = orderRepository.findMonthlyVatDetail(franchiseeIndex, year, month);
-        List<List<String>> detailResult = new ArrayList<>();
-        for (VatDetailResponseInterface vatDetailResponseInterface : vatDetailResponseInterfaceList) {
-            List<String> baseList = new ArrayList<>();
-            baseList.add(vatDetailResponseInterface.getPurchaseSerialNumber());
-            baseList.add(vatDetailResponseInterface.getSaleDate());
-            baseList.add(vatDetailResponseInterface.getTakeoutConfirmNumber());
-            baseList.add(NumberFormatConverter.addCommaToNumber(vatDetailResponseInterface.getAmount()));
-            baseList.add(NumberFormatConverter.addCommaToNumber(vatDetailResponseInterface.getVat()));
-            baseList.add(NumberFormatConverter.addCommaToNumber(vatDetailResponseInterface.getRefundAmount()));
-            baseList.add(vatDetailResponseInterface.getCustomerName());
-            baseList.add(vatDetailResponseInterface.getCustomerNational());
-            detailResult.add(baseList);
-        }
-        return detailResult;
-    }
-
-    public List<List<String>> findMonthlyCmsDetail(Long franchiseeIndex,LocalDate startLocalDate, LocalDate endLocalDate, boolean isPaging) {
+    public List<List<String>> findCmsVatDetail(Long franchiseeIndex, LocalDate startLocalDate, LocalDate endLocalDate, boolean isPaging) {
         int pageData = 15;
         if(isPaging){
             pageData = 100;
         }
 
-        List<VatDetailDto.Response> vatDetailResponse = orderRepository.findMonthlyCmsDetailDsl(franchiseeIndex, startLocalDate, endLocalDate,pageData);
+        List<VatDetailDto.Response> vatDetailResponse = orderRepository.findMonthlyCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate,pageData);
         List<List<String>> detailResult = new ArrayList<>();
 
         for (VatDetailDto.Response response : vatDetailResponse) {
             List<String> baseList = new ArrayList<>();
             baseList.add(response.getPurchaseSerialNumber());
+            log.trace(" @@ response = {}", response.getPurchaseSerialNumber());
             baseList.add(String.valueOf(response.getSaleDate()));
-            log.trace(" @@ response.getSaleDate() = {}", response.getSaleDate());
-            log.trace(" @@ response.getSaleDate() = {}", response.getSaleDate());
-            log.trace(" @@ response.getSaleDate() = {}", response.getSaleDate());
-            log.trace(" @@ response.getSaleDate() = {}", response.getSaleDate());
             baseList.add(response.getTakeOutConfirmNumber());
             baseList.add(NumberFormatConverter.addCommaToNumber(response.getAmount()));
             baseList.add(NumberFormatConverter.addCommaToNumber(response.getVat()));

@@ -14,14 +14,16 @@ public class VatTotalDto {
         String totalVat;
         String totalRefund;
         String totalCommission;
+        String totalSupply;
 
         @QueryProjection
-        public Response(String totalCount, String totalAmount, String totalVat, String totalRefund, String totalCommission){
+        public Response(String totalCount, String totalAmount, String totalVat, String totalRefund, String totalCommission,String totalSupply){
             this.totalCount = totalCount;
             this.totalAmount = totalAmount;
             this.totalVat = totalVat;
             this.totalRefund = totalRefund;
             this.totalCommission = totalCommission;
+            this.totalSupply = totalSupply;
         }
     }
 

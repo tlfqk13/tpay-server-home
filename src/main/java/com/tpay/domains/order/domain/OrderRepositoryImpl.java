@@ -1,6 +1,5 @@
 package com.tpay.domains.order.domain;
 
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tpay.domains.order.application.dto.CmsDetailDto;
 import com.tpay.domains.order.application.dto.QCmsDetailDto_Response;
@@ -28,7 +27,7 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom{
     public OrderRepositoryImpl(EntityManager em){this.queryFactory = new JPAQueryFactory(em);}
 
     @Override
-    public List<VatDetailDto.Response> findMonthlyCmsDetailDsl(Long franchiseeIndex, LocalDate startLocalDate, LocalDate endLocalDate,int pageData) {
+    public List<VatDetailDto.Response> findMonthlyCmsVatDetail(Long franchiseeIndex, LocalDate startLocalDate, LocalDate endLocalDate, int pageData) {
         List<VatDetailDto.Response> content = queryFactory
                 .select(new QVatDetailDto_Response(
                         orderEntity.orderNumber,
@@ -54,22 +53,24 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom{
     }
 
     @Override
-    public VatTotalDto.Response findMonthlyTotalDsl(Long franchiseeIndex, LocalDate startLocalDate, LocalDate endLocalDate,boolean isVat) {
+    public VatTotalDto.Response findMonthlyTotal(Long franchiseeIndex, LocalDate startLocalDate, LocalDate endLocalDate) {
         VatTotalDto.Response content = queryFactory
                 .select(new QVatTotalDto_Response(
                         orderEntity.orderNumber.count().stringValue(),
-                        orderEntity.totalAmount.castToNum(Integer.class).sum().stringValue(),
-                        orderEntity.totalVat.castToNum(Integer.class).sum().stringValue(),
-                        refundEntity.totalRefund.castToNum(Integer.class).sum().stringValue(),
+                        orderEntity.totalAmount.castToNum(Integer.class).sum().stringValue(), //판매금액
+                        orderEntity.totalVat.castToNum(Integer.class).sum().stringValue(), // 부가가치세
+                        refundEntity.totalRefund.castToNum(Integer.class).sum().stringValue(), // 즉시환급상당액
                         (orderEntity.totalVat.castToNum(Integer.class)
-                                .subtract(refundEntity.totalRefund.castToNum(Integer.class))).sum().stringValue()
+                                .subtract(refundEntity.totalRefund.castToNum(Integer.class))).sum().stringValue(), // 환급 수수료
+                        (orderEntity.totalAmount.castToNum(Integer.class)
+                                .subtract(orderEntity.totalVat.castToNum(Integer.class))).sum().stringValue() // 공급가 = 판매금액 - 부가가치세
                 ))
                 .from(refundEntity)
                 .innerJoin(refundEntity.orderEntity,orderEntity)
                 .leftJoin(orderEntity.customerEntity,customerEntity)
                 .where(orderEntity.franchiseeEntity.id.eq(franchiseeIndex)
                         .and(refundEntity.refundStatus.eq(RefundStatus.APPROVAL))
-                        .and(isVat(isVat,startLocalDate,endLocalDate))
+                        .and(refundEntity.createdDate.between(startLocalDate.atStartOfDay(), LocalDateTime.of(endLocalDate, LocalTime.MAX)))
                 )
                 .fetchOne();
 
@@ -77,7 +78,7 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom{
     }
 
     @Override
-    public CmsDetailDto.Response findCmsDetail(Long franchiseeIndex) {
+    public CmsDetailDto.Response findCmsBankInfo(Long franchiseeIndex) {
         CmsDetailDto.Response content = queryFactory
                 .select(new QCmsDetailDto_Response(
                         franchiseeBankEntity.franchiseeEntity.sellerName,
@@ -90,14 +91,5 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom{
                 .fetchOne();
 
         return content;
-    }
-
-    private BooleanExpression isVat(Boolean isVat, LocalDate startLocalDate, LocalDate endLocalDate) {
-        if(isVat){
-            // 6개월
-            return refundEntity.createdDate.between(startLocalDate.atStartOfDay(), LocalDateTime.of(endLocalDate, LocalTime.MAX));
-        }else{
-            return refundEntity.createdDate.between(startLocalDate.atStartOfDay(), LocalDateTime.of(endLocalDate, LocalTime.MAX));
-        }
     }
 }

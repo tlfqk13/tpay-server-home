@@ -52,8 +52,7 @@ public class CmsService {
         List<LocalDate> date = setUpDate(requestDate);
         LocalDate startLocalDate = date.get(0);
         LocalDate endLocalDate = date.get(1);
-        boolean isVat = false;
-        VatTotalDto.Response response = orderRepository.findMonthlyTotalDsl(franchiseeIndex, startLocalDate, endLocalDate,isVat);
+        VatTotalDto.Response response = orderRepository.findMonthlyTotal(franchiseeIndex, startLocalDate, endLocalDate);
 
         if (response == null) {
             return VatTotalDto.Response.builder().totalAmount("0").totalCount("0").totalVat("0").totalCommission("0").build();
@@ -73,10 +72,9 @@ public class CmsService {
         List<LocalDate> date = setUpDate(requestDate);
         LocalDate startLocalDate = date.get(0);
         LocalDate endLocalDate = date.get(1);
-        boolean isVat = false;
 
-        VatTotalDto.Response vatTotalResponse  = orderRepository.findMonthlyTotalDsl(franchiseeIndex, startLocalDate, endLocalDate,isVat);
-        CmsDetailDto.Response cmsTotalResponse = orderRepository.findCmsDetail(franchiseeIndex);
+        VatTotalDto.Response vatTotalResponse  = orderRepository.findMonthlyTotal(franchiseeIndex, startLocalDate, endLocalDate);
+        CmsDetailDto.Response cmsTotalResponse = orderRepository.findCmsBankInfo(franchiseeIndex);
 
         if (vatTotalResponse == null) {
             return CmsDetailResponse.builder()
@@ -120,10 +118,9 @@ public class CmsService {
 
             // 1. 물품판매 상세내역
             boolean isPaging  = true;
-            List<List<String>> detailMonthlyResult = orderService.findMonthlyCmsDetail(franchiseeIndex, startLocalDate, endLocalDate,!isPaging);
+            List<List<String>> detailMonthlyResult = orderService.findCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate,!isPaging);
             // 2. 물품판매 총합계
-            boolean isVat = false;
-            List<String> totalResult = orderService.findMonthlyTotal(franchiseeIndex, startLocalDate, endLocalDate,isVat);
+            List<String> totalResult = orderService.findCmsVatTotal(franchiseeIndex, startLocalDate, endLocalDate);
             // TopSection
             List<String> topSectionInfo = this.topSectionInfo(franchiseeIndex,startLocalDate,endLocalDate);
 
@@ -140,10 +137,10 @@ public class CmsService {
             if(detailMonthlyResult.size() == 15){
                 // 물품상세 내역
                 detailResultRow(xssfWorkbook,sheet,detailMonthlyResult,totalResult,false);
-                detailMonthlyResult = orderService.findMonthlyCmsDetail(franchiseeIndex, startLocalDate, endLocalDate,isPaging);
+                detailMonthlyResult = orderService.findCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate,isPaging);
                 detailResultRow(xssfWorkbook,sheet1,detailMonthlyResult,totalResult,isPaging);
             }else{
-                detailMonthlyResult = orderService.findMonthlyCmsDetail(franchiseeIndex,startLocalDate,endLocalDate,true);
+                detailMonthlyResult = orderService.findCmsVatDetail(franchiseeIndex,startLocalDate,endLocalDate,true);
                 detailResultRow(xssfWorkbook,sheet,detailMonthlyResult,totalResult,false);
             }
 

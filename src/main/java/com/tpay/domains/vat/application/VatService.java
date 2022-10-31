@@ -4,15 +4,16 @@ package com.tpay.domains.vat.application;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.util.converter.NumberFormatConverter;
-import com.tpay.domains.auth.domain.FranchiseeAccessTokenRepository;
 import com.tpay.domains.franchisee.application.FranchiseeFindService;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee_upload.application.FranchiseeUploadFindService;
 import com.tpay.domains.franchisee_upload.domain.FranchiseeUploadEntity;
 import com.tpay.domains.order.application.OrderService;
+import com.tpay.domains.order.domain.OrderRepository;
 import com.tpay.domains.vat.application.dto.VatDetailResponse;
-import com.tpay.domains.vat.application.dto.VatResponse;
+import com.tpay.domains.vat.application.dto.VatTotalDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -22,34 +23,44 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class VatService {
 
     private final OrderService orderService;
+    private final OrderRepository orderRepository;
     private final FranchiseeFindService franchiseeFindService;
     private final FranchiseeUploadFindService franchiseeUploadFindService;
 
-    private final FranchiseeAccessTokenRepository franchiseeAccessTokenRepository;
-
-    public VatResponse vatReport(Long franchiseeIndex, String requestDate) {
+    public VatTotalDto.Response vatReport(Long franchiseeIndex, String requestDate) {
         List<Object> localDates = setUpDate(requestDate);
-        LocalDate startDate = (LocalDate) localDates.get(0);
-        LocalDate endDate = (LocalDate) localDates.get(1);
-        return orderService.findQuarterlyVatReport(franchiseeIndex, startDate, endDate);
+        LocalDate startLocalDate = (LocalDate) localDates.get(0);
+        LocalDate endLocalDate = (LocalDate) localDates.get(1);
+
+        VatTotalDto.Response vatTotalResponse  = orderRepository.findMonthlyTotal(franchiseeIndex, startLocalDate, endLocalDate);
+        if (vatTotalResponse == null) {
+            return VatTotalDto.Response.builder().totalAmount("0").totalCount("0").totalVat("0").totalCommission("0").build();
+        }
+        return VatTotalDto.Response.builder()
+                .totalCount(vatTotalResponse.getTotalCount())
+                .totalAmount(vatTotalResponse.getTotalAmount())
+                .totalRefund(vatTotalResponse.getTotalRefund())
+                .totalVat(vatTotalResponse.getTotalVat())
+                .totalSupply(vatTotalResponse.getTotalSupply())
+                .build();
     }
 
     public VatDetailResponse vatDetail(Long franchiseeIndex, String requestDate) {
         List<Object> localDates = setUpDate(requestDate);
-        LocalDate startDate = (LocalDate) localDates.get(0);
-        LocalDate endDate = (LocalDate) localDates.get(1);
+        LocalDate startLocalDate = (LocalDate) localDates.get(0);
+        LocalDate startEndDate = (LocalDate) localDates.get(1);
         String saleTerm = (String) localDates.get(2);
         //연월일
         //1. 제출자 인적사항
         List<String> personalInfoResult = this.findPersonalInfo(franchiseeIndex, saleTerm);
         //2. 물품판매 총합계
-        List<String> totalResult = orderService.findQuarterlyTotal(franchiseeIndex, startDate, endDate);
+        List<String> totalResult = orderService.findCmsVatTotal(franchiseeIndex, startLocalDate, startEndDate);
         //3. 물품판매 명세
-        boolean isMonthly = false;
-        List<List<String>> detailResult = orderService.findQuarterlyDetail(franchiseeIndex, startDate, endDate);
+        List<List<String>> detailResult = orderService.findCmsVatDetail(franchiseeIndex, startLocalDate, startEndDate,true);
 
         return VatDetailResponse.builder()
                 .vatDetailResponsePersonalInfoList(personalInfoResult)
