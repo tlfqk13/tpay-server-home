@@ -69,7 +69,7 @@ public class CustomerEntity extends BaseTimeEntity {
         this.customerAccountNumber = customerInfo.getAccountNumber();
     }
 
-    public void isRegister() {
+    public void updateRegister() {
         this.isRegister = true;
     }
 }

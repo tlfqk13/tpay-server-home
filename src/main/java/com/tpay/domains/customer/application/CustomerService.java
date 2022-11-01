@@ -83,7 +83,7 @@ public class CustomerService {
         CustomerEntity customerEntity = customerRepository.findByPassportNumber(encryptPassportNumber)
                 .orElseThrow(()->new InvalidPassportInfoException(ExceptionState.INVALID_PASSPORT_INFO, "여권 조회 실패"));
 
-        customerEntity.isRegister();
+        customerEntity.updateRegister();
 
         return CustomerDto.Response.builder()
                 .passportNumber(customerInfo.getPassportNumber())
