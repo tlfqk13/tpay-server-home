@@ -2,7 +2,7 @@ package com.tpay.domains.refund_core.application;
 
 
 import com.tpay.commons.aria.PassportNumberEncryptService;
-import com.tpay.domains.customer.application.CustomerUpdateService;
+import com.tpay.domains.customer.application.CustomerService;
 import com.tpay.domains.refund_core.application.dto.RefundLimitRequest;
 import com.tpay.domains.refund_core.application.dto.RefundResponse;
 import org.assertj.core.api.Assertions;
@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class LimitFindServiceTest {
 
   @Autowired
-  private CustomerUpdateService customerUpdateService;
+  private CustomerService customerService;
 
   @Autowired
   private PassportNumberEncryptService passportNumberEncryptService;
