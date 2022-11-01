@@ -1,13 +1,12 @@
 package com.tpay.domains.vat.presentation;
 
 
-import com.tpay.domains.batch.vat_batch.application.VatMonthlySendService;
 import com.tpay.domains.vat.application.VatDownloadService;
 import com.tpay.domains.vat.application.VatHomeTaxService;
 import com.tpay.domains.vat.application.VatService;
 import com.tpay.domains.vat.application.dto.VatDetailResponse;
 import com.tpay.domains.vat.application.dto.VatHomeTaxDto;
-import com.tpay.domains.vat.application.dto.VatResponse;
+import com.tpay.domains.vat.application.dto.VatTotalDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,18 +21,16 @@ import java.io.IOException;
 public class VatController {
 
     private final VatService vatService;
-    private final VatMonthlySendService vatMonthlySendService;
-
     private final VatDownloadService vatDownloadService;
     private final VatHomeTaxService homeTaxService;
 
 
     @GetMapping("/franchisee/{franchiseeIndex}/vat")
-    public ResponseEntity<VatResponse> vatReport(
+    public ResponseEntity<VatTotalDto.Response> vatReport(
         @PathVariable Long franchiseeIndex,
         @RequestParam String requestDate
     ) {
-        VatResponse result = vatService.vatReport(franchiseeIndex, requestDate);
+        VatTotalDto.Response result = vatService.vatReport(franchiseeIndex, requestDate);
         return ResponseEntity.ok(result);
     }
 
@@ -56,13 +53,11 @@ public class VatController {
         return ResponseEntity.ok(downloadLink);
     }
     // API 호출로 관리자가 한번에 일괄 출력 기능
-    @GetMapping("/franchisee/{franchiseeIndex}/admin/vat/downloads")
-    public ResponseEntity<String> vatMonthlyDownloads(
-            @PathVariable Long franchiseeIndex,
-            @RequestParam String requestMonth // ?requestMonth = 225
-    ){
-        vatMonthlySendService.vatMonthlyFile();
-        return ResponseEntity.ok("vatMonthlySendMailFile");
+    @GetMapping("/franchisee/admin/vat/downloads")
+    public ResponseEntity<String> vatAdminDownloads()
+    {
+        vatDownloadService.vatAdminDownloads();
+        return ResponseEntity.ok("ok");
     }
 
     @GetMapping("/franchisee/{franchiseeIndex}/vat/hometax")

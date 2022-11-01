@@ -7,12 +7,11 @@ import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.util.converter.NumberFormatConverter;
 import com.tpay.domains.franchisee.application.FranchiseeFindService;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
+import com.tpay.domains.order.application.dto.CmsDetailDto;
 import com.tpay.domains.order.application.dto.CmsDetailResponse;
-import com.tpay.domains.order.application.dto.CmsResponse;
-import com.tpay.domains.order.application.dto.CmsResponseDetailInterface;
-import com.tpay.domains.order.application.dto.CmsResponseInterface;
 import com.tpay.domains.order.domain.OrderRepository;
 import com.tpay.domains.refund.application.RefundDetailFindService;
+import com.tpay.domains.vat.application.dto.VatTotalDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -26,8 +25,12 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -45,46 +48,52 @@ public class CmsService {
     private final FranchiseeFindService franchiseeFindService;
     private final RefundDetailFindService refundDetailFindService;
 
-    public CmsResponse cmsReport(Long franchiseeIndex, String requestDate) {
-        List<String> date = setUpDate(requestDate);
-        String year = date.get(0);
-        String month = date.get(1);
-        CmsResponseInterface queryResult = orderRepository.findMonthlyCmsReport(franchiseeIndex, year, month);
-        if (queryResult == null) {
-            return CmsResponse.builder().totalAmount("0").totalCount("0").totalVat("0").totalCommission("0").build();
+    public VatTotalDto.Response cmsReport(Long franchiseeIndex, String requestDate) {
+        List<LocalDate> date = setUpDate(requestDate);
+        LocalDate startLocalDate = date.get(0);
+        LocalDate endLocalDate = date.get(1);
+        VatTotalDto.Response response = orderRepository.findMonthlyTotal(franchiseeIndex, startLocalDate, endLocalDate);
+
+        if (response == null) {
+            return VatTotalDto.Response.builder().totalAmount("0").totalCount("0").totalVat("0").totalCommission("0").build();
         }
 
-        return CmsResponse.builder()
-            .totalCount(queryResult.getTotalCount())
-            .totalAmount(queryResult.getTotalAmount())
-            .totalCommission(queryResult.getTotalCommission())
-            .totalVat(queryResult.getTotalVat())
+        return VatTotalDto.Response.builder()
+            .totalCount(response.getTotalCount())
+            .totalAmount(response.getTotalAmount())
+            .totalRefund(response.getTotalRefund())
+            .totalCommission(response.getTotalCommission())
+            .totalVat(response.getTotalVat())
             .build();
 
     }
 
     public CmsDetailResponse cmsDetail(Long franchiseeIndex, String requestDate) {
-        List<String> date = setUpDate(requestDate);
-        String year = date.get(0);
-        String month = date.get(1);
-        CmsResponseDetailInterface queryResult = orderRepository.findMonthlyCmsDetail(franchiseeIndex, year, month);
-        if (queryResult == null) {
+        List<LocalDate> date = setUpDate(requestDate);
+        LocalDate startLocalDate = date.get(0);
+        LocalDate endLocalDate = date.get(1);
+
+        VatTotalDto.Response vatTotalResponse  = orderRepository.findMonthlyTotal(franchiseeIndex, startLocalDate, endLocalDate);
+        CmsDetailDto.Response cmsTotalResponse = orderRepository.findCmsBankInfo(franchiseeIndex);
+
+        if (vatTotalResponse == null) {
             return CmsDetailResponse.builder()
                 .commissionInfoList(Arrays.asList("0", "0", "0", "0"))
                 .customerInfoList(Arrays.asList("", "", "", "", "0")).build();
         }
         List<String> commissionInfoList = new ArrayList<>();
         List<String> customerInfoList = new ArrayList<>();
-        commissionInfoList.add(NumberFormatConverter.addCommaToNumber(queryResult.getTotalCount()) + "건");
-        commissionInfoList.add(NumberFormatConverter.addCommaToNumber(queryResult.getTotalAmount()));
-        commissionInfoList.add(NumberFormatConverter.addCommaToNumber(queryResult.getTotalVat()));
-        commissionInfoList.add(NumberFormatConverter.addCommaToNumber(queryResult.getTotalCommission()));
+        commissionInfoList.add(NumberFormatConverter.addCommaToNumber(vatTotalResponse.getTotalCount()) + "건");
+        commissionInfoList.add(NumberFormatConverter.addCommaToNumber(vatTotalResponse.getTotalAmount()));
+        commissionInfoList.add(NumberFormatConverter.addCommaToNumber(vatTotalResponse.getTotalVat()));
+        commissionInfoList.add(NumberFormatConverter.addCommaToNumber(vatTotalResponse.getTotalCommission()));
 
-        customerInfoList.add(queryResult.getSellerName());
-        customerInfoList.add(queryResult.getBankName());
-        customerInfoList.add(queryResult.getAccountNumber());
-        customerInfoList.add(queryResult.getWithdrawalDate() + "일");
-        customerInfoList.add(NumberFormatConverter.addCommaToNumber(queryResult.getTotalBill()));
+        customerInfoList.add(cmsTotalResponse.getSellerName());
+        customerInfoList.add(cmsTotalResponse.getBankName());
+        customerInfoList.add(cmsTotalResponse.getAccountNumber());
+        customerInfoList.add(cmsTotalResponse.getWithdrawalDate() + "일");
+        customerInfoList.add(NumberFormatConverter.addCommaToNumber(vatTotalResponse.getTotalCommission()));
+
         return CmsDetailResponse.builder().commissionInfoList(commissionInfoList).customerInfoList(customerInfoList).build();
     }
 
@@ -103,16 +112,17 @@ public class CmsService {
             // TODO: 2022/02/03 엑셀파일 일부 write 후 저장까지 테스트 완료 포멧에 맞게 입력하는 로직 정해지면 구현할 것
             // TODO: 2022/07/14 CMS 청구내역 엑셀파일 양식 새롭게 받음.
 
-            List<String> date = this.setUpDate(requestDate);
-            String year = date.get(0);
-            String month = date.get(1);
+            List<LocalDate> date = setUpDate(requestDate);
+            LocalDate startLocalDate = date.get(0);
+            LocalDate endLocalDate = date.get(1);
+
             // 1. 물품판매 상세내역
             boolean isPaging  = true;
-            List<List<String>> detailMonthlyResult = orderService.findMonthlyCmsDetail(franchiseeIndex, year, month,false);
+            List<List<String>> detailMonthlyResult = orderService.findCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate,!isPaging);
             // 2. 물품판매 총합계
-            List<String> totalResult = orderService.findMonthlyTotal(franchiseeIndex, year, month);
+            List<String> totalResult = orderService.findCmsVatTotal(franchiseeIndex, startLocalDate, endLocalDate);
             // TopSection
-            List<String> topSectionInfo = this.topSectionInfo(franchiseeIndex, year,month);
+            List<String> topSectionInfo = this.topSectionInfo(franchiseeIndex,startLocalDate,endLocalDate);
 
             // 최상단 영역
             topSection(sheet,topSectionInfo);
@@ -127,33 +137,32 @@ public class CmsService {
             if(detailMonthlyResult.size() == 15){
                 // 물품상세 내역
                 detailResultRow(xssfWorkbook,sheet,detailMonthlyResult,totalResult,false);
-                detailMonthlyResult = orderService.findMonthlyCmsDetail(franchiseeIndex, year, month,isPaging);
+                detailMonthlyResult = orderService.findCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate,isPaging);
                 detailResultRow(xssfWorkbook,sheet1,detailMonthlyResult,totalResult,isPaging);
             }else{
-                detailMonthlyResult = orderService.findMonthlyDetail(franchiseeIndex, year, month);
+                detailMonthlyResult = orderService.findCmsVatDetail(franchiseeIndex,startLocalDate,endLocalDate,true);
                 detailResultRow(xssfWorkbook,sheet,detailMonthlyResult,totalResult,false);
             }
 
            StringBuilder fileName = new StringBuilder();
-           fileName.append(topSectionInfo.get(2)).append("_").append(month).append("월").append("_cms");
-           String result = s3FileUploader.uploadXlsx(franchiseeIndex, xssfWorkbook,fileName,month,true);
+           fileName.append(topSectionInfo.get(2)).append("_").append(startLocalDate.getMonthValue()).append("월").append("_cms");
+           String result = s3FileUploader.uploadXlsx(franchiseeIndex, xssfWorkbook,fileName, String.valueOf(startLocalDate.getMonthValue()),true);
             return result;
         } catch (IOException e) {
             throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "File Input Failed");
         }
     }
     public void cmsAdminDownloads() {
-        String requestYear = String.valueOf(LocalDate.now().getYear()).substring(2);
-        String requestMonthly = String.valueOf(LocalDate.now().getMonthValue());
-        String requestYearMonthly = requestYear + requestMonthly;
+        LocalDate startDate = LocalDate.now().minusDays(LocalDate.now().getDayOfMonth()-1);
+        LocalDate endDate = LocalDate.now().minusDays(LocalDate.now().getDayOfMonth()).plusMonths(1);
+        String requestYearMonthly =  String.valueOf(startDate.getYear()).substring(2) + startDate.getMonthValue();
+        log.trace(" @@ requestYearMonthly = {}", requestYearMonthly);
 
-        List<String> date = this.setUpDate(requestYearMonthly);
-        String year = date.get(0);
-        String month = date.get(1);
-        List<List<String>> totalResult = refundDetailFindService.findFranchiseeId(year, month);
+        List<List<String>> totalResult = refundDetailFindService.findFranchiseeId(startDate,endDate);
         for (List<String> strings : totalResult) {
             this.cmsDownloads(Long.valueOf(strings.get(0)), requestYearMonthly);
         }
+
     }
     private void topSection(XSSFSheet sheet, List<String> topSectionInfo) {
         for(int i=CmsCustomValue.TOPSECTION_STARTROW; i<=CmsCustomValue.TOPSECTION_ENDROW; i+=2){
@@ -244,11 +253,16 @@ public class CmsService {
             }
         }
     }
-    private List<String> topSectionInfo(Long franchiseeIndex, String year, String month) {
+    private List<String> topSectionInfo(Long franchiseeIndex,LocalDate startLocalDate, LocalDate endLocalDate) {
+
+        String year = String.valueOf(startLocalDate.getYear());
+        String month = String.valueOf(endLocalDate.getMonthValue());
         String nowMonth = String.valueOf(LocalDate.now().getMonthValue());
+
         if(nowMonth.length() == 1){
             nowMonth= "0" + nowMonth;
         }
+
         FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
         List<String> result = new ArrayList<>();
         result.add("KTP 제 " + year + month); // 문서 번호
@@ -258,25 +272,24 @@ public class CmsService {
         result.add("[ "+ year + "년" + month + "월 01일 ~ " + month + "월 31일 ]" );
         return result;
     }
-    public List<String> setUpDate(String requestDatePart) {
 
-        int yearInt = Integer.parseInt("20" + requestDatePart.substring(0, 2));
-        int monthInt = Integer.parseInt(requestDatePart.substring(2));
+    public List<LocalDate> setUpDate(String requestDate) {
+
+        int yearInt = Integer.parseInt("20" + requestDate.substring(0, 2));
+        int monthInt = Integer.parseInt(requestDate.substring(2));
 
         if(monthInt <10){
-            monthInt = Integer.parseInt(requestDatePart.substring(2).replaceAll("0", ""));
+            monthInt = Integer.parseInt(requestDate.substring(2).replaceAll("0", ""));
         }
 
-        LocalDate localDate = LocalDate.of(yearInt,monthInt-1,1);
-        String year = String.valueOf(localDate.getYear());
-        String month = String.valueOf(localDate.getMonthValue());
-        if(month.length() == 1) {
-            month = "0" + month;
-        }
+        LocalDate startDate = LocalDate.of(yearInt,monthInt-1,1);
+        LocalDate endDate = LocalDate.of(yearInt,monthInt,1);
+        startDate.format(DateTimeFormatter.BASIC_ISO_DATE);
+        endDate.format(DateTimeFormatter.BASIC_ISO_DATE);
 
-        List<String> dateList = new ArrayList<>();
-        dateList.add(year);
-        dateList.add(month);
+        List<LocalDate> dateList = new ArrayList<>();
+        dateList.add(startDate);
+        dateList.add(endDate);
         return dateList;
     }
     private CellStyle cellStyleCustom(XSSFWorkbook xssfWorkbook){
