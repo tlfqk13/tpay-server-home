@@ -1,6 +1,6 @@
 package com.tpay.domains.refund_test.application;
 
-import com.tpay.domains.customer.application.CustomerUpdateService;
+import com.tpay.domains.customer.application.CustomerService;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.refund.application.dto.*;
 import com.tpay.domains.refund.domain.RefundRepository;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 public class RefundTestDetailFindService {
 
     private final RefundRepository refundRepository;
-    private final CustomerUpdateService customerUpdateService;
+    private final CustomerService customerService;
 
     public List<RefundFindResponseInterface> findList(Long franchiseeIndex, LocalDate startDate, LocalDate endDate) {
         log.trace(" @@  = findList @@ ");
@@ -49,7 +49,7 @@ public class RefundTestDetailFindService {
         if (includeZeroInPassportNumber(passportNumber)) {
             List<String> availPassportNumbers = getAvailPassportNumberList(passportNumber);
             for (String passportNum : availPassportNumbers) {
-                customerEntityOptional = customerUpdateService.findCustomerByNationAndPassportNumber(passportNum, nation);
+                customerEntityOptional = customerService.findCustomerByNationAndPassportNumber(passportNum, nation);
                 if(customerEntityOptional.isPresent()) {
                     log.debug("Applied passport Number = {}", passportNum);
                     break;

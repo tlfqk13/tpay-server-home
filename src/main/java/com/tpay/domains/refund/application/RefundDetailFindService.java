@@ -1,6 +1,6 @@
 package com.tpay.domains.refund.application;
 
-import com.tpay.domains.customer.application.CustomerUpdateService;
+import com.tpay.domains.customer.application.CustomerService;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.order.application.dto.CmsDto;
 import com.tpay.domains.refund.application.dto.*;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 public class RefundDetailFindService {
 
     private final RefundRepository refundRepository;
-    private final CustomerUpdateService customerUpdateService;
+    private final CustomerService customerService;
 
     public List<RefundFindResponseInterface> findList(Long franchiseeIndex, LocalDate startDate, LocalDate endDate) {
 
@@ -88,13 +88,13 @@ public class RefundDetailFindService {
         String name = refundCustomerInfoRequest.getName();
         String nation = refundCustomerInfoRequest.getNationality();
         String passportNumber = refundCustomerInfoRequest.getPassportNumber();
-        Optional<CustomerEntity> customerEntityOptional = Optional.empty();
+        Optional<CustomerEntity> customerEntityOptional = customerService.findCustomerByNationAndPassportNumber(passportNumber, nation);
+
         if (includeZeroInPassportNumber(passportNumber)) {
             List<String> availPassportNumbers = getAvailPassportNumberList(passportNumber);
             for (String passportNum : availPassportNumbers) {
-                customerEntityOptional = customerUpdateService.findCustomerByNationAndPassportNumber(passportNum, nation);
+                customerEntityOptional = customerService.findCustomerByNationAndPassportNumber(passportNum, nation);
                 if(customerEntityOptional.isPresent()) {
-                    log.debug("Applied passport Number = {}", passportNum);
                     break;
                 }
             }
@@ -104,6 +104,7 @@ public class RefundDetailFindService {
             return Collections.emptyList();
         }
         Long customerIndex = customerEntityOptional.get().getId();
+        // TODO: 2022/11/01 환급 취소 리스트 조회 -> dsl 로 바꿔야함
         List<RefundFindResponseInterface> refundsByCustomerInfo = refundRepository.findRefundsByCustomerInfo(franchiseeIndex, startDate, endDate, customerIndex);
 
         if (refundsByCustomerInfo.isEmpty()) {

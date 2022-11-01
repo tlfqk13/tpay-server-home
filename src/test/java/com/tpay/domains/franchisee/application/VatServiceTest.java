@@ -11,16 +11,10 @@ import com.tpay.domains.order.domain.OrderEntity;
 import com.tpay.domains.order.domain.OrderRepository;
 import com.tpay.domains.refund.application.RefundService;
 import com.tpay.domains.vat.application.VatService;
-import com.tpay.domains.vat.application.dto.VatReportResponseInterface;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import java.time.LocalDate;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 public class VatServiceTest {
@@ -78,27 +72,4 @@ public class VatServiceTest {
         .build();
     orderRepository.save(orderEntity);
   }
-
-
-  @Test
-  public void vat조회_Null() {
-    //given
-    Long franchiseeIndex = 1L;
-    LocalDate startDate = LocalDate.now();
-    LocalDate endDate = LocalDate.now();
-
-    //when
-    VatReportResponseInterface result = orderRepository.findQuarterlyVatReport(franchiseeIndex, startDate, endDate);
-    assertThat(result).isEqualTo(null);
-  }
-
-//  @Test
-//  public void 날짜셋업_에러() {
-//    //given
-//    String requestDate = "220";
-//    //when
-//    Throwable throwable = catchThrowable(() -> vatService.setUpDate(requestDate));
-//    //then
-//    assertThat(throwable).isInstanceOf(InvalidParameterException.class);
-//  }
 }

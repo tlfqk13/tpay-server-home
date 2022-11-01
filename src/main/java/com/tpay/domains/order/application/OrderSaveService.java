@@ -1,7 +1,7 @@
 package com.tpay.domains.order.application;
 
 import com.tpay.commons.util.IndexInfo;
-import com.tpay.domains.customer.application.CustomerUpdateService;
+import com.tpay.domains.customer.application.CustomerService;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.employee.application.EmployeeFindService;
 import com.tpay.domains.employee.domain.EmployeeEntity;
@@ -31,7 +31,7 @@ public class OrderSaveService {
     private final OrderRepository orderRepository;
     private final FranchiseeFindService franchiseeFindService;
     private final EmployeeFindService employeeFindService;
-    private final CustomerUpdateService customerUpdateService;
+    private final CustomerService customerService;
     private final ProductFindService productFindService;
     private final OrderLineSaveService orderLineSaveService;
 
@@ -40,7 +40,7 @@ public class OrderSaveService {
         FranchiseeEntity franchiseeEntity =
             franchiseeFindService.findByIndex(request.getFranchiseeIndex());
 
-        CustomerEntity customerEntity = customerUpdateService.findByIndex(request.getCustomerIndex());
+        CustomerEntity customerEntity = customerService.findByIndex(request.getCustomerIndex());
 
         ProductEntity productEntity =
             productFindService.findOrElseSave(
@@ -52,7 +52,7 @@ public class OrderSaveService {
     @Transactional
     public OrderEntity save(ExternalRefundEntity externalRefundEntity, String amount) {
         FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(externalRefundEntity.getFranchiseeIndex());
-        CustomerEntity customerEntity = customerUpdateService.findByIndex(externalRefundEntity.getCustomerIndex());
+        CustomerEntity customerEntity = customerService.findByIndex(externalRefundEntity.getCustomerIndex());
         ProductEntity productEntity = productFindService.findOrElseSave(franchiseeEntity.getProductCategory(), amount);
         return this.save(franchiseeEntity, customerEntity, productEntity, null);
 
@@ -92,7 +92,7 @@ public class OrderSaveService {
         }
 
         FranchiseeEntity franchisee = franchiseeFindService.findByIndex(franchiseIndex);
-        CustomerEntity customer = customerUpdateService.findByIndex(orderDto.getCustomerIdx());
+        CustomerEntity customer = customerService.findByIndex(orderDto.getCustomerIdx());
         ProductEntity productEntity =
                 productFindService.findOrElseSave(
                         franchisee.getProductCategory(), orderDto.getPrice());

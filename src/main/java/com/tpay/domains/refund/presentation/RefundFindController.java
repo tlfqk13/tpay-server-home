@@ -8,6 +8,7 @@ import com.tpay.domains.refund.application.dto.RefundPagingFindResponse;
 import com.tpay.domains.refund.domain.RefundStatus;
 import com.tpay.domains.refund_test.dto.RefundDetailTotalDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +17,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
+@Slf4j
 public class RefundFindController {
     private final RefundDetailFindService refundDetailFindService;
 
