@@ -1,7 +1,7 @@
 package com.tpay.domains.pos.application;
 
 import com.tpay.commons.webClient.WebRequestUtil;
-import com.tpay.domains.customer.application.CustomerUpdateService;
+import com.tpay.domains.customer.application.CustomerService;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.external.application.ExternalService;
 import com.tpay.domains.external.domain.ExternalRefundEntity;
@@ -22,7 +22,7 @@ import static com.tpay.commons.custom.CustomValue.REFUND_SERVER;
 @RequiredArgsConstructor
 public class PosBarcodeService {
 
-    private final CustomerUpdateService customerUpdateService;
+    private final CustomerService customerService;
     private final ExternalService externalService;
     private final WebRequestUtil webRequestUtil;
     private final BarcodeService barcodeService;
@@ -34,10 +34,10 @@ public class PosBarcodeService {
         RefundResponse refundResponse = webRequestUtil.post(uri, request);
 
         //외국인 정보 업데이트
-        Optional<CustomerEntity> customerEntityOptional = customerUpdateService.findCustomerByNationAndPassportNumber(refundResponse.getPassportNumber(), request.getNationality());
+        Optional<CustomerEntity> customerEntityOptional = customerService.findCustomerByNationAndPassportNumber(refundResponse.getPassportNumber(), request.getNationality());
         CustomerEntity customerEntity;
         if(customerEntityOptional.isEmpty()){
-            customerEntity = customerUpdateService.updateCustomerInfo(request.getName(), refundResponse.getPassportNumber(), request.getNationality());
+            customerEntity = customerService.updateCustomerInfo(request.getName(), refundResponse.getPassportNumber(), request.getNationality());
         } else {
             customerEntity = customerEntityOptional.get();
         }

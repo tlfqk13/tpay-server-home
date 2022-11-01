@@ -1,6 +1,7 @@
 package com.tpay.domains.refund.application.dto;
 
 
+import com.tpay.domains.refund_test.dto.RefundFindAllDto;
 import lombok.*;
 
 import java.util.List;
@@ -11,5 +12,5 @@ import java.util.List;
 @Getter
 public class RefundPagingFindResponse {
     int totalPage;
-    private List<RefundFindResponseInterface> refundFindResponseInterfaceList;
+    private List<RefundFindAllDto.Response> refundFindResponseInterfaceList;
 }

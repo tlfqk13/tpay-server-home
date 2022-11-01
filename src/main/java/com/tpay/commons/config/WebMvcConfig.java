@@ -62,7 +62,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 // NICE VAN 관련
                 "/van/**",
                 "/franchisee/admin/cms/downloads",
-                "/franchisee/admin/vat/downloads"
+                "/franchisee/admin/vat/downloads",
+                "/customer/**"
         ));
 
         if (!profileName.equals("deploy")) {
