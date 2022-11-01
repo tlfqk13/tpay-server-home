@@ -1,16 +1,14 @@
 package com.tpay.domains.refund.application;
 
-import com.tpay.commons.aria.PassportNumberEncryptService;
-import com.tpay.commons.util.DateFilter;
 import com.tpay.domains.customer.application.CustomerUpdateService;
-import com.tpay.domains.customer.application.dto.CustomerInfo;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.order.application.dto.CmsDto;
 import com.tpay.domains.refund.application.dto.*;
-import com.tpay.domains.refund.domain.RefundEntity;
 import com.tpay.domains.refund.domain.RefundRepository;
 import com.tpay.domains.refund.domain.RefundStatus;
-import com.tpay.domains.search.application.dto.SearchRefundRepository;
+import com.tpay.domains.refund_test.dto.RefundDetailTotalDto;
+import com.tpay.domains.refund_test.dto.RefundFindAllDto;
+import com.tpay.domains.refund_test.dto.RefundFindDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -27,105 +25,44 @@ import java.util.stream.Collectors;
 @Service
 public class RefundDetailFindService {
 
-    private final PassportNumberEncryptService passportNumberEncryptService;
     private final RefundRepository refundRepository;
     private final CustomerUpdateService customerUpdateService;
-    private final SearchRefundRepository searchRefundRepository;
 
     public List<RefundFindResponseInterface> findList(Long franchiseeIndex, LocalDate startDate, LocalDate endDate) {
 
         LocalDate newEnd = endDate.plusDays(1);
         return refundRepository.findAllByFranchiseeIndex(franchiseeIndex, startDate.atTime(0, 0), newEnd.atTime(0, 0));
-
-
     }
 
-    public RefundPagingFindResponse findAll(int page, String startDate, String endDate, RefundStatus refundStatus, String searchKeyword) {
+    public RefundPagingFindResponse findAll(int page, RefundStatus refundStatus, String startDate, String endDate, String searchKeyword) {
         DateTimeFormatter yyyyMMdd = DateTimeFormatter.ofPattern("yyyyMMdd");
         LocalDate startLocalDate = LocalDate.parse("20" + startDate, yyyyMMdd);
         LocalDate endLocalDate = LocalDate.parse("20" + endDate, yyyyMMdd).plusDays(1);
         PageRequest pageRequest = PageRequest.of(page, 15);
-
-        Page<RefundFindResponseInterface> refundFindResponseInterfaces = null;
         boolean isBusinessNumber = searchKeyword.chars().allMatch(Character::isDigit);
 
-        if (refundStatus.equals(RefundStatus.ALL)) {
-            if (searchKeyword.isEmpty()) {
-                refundFindResponseInterfaces = refundRepository.findAllNativeQuery(pageRequest, startLocalDate, endLocalDate);
-            } else {
-                if (isBusinessNumber) {
-                    //사업자 번호로 검색
-                    refundFindResponseInterfaces = searchRefundRepository.SearchFindByBusinessNumber(pageRequest, startLocalDate, endLocalDate, searchKeyword);
-                } else {
-                    //가게 이름으로 검색
-                    refundFindResponseInterfaces = searchRefundRepository.SearchFindByStoreName(pageRequest, startLocalDate, endLocalDate, searchKeyword);
-                }
-            }
-        } else {
-            int ordinal = refundStatus.ordinal();
-            if (searchKeyword.isEmpty()) {
-                refundFindResponseInterfaces = refundRepository.findRefundStatusNativeQuery(pageRequest, startLocalDate, endLocalDate, ordinal);
-            } else {
-                if (isBusinessNumber) {
-                    //사업자 번호로 검색
-                    refundFindResponseInterfaces = searchRefundRepository.SearchFindByBusinessNumber(pageRequest, startLocalDate, endLocalDate, searchKeyword, ordinal);
-                } else {
-                    //가게 이름으로 검색
-                    refundFindResponseInterfaces = searchRefundRepository.SearchFindByStoreName(pageRequest, startLocalDate, endLocalDate, searchKeyword, ordinal);
-                }
-            }
-        }
+        Page<RefundFindAllDto.Response> response = refundRepository.findRefundAll(pageRequest, startLocalDate, endLocalDate, searchKeyword.isEmpty()
+                ,isBusinessNumber,searchKeyword,refundStatus);
 
-        List<RefundFindResponseInterface> list = refundFindResponseInterfaces.getContent();
-        int totalPage = refundFindResponseInterfaces.getTotalPages();
+        int totalPage = response.getTotalPages();
         if(totalPage != 0){
             totalPage = totalPage -1;
         }
+
         return RefundPagingFindResponse.builder()
                 .totalPage(totalPage)
-                .refundFindResponseInterfaceList(list)
+                .refundFindResponseInterfaceList(response.getContent())
                 .build();
     }
 
-    public List<RefundFindResponse> findAllByCustomerInfo(
-        Long franchiseeIndex, CustomerInfo customerInfo, DateFilter dateFilter, LocalDate startDate, LocalDate endDate) {
-        if (endDate != null) {
-            endDate = endDate.plusDays(1);
-        }
-
-        if (dateFilter != DateFilter.CUSTOM) {
-            startDate = dateFilter.getStartDate();
-            endDate = dateFilter.getEndDate();
-        }
-
-        String passportNumber = passportNumberEncryptService.encrypt(customerInfo.getPassportNumber());
-        List<RefundEntity> refundEntityList =
-            refundRepository.findAllByPassportNumber(
-                franchiseeIndex, passportNumber, startDate.atTime(0, 0), endDate.atTime(0, 0));
-
-        return refundEntityList.stream()
-            .map(
-                refundEntity ->
-                    RefundFindResponse.builder()
-                        .refundIndex(refundEntity.getId())
-                        .createdDate(refundEntity.getCreatedDate())
-                        .orderNumber(refundEntity.getOrderEntity().getOrderNumber())
-                        .totalAmount(refundEntity.getOrderEntity().getTotalAmount())
-                        .totalRefund(refundEntity.getTotalRefund())
-                        .refundStatus(refundEntity.getRefundStatus())
-                        .build())
-            .collect(Collectors.toList());
-    }
-
-    public RefundDetailFindResponse findAFranchisee(Long franchiseeIndex, String startDate, String endDate) {
+    public RefundDetailTotalDto.Response findRefundDetail(Long franchiseeIndex, String startDate, String endDate) {
         DateTimeFormatter yyyyMMdd = DateTimeFormatter.ofPattern("yyyyMMdd");
         LocalDate startLocalDate = LocalDate.parse("20" + startDate, yyyyMMdd);
         LocalDate endLocalDate = LocalDate.parse("20" + endDate, yyyyMMdd).plusDays(1);
 
-        List<RefundFindResponseInterface> findAFranchiseeList = refundRepository.findAFranchiseeNativeQuery(franchiseeIndex, startLocalDate, endLocalDate);
-        List<RefundFindResponse> refundList = findAFranchiseeList.stream().map(RefundFindResponse::new).collect(Collectors.toList());
-
+        List<RefundFindDto.Response> findAFranchiseeList = refundRepository.findRefundDetail(franchiseeIndex,startLocalDate,endLocalDate);
         RefundFindResponseInterface refundDetailList = refundRepository.findRefundDetailSaleTotalQuery(franchiseeIndex, startLocalDate, endLocalDate);
+
         RefundDetailTotalResponse refundDetail = RefundDetailTotalResponse.builder()
                 .totalActualAmount(refundDetailList.getActualAmount())
                 .totalAmount(refundDetailList.getTotalAmount())
@@ -134,12 +71,10 @@ public class RefundDetailFindService {
                 .totalCount(refundDetailList.getSaleCount())
                 .build();
 
-        RefundDetailFindResponse refundDetailFindResponse = RefundDetailFindResponse.builder()
+        return RefundDetailTotalDto.Response.builder()
                 .totalRefundData(refundDetail)
-                .refundList(refundList)
+                .refundList(findAFranchiseeList)
                 .build();
-
-        return refundDetailFindResponse;
     }
 
     public List<RefundByCustomerDateResponse> findRefundsByCustomerInfo(Long franchiseeIndex, RefundCustomerRequest refundCustomerRequest) {
