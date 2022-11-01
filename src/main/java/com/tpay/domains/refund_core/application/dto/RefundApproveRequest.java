@@ -6,6 +6,7 @@ import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.order.domain.OrderEntity;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ import static com.tpay.domains.refund.domain.RefundAfterMethod.*;
 
 @Getter
 @Builder
+@Slf4j
 public class RefundApproveRequest {
     private String serviceName;
     private String businessNumber;
@@ -57,6 +59,11 @@ public class RefundApproveRequest {
         List<RefundProductInfo> refundProductInfo = orderEntity.getRefundProductInfoList();
         CustomerEntity customerEntity = orderEntity.getCustomerEntity();
         FranchiseeEntity franchiseeEntity = orderEntity.getFranchiseeEntity();
+
+        log.trace("***************************************************");
+        log.trace(" @@ orderEntity = {}", orderEntity.getTotalRefund());
+        log.trace(" @@ orderEntity = {}", orderEntity.getTotalRefund());
+        log.trace("***************************************************");
 
         RefundApproveRequestBuilder refundApproveRequestBuilder = RefundApproveRequest.builder()
                 .serviceName(CustomValue.APPLICATION_CODE)

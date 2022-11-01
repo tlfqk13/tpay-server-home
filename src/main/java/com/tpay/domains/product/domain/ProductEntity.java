@@ -27,11 +27,15 @@ public class ProductEntity {
     @Column(name = "indPrice", length = 10, unique = true)
     private String price;
 
+    @Column(name = "indRefund", length = 10, unique = true)
+    private String refund;
+
     @Builder
-    public ProductEntity(String name, String lineNumber, String code, String price) {
+    public ProductEntity(String name, String lineNumber, String code, String price,String refund) {
         this.name = name;
         this.lineNumber = lineNumber;
         this.code = code;
         this.price = price;
+        this.refund = refund;
     }
 }

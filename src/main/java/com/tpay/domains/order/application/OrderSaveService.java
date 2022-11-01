@@ -44,7 +44,7 @@ public class OrderSaveService {
 
         ProductEntity productEntity =
             productFindService.findOrElseSave(
-                franchiseeEntity.getProductCategory(), request.getPrice());
+                franchiseeEntity.getProductCategory(), request.getPrice(),request.getRefund());
 
         return this.save(franchiseeEntity, customerEntity, productEntity, null);
     }
@@ -70,7 +70,7 @@ public class OrderSaveService {
             OrderEntity.builder()
                 .franchiseeEntity(franchiseeEntity)
                 .customerEntity(customerEntity)
-                    .purchaseSn(purchaseSn)
+                .purchaseSn(purchaseSn)
                 .build();
 
         orderRepository.save(orderEntity);
@@ -95,7 +95,7 @@ public class OrderSaveService {
         CustomerEntity customer = customerService.findByIndex(orderDto.getCustomerIdx());
         ProductEntity productEntity =
                 productFindService.findOrElseSave(
-                        franchisee.getProductCategory(), orderDto.getPrice());
+                        franchisee.getProductCategory(), orderDto.getPrice(),orderDto.getRefund());
 
         OrderEntity savedOrder = save(franchisee, customer, productEntity, createPurchaseSn());
 
