@@ -54,9 +54,9 @@ public class VatController {
     }
     // API 호출로 관리자가 한번에 일괄 출력 기능
     @GetMapping("/franchisee/admin/vat/downloads")
-    public ResponseEntity<String> vatAdminDownloads()
-    {
-        vatDownloadService.vatAdminDownloads();
+    public ResponseEntity<String> vatAdminDownloads(
+            @RequestParam String requestDate){
+        vatDownloadService.vatAdminDownloads(requestDate);
         return ResponseEntity.ok("ok");
     }
 

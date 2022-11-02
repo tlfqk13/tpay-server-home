@@ -64,4 +64,16 @@ public class CustomerController {
 
         return ResponseEntity.ok("ok");
     }
+
+    /**
+     * 사후 환급 개인 정보 수정
+     */
+    @PatchMapping ("/admin/refund-info")
+    public ResponseEntity<CustomerDto.Response> findAll(
+            @RequestBody CustomerDto.Request customerInfo){
+
+        CustomerDto.Response response =customerService.findAll(customerInfo);
+
+        return ResponseEntity.ok(response);
+    }
 }

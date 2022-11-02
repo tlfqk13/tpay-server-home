@@ -49,8 +49,9 @@ public class CmsController {
 
     // TODO: 2022/07/29 관리자가 한번에 cms 청구서 뽑는 기능
     @GetMapping("/franchisee/admin/cms/downloads")
-    public ResponseEntity<String> adminCmsDownloads(){
-        cmsService.cmsAdminDownloads();
+    public ResponseEntity<String> adminCmsDownloads(
+            @RequestParam String requestDate){
+        cmsService.cmsAdminDownloads(requestDate);
         return ResponseEntity.ok("Asdf");
     }
 }

@@ -12,6 +12,7 @@ import com.tpay.domains.franchisee_upload.domain.FranchiseeUploadEntity;
 import com.tpay.domains.order.application.OrderService;
 import com.tpay.domains.refund.application.RefundDetailFindService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -22,7 +23,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -32,6 +36,7 @@ import static org.apache.poi.ss.usermodel.CellType.STRING;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class VatDownloadService {
 
     private final OrderService orderService;
@@ -92,12 +97,16 @@ public class VatDownloadService {
         }
     }
 
-    public void vatAdminDownloads() {
-        LocalDate startDate = LocalDate.now().minusDays(LocalDate.now().getDayOfMonth() - 1);
-        LocalDate endDate = LocalDate.now().minusDays(LocalDate.now().getDayOfMonth()).plusMonths(1);
-        String requestYearMonthly = String.valueOf(startDate.getYear()).substring(2) + startDate.getMonthValue();
+    public void vatAdminDownloads(String requestDate) {
 
-        List<List<String>> totalResult = refundDetailFindService.findFranchiseeId(startDate, endDate);
+        List<LocalDate> date = setUpDate(requestDate);
+        LocalDate startLocalDate = date.get(0);
+        LocalDate endLocalDate = date.get(1);
+
+        String requestYearMonthly =  String.valueOf(endLocalDate.getYear()).substring(2) + endLocalDate.getMonthValue();
+        log.trace(" @@ requestYearMonthly = {}", requestYearMonthly);
+
+        List<List<String>> totalResult = refundDetailFindService.findFranchiseeId(startLocalDate, endLocalDate);
         for (List<String> strings : totalResult) {
             this.vatMonthlySendMailFile(Long.valueOf(strings.get(0)), requestYearMonthly);
         }

@@ -27,6 +27,9 @@ public class OrderLineEntity {
     @Column(name = "indVat", length = 10)
     private String vat;
 
+    @Column(name = "indRefund", length = 10)
+    private String refund;
+
     @ManyToOne
     @JoinColumn(name = "order_id")
     private OrderEntity orderEntity;
@@ -46,6 +49,7 @@ public class OrderLineEntity {
     public void initialize() {
         this.totalPrice = initTotalPrice();
         this.vat = initVAT();
+        this.refund = initRefund();
     }
 
     private String initTotalPrice() {
@@ -55,5 +59,9 @@ public class OrderLineEntity {
 
     private String initVAT() {
         return String.valueOf(Math.floorDiv(Long.parseLong(this.totalPrice), 11));
+    }
+
+    private String initRefund() {
+        return this.productEntity.getRefund();
     }
 }

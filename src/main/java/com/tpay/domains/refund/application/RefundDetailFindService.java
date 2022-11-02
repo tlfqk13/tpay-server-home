@@ -90,15 +90,16 @@ public class RefundDetailFindService {
         String passportNumber = refundCustomerInfoRequest.getPassportNumber();
         Optional<CustomerEntity> customerEntityOptional = customerService.findCustomerByNationAndPassportNumber(passportNumber, nation);
 
-        if (includeZeroInPassportNumber(passportNumber)) {
+        /*if (includeZeroInPassportNumber(passportNumber)) {
             List<String> availPassportNumbers = getAvailPassportNumberList(passportNumber);
             for (String passportNum : availPassportNumbers) {
-                customerEntityOptional = customerService.findCustomerByNationAndPassportNumber(passportNum, nation);
+                customerEntityOptional = customerUpdateService.findCustomerByNationAndPassportNumber(passportNum, nation);
                 if(customerEntityOptional.isPresent()) {
+                    log.debug("Applied passport Number = {}", passportNum);
                     break;
                 }
             }
-        }
+        }*/
 
         if(customerEntityOptional.isEmpty()) {
             return Collections.emptyList();

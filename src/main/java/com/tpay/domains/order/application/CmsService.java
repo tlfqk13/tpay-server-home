@@ -152,13 +152,16 @@ public class CmsService {
             throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "File Input Failed");
         }
     }
-    public void cmsAdminDownloads() {
-        LocalDate startDate = LocalDate.now().minusDays(LocalDate.now().getDayOfMonth()-1);
-        LocalDate endDate = LocalDate.now().minusDays(LocalDate.now().getDayOfMonth()).plusMonths(1);
-        String requestYearMonthly =  String.valueOf(startDate.getYear()).substring(2) + startDate.getMonthValue();
+    public void cmsAdminDownloads(String requestDate) {
+
+        List<LocalDate> date = setUpDate(requestDate);
+        LocalDate startLocalDate = date.get(0);
+        LocalDate endLocalDate = date.get(1);
+
+        String requestYearMonthly =  String.valueOf(endLocalDate.getYear()).substring(2) + endLocalDate.getMonthValue();
         log.trace(" @@ requestYearMonthly = {}", requestYearMonthly);
 
-        List<List<String>> totalResult = refundDetailFindService.findFranchiseeId(startDate,endDate);
+        List<List<String>> totalResult = refundDetailFindService.findFranchiseeId(startLocalDate,endLocalDate);
         for (List<String> strings : totalResult) {
             this.cmsDownloads(Long.valueOf(strings.get(0)), requestYearMonthly);
         }
