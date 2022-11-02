@@ -73,6 +73,7 @@ public class RefundApproveService {
 
         OrderEntity orderEntity = orderSaveService.save(request);
         log.debug("Order saved Id = {} ", orderEntity.getId());
+        log.trace(" @@ orderEntity = {}", orderEntity.getTotalRefund());
 
         updateUserDeviceInfo(request, orderEntity);
 

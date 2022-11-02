@@ -83,6 +83,25 @@ public class CustomerService {
         CustomerEntity customerEntity = customerRepository.findByPassportNumber(encryptPassportNumber)
                 .orElseThrow(()->new InvalidPassportInfoException(ExceptionState.INVALID_PASSPORT_INFO, "여권 조회 실패"));
 
+        return CustomerDto.Response.builder()
+                .passportNumber(customerInfo.getPassportNumber())
+                .name(customerEntity.getCustomerName())
+                .email(customerEntity.getCustomerEmail())
+                .phoneNumber(customerEntity.getCustomerPhoneNumber())
+                .customerPaymentType(customerEntity.getCustomerPaymentType())
+                .creditCardNumber(customerEntity.getCustomerCreditNumber())
+                .bankName(customerEntity.getCustomerBankName())
+                .accountNumber(customerEntity.getCustomerAccountNumber())
+                .nation(customerEntity.getNation())
+                .build();
+    }
+
+    public CustomerDto.Response findAll(CustomerDto.Request customerInfo) {
+
+        String encryptPassportNumber = passportNumberEncryptService.encrypt(customerInfo.getPassportNumber());
+        CustomerEntity customerEntity = customerRepository.findByPassportNumber(encryptPassportNumber)
+                .orElseThrow(()->new InvalidPassportInfoException(ExceptionState.INVALID_PASSPORT_INFO, "여권 조회 실패"));
+
         customerEntity.updateRegister();
 
         return CustomerDto.Response.builder()

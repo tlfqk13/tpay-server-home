@@ -10,6 +10,7 @@ public class RefundSaveRequest {
     private Long employeeIndex;
     private Long customerIndex;
     private String price;
+    private String refund;
     private UserSelector userSelector;
     private Device device;
 

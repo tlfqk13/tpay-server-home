@@ -8,6 +8,7 @@ public class OrderDto {
     public static class Request {
         Long customerIdx;
         String price;
+        String refund;
     }
 
     @Value

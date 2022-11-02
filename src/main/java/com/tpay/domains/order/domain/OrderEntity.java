@@ -37,6 +37,9 @@ public class OrderEntity extends BaseTimeEntity {
     @Column(name = "totQty", length = 7)
     private String totalQuantity;
 
+    @Column(name = "totRefund", length = 7)
+    private String totalRefund;
+
     @Column(name = "purchsSn", length = 20)
     private String orderNumber;
 
@@ -77,6 +80,7 @@ public class OrderEntity extends BaseTimeEntity {
         this.totalAmount = this.initOrderLineAmount();
         this.totalQuantity = this.initOrderLineQuantity();
         this.totalVat = this.initOrderLineVAT();
+        this.totalRefund = this.initOrderLineRefund();
         return this;
     }
 
@@ -87,6 +91,15 @@ public class OrderEntity extends BaseTimeEntity {
                 .reduce(Long::sum)
                 .orElseGet(() -> 0L);
         return String.valueOf(amount);
+    }
+
+    public String initOrderLineRefund() {
+        Long refund =
+                this.orderLineEntityList.stream()
+                        .map(orderLine -> Long.parseLong(orderLine.getRefund()))
+                        .reduce(Long::sum)
+                        .orElseGet(() -> 0L);
+        return String.valueOf(refund);
     }
 
     public String initOrderLineQuantity() {
@@ -112,20 +125,6 @@ public class OrderEntity extends BaseTimeEntity {
             .map(orderLineEntity -> RefundProductInfo.of(orderLineEntity))
             .collect(Collectors.toList());
     }
-
-    // TODO: 2022/08/02 환급 금액 버림 ex)30000 -> 1901 ->1900
-    public String getTotalRefund() {
-        double vat = Double.parseDouble(this.totalVat);
-        double totalRefund = Math.floor(((vat*70)/100)/100)*100;
-        // TODO: 2022/08/09 합계 보정을 위해
-        int amount = Integer.parseInt(initOrderLineAmount());
-        double actualAmountResult = (Math.ceil( (amount - totalRefund) /100) * 100);
-        int totalRefundResult = (int) (amount - actualAmountResult);
-
-        return Integer.toString(totalRefundResult);
-    }
-
-
     public long getPointsWithPercentage(double balancePercentage){
         double vat = Double.parseDouble(this.totalVat);
         return (long) Math.floor((vat * balancePercentage) / 100);

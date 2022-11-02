@@ -15,11 +15,21 @@ public class ProductFindService {
     private final ProductSaveService productSaveService;
 
     @Transactional
-    public ProductEntity findOrElseSave(String productName, String price) {
+    public ProductEntity findOrElseSave(String productName, String price,String refund) {
         ProductEntity productEntity =
             productRepository
                 .findByNameAndPrice(productName, price)
-                .orElseGet(() -> productSaveService.save(productName, price));
+                .orElseGet(() -> productSaveService.save(productName, price,refund));
+
+        return productEntity;
+    }
+
+    @Transactional
+    public ProductEntity findOrElseSave(String productName, String price) {
+        ProductEntity productEntity =
+                productRepository
+                        .findByNameAndPrice(productName, price)
+                        .orElseGet(() -> productSaveService.save(productName, price));
 
         return productEntity;
     }
