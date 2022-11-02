@@ -23,4 +23,6 @@ public class RefundReceiptController {
         List<RefundReceiptDto.Response> refundReceiptList = refundReceiptFindService.findRefundReceiptDetail(request);
         return ResponseEntity.ok(refundReceiptList);
     }
+
+
 }

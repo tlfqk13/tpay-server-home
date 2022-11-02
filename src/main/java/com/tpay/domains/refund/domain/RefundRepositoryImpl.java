@@ -163,9 +163,10 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
 
     private BooleanExpression isRefundAfter(Boolean refundAfter) {
         if(refundAfter){
-            return refundEntity.refundAfterEntity.isNotNull();
+            return refundEntity.refundAfterEntity.isNotNull()
+                    .and(refundEntity.totalRefund.castToNum(Integer.class).goe(80000));
         }else{
-            return null;
+            return refundEntity.totalRefund.castToNum(Integer.class).loe(74000);
         }
     }
 
