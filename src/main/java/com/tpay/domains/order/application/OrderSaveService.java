@@ -38,13 +38,13 @@ public class OrderSaveService {
     @Transactional
     public OrderEntity save(RefundSaveRequest request) {
         FranchiseeEntity franchiseeEntity =
-            franchiseeFindService.findByIndex(request.getFranchiseeIndex());
+                franchiseeFindService.findByIndex(request.getFranchiseeIndex());
 
         CustomerEntity customerEntity = customerService.findByIndex(request.getCustomerIndex());
 
         ProductEntity productEntity =
-            productFindService.findOrElseSave(
-                franchiseeEntity.getProductCategory(), request.getPrice(),request.getRefund());
+                productFindService.findOrElseSave(
+                        franchiseeEntity.getProductCategory(), request.getPrice(), request.getRefund());
 
         return this.save(franchiseeEntity, customerEntity, productEntity, null);
     }
@@ -60,18 +60,18 @@ public class OrderSaveService {
 
     @Transactional
     public OrderEntity save(
-        FranchiseeEntity franchiseeEntity,
-        CustomerEntity customerEntity,
-        ProductEntity productEntity,
-        String purchaseSn
+            FranchiseeEntity franchiseeEntity,
+            CustomerEntity customerEntity,
+            ProductEntity productEntity,
+            String purchaseSn
     ) {
 
         OrderEntity orderEntity =
-            OrderEntity.builder()
-                .franchiseeEntity(franchiseeEntity)
-                .customerEntity(customerEntity)
-                .purchaseSn(purchaseSn)
-                .build();
+                OrderEntity.builder()
+                        .franchiseeEntity(franchiseeEntity)
+                        .customerEntity(customerEntity)
+                        .purchaseSn(purchaseSn)
+                        .build();
 
         orderRepository.save(orderEntity);
         OrderLineEntity orderLineEntity = orderLineSaveService.save(orderEntity, productEntity);
@@ -83,7 +83,7 @@ public class OrderSaveService {
     @Transactional
     public OrderDto.Response createOrder(OrderDto.Request orderDto, IndexInfo indexInfo) {
         Long franchiseIndex;
-        if(EMPLOYEE == indexInfo.getUserSelector()) {
+        if (EMPLOYEE == indexInfo.getUserSelector()) {
             EmployeeEntity employee = employeeFindService.findById(Long.parseLong(indexInfo.getIndex()))
                     .orElseThrow();
             franchiseIndex = employee.getFranchiseeEntity().getId();
@@ -95,7 +95,7 @@ public class OrderSaveService {
         CustomerEntity customer = customerService.findByIndex(orderDto.getCustomerIdx());
         ProductEntity productEntity =
                 productFindService.findOrElseSave(
-                        franchisee.getProductCategory(), orderDto.getPrice(),orderDto.getRefund());
+                        franchisee.getProductCategory(), orderDto.getPrice(), orderDto.getRefund());
 
         OrderEntity savedOrder = save(franchisee, customer, productEntity, createPurchaseSn());
 

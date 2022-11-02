@@ -36,7 +36,7 @@ Configuration:
               exceeds: 31
         Filters:
           ThresholdFilter:
-            level: debug
+            level: trace
       - name: RollingFile_Appender_Error
         fileName: ${log-path}/rollingfile-error.log
         filePattern: "${log-path}/archive/rollingfile-error.log_%d{yyyy-MM-dd}.gz"
@@ -63,6 +63,13 @@ Configuration:
         ref: Console_Appender
     Logger:
       - name: com.tpay.domains
+        additivity: false
+        level: trace
+        AppenderRef:
+          - ref: RollingFile_Appender
+          - ref: Console_Appender
+          - ref: RollingFile_Appender_Error
+      - name: com.tpay.commons
         additivity: false
         level: trace
         AppenderRef:

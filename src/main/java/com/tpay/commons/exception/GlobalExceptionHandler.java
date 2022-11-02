@@ -100,6 +100,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(response.getValue()).body(response);
     }
 
+    @ExceptionHandler(OrderNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> orderNotFoundExHandler(
+            HttpServletRequest request, OrderNotFoundException exception) {
+        log.error("orderNotFound Exception() : {}", exception.getMessage());
+        ExceptionResponse response = ExceptionResponse.of(request, exception);
+        return ResponseEntity.status(response.getValue()).body(response);
+    }
+
     @ExceptionHandler(OptimisticLockingFailureException.class)
     public ResponseEntity<ExceptionResponse> updateFailureHandler(
             HttpServletRequest request, WebfluxGeneralException exception) {

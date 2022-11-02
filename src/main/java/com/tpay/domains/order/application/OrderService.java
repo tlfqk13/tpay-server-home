@@ -1,5 +1,7 @@
 package com.tpay.domains.order.application;
 
+import com.tpay.commons.exception.ExceptionState;
+import com.tpay.commons.exception.detail.OrderNotFoundException;
 import com.tpay.commons.util.converter.NumberFormatConverter;
 import com.tpay.domains.order.domain.OrderEntity;
 import com.tpay.domains.order.domain.OrderRepository;
@@ -115,6 +117,6 @@ public class OrderService {
 
     public OrderEntity findOrderByPurchaseSn(String purchaseSn) {
         return orderRepository.findByOrderNumber(purchaseSn)
-                .orElseThrow(NullPointerException::new);
+                .orElseThrow(() -> new OrderNotFoundException(ExceptionState.ORDER_NOT_FOUND));
     }
 }

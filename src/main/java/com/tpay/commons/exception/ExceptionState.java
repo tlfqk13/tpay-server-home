@@ -25,6 +25,7 @@ public enum ExceptionState {
     DUPLICATE_SIGNIN(400, HttpStatus.BAD_REQUEST, "A0005", "Duplicate sign-in"),
     DUPLICATE_SIGNOUT(400, HttpStatus.UNAUTHORIZED, "A0006", "Duplicate sign-out force"),
     REFUND(400, HttpStatus.BAD_REQUEST, "R0001", "Refund Exception"),
+    ORDER_NOT_FOUND(400, HttpStatus.BAD_REQUEST, "R0002", "Order Not Found, create Order First"),
     INVALID_PASSPORT_INFO(400, HttpStatus.BAD_REQUEST, "E0001", "Contact Backend Developer"),
     INVALID_EXTERNAL_REFUND_INDEX(400,HttpStatus.BAD_REQUEST,"G0001","Invalid External Refund Index"),
     ALREADY_CANCELLED(409, HttpStatus.BAD_REQUEST, "G0002", "Already Cancelled Index"),

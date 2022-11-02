@@ -1,5 +1,7 @@
 package com.tpay.domains.order.presentation;
 
+import com.tpay.commons.exception.ExceptionState;
+import com.tpay.commons.exception.detail.JwtRuntimeException;
 import com.tpay.commons.jwt.AuthToken;
 import com.tpay.commons.jwt.JwtUtils;
 import com.tpay.commons.util.IndexInfo;
@@ -10,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,6 +39,9 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<OrderDto.Response> order(HttpServletRequest request, @RequestBody OrderDto.Request orderDto) {
         String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (!StringUtils.hasText(bearerToken)) {
+            throw new JwtRuntimeException(ExceptionState.INVALID_TOKEN, "Token Data Empty");
+        }
         AuthToken authToken = jwtUtils.convertAuthToken(bearerToken.substring(7));
         IndexInfo indexInfo = getIndexFromClaims(authToken.getData());
 

@@ -15,11 +15,16 @@ public class ProductFindService {
     private final ProductSaveService productSaveService;
 
     @Transactional
-    public ProductEntity findOrElseSave(String productName, String price,String refund) {
+    public ProductEntity findOrElseSave(String productName, String price, String refund) {
         ProductEntity productEntity =
-            productRepository
-                .findByNameAndPrice(productName, price)
-                .orElseGet(() -> productSaveService.save(productName, price,refund));
+                productRepository
+                        .findByNameAndPrice(productName, price)
+                        .orElseGet(() -> productSaveService.save(productName, price, refund));
+
+        // refund column 이 추가되면서 productName 과 price 가 같은 product 중 refund 가 없는 엔티티는 업데이트
+        if (null == productEntity.getRefund()) {
+            productEntity.updateRefundVal(refund);
+        }
 
         return productEntity;
     }
