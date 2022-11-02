@@ -62,6 +62,6 @@ public class OrderLineEntity {
     }
 
     private String initRefund() {
-        return String.valueOf(Long.parseLong(this.productEntity.getRefund()));
+        return this.productEntity.getRefund();
     }
 }
