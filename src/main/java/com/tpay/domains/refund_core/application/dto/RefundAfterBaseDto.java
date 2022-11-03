@@ -12,10 +12,14 @@ import lombok.NoArgsConstructor;
 @Getter
 public class RefundAfterBaseDto {
     private String cusCode;
-    private String locaCode;
-    private String kioskBsnmCode;
-    private String kioskCode;
-    private String counterTypeCode;
+    @Builder.Default
+    private String locaCode = "ICN";
+    @Builder.Default
+    private String kioskBsnmCode = "";
+    @Builder.Default
+    private String kioskCode = "";
+    @Builder.Default
+    private String counterTypeCode = "";
     private RefundAfterMethod refundAfterMethod;
     private String refundFinishDate;
     private boolean retry;

@@ -1,7 +1,12 @@
 package com.tpay.commons.util;
 
+import io.jsonwebtoken.Claims;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
+
+import static com.tpay.commons.util.UserSelector.EMPLOYEE;
+import static com.tpay.commons.util.UserSelector.FRANCHISEE;
 
 public class KtpCommonUtil {
 
@@ -12,4 +17,14 @@ public class KtpCommonUtil {
     public static boolean isApplicationInitBeforeOneMinute() {
         return Duration.between(APPLICATION_START_TIME, LocalDateTime.now()).getSeconds() < ONE_MINUTE;
     }
+
+    public static IndexInfo getIndexFromClaims(Claims claims) {
+        Object accessE = claims.get("accessE");
+        if (accessE == null) {
+            Object accessF = claims.get("accessF");
+            return new IndexInfo(FRANCHISEE, String.valueOf(accessF));
+        }
+        return new IndexInfo(EMPLOYEE, String.valueOf(accessE));
+    }
+
 }

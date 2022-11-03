@@ -5,6 +5,7 @@ import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.exception.detail.WebfluxGeneralException;
 import com.tpay.commons.push.PushCategoryType;
+import com.tpay.commons.util.IndexInfo;
 import com.tpay.commons.webClient.WebRequestUtil;
 import com.tpay.domains.auth.domain.EmployeeAccessTokenEntity;
 import com.tpay.domains.auth.domain.EmployeeAccessTokenRepository;
@@ -19,6 +20,7 @@ import com.tpay.domains.franchisee.application.FranchiseeFindService;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.order.application.OrderSaveService;
 import com.tpay.domains.order.application.OrderService;
+import com.tpay.domains.order.application.dto.OrderDto;
 import com.tpay.domains.order.domain.OrderEntity;
 import com.tpay.domains.point.domain.SignType;
 import com.tpay.domains.point_scheduled.application.PointScheduledChangeService;
@@ -26,11 +28,9 @@ import com.tpay.domains.push.application.NonBatchPushService;
 import com.tpay.domains.refund.application.RefundService;
 import com.tpay.domains.refund.application.dto.RefundSaveRequest;
 import com.tpay.domains.refund.domain.RefundAfterEntity;
+import com.tpay.domains.refund.domain.RefundAfterMethod;
 import com.tpay.domains.refund.domain.RefundEntity;
-import com.tpay.domains.refund_core.application.dto.RefundAfterBaseDto;
-import com.tpay.domains.refund_core.application.dto.RefundAfterDto;
-import com.tpay.domains.refund_core.application.dto.RefundApproveRequest;
-import com.tpay.domains.refund_core.application.dto.RefundResponse;
+import com.tpay.domains.refund_core.application.dto.*;
 import com.tpay.domains.van.domain.PaymentEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -177,6 +177,31 @@ public class RefundApproveService {
     public RefundResponse approveAfter(RefundAfterDto.Request refundAfterDto) {
         try {
             return approveAfter(refundAfterDto, null);
+        } catch (WebfluxGeneralException e) {
+            log.debug("WEBFLUX_GENERAL_ERROR");
+            throw new WebfluxGeneralException(ExceptionState.WEBFLUX_GENERAL, e.getMessage());
+        }
+    }
+
+    /**
+     * KTP에서 주문과 환급을 동시에 처리할 때 사용
+     */
+    @Transactional
+    public RefundResponse approveAfter(OrderDto.Request orderDto, IndexInfo indexInfo) {
+        try {
+            // create Order
+            OrderDto.Response order = orderSaveService.createOrder(orderDto, indexInfo);
+
+            // build Refund After Dto
+            RefundAfterBaseDto baseDto = RefundAfterBaseDto.builder()
+                    .cusCode("040")
+                    .refundAfterMethod(RefundAfterMethod.MANUAL)
+                    .retry(false)
+                    .build();
+            RefundItemDto.Request refundItemDto = RefundItemDto.Request.builder().docId(order.getPurchaseSn()).build();
+            RefundAfterDto.Request refundAfterDto = new RefundAfterDto.Request(baseDto, refundItemDto);
+
+            return approveAfter(refundAfterDto);
         } catch (WebfluxGeneralException e) {
             log.debug("WEBFLUX_GENERAL_ERROR");
             throw new WebfluxGeneralException(ExceptionState.WEBFLUX_GENERAL, e.getMessage());

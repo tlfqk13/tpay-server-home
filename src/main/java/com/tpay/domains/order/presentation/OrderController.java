@@ -7,7 +7,6 @@ import com.tpay.commons.jwt.JwtUtils;
 import com.tpay.commons.util.IndexInfo;
 import com.tpay.domains.order.application.OrderSaveService;
 import com.tpay.domains.order.application.dto.OrderDto;
-import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpHeaders;
@@ -20,8 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static com.tpay.commons.util.UserSelector.EMPLOYEE;
-import static com.tpay.commons.util.UserSelector.FRANCHISEE;
+import static com.tpay.commons.util.KtpCommonUtil.getIndexFromClaims;
 
 @RestController
 @Slf4j
@@ -42,18 +40,9 @@ public class OrderController {
         if (!StringUtils.hasText(bearerToken)) {
             throw new JwtRuntimeException(ExceptionState.INVALID_TOKEN, "Token Data Empty");
         }
-        AuthToken authToken = jwtUtils.convertAuthToken(bearerToken.substring(7));
+        AuthToken authToken = jwtUtils.convertAuthToken(bearerToken);
         IndexInfo indexInfo = getIndexFromClaims(authToken.getData());
 
         return ResponseEntity.ok(orderService.createOrder(orderDto, indexInfo));
-    }
-
-    private IndexInfo getIndexFromClaims(Claims claims) {
-        Object accessE = claims.get("accessE");
-        if (accessE == null) {
-            Object accessF = claims.get("accessF");
-            return new IndexInfo(FRANCHISEE, String.valueOf(accessF));
-        }
-        return new IndexInfo(EMPLOYEE, String.valueOf(accessE));
     }
 }

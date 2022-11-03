@@ -2,19 +2,29 @@ package com.tpay.domains.refund_core.presentation;
 
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.FranchiseeAuthenticationException;
+import com.tpay.commons.exception.detail.JwtRuntimeException;
+import com.tpay.commons.jwt.AuthToken;
+import com.tpay.commons.jwt.JwtUtils;
+import com.tpay.commons.util.IndexInfo;
 import com.tpay.commons.util.UserSelector;
+import com.tpay.domains.order.application.dto.OrderDto;
 import com.tpay.domains.refund.application.dto.RefundSaveRequest;
 import com.tpay.domains.refund_core.application.LimitFindService;
 import com.tpay.domains.refund_core.application.RefundApproveService;
 import com.tpay.domains.refund_core.application.RefundCancelService;
 import com.tpay.domains.refund_core.application.dto.RefundAfterCancelDto;
-import com.tpay.domains.refund_core.application.dto.RefundAfterDto;
 import com.tpay.domains.refund_core.application.dto.RefundLimitRequest;
 import com.tpay.domains.refund_core.application.dto.RefundResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+
+import static com.tpay.commons.util.KtpCommonUtil.getIndexFromClaims;
 
 /**
  * 실질적인 관세청 통신 3개 기능
@@ -29,6 +39,8 @@ public class RefundCoreController {
     private final RefundApproveService refundApproveService;
     private final RefundCancelService refundCancelService;
     private final LimitFindService limitFindService;
+
+    private final JwtUtils jwtUtils;
 
     /**
      * 환급 승인 요청
@@ -112,8 +124,16 @@ public class RefundCoreController {
      */
     @PostMapping("/after/approval")
     public ResponseEntity<RefundResponse> refundAfterApproval(
-            @RequestBody RefundAfterDto.Request request) {
-        return ResponseEntity.ok(refundApproveService.approveAfter(request));
+            HttpServletRequest request,
+            @RequestBody OrderDto.Request dto) {
+        String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (!StringUtils.hasText(bearerToken)) {
+            throw new JwtRuntimeException(ExceptionState.INVALID_TOKEN, "Token Data Empty");
+        }
+        AuthToken authToken = jwtUtils.convertAuthToken(bearerToken);
+        IndexInfo indexInfo = getIndexFromClaims(authToken.getData());
+
+        return ResponseEntity.ok(refundApproveService.approveAfter(dto, indexInfo));
     }
 
     /**
