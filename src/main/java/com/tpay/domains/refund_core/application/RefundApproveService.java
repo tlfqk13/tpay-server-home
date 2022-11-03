@@ -183,6 +183,12 @@ public class RefundApproveService {
         }
     }
 
+    @Transactional
+    public void cancelRefundAfter(String tkOutNumber) {
+        RefundEntity refund = refundService.getRefundByTkOutNumber(tkOutNumber);
+        refund.updateCancel();
+    }
+
     private void updateUserDeviceInfo(RefundSaveRequest request, OrderEntity orderEntity) {
         if (request.getUserSelector().equals(EMPLOYEE)) {
             EmployeeEntity employeeEntity = employeeFindService.findById(request.getEmployeeIndex())

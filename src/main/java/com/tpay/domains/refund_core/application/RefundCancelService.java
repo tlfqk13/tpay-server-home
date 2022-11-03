@@ -45,8 +45,9 @@ public class RefundCancelService {
         String uri = CustomValue.REFUND_SERVER + "/refund/cancel";
         RefundResponse refundResponse = webRequestUtil.post(uri, refundCancelRequest);
 
-
-        refundEntity.updateCancel(refundResponse.getResponseCode());
+        if (refundResponse.getResponseCode().equals("0000")) {
+            refundEntity.updateCancel();
+        }
 
         double balancePercentage = refundEntity.getOrderEntity().getFranchiseeEntity().getBalancePercentage();
         pointScheduledChangeService.change(refundEntity, SignType.NEGATIVE, balancePercentage);

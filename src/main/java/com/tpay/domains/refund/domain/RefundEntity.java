@@ -61,15 +61,13 @@ public class RefundEntity extends BaseTimeEntity {
         orderEntity.setRefundEntity(this);
     }
 
-    public void updateCancel(String responseCode) {
-        if (responseCode.equals("0000")) {
-            this.refundStatus = RefundStatus.CANCEL;
-        }
+    public void updateCancel() {
+        this.refundStatus = RefundStatus.CANCEL;
     }
 
     public void addRefundAfterEntity(RefundAfterEntity refundAfterEntity) {
         // 만약 환급액이 75000원 이하인 경우 바로 승인이 되기 때문에
-        if(RefundStatus.APPROVAL == this.refundStatus) {
+        if (RefundStatus.APPROVAL == this.refundStatus) {
             refundAfterEntity.updateApprovalFinishDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
         }
         this.refundAfterEntity = refundAfterEntity;
