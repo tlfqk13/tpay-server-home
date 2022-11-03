@@ -5,6 +5,7 @@ import com.tpay.commons.exception.detail.JwtRuntimeException;
 import com.tpay.commons.jwt.AuthToken;
 import com.tpay.commons.jwt.JwtUtils;
 import com.tpay.commons.util.IndexInfo;
+import com.tpay.commons.util.KtpCommonUtil;
 import com.tpay.commons.util.UserSelector;
 import com.tpay.domains.auth.application.AccessTokenService;
 import com.tpay.domains.auth.domain.EmployeeAccessTokenEntity;
@@ -16,7 +17,9 @@ import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee_applicant.application.FranchiseeApplicantFindService;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
 import io.jsonwebtoken.Claims;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpHeaders;
 import org.jetbrains.annotations.NotNull;
@@ -70,7 +73,7 @@ public class JwtValidationInterceptor implements HandlerInterceptor {
 
         AuthToken authToken = getAuthToken(request);
         Claims claims = authToken.getData();
-        IndexInfo tokenInfo = getIndexFromClaims(claims);
+        IndexInfo tokenInfo = KtpCommonUtil.getIndexFromClaims(claims);
         IndexInfo uriInfo = getIndexFromUri(request);
 
         UserSelector tokenUserSelector = tokenInfo.getUserSelector();
