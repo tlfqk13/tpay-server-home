@@ -153,4 +153,7 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long>, Ref
     @EntityGraph(attributePaths = {"orderEntity"})
     List<RefundEntity> findByCreatedDateBetween(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 
+    @EntityGraph(attributePaths = {"orderEntity"})
+    Optional<RefundEntity> findByTakeOutNumber(String tkOutNum);
+
 }

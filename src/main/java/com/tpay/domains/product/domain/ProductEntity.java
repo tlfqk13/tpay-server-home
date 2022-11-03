@@ -31,11 +31,15 @@ public class ProductEntity {
     private String refund;
 
     @Builder
-    public ProductEntity(String name, String lineNumber, String code, String price,String refund) {
+    public ProductEntity(String name, String lineNumber, String code, String price, String refund) {
         this.name = name;
         this.lineNumber = lineNumber;
         this.code = code;
         this.price = price;
+        this.refund = refund;
+    }
+
+    public void updateRefundVal(String refund) {
         this.refund = refund;
     }
 }

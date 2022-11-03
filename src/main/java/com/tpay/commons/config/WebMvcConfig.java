@@ -63,7 +63,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 "/van/**",
                 "/franchisee/admin/cms/downloads",
                 "/franchisee/admin/vat/downloads",
-                "/customer/**"
+                "/customer/**",
+                "/refund/after/**" // URI Parsing 추가하기 애매, uri 방식을 바꾸는게 향후 이득
         ));
 
         if (!profileName.equals("deploy")) {
