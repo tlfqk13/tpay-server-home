@@ -6,7 +6,7 @@ public class OrderDto {
 
     @Value
     public static class Request {
-        Long customerIdx;
+        Long customerIndex;
         String price;
         String refund;
     }

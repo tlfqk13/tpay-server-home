@@ -17,6 +17,7 @@ import com.tpay.domains.product.application.ProductFindService;
 import com.tpay.domains.product.domain.ProductEntity;
 import com.tpay.domains.refund.application.dto.RefundSaveRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +28,7 @@ import static com.tpay.commons.util.UserSelector.EMPLOYEE;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class OrderSaveService {
 
     private final OrderRepository orderRepository;
@@ -105,9 +107,8 @@ public class OrderSaveService {
         } else {
             franchiseIndex = Long.parseLong(indexInfo.getIndex());
         }
-
         FranchiseeEntity franchisee = franchiseeFindService.findByIndex(franchiseIndex);
-        CustomerEntity customer = customerService.findByIndex(orderDto.getCustomerIdx());
+        CustomerEntity customer = customerService.findByIndex(orderDto.getCustomerIndex());
         ProductEntity productEntity =
                 productFindService.findOrElseSave(
                         franchisee.getProductCategory(), orderDto.getPrice(), orderDto.getRefund());

@@ -32,7 +32,7 @@ public class RefundReceiptDto {
                 ,String texFreeStoreNumber,LocalDateTime saleDate,String sellerName
                 ,String franchiseeName,String businessNumber,String storeAddress
                 ,String storeTelNumber,String totalAmount,String totalVat
-                ,String totalRefund, String administrativeCharge, String expireDate){
+                ,String totalRefund, String administrativeCharge, LocalDateTime expireDate){
 
             this.refundAfter = refundAfter;
             this.taxFreeStoreNumber = texFreeStoreNumber;
@@ -46,7 +46,7 @@ public class RefundReceiptDto {
             this.totalVat = totalVat;
             this.totalRefund = totalRefund;
             this.administrativeCharge = administrativeCharge;
-            this.expireDate = expireDate;
+            this.expireDate = expireDate.plusMonths(3).toString().substring(0,10);
         }
     }
 

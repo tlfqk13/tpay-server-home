@@ -30,6 +30,7 @@ public class VanOrderController {
         // VAN 의 경우 환급 정보 생성 후 조회
         vanService.createRefundAfter(request.getEncryptPassportNumber(), refundAfterBaseDto);
         //조회
+        // TODO: 2022/11/04 VAN 여권번호.decode -> SUCCESS15 || tpay 에서 다시 encrypt 해야함 
         VanOrdersDto.Response response = vanService.findVanOrder(request.getEncryptPassportNumber());
         return ResponseEntity.ok(response);
     }

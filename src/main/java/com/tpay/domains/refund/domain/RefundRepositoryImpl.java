@@ -49,7 +49,7 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
                         orderEntity.totalVat,
                         refundEntity.totalRefund,
                         refundEntity.totalRefund.castToNum(Integer.class).subtract(pointScheduledEntity.value).stringValue(),
-                        refundEntity.createdDate.stringValue().substring(0,10)
+                        refundEntity.createdDate
                 ))
                 .from(orderEntity)
                 .leftJoin(orderEntity.refundEntity,refundEntity)

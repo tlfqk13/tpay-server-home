@@ -146,7 +146,7 @@ public class CmsService {
 
            StringBuilder fileName = new StringBuilder();
            fileName.append(topSectionInfo.get(2)).append("_").append(startLocalDate.getMonthValue()).append("월").append("_cms");
-           String result = s3FileUploader.uploadXlsx(franchiseeIndex, xssfWorkbook,fileName, String.valueOf(startLocalDate.getMonthValue()),true);
+           String result = s3FileUploader.uploadPdf(franchiseeIndex, xssfWorkbook,fileName, String.valueOf(startLocalDate.getMonthValue()),true);
             return result;
         } catch (IOException e) {
             throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "File Input Failed");

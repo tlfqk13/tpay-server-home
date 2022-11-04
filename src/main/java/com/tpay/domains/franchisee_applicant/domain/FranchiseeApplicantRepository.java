@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface FranchiseeApplicantRepository
-    extends JpaRepository<FranchiseeApplicantEntity, Long> {
+    extends JpaRepository<FranchiseeApplicantEntity, Long>{
 
     void deleteByFranchiseeEntity(FranchiseeEntity franchiseeEntity);
     Optional<FranchiseeApplicantEntity> findByFranchiseeEntityBusinessNumber(String businessNumber);

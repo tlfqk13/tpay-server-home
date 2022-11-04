@@ -190,4 +190,29 @@ public class S3FileUploader {
         }
         return s3Client.getUrl(bucket, String.valueOf(key)).toString();
     }
+
+    public String uploadPdf(Long franchiseeIndex, XSSFWorkbook xssfWorkbook
+            , StringBuilder fileName, String month,boolean isCms) throws IOException {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        xssfWorkbook.write(byteArrayOutputStream);
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+        ObjectMetadata objectMetaData = new ObjectMetadata();
+        objectMetaData.setContentType("application/pdf");
+        objectMetaData.setContentLength((long) byteArrayOutputStream.toByteArray().length);
+        byteArrayOutputStream.close();
+        StringBuilder key = new StringBuilder();
+        System.out.println(fileName);
+        if(isCms){
+            key.append("CmsMonthlyReport/").append(month).append("/").append(fileName);
+        }else{
+            key.append("VatMonthlyReport/").append(month).append("/").append(fileName);
+        }
+        try {
+            s3Client.putObject(new PutObjectRequest(bucket, String.valueOf(key), byteArrayInputStream, objectMetaData)
+                    .withCannedAcl(CannedAccessControlList.PublicRead));
+        } finally {
+            byteArrayInputStream.close();
+        }
+        return s3Client.getUrl(bucket, String.valueOf(key)).toString();
+    }
 }

@@ -1,6 +1,9 @@
 package com.tpay.domains.van.application;
 
 import com.tpay.commons.aria.PassportNumberDecryptService;
+import com.tpay.commons.aria.PassportNumberEncryptService;
+import com.tpay.commons.exception.ExceptionState;
+import com.tpay.commons.exception.detail.CustomerNotFoundException;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.customer.domain.CustomerRepository;
 import com.tpay.domains.order.application.dto.OrdersDtoInterface;
@@ -33,17 +36,15 @@ public class VanService {
 
     private final RefundService refundService;
     private final PassportNumberDecryptService decryptService;
+    private final PassportNumberEncryptService encryptService;
 
     @Transactional
     public void createRefundAfter(String encryptPassportNumber, VanRefundAfterBaseDto refundAfterBaseDto) {
 
-        log.trace(" @@ createRefundAfter _ encryptPassportNumber = {}", encryptPassportNumber);
-        log.trace(" @@ encryptPassportNumber.length() = {}", encryptPassportNumber.length());
-        String decryptPassportNumber = decryptService.decrypt("SUCCESS15");
-        log.trace(" @@ decryptPassportNumber = {}", decryptPassportNumber);
+        String encryptNumber = encryptService.encrypt(encryptPassportNumber);
 
-        CustomerEntity customerEntity = customerRepository.findByPassportNumber(decryptPassportNumber)
-                .orElseThrow(NullPointerException::new);
+        CustomerEntity customerEntity = customerRepository.findByPassportNumber(encryptNumber)
+                .orElseThrow(()->new CustomerNotFoundException(ExceptionState.CUSTOMER_NOT_FOUND));
 
         List<OrderEntity> orders = orderRepository.findOrders(customerEntity.getId());
         for (OrderEntity order : orders) {
@@ -74,7 +75,9 @@ public class VanService {
     }
 
     public VanOrdersDto.Response findVanOrder(String encryptedPassportNumber) {
-        List<OrdersDtoInterface> ordersDtoInterfaceList = orderRepository.findVanOrdersDetail(encryptedPassportNumber);
+
+        String encryptNumber = encryptService.encrypt(encryptedPassportNumber);
+        List<OrdersDtoInterface> ordersDtoInterfaceList = orderRepository.findVanOrdersDetail(encryptNumber);
 
         List<VanOrderDetail> baseList = new ArrayList<>();
         for (OrdersDtoInterface orderDto : ordersDtoInterfaceList) {

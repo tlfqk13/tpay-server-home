@@ -133,8 +133,8 @@ public class AdminFranchiseeApplicant {
     @ApiOperation(value = "가맹점 포인트 적립 비율 업데이트  ", notes = "가맹점 포인트 적립 비율 업데이트 ")
     public ResponseEntity<String> updateBalancePercentage(
             @PathVariable Long franchiseeApplicantIndex
-            ,@RequestBody FranchiseeApplicantSetBalancePerRequest franchiseeApplicantSetBalancePerRequest) {
-        String result = String.valueOf(franchiseeApplicantSetBalancePerService.updateBalancePercentage(franchiseeApplicantIndex, franchiseeApplicantSetBalancePerRequest));
+            ,@RequestBody FranchiseeApplicantUpdateDto.balancePercentageRequest request) {
+        String result = String.valueOf(franchiseeApplicantSetBalancePerService.updateBalancePercentage(franchiseeApplicantIndex, request));
         return ResponseEntity.ok(result);
     }
 
