@@ -1,5 +1,6 @@
 package com.tpay.domains.van.application;
 
+import com.tpay.commons.aria.PassportNumberDecryptService;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.customer.domain.CustomerRepository;
 import com.tpay.domains.order.application.dto.OrdersDtoInterface;
@@ -31,10 +32,17 @@ public class VanService {
     private final CustomerRepository customerRepository;
 
     private final RefundService refundService;
+    private final PassportNumberDecryptService decryptService;
 
     @Transactional
     public void createRefundAfter(String encryptPassportNumber, VanRefundAfterBaseDto refundAfterBaseDto) {
-        CustomerEntity customerEntity = customerRepository.findByPassportNumber(encryptPassportNumber)
+
+        log.trace(" @@ createRefundAfter _ encryptPassportNumber = {}", encryptPassportNumber);
+        log.trace(" @@ encryptPassportNumber.length() = {}", encryptPassportNumber.length());
+        String decryptPassportNumber = decryptService.decrypt("SUCCESS15");
+        log.trace(" @@ decryptPassportNumber = {}", decryptPassportNumber);
+
+        CustomerEntity customerEntity = customerRepository.findByPassportNumber(decryptPassportNumber)
                 .orElseThrow(NullPointerException::new);
 
         List<OrderEntity> orders = orderRepository.findOrders(customerEntity.getId());

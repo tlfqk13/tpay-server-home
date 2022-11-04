@@ -25,6 +25,7 @@ import static com.tpay.domains.customer.domain.QCustomerEntity.customerEntity;
 import static com.tpay.domains.franchisee.domain.QFranchiseeEntity.franchiseeEntity;
 import static com.tpay.domains.franchisee_upload.domain.QFranchiseeUploadEntity.franchiseeUploadEntity;
 import static com.tpay.domains.order.domain.QOrderEntity.orderEntity;
+import static com.tpay.domains.point_scheduled.domain.QPointScheduledEntity.pointScheduledEntity;
 import static com.tpay.domains.refund.domain.QRefundEntity.refundEntity;
 public class RefundRepositoryImpl implements RefundRepositoryCustom {
 
@@ -36,6 +37,7 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
     public List<RefundReceiptDto.Response> findRefundReceipt(String encryptPassportNumber, boolean refundAfter) {
         List<RefundReceiptDto.Response> content = queryFactory
                 .select(new QRefundReceiptDto_Response(
+                        refundEntity.refundAfterEntity.isNotNull(),
                         franchiseeUploadEntity.taxFreeStoreNumber,
                         orderEntity.createdDate,
                         franchiseeEntity.storeName,
@@ -45,10 +47,13 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
                         franchiseeEntity.storeNumber,
                         orderEntity.totalAmount,
                         orderEntity.totalVat,
-                        refundEntity.totalRefund
+                        refundEntity.totalRefund,
+                        refundEntity.totalRefund.castToNum(Integer.class).subtract(pointScheduledEntity.value).stringValue(),
+                        refundEntity.createdDate.stringValue().substring(0,10)
                 ))
                 .from(orderEntity)
                 .leftJoin(orderEntity.refundEntity,refundEntity)
+                .leftJoin(pointScheduledEntity).on(pointScheduledEntity.orderEntity.id.eq(orderEntity.id))
                 .leftJoin(orderEntity.franchiseeEntity,franchiseeEntity)
                 .leftJoin(orderEntity.customerEntity,customerEntity)
                 .leftJoin(franchiseeUploadEntity).on(franchiseeEntity.id.eq(franchiseeUploadEntity.franchiseeIndex))

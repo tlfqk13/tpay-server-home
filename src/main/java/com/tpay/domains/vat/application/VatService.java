@@ -49,7 +49,7 @@ public class VatService {
                 .build();
     }
 
-    public VatDetailResponse vatDetail(Long franchiseeIndex, String requestDate) {
+    public VatDetailResponse vatDetail(Long franchiseeIndex, String requestDate, boolean appVatDetail) {
         List<Object> localDates = setUpDate(requestDate);
         LocalDate startLocalDate = (LocalDate) localDates.get(0);
         LocalDate startEndDate = (LocalDate) localDates.get(1);
@@ -60,7 +60,8 @@ public class VatService {
         //2. 물품판매 총합계
         List<String> totalResult = orderService.findCmsVatTotal(franchiseeIndex, startLocalDate, startEndDate);
         //3. 물품판매 명세
-        List<List<String>> detailResult = orderService.findCmsVatDetail(franchiseeIndex, startLocalDate, startEndDate,true);
+        // TODO: 2022/11/03 vatDetailApp - > 고객이름, 국적 빼고 보내줘야함
+        List<List<String>> detailResult = orderService.findCmsVatDetail(franchiseeIndex, startLocalDate, startEndDate,true,appVatDetail);
 
         return VatDetailResponse.builder()
                 .vatDetailResponsePersonalInfoList(personalInfoResult)

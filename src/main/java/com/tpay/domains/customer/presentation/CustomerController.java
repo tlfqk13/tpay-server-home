@@ -72,7 +72,7 @@ public class CustomerController {
     /**
      * 어드민 - 사후 환급 개인 정보 조회
      */
-    @PatchMapping ("/admin/refund-info")
+    @GetMapping ("/admin/refund-info")
     public ResponseEntity<Page<CustomerDto.Response>> adminFindAll(int page, String searchKeyword){
 
         Page<CustomerDto.Response> response =customerService.adminFindAll(page,searchKeyword);
