@@ -34,7 +34,7 @@ public class SignUpService {
     private final PushTokenService pushTokenService;
 
     @Transactional
-    public Long signUp(FranchiseeSignUpRequest request) {
+    public Long signUp(FranchiseeSignUpRequest request, boolean isApi) {
 
         String businessNumber = request.getBusinessNumber();
         if (!regExUtils.validate(RegExType.BUSINESS_NUMBER, businessNumber)) {
@@ -44,9 +44,11 @@ public class SignUpService {
         }
 
         String password = request.getPassword();
-        if (!regExUtils.validate(RegExType.PASSWORD, password)) {
-            throw new InvalidPasswordException(
-                ExceptionState.INVALID_PASSWORD, "Invalid Password Format");
+        if(!isApi) {
+            if (!regExUtils.validate(RegExType.PASSWORD, password)) {
+                throw new InvalidPasswordException(
+                        ExceptionState.INVALID_PASSWORD, "Invalid Password Format");
+            }
         }
 
         if (franchiseeRepository.existsByBusinessNumber(businessNumber.replaceAll("-", ""))) {
@@ -57,7 +59,10 @@ public class SignUpService {
             throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid Email Format");
         }
 
-        String encodedPassword = passwordEncoder.encode(password);
+        String encodedPassword = null;
+        if (!isApi) {
+            encodedPassword = passwordEncoder.encode(password);
+        }
         double defaultBalancePercentage = 0;
         FranchiseeEntity franchiseeEntity =
             FranchiseeEntity.builder()
@@ -93,5 +98,9 @@ public class SignUpService {
             log.trace("===================토큰없이 회원가입 완료====================");
         }
         return franchiseeEntity.getId();
+    }
+
+    public Long signUp(FranchiseeSignUpRequest request){
+        return signUp(request, false);
     }
 }

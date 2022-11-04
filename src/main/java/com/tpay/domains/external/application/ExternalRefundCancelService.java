@@ -65,13 +65,13 @@ public class ExternalRefundCancelService {
             RefundResponse refundResponse = webRequestUtil.post(uri, refundCancelRequest);
             commonLogger.afterHttpClient(externalRefundIndex);
 
-            //0000이 아닌경우 에러 발생
-            if (!refundResponse.getResponseCode().equals("0000")) {
+            if (refundResponse.getResponseCode().equals("0000")) {
+                refundEntity.updateCancel();
+            } else {
                 commonLogger.error1(externalRefundIndex, "R9105", "응답 코드가 0이 아닙니다. 응답메시지 : " + refundResponse.getMessage());
                 return ExternalRefundResponse.builder().responseCode("R9105").message("[R9105] 시스템 에러입니다.").build();
             }
 
-            refundEntity.updateCancel(refundResponse.getResponseCode());
             externalRefundEntity.changeStatus(ExternalRefundStatus.CANCEL);
             Long externalRefundFranchiseeIndex = externalRefundEntity.getFranchiseeIndex();
             FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(externalRefundFranchiseeIndex);

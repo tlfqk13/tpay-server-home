@@ -41,14 +41,18 @@ public class JwtUtils {
     }
 
     public AuthToken convertAuthToken(String token) {
-        log.trace("Auth Token Data : {} , {} ", token,key);
+        String bearerToken = token;
+        if (token.contains("Bearer")) {
+            bearerToken = token.substring(7);
+        }
+        log.trace("Auth Token Data : {} , {} ", bearerToken, key);
         return new AuthToken(token, key);
     }
 
     // TODO: 2022/09/07 자동 로그인 이슈 테스트 !!!!!!! * 테스트 반드시 수정
     public Date createExpiredDate(long minutes) {
         return Date.from(
-            LocalDateTime.now().plusHours(minutes).atZone(ZoneId.systemDefault()).toInstant());
-            //LocalDateTime.now().plusSeconds(60).atZone(ZoneId.systemDefault()).toInstant());
+                LocalDateTime.now().plusHours(minutes).atZone(ZoneId.systemDefault()).toInstant());
+        //LocalDateTime.now().plusSeconds(60).atZone(ZoneId.systemDefault()).toInstant());
     }
 }

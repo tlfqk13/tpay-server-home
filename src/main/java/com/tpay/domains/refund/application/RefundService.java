@@ -1,9 +1,10 @@
 package com.tpay.domains.refund.application;
 
+import com.tpay.commons.exception.ExceptionState;
+import com.tpay.commons.exception.detail.OrderNotFoundException;
 import com.tpay.domains.order.domain.OrderEntity;
 import com.tpay.domains.refund.domain.RefundEntity;
 import com.tpay.domains.refund.domain.RefundRepository;
-import com.tpay.domains.refund_core.application.dto.RefundResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class RefundService {
 
     private final RefundRepository refundRepository;
@@ -41,8 +43,8 @@ public class RefundService {
         return refundRepository.save(refundEntity);
     }
 
-    @Transactional
-    public RefundResponse update() {
-        return null;
+    public RefundEntity getRefundByTkOutNumber(String tkOutNum) {
+        return refundRepository.findByTakeOutNumber(tkOutNum)
+                .orElseThrow(() -> new OrderNotFoundException(ExceptionState.ORDER_NOT_FOUND, "TkOutNumber 로 주문을 찾을 수 없음"));
     }
 }

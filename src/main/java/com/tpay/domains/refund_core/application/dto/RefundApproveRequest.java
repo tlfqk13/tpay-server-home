@@ -54,8 +54,9 @@ public class RefundApproveRequest {
     private String cityYn;
     private String kioskYn;
     private String retryYn;
+    private String afilYn; // 가맹점 실시간 접수 현황
 
-    public static RefundApproveRequest of(OrderEntity orderEntity, RefundAfterDto.Request refundAfterDto) {
+    public static RefundApproveRequest of(OrderEntity orderEntity, RefundAfterDto.Request refundAfterDto, boolean isVan) {
         List<RefundProductInfo> refundProductInfo = orderEntity.getRefundProductInfoList();
         CustomerEntity customerEntity = orderEntity.getCustomerEntity();
         FranchiseeEntity franchiseeEntity = orderEntity.getFranchiseeEntity();
@@ -89,7 +90,7 @@ public class RefundApproveRequest {
                 .totalStr("0")
                 .totalVat(orderEntity.getTotalVat());
 
-        if(null != refundAfterDto) {
+        if (null != refundAfterDto) {
             RefundAfterBaseDto refundAfterInfo = refundAfterDto.getRefundAfterInfo();
             refundApproveRequestBuilder
                     .cusCode(refundAfterInfo.getCusCode())
@@ -102,6 +103,14 @@ public class RefundApproveRequest {
                     .cityYn(booleanToFixedTypeString(CITY == refundAfterInfo.getRefundAfterMethod()))
                     .kioskYn(booleanToFixedTypeString(KIOSK == refundAfterInfo.getRefundAfterMethod()))
                     .retryYn(booleanToFixedTypeString(refundAfterInfo.isRetry()));
+
+            if (isVan) {
+                refundApproveRequestBuilder
+                        .afilYn("0");
+            } else {
+                refundApproveRequestBuilder
+                        .afilYn("2");
+            }
         }
 
         return refundApproveRequestBuilder.build();
@@ -110,7 +119,12 @@ public class RefundApproveRequest {
     private static String booleanToFixedTypeString(boolean booleanInfo) {
         return booleanInfo ? "1" : "0";
     }
+
     public static RefundApproveRequest of(OrderEntity orderEntity) {
         return of(orderEntity, null);
+    }
+
+    public static RefundApproveRequest of(OrderEntity orderEntity, RefundAfterDto.Request refundAfterDto) {
+        return of(orderEntity, refundAfterDto, false);
     }
 }

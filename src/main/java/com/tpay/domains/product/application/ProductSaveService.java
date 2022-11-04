@@ -11,9 +11,9 @@ public class ProductSaveService {
 
     private final ProductRepository productRepository;
 
-    public ProductEntity save(String category, String price,String refund) {
+    public ProductEntity save(String category, String price, String refund) {
         ProductEntity productEntity =
-            ProductEntity.builder().name(category).code("001").lineNumber("001").price(price).refund(refund).build();
+                ProductEntity.builder().name(category).code("001").lineNumber("001").price(price).refund(refund).build();
         return productRepository.save(productEntity);
     }
 
