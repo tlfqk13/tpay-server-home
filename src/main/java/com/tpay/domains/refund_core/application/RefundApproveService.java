@@ -7,6 +7,7 @@ import com.tpay.commons.exception.detail.WebfluxGeneralException;
 import com.tpay.commons.push.PushCategoryType;
 import com.tpay.commons.util.IndexInfo;
 import com.tpay.commons.webClient.WebRequestUtil;
+import com.tpay.domains.api.domain.vo.RefundApprovalDto;
 import com.tpay.domains.auth.domain.EmployeeAccessTokenEntity;
 import com.tpay.domains.auth.domain.EmployeeAccessTokenRepository;
 import com.tpay.domains.auth.domain.FranchiseeAccessTokenEntity;
@@ -110,6 +111,42 @@ public class RefundApproveService {
             log.debug("Refund delete orderEntity id = {} ", orderEntity.getId());
             orderService.deleteByIndex(orderEntity.getId());
             log.debug("WEBFLUX_GENERAL_ERROR");
+            throw new WebfluxGeneralException(ExceptionState.WEBFLUX_GENERAL, e.getMessage());
+        }
+    }
+
+    /**
+     * 현재 api 에서 요청이 들어오는 환급에서 사용
+     */
+    @Transactional
+    public RefundResponse approve(Long customerIdx, RefundApprovalDto.Request request) {
+        OrderEntity order = orderSaveService.save(customerIdx, request);
+        FranchiseeEntity franchiseeEntity = order.getFranchiseeEntity();
+
+        RefundApproveRequest refundApproveRequest = RefundApproveRequest.of(order);
+        String uri = CustomValue.REFUND_SERVER + "/refund/approval";
+        try {
+            RefundResponse refundResponse = webRequestUtil.post(uri, refundApproveRequest);
+
+            RefundEntity refundEntity =
+                    refundService.save(
+                            refundResponse.getResponseCode(),
+                            refundResponse.getPurchaseSequenceNumber(),
+                            refundResponse.getTakeoutNumber(),
+                            order);
+            log.debug("Refund approve entity id = {} ", refundEntity.getId());
+
+            pointScheduledChangeService.change(refundEntity, SignType.POSITIVE, franchiseeEntity.getBalancePercentage());
+
+            if (!franchiseeEntity.getIsRefundOnce()) {
+                nonBatchPushService.nonBatchPushNSave(PushCategoryType.CASE_FIVE, franchiseeEntity.getId());
+                franchiseeEntity.isRefundOnce();
+            }
+            return refundResponse;
+        } catch (WebfluxGeneralException e) {
+            log.error("API Refund failed orderEntity id = {} ", order.getId());
+            orderService.deleteByIndex(order.getId());
+            log.error("WEBFLUX_GENERAL_ERROR");
             throw new WebfluxGeneralException(ExceptionState.WEBFLUX_GENERAL, e.getMessage());
         }
     }
