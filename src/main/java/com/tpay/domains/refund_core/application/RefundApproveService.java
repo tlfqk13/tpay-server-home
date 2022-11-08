@@ -7,7 +7,7 @@ import com.tpay.commons.exception.detail.WebfluxGeneralException;
 import com.tpay.commons.push.PushCategoryType;
 import com.tpay.commons.util.IndexInfo;
 import com.tpay.commons.webClient.WebRequestUtil;
-import com.tpay.domains.api.domain.vo.RefundApprovalDto;
+import com.tpay.domains.api.domain.vo.ApprovalDto;
 import com.tpay.domains.auth.domain.EmployeeAccessTokenEntity;
 import com.tpay.domains.auth.domain.EmployeeAccessTokenRepository;
 import com.tpay.domains.auth.domain.FranchiseeAccessTokenEntity;
@@ -119,7 +119,7 @@ public class RefundApproveService {
      * 현재 api 에서 요청이 들어오는 환급에서 사용
      */
     @Transactional
-    public RefundResponse approve(Long customerIdx, RefundApprovalDto.Request request) {
+    public RefundResponse approve(Long customerIdx, ApprovalDto.Request request) {
         OrderEntity order = orderSaveService.save(customerIdx, request);
         FranchiseeEntity franchiseeEntity = order.getFranchiseeEntity();
 

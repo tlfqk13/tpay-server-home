@@ -1,7 +1,7 @@
 package com.tpay.domains.order.application;
 
 import com.tpay.commons.util.IndexInfo;
-import com.tpay.domains.api.domain.vo.RefundApprovalDto;
+import com.tpay.domains.api.domain.vo.ApprovalDto;
 import com.tpay.domains.customer.application.CustomerService;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.employee.application.EmployeeFindService;
@@ -82,7 +82,7 @@ public class OrderSaveService {
     }
 
     @Transactional
-    public OrderEntity save(Long customerIdx, RefundApprovalDto.Request dto) {
+    public OrderEntity save(Long customerIdx, ApprovalDto.Request dto) {
         FranchiseeEntity franchiseeEntity =
                 franchiseeFindService.findByIndex(Long.parseLong(dto.getFranchiseeId()));
 

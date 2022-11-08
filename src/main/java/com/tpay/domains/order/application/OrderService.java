@@ -119,4 +119,8 @@ public class OrderService {
         return orderRepository.findByOrderNumber(purchaseSn)
                 .orElseThrow(() -> new OrderNotFoundException(ExceptionState.ORDER_NOT_FOUND));
     }
+
+    public Optional<OrderEntity> findOrderByPurchaseSnInApi(String purchaseSn) {
+        return orderRepository.findByOrderNumber(purchaseSn);
+    }
 }

@@ -3,7 +3,7 @@ package com.tpay.domains.api.domain.vo;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-public class RefundApprovalDto {
+public class ApprovalDto {
 
     @Getter
     @NoArgsConstructor
