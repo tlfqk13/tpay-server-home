@@ -43,7 +43,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 "/external/**",
                 "/push/batch/**",
                 "/refund/limit",
-                "/refund/receipt",
+                "/refund/receipt/**",
                 "/refund/admin-cancel/**",
                 "/error",
                 "/h2-console/**",

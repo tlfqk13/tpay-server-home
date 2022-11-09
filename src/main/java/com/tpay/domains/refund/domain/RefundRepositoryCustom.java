@@ -12,6 +12,7 @@ import java.util.List;
 
 public interface RefundRepositoryCustom {
     List<RefundReceiptDto.Response> findRefundReceipt(String encryptPassportNumber, boolean refundAfter);
+    List<RefundReceiptDto.Response> downloadsRefundReceipt(String encryptPassportNumber, boolean refundAfter);
     List<RefundFindDto.Response> findRefundDetail(Long franchiseeIndex,LocalDate startLocalDate, LocalDate endLocalDate);
     Page<RefundFindAllDto.Response> findRefundAll(Pageable pageable, LocalDate startLocalDate, LocalDate endLocalDate
             , boolean isKeywordEmpty, boolean businessNumber, String searchKeyword,RefundStatus  refundStatus);

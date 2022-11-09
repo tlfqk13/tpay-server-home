@@ -37,9 +37,10 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
     public List<RefundReceiptDto.Response> findRefundReceipt(String encryptPassportNumber, boolean refundAfter) {
         List<RefundReceiptDto.Response> content = queryFactory
                 .select(new QRefundReceiptDto_Response(
+                        orderEntity.orderNumber,
                         refundEntity.refundAfterEntity.isNotNull(),
                         franchiseeUploadEntity.taxFreeStoreNumber,
-                        orderEntity.createdDate,
+                        orderEntity.createdDate.stringValue(),
                         franchiseeEntity.storeName,
                         franchiseeEntity.sellerName,
                         franchiseeEntity.businessNumber,
@@ -63,6 +64,39 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
 
         return content;
     }
+
+    @Override
+    public List<RefundReceiptDto.Response> downloadsRefundReceipt(String encryptPassportNumber, boolean refundAfter) {
+        List<RefundReceiptDto.Response> content = queryFactory
+                .select(new QRefundReceiptDto_Response(
+                        orderEntity.orderNumber,
+                        refundEntity.refundAfterEntity.isNotNull(),
+                        franchiseeUploadEntity.taxFreeStoreNumber,
+                        orderEntity.createdDate.stringValue(),
+                        franchiseeEntity.storeName,
+                        franchiseeEntity.sellerName,
+                        franchiseeEntity.businessNumber,
+                        franchiseeEntity.storeAddressBasic.concat(franchiseeEntity.storeAddressDetail),
+                        franchiseeEntity.storeNumber,
+                        orderEntity.totalAmount,
+                        orderEntity.totalVat,
+                        refundEntity.totalRefund,
+                        refundEntity.totalRefund.castToNum(Integer.class).subtract(pointScheduledEntity.value).stringValue(),
+                        refundEntity.createdDate
+                ))
+                .from(orderEntity)
+                .leftJoin(orderEntity.refundEntity,refundEntity)
+                .leftJoin(pointScheduledEntity).on(pointScheduledEntity.orderEntity.id.eq(orderEntity.id))
+                .leftJoin(orderEntity.franchiseeEntity,franchiseeEntity)
+                .leftJoin(orderEntity.customerEntity,customerEntity)
+                .leftJoin(franchiseeUploadEntity).on(franchiseeEntity.id.eq(franchiseeUploadEntity.franchiseeIndex))
+                .where(customerEntity.passportNumber.eq(encryptPassportNumber)
+                        .and(isDownloads(refundAfter)))
+                .fetch();
+
+        return content;
+    }
+
 
     @Override
     public List<RefundFindDto.Response> findRefundDetail(Long franchiseeIndex, LocalDate startLocalDate, LocalDate endLocalDate) {
@@ -175,4 +209,13 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
         }
     }
 
+    private BooleanExpression isDownloads(Boolean refundAfter) {
+        if(refundAfter){
+            return refundEntity.refundAfterEntity.isNotNull()
+                    .and(refundEntity.totalRefund.castToNum(Integer.class).goe(35000));
+        }else{
+            return refundEntity.refundAfterEntity.isNull()
+                    .and(refundEntity.totalRefund.castToNum(Integer.class).loe(32000));
+        }
+    }
 }
