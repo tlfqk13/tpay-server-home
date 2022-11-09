@@ -84,7 +84,7 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long>, Order
     )
     List<OrdersDtoInterface> findVanOrdersDetail(@Param("passportNumber") String passportNumber);
 
-    @EntityGraph(attributePaths = {"refundEntity"})
+    @EntityGraph(attributePaths = {"customerEntity"})
     Optional<OrderEntity> findByOrderNumber(String docId);
 
     @Query(value = "select o from OrderEntity o  join fetch o.customerEntity " +
