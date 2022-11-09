@@ -3,12 +3,12 @@ package com.tpay.domains.api.service;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.exception.detail.KtpApiException;
 import com.tpay.domains.api.domain.vo.ApprovalDto;
-import com.tpay.domains.customer.application.CustomerService;
+import com.tpay.domains.customer.application.CustomerApiService;
 import com.tpay.domains.customer.domain.CustomerEntity;
-import com.tpay.domains.order.application.OrderService;
+import com.tpay.domains.order.application.OrderApiService;
 import com.tpay.domains.order.domain.OrderEntity;
 import com.tpay.domains.refund.domain.RefundStatus;
-import com.tpay.domains.refund_core.application.RefundCancelService;
+import com.tpay.domains.refund_core.application.RefundCancelApiService;
 import com.tpay.domains.refund_core.application.dto.RefundResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,9 +23,9 @@ import java.util.Optional;
 @Slf4j
 public class ApiService {
 
-    private final CustomerService customerService;
-    private final OrderService orderService;
-    private final RefundCancelService refundCancelService;
+    private final CustomerApiService customerService;
+    private final OrderApiService orderService;
+    private final RefundCancelApiService refundCancelService;
 
     @Transactional
     public Long createCustomer(ApprovalDto.Request dto) {
