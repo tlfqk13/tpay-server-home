@@ -83,9 +83,4 @@ public class FranchiseeApplicantUpdateService {
         FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeApplicantIndex);
         return franchiseeEntity.updateBalancePercentage(request.getBalancePercentage());
     }
-
-    public boolean updateRefundAfterFranchisee(Long franchiseeApplicantIndex, FranchiseeApplicantUpdateDto.refundAfterFranchiseeRequest request) {
-        FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeApplicantIndex);
-        return franchiseeEntity.updateAfterRefund(request.isRefundAfterFranchisee());
-    }
 }

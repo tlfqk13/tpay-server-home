@@ -223,6 +223,7 @@ public class FranchiseeEntity extends BaseTimeEntity {
         this.storeAddressBasic = request.getStoreAddressBasic();
         this.storeAddressDetail = request.getStoreAddressDetail();
         this.balancePercentage = request.getBalancePercentage();
+        this.isAfterRefund = request.getIsRefundAfter();
         return this;
     }
 

@@ -17,7 +17,7 @@ public class FranchiseeApplicantUpdateDto {
     }
 
     @Getter
-    public static class refundAfterFranchiseeRequest{
-        boolean refundAfterFranchisee;
+    public static class isRefundAfterRequest{
+        boolean isRefundAfter;
     }
 }

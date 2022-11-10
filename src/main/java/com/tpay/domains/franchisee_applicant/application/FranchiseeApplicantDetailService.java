@@ -11,6 +11,7 @@ import com.tpay.domains.franchisee_upload.application.FranchiseeUploadFindServic
 import com.tpay.domains.franchisee_upload.domain.FranchiseeBankEntity;
 import com.tpay.domains.franchisee_upload.domain.FranchiseeUploadEntity;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class FranchiseeApplicantDetailService {
 
     private final FranchiseeApplicantFindService franchiseeApplicantFindService;
@@ -36,7 +38,6 @@ public class FranchiseeApplicantDetailService {
         } catch (InvalidParameterException e) {
             franchiseeBankEntity = FranchiseeBankEntity.builder().build();
         }
-
         FranchiseeApplicantDetailResponse franchiseeApplicantDetailResponse = FranchiseeApplicantDetailResponse.builder()
             .storeName(franchiseeEntity.getStoreName())
             .sellerName(franchiseeEntity.getSellerName())
@@ -52,6 +53,7 @@ public class FranchiseeApplicantDetailService {
             .storeAddressDetail(franchiseeEntity.getStoreAddressDetail())
             .createdDate(franchiseeEntity.getCreatedDate())
             .isRead(franchiseeApplicantEntity.getIsRead())
+            .isRefundAfter(franchiseeEntity.getIsAfterRefund())
 
             .imageUrl((Optional.ofNullable(franchiseeUploadEntity.getS3Path()).orElse("")))
             .taxFreeStoreNumber((Optional.ofNullable(franchiseeUploadEntity.getTaxFreeStoreNumber()).orElse("")))

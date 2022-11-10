@@ -1,8 +1,5 @@
 package com.tpay.domains.refund.application;
 
-import com.aspose.cells.CellsHelper;
-import com.aspose.cells.SaveFormat;
-import com.aspose.cells.Workbook;
 import com.tpay.commons.aws.S3FileUploader;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
@@ -19,12 +16,13 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
-import java.util.ArrayList;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import static com.tpay.domains.refund.application.RefundReceiptCustomValue.*;
-import static java.lang.System.out;
 
 @RequiredArgsConstructor
 @Service
@@ -32,10 +30,9 @@ import static java.lang.System.out;
 public class RefundReceiptDownloadsService {
     private final RefundReceiptFindService refundReceiptFindService;
     private final S3FileUploader s3FileUploader;
-    List<String> fileNameList = new ArrayList<>();
+
     public void downloadsRefundReceipt(RefundReceiptDto.Request request) {
 
-        //pdfConverter();
         try {
             List<RefundReceiptDto.Response> response = refundReceiptFindService.downloadsRefundReceiptDetail(request);
             String passportNumber = request.getPassportNumber();
@@ -80,7 +77,6 @@ public class RefundReceiptDownloadsService {
         // 사후환급(2,3단계)
         resultSection(sheet, response, passportNumber, isRefundAfter, costCellStyle);
 
-        savedExcelFilesInLocal(xssfWorkbook,fileName);
     }
 
     private void resultSection(XSSFSheet sheet, RefundReceiptDto.Response response, String passportNumber, boolean isRefundAfter, CellStyle costCellStyle) {
@@ -172,57 +168,5 @@ public class RefundReceiptDownloadsService {
         CellStyle personalInfoResultCellStyle = xssfWorkbook.createCellStyle();
         personalInfoResultCellStyle.setAlignment(HorizontalAlignment.RIGHT);
         return personalInfoResultCellStyle;
-    }
-
-    public void savedExcelFilesInLocal(XSSFWorkbook xssfWorkbook, String fileName){
-        try {
-            try{
-                //파일 생성
-                File file = new File(REFUND_RECEIPT_FOLDER + fileName); // 파일 확장자 .xlsx로 고정
-                FileOutputStream fos = new FileOutputStream(file);
-                xssfWorkbook.write(fos);
-                if(fos!=null){
-                    fos.close();
-                }
-                out.println("write Complete");
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-            log.trace(" @@ fileName = {}", fileName);
-            fileNameList.add(REFUND_RECEIPT_FOLDER + fileName);
-            log.trace(" @@ fileNameList = {}", fileNameList.size());
-        }catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void mergedExcelFiles(RefundReceiptDto.Request request) {
-
-        downloadsRefundReceipt(request);
-
-        String[] files = new String[fileNameList.size()];
-
-        for(int i=0;i<fileNameList.size();i++){
-            files[i] = fileNameList.get(i);
-        }
-        try {
-            log.trace(" @@ mergedExcelFiles @@ ");
-            CellsHelper.mergeFiles(files,"cache",REFUND_RECEIPT_FOLDER + CONVERT_PDF_FILE);
-            savedPdfFiles();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
-    public void savedPdfFiles() {
-        try {
-            log.trace(" @@ savedPdfFiles__Start____;");
-            Workbook workbook = new Workbook(REFUND_RECEIPT_FOLDER + CONVERT_PDF_FILE);
-            workbook.save(REFUND_RECEIPT_FOLDER + REFUND_RECEIPT_PDF_FILE, SaveFormat.PDF);
-
-            String result = s3FileUploader.uploadRefundReceipt(REFUND_RECEIPT_FOLDER + REFUND_RECEIPT_PDF_FILE);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }

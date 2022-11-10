@@ -7,6 +7,7 @@ import com.tpay.domains.franchisee_upload.application.FranchiseeUploadService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Api(tags = "어드민 - 가맹점 신청 관련")
 @RequestMapping("/test/admin/franchisee-applicants")
 @RequiredArgsConstructor
+@Slf4j
 public class AdminFranchiseeApplicantTest {
 
     private final FranchiseeApplicantAcceptService franchiseeApplicantAcceptService;
@@ -145,15 +147,6 @@ public class AdminFranchiseeApplicantTest {
             @PathVariable Long franchiseeApplicantIndex
             ,@RequestBody FranchiseeApplicantUpdateDto.balancePercentageRequest request) {
         String result = String.valueOf(franchiseeApplicantUpdateService.updateBalancePercentage(franchiseeApplicantIndex, request));
-        return ResponseEntity.ok(result);
-    }
-
-    @PatchMapping("/{franchiseeApplicantIndex}/refundAfterFranchisee")
-    @ApiOperation(value = "가맹점 사후환급 승인 업데이트  ", notes = "가맹점 사후환급 승인 업데이트 ")
-    public ResponseEntity<String> updateRefundAfterFranchisee(
-            @PathVariable Long franchiseeApplicantIndex
-            ,@RequestBody FranchiseeApplicantUpdateDto.refundAfterFranchiseeRequest request) {
-        String result = String.valueOf(franchiseeApplicantUpdateService.updateRefundAfterFranchisee(franchiseeApplicantIndex, request));
         return ResponseEntity.ok(result);
     }
 }

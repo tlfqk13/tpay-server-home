@@ -100,9 +100,6 @@ dependencies {
     // https://mvnrepository.com/artifact/commons-io/commons-io
     implementation 'commons-io:commons-io:2.6'
 
-    implementation group: 'com.aspose', name: 'aspose-cells', version: '21.1'
-    compile group: 'commons-fileupload', name: 'commons-fileupload', version: '1.4'
-
     // QueryDSL
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
     implementation "com.querydsl:querydsl-apt:${queryDslVersion}"

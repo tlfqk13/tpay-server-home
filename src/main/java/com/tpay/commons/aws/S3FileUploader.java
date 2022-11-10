@@ -9,9 +9,6 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.*;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.disk.DiskFileItem;
-import org.apache.commons.io.IOUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -19,8 +16,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
-import java.io.*;
-import java.nio.file.Files;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -190,32 +189,6 @@ public class S3FileUploader {
         } finally {
             byteArrayInputStream.close();
         }
-        return s3Client.getUrl(bucket, String.valueOf(key)).toString();
-    }
-
-    public String uploadRefundReceipt(String fileName) throws Exception {
-
-        File pdfFile = new File(fileName); // 파일 확장자 .xlsx로 고정
-
-        FileItem fileItem = new DiskFileItem("mainFile", Files.probeContentType(pdfFile.toPath()),
-                false, pdfFile.getName(), (int) pdfFile.length(), pdfFile.getParentFile());
-
-        try {
-            InputStream input = new FileInputStream(pdfFile);
-            OutputStream os = fileItem.getOutputStream();
-            IOUtils.copy(input, os);
-        } catch (IOException ex) {
-            // do something.
-        }
-
-        ObjectMetadata objectMetadata = new ObjectMetadata();
-        objectMetadata.setContentType(MediaType.ALL_VALUE);
-        objectMetadata.setContentLength(fileItem.getSize());
-        StringBuilder key = new StringBuilder();
-        key.append("RefundReceipt/").append(fileName);
-
-        s3Client.putObject(new PutObjectRequest(bucket, String.valueOf(key), fileItem.getInputStream(), objectMetadata)
-                .withCannedAcl(CannedAccessControlList.PublicRead));
         return s3Client.getUrl(bucket, String.valueOf(key)).toString();
     }
 }
