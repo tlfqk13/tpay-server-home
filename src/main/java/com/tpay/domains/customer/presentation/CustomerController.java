@@ -34,7 +34,7 @@ public class CustomerController {
     /**
      * 사후 환급 개인 정보 입력
      */
-    @PostMapping("/refund-info")
+    @PostMapping("/refund-info/register")
     public ResponseEntity<String> registerAfterRefundCustomer(
             @RequestBody CustomerDto.Request customerInfo){
 
@@ -46,7 +46,7 @@ public class CustomerController {
     /**
      * 사후 환급 개인 정보 수정하기전에 입력했던 정보 보여주기 용도
      */
-    @GetMapping ("/refund-info")
+    @PostMapping ("/refund-info")
     public ResponseEntity<CustomerDto.Response> getRegisterAfterRefundCustomer(
             @RequestBody CustomerDto.Request customerInfo){
 

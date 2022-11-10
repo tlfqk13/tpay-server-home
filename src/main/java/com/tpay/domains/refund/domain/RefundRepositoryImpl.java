@@ -91,7 +91,7 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
                 .leftJoin(orderEntity.customerEntity,customerEntity)
                 .leftJoin(franchiseeUploadEntity).on(franchiseeEntity.id.eq(franchiseeUploadEntity.franchiseeIndex))
                 .where(customerEntity.passportNumber.eq(encryptPassportNumber)
-                        .and(isDownloads(refundAfter)))
+                        .and(isRefundAfter(refundAfter)))
                 .fetch();
 
         return content;
@@ -206,16 +206,6 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
                     .and(refundEntity.totalRefund.castToNum(Integer.class).goe(80000));
         }else{
             return refundEntity.totalRefund.castToNum(Integer.class).loe(74000);
-        }
-    }
-
-    private BooleanExpression isDownloads(Boolean refundAfter) {
-        if(refundAfter){
-            return refundEntity.refundAfterEntity.isNotNull()
-                    .and(refundEntity.totalRefund.castToNum(Integer.class).goe(35000));
-        }else{
-            return refundEntity.refundAfterEntity.isNull()
-                    .and(refundEntity.totalRefund.castToNum(Integer.class).loe(32000));
         }
     }
 }

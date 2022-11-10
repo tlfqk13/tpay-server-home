@@ -30,9 +30,10 @@ public class RefundReceiptController {
     public ResponseEntity<String> downloadsRefundReceipt(
             @RequestBody RefundReceiptDto.Request request
     ){
-        refundReceiptDownloadsService.downloadsRefundReceipt(request);
+        refundReceiptDownloadsService.mergedExcelFiles(request);
         return ResponseEntity.ok("ok");
     }
+
 
 
 }
