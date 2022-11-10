@@ -17,6 +17,8 @@ public class FranchiseeApplicantDetailUpdateResponse {
     private final String storeNumber;
     private final String storeAddressBasic;
     private final String storeAddressDetail;
+    // TODO: 2022/11/10
+    private final boolean isRefundAfter;
     // Applicants
 
     private final String taxFreeStoreNumber;
@@ -44,6 +46,7 @@ public class FranchiseeApplicantDetailUpdateResponse {
         this.bankAccount = franchiseeBankEntity.getAccountNumber();
         this.withdrawalDate = franchiseeBankEntity.getWithdrawalDate();
         this.balancePercentage = franchiseeEntity.getBalancePercentage();
+        this.isRefundAfter = franchiseeEntity.getIsAfterRefund();
 
     }
     

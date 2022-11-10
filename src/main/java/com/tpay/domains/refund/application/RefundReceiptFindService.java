@@ -48,4 +48,21 @@ public class RefundReceiptFindService {
         }
         return response;
     }
+
+    public List<RefundReceiptDto.Response> downloadsRefundReceiptDetail(RefundReceiptDto.Request request){
+
+        String encryptPassportNumber = encryptService.encrypt(request.getPassportNumber());
+
+        CustomerEntity customerEntity = customerRepository.findByPassportNumber(encryptPassportNumber)
+                .orElseThrow(()->new InvalidPassportInfoException(ExceptionState.INVALID_PASSPORT_INFO, "여권 조회 실패"));
+
+        List<RefundReceiptDto.Response> response;
+        // 최신순, 과거순
+        response = refundRepository.downloadsRefundReceipt(customerEntity.getPassportNumber(),request.isRefundAfter());
+
+        if(request.isLatest()){
+            response = response.stream().sorted(Comparator.comparing(RefundReceiptDto.Response::getSaleDate).reversed()).collect(Collectors.toList());
+        }
+        return response;
+    }
 }

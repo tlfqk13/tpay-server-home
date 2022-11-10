@@ -21,7 +21,7 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long>, Ref
                             "       purchs_sn      as orderNumber,\n" +
                             "       r.created_date as createdDate,\n" +
                             "       tot_amt        as totalAmount,\n" +
-                            "       tot_refund     as totalRefund,\n" +
+                            "       r.tot_refund     as totalRefund,\n" +
                             "       refund_status  as refundStatus,\n" +
                             "       p.value      as point\n" +
                             "from refund r\n" +
@@ -44,8 +44,8 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long>, Ref
             value =
                     "select date(o.created_date)                                                                   as formatDate\n" +
                             "     , cast(sum(if(r.refund_status = 0, tot_amt, 0)) as integer)                      as totalAmount\n" +
-                            "     , cast(sum(if(r.refund_status = 0, tot_refund, 0)) as integer)                   as totalRefund\n" +
-                            "     , cast(sum(if(r.refund_status = 0, tot_amt, 0)) - sum(if(r.refund_status = 0, tot_refund, 0)) as integer) as actualAmount\n" +
+                            "     , cast(sum(if(r.refund_status = 0, r.tot_refund, 0)) as integer)                   as totalRefund\n" +
+                            "     , cast(sum(if(r.refund_status = 0, tot_amt, 0)) - sum(if(r.refund_status = 0, r.tot_refund, 0)) as integer) as actualAmount\n" +
                             "     , sum(if(r.refund_status = 0, 1, 0))                                                     as saleCount\n" +
                             "     , sum(if(r.refund_status = 2, 1, 0))                                                     as cancelCount\n" +
                             "from orders o\n" +
@@ -63,8 +63,8 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long>, Ref
             value =
                     "select date(o.created_date)                                                                   as formatDate\n" +
                             "     , sum(if(r.refund_status = 0, tot_amt, 0))                                               as totalAmount\n" +
-                            "     , sum(if(r.refund_status = 0, tot_refund, 0))                                            as totalRefund\n" +
-                            "     , sum(if(r.refund_status = 0, tot_amt, 0)) - sum(if(r.refund_status = 0, tot_refund, 0)) as actualAmount\n" +
+                            "     , sum(if(r.refund_status = 0, r.tot_refund, 0))                                            as totalRefund\n" +
+                            "     , sum(if(r.refund_status = 0, tot_amt, 0)) - sum(if(r.refund_status = 0, r.tot_refund, 0)) as actualAmount\n" +
                             "     , sum(if(r.refund_status = 0, 1, 0))                                                     as saleCount\n" +
                             "     , sum(if(r.refund_status = 2, 1, 0))                                                     as cancelCount\n" +
                             "from orders o\n" +
@@ -84,7 +84,7 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long>, Ref
             "       r.created_date  as createdDate,\n" +
             "  date(r.created_date) as formatDate,\n" +
             "       tot_amt         as totalAmount,\n" +
-            "       tot_refund      as totalRefund,\n" +
+            "       r.tot_refund      as totalRefund,\n" +
             "       refund_status   as refundStatus,\n" +
             "       p.value   as point\n" +
             "from refund r\n" +

@@ -7,6 +7,7 @@ import com.tpay.domains.franchisee_upload.application.FranchiseeUploadService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Api(tags = "어드민 - 가맹점 신청 관련")
 @RequestMapping("/test/admin/franchisee-applicants")
 @RequiredArgsConstructor
+@Slf4j
 public class AdminFranchiseeApplicantTest {
 
     private final FranchiseeApplicantAcceptService franchiseeApplicantAcceptService;
@@ -30,8 +32,8 @@ public class AdminFranchiseeApplicantTest {
     private final FranchiseeApplicantTestFindService franchiseeApplicantTestFindService;
     private final FranchiseeApplicantReadService franchiseeApplicantReadService;
     private final FranchiseeApplicantRejectService franchiseeApplicantRejectService;
-    private final FranchiseeApplicantSetBalancePerService franchiseeApplicantSetBalancePerService;
     private final FranchiseeUploadService franchiseeUploadService;
+    private final FranchiseeApplicantUpdateService franchiseeApplicantUpdateService;
 
     /**
      * 가맹점 신청 수락
@@ -107,11 +109,7 @@ public class AdminFranchiseeApplicantTest {
         return ResponseEntity.ok(result);
     }
 
-    /**
-     * 지정증 업데이트
-     */
     @PatchMapping("/{franchiseeApplicantIndex}/taxFreeStoreNumber")
-    @ApiOperation(value = "가맹점 신청 내역조회", notes = "가맹점 현황 내 상세보기 내 사후면세지정증 수기 업데이트")
     public ResponseEntity<String> updateTaxFreeStoreNumber(@PathVariable Long franchiseeApplicantIndex, @RequestBody FranchiseeApplicantSetNumberRequest franchiseeApplicantSetNumberRequest) {
         String result = franchiseeApplicantSetNumberService.updateTaxFreeStoreNumber(franchiseeApplicantIndex, franchiseeApplicantSetNumberRequest);
         return ResponseEntity.ok(result);
@@ -128,18 +126,6 @@ public class AdminFranchiseeApplicantTest {
     }
 
     /**
-     * 포인트 적립 비율 업데이트
-     */
-    @PatchMapping("/{franchiseeApplicantIndex}/balancePercentage")
-    @ApiOperation(value = "가맹점 포인트 적립 비율 업데이트  ", notes = "가맹점 포인트 적립 비율 업데이트 ")
-    public ResponseEntity<String> updateBalancePercentage(
-            @PathVariable Long franchiseeApplicantIndex
-            ,@RequestBody FranchiseeApplicantSetBalancePerRequest franchiseeApplicantSetBalancePerRequest) {
-        String result = String.valueOf(franchiseeApplicantSetBalancePerService.updateBalancePercentage(franchiseeApplicantIndex, franchiseeApplicantSetBalancePerRequest));
-        return ResponseEntity.ok(result);
-    }
-
-    /**
      * 어드민에서 지정증 및 은행 정보 기입
      */
     @PostMapping("/franchiseeUpload/{franchiseeIndex}")
@@ -150,5 +136,17 @@ public class AdminFranchiseeApplicantTest {
             @RequestParam(required = false) MultipartFile uploadImage) {
         String s3Path = franchiseeUploadService.uploadImageAndBankInfo(franchiseeIndex, franchiseeBankInfoString, imageCategory, uploadImage);
         return ResponseEntity.ok(s3Path);
+    }
+
+    /**
+     * 포인트 적립 비율 업데이트
+     */
+    @PatchMapping("/{franchiseeApplicantIndex}/balancePercentage")
+    @ApiOperation(value = "가맹점 포인트 적립 비율 업데이트  ", notes = "가맹점 포인트 적립 비율 업데이트 ")
+    public ResponseEntity<String> updateBalancePercentage(
+            @PathVariable Long franchiseeApplicantIndex
+            ,@RequestBody FranchiseeApplicantUpdateDto.balancePercentageRequest request) {
+        String result = String.valueOf(franchiseeApplicantUpdateService.updateBalancePercentage(franchiseeApplicantIndex, request));
+        return ResponseEntity.ok(result);
     }
 }

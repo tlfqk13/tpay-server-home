@@ -6,6 +6,8 @@ import com.tpay.commons.exception.detail.InvalidPassportInfoException;
 import com.tpay.commons.webClient.WebRequestUtil;
 import com.tpay.domains.customer.application.CustomerService;
 import com.tpay.domains.customer.domain.CustomerEntity;
+import com.tpay.domains.franchisee.domain.FranchiseeEntity;
+import com.tpay.domains.franchisee.domain.FranchiseeRepository;
 import com.tpay.domains.refund_core.application.dto.CheckNationValue;
 import com.tpay.domains.refund_core.application.dto.RefundLimitRequest;
 import com.tpay.domains.refund_core.application.dto.RefundResponse;
@@ -24,6 +26,8 @@ public class LimitFindService {
 
     private final CustomerService customerService;
     private final WebRequestUtil webRequestUtil;
+
+    private final FranchiseeRepository franchiseeRepository;
 
     @Transactional
     public RefundResponse find(RefundLimitRequest request) {
@@ -59,7 +63,10 @@ public class LimitFindService {
                 log.debug("Refund Limit customerID = {}", customerEntityId);
             }
 
-            return refundResponse.addCustomerInfo(customerEntityId);
+            // TODO: 2022/11/04 사후환급 신청 가맹점 여부 조회를 위해... 
+            FranchiseeEntity franchiseeEntity = franchiseeRepository.findById(request.getFranchiseeIndex()).orElseThrow(() -> new IllegalArgumentException("Invalid Franchisee Entity"));
+
+            return refundResponse.addCustomerInfo(customerEntityId,franchiseeEntity.getIsAfterRefund());
 
         } else {
             throw new InvalidPassportInfoException(ExceptionState.INVALID_PASSPORT_INFO, "한도조회 실패");

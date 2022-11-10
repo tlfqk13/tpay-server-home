@@ -150,6 +150,7 @@ public class S3FileUploader {
         ObjectMetadata objectMetaData = new ObjectMetadata();
         objectMetaData.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         objectMetaData.setContentLength((long) byteArrayOutputStream.toByteArray().length);
+        
         byteArrayOutputStream.close();
         objectMetaData.setContentDisposition("attachment; filename=\"" + franchiseeIndex + ".xlsx\"");
         StringBuilder key = new StringBuilder();

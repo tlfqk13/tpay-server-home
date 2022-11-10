@@ -39,7 +39,8 @@ public class VatController {
         @PathVariable Long franchiseeIndex,
         @RequestParam String requestDate
     ) {
-        VatDetailResponse vatDetailResponse = vatService.vatDetail(franchiseeIndex, requestDate);
+        boolean appVatDetail = true;
+        VatDetailResponse vatDetailResponse = vatService.vatDetail(franchiseeIndex, requestDate,appVatDetail);
         return ResponseEntity.ok(vatDetailResponse);
     }
 

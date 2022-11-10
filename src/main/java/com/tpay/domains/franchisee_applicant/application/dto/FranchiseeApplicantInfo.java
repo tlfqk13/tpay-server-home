@@ -19,6 +19,7 @@ public class FranchiseeApplicantInfo {
     private String createdDate;
     private Boolean isRefundOnce;
     private Boolean isRead;
+    private boolean isRefundAfter;
 
     public static FranchiseeApplicantInfo toResponse(FranchiseeApplicantEntity franchiseeApplicantEntity) {
         FranchiseeEntity franchiseeEntity = franchiseeApplicantEntity.getFranchiseeEntity();
@@ -32,6 +33,7 @@ public class FranchiseeApplicantInfo {
             .createdDate(franchiseeEntity.getCreatedDate().toString())
             .isRefundOnce(franchiseeEntity.getIsRefundOnce())
             .isRead(franchiseeApplicantEntity.getIsRead())
+            .isRefundAfter(franchiseeEntity.getIsAfterRefund())
             .build();
     }
 }

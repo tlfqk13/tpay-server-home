@@ -192,7 +192,8 @@ public class RefundApproveService {
                     .refundAfterMethod(refundAfterInfo.getRefundAfterMethod())
                     .build();
 
-
+            // TODO: 2022/11/04 사후 환급 포인트 적립 
+            pointScheduledChangeService.change(refundEntity, SignType.POSITIVE, orderEntity.getFranchiseeEntity().getBalancePercentage());
             refundEntity.addRefundAfterEntity(refundAfterEntity);
         }
 

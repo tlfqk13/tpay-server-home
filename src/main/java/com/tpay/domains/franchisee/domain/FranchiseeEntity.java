@@ -84,6 +84,9 @@ public class FranchiseeEntity extends BaseTimeEntity {
     @ColumnDefault("false") // ddl auto-create 아니면 쓸모는 없음
     private Boolean isRefundOnce;
 
+    @Column(name = "isAfterRefund", length = 5)
+    private Boolean isAfterRefund;
+
     @Column(name = "popUp", length = 1)
     private boolean popUp;
 
@@ -143,6 +146,7 @@ public class FranchiseeEntity extends BaseTimeEntity {
         this.isActiveSound = true;
         this.isActiveVibration = true;
         this.isConnectedPos = false;
+        this.isAfterRefund = false;
         this.posType = PosType.INIT;
         this.balancePercentage = balancePercentage;
     }
@@ -219,11 +223,17 @@ public class FranchiseeEntity extends BaseTimeEntity {
         this.storeAddressBasic = request.getStoreAddressBasic();
         this.storeAddressDetail = request.getStoreAddressDetail();
         this.balancePercentage = request.getBalancePercentage();
+        this.isAfterRefund = request.getIsRefundAfter();
         return this;
     }
 
     public double updateBalancePercentage(double balancePercentage) {
         this.balancePercentage = balancePercentage;
         return balancePercentage;
+    }
+
+    public boolean updateAfterRefund(boolean isAfterRefund) {
+        this.isAfterRefund = true;
+        return isAfterRefund;
     }
 }

@@ -61,11 +61,6 @@ public class RefundApproveRequest {
         CustomerEntity customerEntity = orderEntity.getCustomerEntity();
         FranchiseeEntity franchiseeEntity = orderEntity.getFranchiseeEntity();
 
-        log.trace("***************************************************");
-        log.trace(" @@ orderEntity = {}", orderEntity.getTotalRefund());
-        log.trace(" @@ orderEntity = {}", orderEntity.getTotalRefund());
-        log.trace("***************************************************");
-
         RefundApproveRequestBuilder refundApproveRequestBuilder = RefundApproveRequest.builder()
                 .serviceName(CustomValue.APPLICATION_CODE)
                 .nationality(customerEntity.getNation())

@@ -32,6 +32,13 @@ repositories {
     }
 }
 
+repositories {
+    mavenCentral()
+    maven{
+        url 'https://releases.aspose.com/java/repo/'
+    }
+}
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'

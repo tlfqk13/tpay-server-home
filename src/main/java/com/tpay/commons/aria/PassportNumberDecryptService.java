@@ -3,6 +3,7 @@ package com.tpay.commons.aria;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.security.InvalidKeyException;
@@ -15,6 +16,7 @@ import java.security.InvalidKeyException;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PassportNumberDecryptService {
     public String decrypt(String passportNumber) {
         try {

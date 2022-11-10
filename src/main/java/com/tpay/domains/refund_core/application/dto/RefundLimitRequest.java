@@ -13,6 +13,7 @@ public class RefundLimitRequest {
     private String nationality;
     private String totalAmount;
     private String saleDate;
+    private Long franchiseeIndex;
 
     public RefundLimitRequest nationUpdate(String nationality){
         this.nationality = nationality;
