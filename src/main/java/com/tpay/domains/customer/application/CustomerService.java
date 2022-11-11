@@ -93,13 +93,13 @@ public class CustomerService {
                 .build();
     }
 
-    public Page<CustomerDto.Response> adminFindAll(int page, String searchKeyword) {
+    public Page<CustomerDto.Response> findAllCustomer(int page, String searchKeyword) {
 
         PageRequest pageRequest = PageRequest.of(page, 15);
         boolean searchKeywordEmpty = searchKeyword.isEmpty();
 
         Page<CustomerDto.Response> responses =
-                customerRepository.adminFindAll(pageRequest,searchKeyword,searchKeywordEmpty);
+                customerRepository.findAllCustomer(pageRequest,searchKeyword,searchKeywordEmpty);
 
         return responses;
     }

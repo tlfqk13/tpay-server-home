@@ -24,7 +24,7 @@ public class CustomerRepositoryImpl implements CustomerRepositoryCustom {
     }
 
     @Override
-    public Page<CustomerDto.Response> adminFindAll(Pageable pageable, String searchKeyword, boolean isKeywordEmpty) {
+    public Page<CustomerDto.Response> findAllCustomer(Pageable pageable, String searchKeyword, boolean isKeywordEmpty) {
 
         List<CustomerDto.Response> content = queryFactory
                 .select(new QCustomerDto_Response(

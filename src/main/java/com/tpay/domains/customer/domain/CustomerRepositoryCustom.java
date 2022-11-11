@@ -6,5 +6,5 @@ import org.springframework.data.domain.Pageable;
 
 public interface CustomerRepositoryCustom {
 
-    Page<CustomerDto.Response> adminFindAll(Pageable pageable, String searchKeyword,boolean searchKeywordEmpty);
+    Page<CustomerDto.Response> findAllCustomer(Pageable pageable, String searchKeyword, boolean searchKeywordEmpty);
 }

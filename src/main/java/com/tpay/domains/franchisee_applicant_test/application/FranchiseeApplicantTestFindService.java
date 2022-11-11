@@ -168,6 +168,11 @@ public class FranchiseeApplicantTestFindService {
             if (isNewUploadedImg.equals("true") || isNewUploadedImg.equals("TRUE")) {
                 String s3path = franchiseeUploadService.uploadImageAndBankInfo(franchiseeEntity.getId(), imageCategory, uploadImage);
             }
+            if("O".equals(request.getRefundAfterShop())){
+                franchiseeEntity.updateAfterRefund(true);
+            }else{
+                franchiseeEntity.updateAfterRefund(false);
+            }
         } catch (InvalidParameterException e) {
             franchiseeBankEntity = FranchiseeBankEntity.builder().build();
         }catch (Exception e) {
