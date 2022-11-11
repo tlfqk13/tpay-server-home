@@ -1,6 +1,5 @@
 package com.tpay.domains.customer.domain;
 
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tpay.domains.customer.application.dto.CustomerDto;
@@ -24,7 +23,7 @@ public class CustomerRepositoryImpl implements CustomerRepositoryCustom {
     }
 
     @Override
-    public Page<CustomerDto.Response> adminFindAll(Pageable pageable, String searchKeyword, boolean isKeywordEmpty) {
+    public Page<CustomerDto.Response> adminFindAll(Pageable pageable, String searchKeyword) {
 
         List<CustomerDto.Response> content = queryFactory
                 .select(new QCustomerDto_Response(
@@ -40,7 +39,7 @@ public class CustomerRepositoryImpl implements CustomerRepositoryCustom {
                 .from(orderEntity)
                 .leftJoin(orderEntity.customerEntity, customerEntity)
                 .where(customerEntity.isRegister.eq(true)
-                                .and(isKeywordEmpty(isKeywordEmpty,searchKeyword))
+                                .and(customerEntity.customerName.contains(searchKeyword))
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -54,14 +53,4 @@ public class CustomerRepositoryImpl implements CustomerRepositoryCustom {
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }
-
-    private BooleanExpression isKeywordEmpty(Boolean isKeywordEmpty,String searchKeyword) {
-        if (!isKeywordEmpty) {
-            return customerEntity.customerName.eq(searchKeyword);
-        } else {
-            return null;
-        }
-    }
-
-
 }

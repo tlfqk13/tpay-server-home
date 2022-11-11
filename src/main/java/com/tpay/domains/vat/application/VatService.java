@@ -10,6 +10,7 @@ import com.tpay.domains.franchisee_upload.application.FranchiseeUploadFindServic
 import com.tpay.domains.franchisee_upload.domain.FranchiseeUploadEntity;
 import com.tpay.domains.order.application.OrderService;
 import com.tpay.domains.order.domain.OrderRepository;
+import com.tpay.domains.vat.application.dto.VatDetailDto;
 import com.tpay.domains.vat.application.dto.VatDetailResponse;
 import com.tpay.domains.vat.application.dto.VatTotalDto;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +50,7 @@ public class VatService {
                 .build();
     }
 
-    public VatDetailResponse vatDetail(Long franchiseeIndex, String requestDate, boolean appVatDetail) {
+    public VatDetailResponse vatDetail(Long franchiseeIndex, String requestDate) {
         List<Object> localDates = setUpDate(requestDate);
         LocalDate startLocalDate = (LocalDate) localDates.get(0);
         LocalDate startEndDate = (LocalDate) localDates.get(1);
@@ -61,7 +62,7 @@ public class VatService {
         List<String> totalResult = orderService.findCmsVatTotal(franchiseeIndex, startLocalDate, startEndDate);
         //3. 물품판매 명세
         // TODO: 2022/11/03 vatDetailApp - > 고객이름, 국적 빼고 보내줘야함
-        List<List<String>> detailResult = orderService.findCmsVatDetail(franchiseeIndex, startLocalDate, startEndDate,true,appVatDetail);
+        List<List<String>> detailResult = this.findCmsVatDetailFromApp(franchiseeIndex, startLocalDate, startEndDate);
 
         return VatDetailResponse.builder()
                 .vatDetailResponsePersonalInfoList(personalInfoResult)
@@ -108,5 +109,25 @@ public class VatService {
         result.add(saleTerm);
         result.add(franchiseeUploadEntity.getTaxFreeStoreNumber());
         return result;
+    }
+
+    private List<List<String>> findCmsVatDetailFromApp(Long franchiseeIndex, LocalDate startLocalDate, LocalDate endLocalDate) {
+
+        int pageData = 100;
+
+        List<VatDetailDto.Response> vatDetailResponse = orderRepository.findMonthlyCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate,pageData);
+        List<List<String>> detailResult = new ArrayList<>();
+
+        for (VatDetailDto.Response response : vatDetailResponse) {
+            List<String> baseList = new ArrayList<>();
+            baseList.add(response.getPurchaseSerialNumber());
+            baseList.add(String.valueOf(response.getSaleDate()));
+            baseList.add(response.getTakeOutConfirmNumber());
+            baseList.add(NumberFormatConverter.addCommaToNumber(response.getAmount()));
+            baseList.add(NumberFormatConverter.addCommaToNumber(response.getVat()));
+            baseList.add(NumberFormatConverter.addCommaToNumber(response.getRefundAmount()));
+            detailResult.add(baseList);
+        }
+        return detailResult;
     }
 }

@@ -1,5 +1,6 @@
 package com.tpay.domains.order.application;
 
+import com.tpay.commons.custom.RefundRateCondition;
 import com.tpay.commons.util.IndexInfo;
 import com.tpay.domains.api.domain.vo.ApprovalDto;
 import com.tpay.domains.customer.application.CustomerService;
@@ -37,18 +38,30 @@ public class OrderSaveService {
     private final CustomerService customerService;
     private final ProductFindService productFindService;
     private final OrderLineSaveService orderLineSaveService;
+    private final RefundRateCondition refundRateCondition;
 
     @Transactional
     public OrderEntity save(RefundSaveRequest request) {
+
         FranchiseeEntity franchiseeEntity =
                 franchiseeFindService.findByIndex(request.getFranchiseeIndex());
 
         CustomerEntity customerEntity = customerService.findByIndex(request.getCustomerIndex());
 
-        ProductEntity productEntity =
-                productFindService.findOrElseSave(
-                        franchiseeEntity.getProductCategory(), request.getPrice(), request.getRefund());
+        ProductEntity productEntity;
 
+        // TODO: 2022/11/11 환급요율표 미업데이트 가맹점 대상
+        if(request.getRefund() == null) {
+            String refund = refundRateCondition.refundRate(Integer.parseInt(request.getPrice()));
+            log.trace(" @@ refund = {}", refund);
+            productEntity =
+                    productFindService.findOrElseSave(
+                            franchiseeEntity.getProductCategory(), request.getPrice(),refund);
+        }else {
+            productEntity =
+                    productFindService.findOrElseSave(
+                            franchiseeEntity.getProductCategory(), request.getPrice(), request.getRefund());
+        }
         return this.save(franchiseeEntity, customerEntity, productEntity, null);
     }
 

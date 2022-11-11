@@ -87,33 +87,6 @@ public class OrderService {
         }
         return detailResult;
     }
-
-    public List<List<String>> findCmsVatDetail(Long franchiseeIndex, LocalDate startLocalDate, LocalDate endLocalDate, boolean isPaging,boolean appVatDetail) {
-        int pageData = 15;
-        if(isPaging){
-            pageData = 100;
-        }
-
-        List<VatDetailDto.Response> vatDetailResponse = orderRepository.findMonthlyCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate,pageData);
-        List<List<String>> detailResult = new ArrayList<>();
-
-        for (VatDetailDto.Response response : vatDetailResponse) {
-            List<String> baseList = new ArrayList<>();
-            baseList.add(response.getPurchaseSerialNumber());
-            baseList.add(String.valueOf(response.getSaleDate()));
-            baseList.add(response.getTakeOutConfirmNumber());
-            baseList.add(NumberFormatConverter.addCommaToNumber(response.getAmount()));
-            baseList.add(NumberFormatConverter.addCommaToNumber(response.getVat()));
-            baseList.add(NumberFormatConverter.addCommaToNumber(response.getRefundAmount()));
-            if(!appVatDetail) {
-                baseList.add(response.getCustomerName());
-                baseList.add(response.getCustomerNational());
-            }
-            detailResult.add(baseList);
-        }
-        return detailResult;
-    }
-
     @Transactional
     public Long sumTotalSaleAmountByFranchiseeIndex(Long franchiseeIndex) {
         Optional<Long> optionalResult = orderRepository.sumTotalSaleAmountByFranchiseeIndex(franchiseeIndex);
