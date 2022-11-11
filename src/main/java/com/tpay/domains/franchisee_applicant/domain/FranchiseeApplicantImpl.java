@@ -45,7 +45,8 @@ public class FranchiseeApplicantImpl implements FranchiseeApplicantCustom {
 
         JPAQuery<Long> countQuery = queryFactory.select(franchiseeApplicantEntity.count())
                 .from(franchiseeApplicantEntity)
-                .leftJoin(franchiseeEntity).on(franchiseeApplicantEntity.id.eq(franchiseeEntity.id));
+                .leftJoin(franchiseeEntity).on(franchiseeApplicantEntity.id.eq(franchiseeEntity.id))
+                .where(franchiseeEntity.storeName.like(searchKeyword));
 
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);

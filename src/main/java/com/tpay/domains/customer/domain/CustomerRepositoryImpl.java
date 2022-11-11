@@ -1,6 +1,5 @@
 package com.tpay.domains.customer.domain;
 
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tpay.domains.customer.application.dto.CustomerDto;
@@ -50,7 +49,10 @@ public class CustomerRepositoryImpl implements CustomerRepositoryCustom {
 
         JPAQuery<Long> countQuery = queryFactory.select(orderEntity.count())
                 .from(orderEntity)
-                .leftJoin(orderEntity.customerEntity, customerEntity);
+                .leftJoin(orderEntity.customerEntity, customerEntity)
+                .where(customerEntity.isRegister.eq(true)
+                        .and(customerEntity.customerName.contains(searchKeyword))
+                );
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }
