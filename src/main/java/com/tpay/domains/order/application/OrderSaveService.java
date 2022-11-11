@@ -1,5 +1,6 @@
 package com.tpay.domains.order.application;
 
+import com.tpay.commons.custom.RefundRateCondition;
 import com.tpay.commons.util.IndexInfo;
 import com.tpay.domains.api.domain.vo.ApprovalDto;
 import com.tpay.domains.customer.application.CustomerService;
@@ -17,6 +18,7 @@ import com.tpay.domains.product.application.ProductFindService;
 import com.tpay.domains.product.domain.ProductEntity;
 import com.tpay.domains.refund.application.dto.RefundSaveRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +29,7 @@ import static com.tpay.commons.util.UserSelector.EMPLOYEE;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class OrderSaveService {
 
     private final OrderRepository orderRepository;
@@ -35,18 +38,30 @@ public class OrderSaveService {
     private final CustomerService customerService;
     private final ProductFindService productFindService;
     private final OrderLineSaveService orderLineSaveService;
+    private final RefundRateCondition refundRateCondition;
 
     @Transactional
     public OrderEntity save(RefundSaveRequest request) {
+
         FranchiseeEntity franchiseeEntity =
                 franchiseeFindService.findByIndex(request.getFranchiseeIndex());
 
         CustomerEntity customerEntity = customerService.findByIndex(request.getCustomerIndex());
 
-        ProductEntity productEntity =
-                productFindService.findOrElseSave(
-                        franchiseeEntity.getProductCategory(), request.getPrice(), request.getRefund());
+        ProductEntity productEntity;
 
+        // TODO: 2022/11/11 환급요율표 미업데이트 가맹점 대상
+        if(request.getRefund() == null) {
+            String refund = refundRateCondition.refundRate(Integer.parseInt(request.getPrice()));
+            log.trace(" @@ refund = {}", refund);
+            productEntity =
+                    productFindService.findOrElseSave(
+                            franchiseeEntity.getProductCategory(), request.getPrice(),refund);
+        }else {
+            productEntity =
+                    productFindService.findOrElseSave(
+                            franchiseeEntity.getProductCategory(), request.getPrice(), request.getRefund());
+        }
         return this.save(franchiseeEntity, customerEntity, productEntity, null);
     }
 
@@ -105,9 +120,8 @@ public class OrderSaveService {
         } else {
             franchiseIndex = Long.parseLong(indexInfo.getIndex());
         }
-
         FranchiseeEntity franchisee = franchiseeFindService.findByIndex(franchiseIndex);
-        CustomerEntity customer = customerService.findByIndex(orderDto.getCustomerIdx());
+        CustomerEntity customer = customerService.findByIndex(orderDto.getCustomerIndex());
         ProductEntity productEntity =
                 productFindService.findOrElseSave(
                         franchisee.getProductCategory(), orderDto.getPrice(), orderDto.getRefund());

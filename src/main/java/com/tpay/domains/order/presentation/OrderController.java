@@ -42,7 +42,6 @@ public class OrderController {
         }
         AuthToken authToken = jwtUtils.convertAuthToken(bearerToken);
         IndexInfo indexInfo = getIndexFromClaims(authToken.getData());
-
         return ResponseEntity.ok(orderService.createOrder(orderDto, indexInfo));
     }
 }

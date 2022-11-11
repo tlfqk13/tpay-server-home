@@ -76,7 +76,6 @@ public class OrderService {
         for (VatDetailDto.Response response : vatDetailResponse) {
             List<String> baseList = new ArrayList<>();
             baseList.add(response.getPurchaseSerialNumber());
-            log.trace(" @@ response = {}", response.getPurchaseSerialNumber());
             baseList.add(String.valueOf(response.getSaleDate()));
             baseList.add(response.getTakeOutConfirmNumber());
             baseList.add(NumberFormatConverter.addCommaToNumber(response.getAmount()));
@@ -88,7 +87,6 @@ public class OrderService {
         }
         return detailResult;
     }
-
     @Transactional
     public Long sumTotalSaleAmountByFranchiseeIndex(Long franchiseeIndex) {
         Optional<Long> optionalResult = orderRepository.sumTotalSaleAmountByFranchiseeIndex(franchiseeIndex);

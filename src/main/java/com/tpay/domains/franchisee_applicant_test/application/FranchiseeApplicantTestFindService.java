@@ -96,17 +96,12 @@ public class FranchiseeApplicantTestFindService {
         return franchiseeApplicantEntity;
     }
 
-
-    public List<FranchiseeApplicantEntity> findByFranchiseeStatus(FranchiseeStatus franchiseeStatus) {
-        return franchiseeApplicantRepository.findByFranchiseeStatus(franchiseeStatus);
-    }
-
-
     // TODO: 2022/04/26 조회하려는 컬럼 분리
     public FranchiseeApplicantFindResponse applicantFilter(FilterSelector filterSelector, String value, int page, String searchKeyword) {
         List<Boolean> booleanList = new ArrayList<>(List.of(false));
         List<FranchiseeStatus> franchiseeStatusList = new ArrayList<>();
-        Page<FranchiseeApplicantEntity> franchiseeApplicantEntityList;
+        Page<FranchiseeApplicantEntity> franchiseeApplicantEntityList = null;
+        Page<FranchiseeApplicantDto.Response> dslList;
         PageRequest pageRequest = PageRequest.of(page, 15);
         boolean isBusinessNumber = searchKeyword.chars().allMatch(Character::isDigit);
 
@@ -149,16 +144,6 @@ public class FranchiseeApplicantTestFindService {
         return franchiseeApplicantFindResponse;
     }
 
-    private Page<FranchiseeApplicantEntity> getFranchiseeApplicantEntities(String searchKeyword, List<Boolean> booleanList, List<FranchiseeStatus> franchiseeStatusList, PageRequest pageRequest, boolean isBusinessNumber) {
-        Page<FranchiseeApplicantEntity> franchiseeApplicantEntityList;
-        if (isBusinessNumber) {
-            franchiseeApplicantEntityList = franchiseeApplicantRepository.findByIsReadInAndFranchiseeStatusInAndFranchiseeEntityBusinessNumberContainingOrderByIdDesc(booleanList, franchiseeStatusList, pageRequest, searchKeyword);
-        } else {
-            franchiseeApplicantEntityList = franchiseeApplicantRepository.findByIsReadInAndFranchiseeStatusInAndFranchiseeEntityStoreNameContainingOrderByIdDesc(booleanList, franchiseeStatusList, pageRequest, searchKeyword);
-        }
-        return franchiseeApplicantEntityList;
-    }
-
     @Transactional
     public FranchiseeApplicantDetailUpdateResponse updateFranchiseeApplicantInfo(Long franchiseeApplicantIndex, String imageCategory
             , String detailFranchiseeInfo, MultipartFile uploadImage, String isNewUploadedImg) {
@@ -182,6 +167,11 @@ public class FranchiseeApplicantTestFindService {
             }
             if (isNewUploadedImg.equals("true") || isNewUploadedImg.equals("TRUE")) {
                 String s3path = franchiseeUploadService.uploadImageAndBankInfo(franchiseeEntity.getId(), imageCategory, uploadImage);
+            }
+            if("O".equals(request.getRefundAfterShop())){
+                franchiseeEntity.updateAfterRefund(true);
+            }else{
+                franchiseeEntity.updateAfterRefund(false);
             }
         } catch (InvalidParameterException e) {
             franchiseeBankEntity = FranchiseeBankEntity.builder().build();

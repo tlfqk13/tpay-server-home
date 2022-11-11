@@ -23,9 +23,11 @@ public class RefundResponse {
     private String nationality;
 
     private Long customerIndex;
+    private boolean isRefundAfterShop;
 
-    public RefundResponse addCustomerInfo(Long customerIndex) {
+    public RefundResponse addCustomerInfo(Long customerIndex,boolean isRefundAfterShop) {
         this.customerIndex = customerIndex;
+        this.isRefundAfterShop = isRefundAfterShop;
         return this;
     }
 }

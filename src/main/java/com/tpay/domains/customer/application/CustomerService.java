@@ -5,13 +5,19 @@ import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.exception.detail.InvalidPassportInfoException;
 import com.tpay.domains.customer.application.dto.CustomerDto;
+import com.tpay.domains.customer.application.dto.CustomerMyPageDto;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.customer.domain.CustomerRepository;
+import com.tpay.domains.refund.application.dto.RefundReceiptDto;
+import com.tpay.domains.refund.domain.RefundRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -21,6 +27,7 @@ public class CustomerService {
 
     private final PassportNumberEncryptService passportNumberEncryptService;
     private final CustomerRepository customerRepository;
+    private final RefundRepository refundRepository;
 
     public Optional<CustomerEntity> findCustomerByNationAndPassportNumber(String passportNumber, String nation) {
         String encryptedPassportNumber = passportNumberEncryptService.encrypt(passportNumber);
@@ -54,40 +61,30 @@ public class CustomerService {
 
     @Transactional
     public void registerAfterRefundCustomer(CustomerDto.Request customerInfo){
-        String encryptPassportNumber = passportNumberEncryptService.encrypt(customerInfo.getPassportNumber());
 
-        CustomerEntity customerEntity = customerRepository.findByPassportNumber(encryptPassportNumber)
-                .orElseThrow(()->new InvalidPassportInfoException(ExceptionState.INVALID_PASSPORT_INFO, "여권 조회 실패"));
+        CustomerEntity customerEntity = getCustomerEntity(customerInfo);
 
         customerEntity.registerAfterRefundCustomer(customerEntity.getPassportNumber(),customerEntity.getCustomerName()
                 ,customerEntity.getNation(),customerInfo);
+
+        customerEntity.updateRegister();
 
         customerRepository.save(customerEntity);
     }
 
     public boolean customerPassportValidate(CustomerDto.Request customerInfo) {
 
-        String encryptPassportNumber = passportNumberEncryptService.encrypt(customerInfo.getPassportNumber());
-
-        CustomerEntity customerEntity = customerRepository.findByPassportNumber(encryptPassportNumber)
-                .orElseThrow(()->new InvalidPassportInfoException(ExceptionState.INVALID_PASSPORT_INFO, "여권 조회 실패"));
-
-        log.trace(" @@ customerEntity.getCustomerName() = {}", customerEntity.getCustomerName());
-        log.trace(" @@ customerEntity.getId() = {}", customerEntity.getId());
-
+        CustomerEntity customerEntity = getCustomerEntity(customerInfo);
         return customerEntity.getIsRegister();
     }
     public CustomerDto.Response getRegisterAfterRefundCustomer(CustomerDto.Request customerInfo) {
 
-        String encryptPassportNumber = passportNumberEncryptService.encrypt(customerInfo.getPassportNumber());
-        CustomerEntity customerEntity = customerRepository.findByPassportNumber(encryptPassportNumber)
-                .orElseThrow(()->new InvalidPassportInfoException(ExceptionState.INVALID_PASSPORT_INFO, "여권 조회 실패"));
+        CustomerEntity customerEntity = getCustomerEntity(customerInfo);
 
         return CustomerDto.Response.builder()
                 .passportNumber(customerInfo.getPassportNumber())
                 .name(customerEntity.getCustomerName())
                 .email(customerEntity.getCustomerEmail())
-                .phoneNumber(customerEntity.getCustomerPhoneNumber())
                 .customerPaymentType(customerEntity.getCustomerPaymentType())
                 .creditCardNumber(customerEntity.getCustomerCreditNumber())
                 .bankName(customerEntity.getCustomerBankName())
@@ -96,24 +93,46 @@ public class CustomerService {
                 .build();
     }
 
-    public CustomerDto.Response findAll(CustomerDto.Request customerInfo) {
+    public Page<CustomerDto.Response> findAllCustomer(int page, String searchKeyword) {
 
-        String encryptPassportNumber = passportNumberEncryptService.encrypt(customerInfo.getPassportNumber());
-        CustomerEntity customerEntity = customerRepository.findByPassportNumber(encryptPassportNumber)
-                .orElseThrow(()->new InvalidPassportInfoException(ExceptionState.INVALID_PASSPORT_INFO, "여권 조회 실패"));
+        PageRequest pageRequest = PageRequest.of(page, 15);
+        Page<CustomerDto.Response> responses =
+                customerRepository.findAllCustomer(pageRequest,searchKeyword);
 
-        customerEntity.updateRegister();
+        return responses;
+    }
 
-        return CustomerDto.Response.builder()
-                .passportNumber(customerInfo.getPassportNumber())
-                .name(customerEntity.getCustomerName())
-                .email(customerEntity.getCustomerEmail())
-                .phoneNumber(customerEntity.getCustomerPhoneNumber())
-                .customerPaymentType(customerEntity.getCustomerPaymentType())
-                .creditCardNumber(customerEntity.getCustomerCreditNumber())
-                .bankName(customerEntity.getCustomerBankName())
-                .accountNumber(customerEntity.getCustomerAccountNumber())
-                .nation(customerEntity.getNation())
+    public CustomerMyPageDto.Response getMyPage(CustomerDto.Request customerInfo) {
+
+        CustomerEntity customerEntity = getCustomerEntity(customerInfo);
+
+        List<RefundReceiptDto.Response> response =
+                refundRepository.findRefundReceipt(customerEntity.getPassportNumber(),false);
+
+        int totalRefundCompleted = 0;
+        String refundInformation = CustomerCustomValue.CREDIT_CARD;
+
+        if(!response.isEmpty()){
+            totalRefundCompleted = response.size();
+        }
+
+        if(customerEntity.getCustomerCreditNumber().isEmpty()
+                && !customerEntity.getCustomerBankName().isEmpty()
+                && !customerEntity.getCustomerAccountNumber().isEmpty()){
+
+            refundInformation = CustomerCustomValue.CARD;
+        }
+
+        return CustomerMyPageDto.Response.builder()
+                .totalRefundCompleted(totalRefundCompleted)
+                .refundInformation(refundInformation)
                 .build();
+    }
+
+    private CustomerEntity getCustomerEntity(CustomerDto.Request customerInfo) {
+        String encryptPassportNumber = passportNumberEncryptService.encrypt(customerInfo.getPassportNumber());
+
+        return customerRepository.findByPassportNumber(encryptPassportNumber)
+                .orElseThrow(()->new InvalidPassportInfoException(ExceptionState.INVALID_PASSPORT_INFO, "여권 조회 실패"));
     }
 }

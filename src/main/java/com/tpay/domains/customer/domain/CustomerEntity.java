@@ -36,8 +36,6 @@ public class CustomerEntity extends BaseTimeEntity {
     @Column(name = "paymentType")
     private CustomerPaymentType customerPaymentType;
 
-    @Column(name = "cusPhoneNumber", length = 40)
-    private String customerPhoneNumber;
     @Column(name = "cusCreditNumber", length = 40)
     private String customerCreditNumber;
     @Column(name = "cusBankName", length = 40)
@@ -63,7 +61,6 @@ public class CustomerEntity extends BaseTimeEntity {
         this.nation = nation;
         this.customerEmail = customerInfo.getEmail();
         this.customerPaymentType = customerInfo.getCustomerPaymentType();
-        this.customerPhoneNumber = customerInfo.getPhoneNumber();
         this.customerCreditNumber = customerInfo.getCreditCardNumber();
         this.customerBankName = customerInfo.getBankName();
         this.customerAccountNumber = customerInfo.getAccountNumber();

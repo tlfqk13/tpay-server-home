@@ -27,6 +27,7 @@ public class FranchiseeApplicantDetailResponse {
     private String storeAddressDetail;
     private LocalDateTime createdDate;
     private Boolean isRead;
+    private String refundAfterShop;
     // Applicants
     private String imageUrl;
     private String taxFreeStoreNumber;
