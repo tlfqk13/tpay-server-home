@@ -30,7 +30,6 @@ import static com.tpay.domains.refund.application.RefundReceiptCustomValue.*;
 public class RefundReceiptDownloadsService {
     private final RefundReceiptFindService refundReceiptFindService;
     private final S3FileUploader s3FileUploader;
-
     public void downloadsRefundReceipt(RefundReceiptDto.Request request) {
 
         try {

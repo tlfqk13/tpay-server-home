@@ -96,10 +96,8 @@ public class CustomerService {
     public Page<CustomerDto.Response> findAllCustomer(int page, String searchKeyword) {
 
         PageRequest pageRequest = PageRequest.of(page, 15);
-        boolean searchKeywordEmpty = searchKeyword.isEmpty();
-
         Page<CustomerDto.Response> responses =
-                customerRepository.findAllCustomer(pageRequest,searchKeyword,searchKeywordEmpty);
+                customerRepository.findAllCustomer(pageRequest,searchKeyword);
 
         return responses;
     }
