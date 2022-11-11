@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
@@ -26,7 +28,12 @@ public class ApiController {
     }
 
     @PostMapping("/refund/cancel")
-    public RefundResponse cancel(@RequestBody CancelDto.Request dto) {
-        return apiService.cancelRefund(dto.getPurchaseSequenceNumber());
+    public void cancel(@RequestBody CancelDto.Request dto) {
+        apiService.cancelRefund(dto.getPurchaseSequenceNumber());
+    }
+
+    @PostMapping("/refund/cancel/bulk")
+    public List<RefundResponse>  bulkCancel(@RequestBody List<CancelDto.Request> dtos) {
+        return apiService.cancelRefund(dtos);
     }
 }
