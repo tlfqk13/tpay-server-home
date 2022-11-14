@@ -90,10 +90,9 @@ public class ErpFranchiseeApplicantTestController{
     public ResponseEntity<FranchiseeApplicantFindResponse> filter(
             @PathVariable FilterSelector filterSelector,
             @PathVariable String value,
-            @RequestParam int page,
-            @RequestParam String searchKeyword
-    ) {
-        FranchiseeApplicantFindResponse result = franchiseeApplicantTestFindService.applicantFilter(filterSelector, value, page, searchKeyword);
+            int page,
+            @RequestParam(defaultValue = "") String searchKeyword){
+        FranchiseeApplicantFindResponse result = franchiseeApplicantTestFindService.applicantFilterTest(filterSelector, value, page, searchKeyword);
         return ResponseEntity.ok(result);
     }
 

@@ -8,9 +8,8 @@ import java.util.List;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class FranchiseeApplicantFindResponse {
+public class FranchiseeApplicantFindResponseTest {
 
     private int totalPage;
-    private List<FranchiseeApplicantInfo> franchiseeApplicantInfoList;
-    List<FranchiseeApplicantDto.Response> response;
+    List<FranchiseeApplicantDto.Response> franchiseeApplicantInfoList;
 }

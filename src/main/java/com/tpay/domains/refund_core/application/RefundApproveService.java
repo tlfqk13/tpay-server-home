@@ -122,6 +122,7 @@ public class RefundApproveService {
     @Transactional
     public RefundResponse approveAfter(RefundAfterDto.Request refundAfterDto, PaymentEntity payment) {
         OrderEntity orderEntity = orderService.findOrderByPurchaseSn(refundAfterDto.getRefundItem().getDocId());
+        FranchiseeEntity franchiseeEntity = orderEntity.getFranchiseeEntity();
         RefundApproveRequest refundApproveRequest = RefundApproveRequest.of(orderEntity, refundAfterDto);
 
         RefundResponse refundResponse;

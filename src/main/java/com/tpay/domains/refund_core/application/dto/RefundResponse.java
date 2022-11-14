@@ -30,4 +30,9 @@ public class RefundResponse {
         this.isRefundAfterShop = isRefundAfterShop;
         return this;
     }
+
+    public RefundResponse addCustomerInfo(Long customerIndex) {
+        this.customerIndex = customerIndex;
+        return this;
+    }
 }

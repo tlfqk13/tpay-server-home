@@ -41,24 +41,27 @@ public class OrderSaveService {
     private final RefundRateCondition refundRateCondition;
 
     @Transactional
-    public OrderEntity save(RefundSaveRequest request, Long franchiseeIndex) {
+    public OrderEntity save(RefundSaveRequest request) {
 
         FranchiseeEntity franchiseeEntity =
-                franchiseeFindService.findByIndex(franchiseeIndex);
+                franchiseeFindService.findByIndex(request.getFranchiseeIndex());
 
         CustomerEntity customerEntity = customerService.findByIndex(request.getCustomerIndex());
 
         ProductEntity productEntity;
 
-        // 2022/11/11 환급요율표 미업데이트 가맹점 대상에 대해 적용
-        String refund = request.getRefund();
-        if (refund == null) {
-            refund = refundRateCondition.refundRate(Integer.parseInt(request.getPrice()));
+        // TODO: 2022/11/11 환급요율표 미업데이트 가맹점 대상
+        if(request.getRefund() == null) {
+            String refund = refundRateCondition.nonUpdateUserTotalRefund((request.getPrice()));
+            log.trace(" @@ refund = {}", refund);
+            productEntity =
+                    productFindService.findOrElseSave(
+                            franchiseeEntity.getProductCategory(), request.getPrice(),refund);
+        }else {
+            productEntity =
+                    productFindService.findOrElseSave(
+                            franchiseeEntity.getProductCategory(), request.getPrice(), request.getRefund());
         }
-        productEntity =
-                productFindService.findOrElseSave(
-                        franchiseeEntity.getProductCategory(), request.getPrice(), refund);
-
         return this.save(franchiseeEntity, customerEntity, productEntity, null);
     }
 

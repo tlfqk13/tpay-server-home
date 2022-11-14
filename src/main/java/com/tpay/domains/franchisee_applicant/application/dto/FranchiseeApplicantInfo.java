@@ -36,4 +36,18 @@ public class FranchiseeApplicantInfo {
             .isRefundAfter(franchiseeEntity.getIsAfterRefund())
             .build();
     }
+
+    // TODO: 2022/11/14 쿼리 고도화 가맹점현황 filter
+    public static FranchiseeApplicantInfo toResponse(FranchiseeApplicantDto.Response response) {
+        return FranchiseeApplicantInfo.builder()
+                .franchiseeApplicantIndex(response.getFranchiseeApplicantIndex())
+                .franchiseeStatus(response.getFranchiseeStatus())
+                .businessNumber(response.getBusinessNumber())
+                .storeName(response.getStoreName())
+                .sellerName(response.getSellerName())
+                .createdDate(response.getCreatedDate().toString())
+                .isRefundOnce(response.isRefundOnce())
+                .isRead(response.isRead())
+                .build();
+    }
 }
