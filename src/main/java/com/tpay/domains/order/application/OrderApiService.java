@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -17,7 +18,11 @@ public class OrderApiService {
 
     private final OrderRepository orderRepository;
 
-    public Optional<OrderEntity> findOrderByPurchaseSnInApi(String purchaseSn) {
+    public Optional<OrderEntity> findOrderByPurchaseSn(String purchaseSn) {
         return orderRepository.findByOrderNumber(purchaseSn);
+    }
+
+    public List<OrderEntity> findOrdersByPurchaseSn(List<String> purchaseSns) {
+        return orderRepository.findByOrderNumbers(purchaseSns);
     }
 }
