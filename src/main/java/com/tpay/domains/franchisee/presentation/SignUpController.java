@@ -1,5 +1,6 @@
 package com.tpay.domains.franchisee.presentation;
 
+import com.tpay.commons.custom.CustomValue;
 import com.tpay.domains.franchisee.application.SignUpService;
 import com.tpay.domains.franchisee.application.dto.FranchiseeSignUpRequest;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ public class SignUpController {
     private boolean isApiServer(String ip) {
         // TODO : API 서버 주소 입력
         List<String> allowedIps = List.of("127.0.0.1",    // Localhost
-                "54.180.131.244");// Ktp-api-test
+                CustomValue.API_TEST_SERVER);// Ktp-api-test
 
         return allowedIps.contains(ip);
     }
