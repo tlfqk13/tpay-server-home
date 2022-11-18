@@ -110,19 +110,21 @@ public class CustomerService {
                 refundRepository.findRefundReceipt(customerEntity.getPassportNumber(),false);
 
         int totalRefundCompleted = 0;
-        String refundInformation = CustomerCustomValue.CREDIT_CARD;
+        String refundInformation = "";
 
         if(!response.isEmpty()){
             totalRefundCompleted = response.size();
         }
 
-        if(customerEntity.getCustomerCreditNumber().isEmpty()
-                && !customerEntity.getCustomerBankName().isEmpty()
-                && !customerEntity.getCustomerAccountNumber().isEmpty()){
-
-            refundInformation = CustomerCustomValue.CARD;
+        if(customerEntity.getIsRegister()){
+            if(null == customerEntity.getCustomerCreditNumber()
+                    && !customerEntity.getCustomerBankName().isEmpty()
+                    && !customerEntity.getCustomerAccountNumber().isEmpty()){
+                   refundInformation = CustomerCustomValue.CARD;
+            }else{
+                refundInformation = CustomerCustomValue.CREDIT_CARD;
+            }
         }
-
         return CustomerMyPageDto.Response.builder()
                 .totalRefundCompleted(totalRefundCompleted)
                 .refundInformation(refundInformation)
