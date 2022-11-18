@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,6 +25,9 @@ public class SignUpController {
 
     private boolean isApiServer(String ip) {
         // TODO : API 서버 주소 입력
-        return ip.equals("127.0.0.1");
+        List<String> allowedIps = List.of("127.0.0.1",    // Localhost
+                "54.180.131.244");// Ktp-api-test
+
+        return allowedIps.contains(ip);
     }
 }
