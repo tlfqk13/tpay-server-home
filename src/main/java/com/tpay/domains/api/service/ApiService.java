@@ -2,7 +2,6 @@ package com.tpay.domains.api.service;
 
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.exception.detail.KtpApiException;
-import com.tpay.commons.exception.detail.WebfluxGeneralException;
 import com.tpay.domains.api.domain.vo.ApprovalDto;
 import com.tpay.domains.api.domain.vo.CancelDto;
 import com.tpay.domains.customer.application.CustomerApiService;
@@ -10,7 +9,7 @@ import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.order.application.OrderApiService;
 import com.tpay.domains.order.domain.OrderEntity;
 import com.tpay.domains.refund.domain.RefundStatus;
-import com.tpay.domains.refund_core.application.RefundCancelApiService;
+import com.tpay.domains.refund_core.application.RefundApiService;
 import com.tpay.domains.refund_core.application.dto.RefundResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +29,7 @@ public class ApiService {
 
     private final CustomerApiService customerService;
     private final OrderApiService orderService;
-    private final RefundCancelApiService refundCancelService;
+    private final RefundApiService refundApiService;
 
     @Transactional
     public Long createCustomer(ApprovalDto.Request dto) {
@@ -47,6 +46,11 @@ public class ApiService {
             CustomerEntity customerEntity = customerService.updateCustomerInfo(dto.getName(), dto.getPassport(), dto.getNation());
             return customerEntity.getId();
         }
+    }
+
+    @Transactional
+    public RefundResponse approveRefund(Long customerIdx, ApprovalDto.Request request) {
+        return refundApiService.approve(customerIdx, request);
     }
 
     /**
@@ -69,7 +73,7 @@ public class ApiService {
         Long refundId = order.getRefundEntity().getId();
         log.debug("refundId = {}, customerId = {}", refundId, customerId);
 
-        refundCancelService.cancel(customerId, refundId);
+        refundApiService.cancel(customerId, refundId);
     }
 
     /**
@@ -99,7 +103,7 @@ public class ApiService {
             log.debug("refundId = {}, customerId = {}", refundId, customerId);
             String purchaseSequenceNumber = order.getOrderNumber();
             try {
-                String responseCode = refundCancelService.cancelBulk(customerId, refundId);
+                String responseCode = refundApiService.cancelBulk(customerId, refundId);
                 results.add(
                         RefundResponse.builder()
                                 .responseCode(responseCode)
@@ -108,7 +112,7 @@ public class ApiService {
                 );
                 log.debug("Canceled purchaseSequenceNumber = {}", purchaseSequenceNumber);
                 updateRefundIds.add(refundId);
-            } catch (WebfluxGeneralException e) {
+            } catch (KtpApiException e) {
                 String[] split = e.getMessage().split(":");
                 RefundResponse response = RefundResponse.builder().responseCode(split[0]).build();
                 results.add(response);
@@ -117,7 +121,7 @@ public class ApiService {
         }
 
         if (!updateRefundIds.isEmpty()) {
-            int count = refundCancelService.updateBulkRefundCancel(updateRefundIds);
+            int count = refundApiService.updateBulkRefundCancel(updateRefundIds);
             log.debug("Refund cancel affected count = {}", count);
         }
 

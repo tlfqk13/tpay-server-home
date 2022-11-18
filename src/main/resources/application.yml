@@ -34,6 +34,8 @@ custom:
     save-path: ENC(eYDNkT5cu7xnhdT895ea0Rl9ZSZRpxqT5dpWEmDiE4g=)
   s3:
     base-uri: ENC(XdSikIGy5Xl70+0BXM8scfYUK3jA4Y7Oj/9AM4K55jfHXeTp/hepZdGKWOPKGjkJwZgcQaqwI10AH/IC4ngDKA==)
+  api:
+    test: ENC(pX5jIPw6xaZabSqmoYFI3XS69rtgh5Xt)
 cloud:
   aws:
     credentials:

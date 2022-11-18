@@ -15,6 +15,7 @@ public class CustomValue {
     public static String BARCODE_SAVE_PATH;
     public static String FIREBASE_SDK_PATH;
     public static String S3_BASE_URI;
+    public static String API_TEST_SERVER;
 
     @Value("${custom.push.sdk-path}")
     public void setFirebaseSdkPath(String firebaseSdkPath) {FIREBASE_SDK_PATH = firebaseSdkPath;}
@@ -51,5 +52,7 @@ public class CustomValue {
     @Value("${custom.s3.base-uri}")
     public void setS3BaseUri(String baseUri) {S3_BASE_URI = baseUri;}
 
+    @Value("${custom.api.test}")
+    public void setApiTestServer(String addr) {API_TEST_SERVER = addr;}
 
 }
