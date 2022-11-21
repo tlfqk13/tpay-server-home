@@ -1,5 +1,7 @@
 package com.tpay.commons.util;
 
+import com.tpay.commons.exception.ExceptionState;
+import com.tpay.commons.exception.detail.JwtRuntimeException;
 import io.jsonwebtoken.Claims;
 
 import java.time.Duration;
@@ -18,11 +20,14 @@ public class KtpCommonUtil {
         return Duration.between(APPLICATION_START_TIME, LocalDateTime.now()).getSeconds() < ONE_MINUTE;
     }
 
-    public static IndexInfo getIndexFromClaims(Claims claims) {
+    public static IndexInfo getIndexInfoFromClaims(Claims claims) {
         Object accessE = claims.get("accessE");
-        if (accessE == null) {
+        if (null == accessE) {
             Object accessF = claims.get("accessF");
-            return new IndexInfo(FRANCHISEE, String.valueOf(accessF));
+            if (null != accessF) {
+                return new IndexInfo(FRANCHISEE, String.valueOf(accessF));
+            }
+            throw new JwtRuntimeException(ExceptionState.INVALID_TOKEN, "Token doesn't have valid user info");
         }
         return new IndexInfo(EMPLOYEE, String.valueOf(accessE));
     }

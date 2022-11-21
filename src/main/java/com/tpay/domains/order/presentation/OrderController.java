@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static com.tpay.commons.util.KtpCommonUtil.getIndexFromClaims;
+import static com.tpay.commons.util.KtpCommonUtil.getIndexInfoFromClaims;
 
 @RestController
 @Slf4j
@@ -41,7 +41,7 @@ public class OrderController {
             throw new JwtRuntimeException(ExceptionState.INVALID_TOKEN, "Token Data Empty");
         }
         AuthToken authToken = jwtUtils.convertAuthToken(bearerToken);
-        IndexInfo indexInfo = getIndexFromClaims(authToken.getData());
+        IndexInfo indexInfo = getIndexInfoFromClaims(authToken.getData());
         return ResponseEntity.ok(orderService.createOrder(orderDto, indexInfo));
     }
 }

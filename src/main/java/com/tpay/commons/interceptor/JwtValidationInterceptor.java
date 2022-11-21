@@ -1,6 +1,8 @@
 package com.tpay.commons.interceptor;
 
 import com.tpay.commons.exception.ExceptionState;
+import com.tpay.commons.exception.detail.FranchiseeAuthenticationException;
+import com.tpay.commons.exception.detail.FranchiseeNotFoundException;
 import com.tpay.commons.exception.detail.JwtRuntimeException;
 import com.tpay.commons.jwt.AuthToken;
 import com.tpay.commons.jwt.JwtUtils;
@@ -21,13 +23,15 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.HttpHeaders;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 import static com.tpay.commons.util.UserSelector.EMPLOYEE;
 import static com.tpay.commons.util.UserSelector.FRANCHISEE;
@@ -62,18 +66,64 @@ public class JwtValidationInterceptor implements HandlerInterceptor {
     // 인터셉터 프리핸들 메서드 오버라이드
     @Override
     public boolean preHandle(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object handler) throws Exception {
-        return validationCheck(request);
+        if (hasToken(request) && validateToken(request)) {
+            return compareUriWithToken(request);
+        }
+
+        return false;
     }
 
-    // 벨리데이션 체크는 헤더의 Authorization 의 jwt AT로 나온 index와 URI의 index를 비교하는 책임
-    private boolean validationCheck(HttpServletRequest request) {
+    private boolean hasToken(HttpServletRequest request) {
+        Optional<String> token = parseToken(request);
+        if (token.isEmpty()) {
+            throw new FranchiseeAuthenticationException(
+                    ExceptionState.AUTHENTICATION_FAILED, "Token not exists");
+        }
+        return true;
+    }
+
+    private Optional<String> parseToken(HttpServletRequest request) {
+        String authToken = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (StringUtils.hasText(authToken)) {
+            return Optional.of(authToken);
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    void checkDuplicateSignIn(IndexInfo indexInfo, String tokenValue) {
+        String lastAccessToken;
+        if (FRANCHISEE == indexInfo.getUserSelector()) {
+            FranchiseeAccessTokenEntity franchiseeAccessTokenEntity =
+                    accessTokenService.findByFranchiseeId(Long.valueOf(indexInfo.getIndex()))
+                            .orElseThrow(() -> new FranchiseeNotFoundException(ExceptionState.ID_NOT_FOUND));
+            lastAccessToken = franchiseeAccessTokenEntity.getAccessToken();
+        } else {
+            EmployeeAccessTokenEntity employeeAccessTokenEntity =
+                    accessTokenService.findByEmployeeId(Long.valueOf(indexInfo.getIndex()))
+                            .orElseThrow(() -> new FranchiseeNotFoundException(ExceptionState.ID_NOT_FOUND));
+            lastAccessToken = employeeAccessTokenEntity.getAccessToken();
+        }
+
+        if (isDifferentTokenValue(tokenValue, lastAccessToken)) {
+            log.debug("authToken = {}, latest = {} ", tokenValue, lastAccessToken);
+            throw new JwtRuntimeException(ExceptionState.DUPLICATE_SIGNOUT);
+        }
+    }
+
+    private boolean validateToken(HttpServletRequest request) {
         log.debug("URI = {}", request.getRequestURI());
         log.debug("Header - Authentication = {}" , request.getHeader(HttpHeaders.AUTHORIZATION));
         log.trace("Duplicate _ Validation Check Start");
 
         AuthToken authToken = getAuthToken(request);
+        return authToken.validate();
+    }
+    // 벨리데이션 체크는 헤더의 Authorization 의 jwt AT로 나온 index와 URI의 index를 비교하는 책임
+    private boolean compareUriWithToken(HttpServletRequest request) {
+        AuthToken authToken = getAuthToken(request);
         Claims claims = authToken.getData();
-        IndexInfo tokenInfo = KtpCommonUtil.getIndexFromClaims(claims);
+        IndexInfo tokenInfo = KtpCommonUtil.getIndexInfoFromClaims(claims);
         IndexInfo uriInfo = getIndexFromUri(request);
 
         UserSelector tokenUserSelector = tokenInfo.getUserSelector();
@@ -81,29 +131,8 @@ public class JwtValidationInterceptor implements HandlerInterceptor {
         String uriIndex = uriInfo.getIndex();
         log.trace(" token 비교 시작점 ");
 
-        if (FRANCHISEE == tokenUserSelector) {
-            FranchiseeAccessTokenEntity franchiseeAccessTokenEntity =
-                    accessTokenService.findByFranchiseeId(Long.valueOf(tokenIndex))
-                            .orElseThrow(NullPointerException::new);
-
-            String latestFranchiseeAccessToken = franchiseeAccessTokenEntity.getAccessToken();
-
-            log.trace("authToken = {}, latest = {} ", authToken.getValue(), latestFranchiseeAccessToken);
-            if (isDifferentTokenValue(authToken.getValue(), latestFranchiseeAccessToken)) {
-                log.trace("DUPLICATE_SIGNOUT");
-                throw new JwtRuntimeException(ExceptionState.DUPLICATE_SIGNOUT);
-            }
-        } else {
-            EmployeeAccessTokenEntity employeeAccessTokenEntity =
-                    accessTokenService.findByEmployeeId(Long.valueOf(tokenIndex))
-                            .orElseThrow(NullPointerException::new);
-
-            String latestEmployeeAccessToken = employeeAccessTokenEntity.getAccessToken();
-            log.trace("authToken = {}, latest = {} ", authToken.getValue(), latestEmployeeAccessToken);
-            if (isDifferentTokenValue(authToken.getValue(), latestEmployeeAccessToken)) {
-                throw new JwtRuntimeException(ExceptionState.DUPLICATE_SIGNOUT);
-            }
-        }
+        // 중복 로그인 확인
+        checkDuplicateSignIn(tokenInfo, authToken.getValue());
 
         if (tokenInfo.getUserSelector().equals(uriInfo.getUserSelector()) && tokenIndex.equals(uriIndex)) {
             if (FRANCHISEE == tokenUserSelector) {
@@ -147,24 +176,6 @@ public class JwtValidationInterceptor implements HandlerInterceptor {
             log.warn("INDEX FROM AUTH: {} {}", "FRANCHISEE", tokenIndex);
             throw new JwtRuntimeException(ExceptionState.MISMATCH_TOKEN, "jwt C Error : Authorization info mismatch");
         }
-    }
-
-    //jwt AT 토큰 파싱
-    private IndexInfo getIndexFromClaims(Claims claims) {
-        Object accessE = claims.get("accessE");
-        if (accessE == null) {
-            Object accessF = claims.get("accessF");
-            return new IndexInfo(FRANCHISEE, String.valueOf(accessF));
-        }
-        return new IndexInfo(EMPLOYEE, String.valueOf(accessE));
-    }
-
-    //jwt AT 토큰 파싱
-    private Claims getClaims(HttpServletRequest request) {
-        String header = request.getHeader(HttpHeaders.AUTHORIZATION);
-        AuthToken authToken = jwtUtils.convertAuthToken(header);
-        log.trace("authToken.getValue() = {}", authToken.getValue());
-        return authToken.getData();
     }
 
     private AuthToken getAuthToken(HttpServletRequest request) {

@@ -1,6 +1,5 @@
 package com.tpay.commons.config;
 
-import com.tpay.commons.interceptor.AuthInterceptor;
 import com.tpay.commons.interceptor.JwtValidationInterceptor;
 import com.tpay.commons.interceptor.PrintRequestInterceptor;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +15,6 @@ import java.util.List;
 @Configuration
 @RequiredArgsConstructor
 public class WebMvcConfig implements WebMvcConfigurer {
-    private final AuthInterceptor authInterceptor;
     private final PrintRequestInterceptor printRequestInterceptor;
     private final JwtValidationInterceptor jwtValidationInterceptor;
 
@@ -79,10 +77,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
         registry
                 .addInterceptor(jwtValidationInterceptor)
-                .addPathPatterns("/**")
-                .excludePathPatterns(exclusivePathList);
-        registry
-                .addInterceptor(authInterceptor)
                 .addPathPatterns("/**")
                 .excludePathPatterns(exclusivePathList);
         registry.addInterceptor(printRequestInterceptor).addPathPatterns("/**");

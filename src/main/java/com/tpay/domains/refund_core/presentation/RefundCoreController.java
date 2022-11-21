@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static com.tpay.commons.util.KtpCommonUtil.getIndexFromClaims;
+import static com.tpay.commons.util.KtpCommonUtil.getIndexInfoFromClaims;
 
 /**
  * 실질적인 관세청 통신 3개 기능
@@ -131,7 +131,7 @@ public class RefundCoreController {
             throw new JwtRuntimeException(ExceptionState.INVALID_TOKEN, "Token Data Empty");
         }
         AuthToken authToken = jwtUtils.convertAuthToken(bearerToken);
-        IndexInfo indexInfo = getIndexFromClaims(authToken.getData());
+        IndexInfo indexInfo = getIndexInfoFromClaims(authToken.getData());
 
         return ResponseEntity.ok(refundApproveService.approveAfter(dto, indexInfo));
     }
