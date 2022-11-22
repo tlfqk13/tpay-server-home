@@ -114,11 +114,11 @@ public class OrderSaveService {
     public OrderDto.Response createOrder(OrderDto.Request orderDto, IndexInfo indexInfo) {
         Long franchiseIndex;
         if (EMPLOYEE == indexInfo.getUserSelector()) {
-            EmployeeEntity employee = employeeFindService.findById(Long.parseLong(indexInfo.getIndex()))
+            EmployeeEntity employee = employeeFindService.findById(indexInfo.getIndex())
                     .orElseThrow();
             franchiseIndex = employee.getFranchiseeEntity().getId();
         } else {
-            franchiseIndex = Long.parseLong(indexInfo.getIndex());
+            franchiseIndex = indexInfo.getIndex();
         }
         FranchiseeEntity franchisee = franchiseeFindService.findByIndex(franchiseIndex);
         CustomerEntity customer = customerService.findByIndex(orderDto.getCustomerIndex());

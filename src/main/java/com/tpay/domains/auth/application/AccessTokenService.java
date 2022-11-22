@@ -49,7 +49,7 @@ public class AccessTokenService {
 
     @Transactional
     public void deleteById(IndexInfo indexInfo) {
-        Long index = Long.parseLong(indexInfo.getIndex());
+        Long index = indexInfo.getIndex();
         if (FRANCHISEE == indexInfo.getUserSelector()) {
             franchiseeAccessTokenRepository.deleteByFranchiseeEntityId(index);
         }

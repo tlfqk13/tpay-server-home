@@ -21,27 +21,33 @@ public class KtpCommonUtil {
     }
 
     public static IndexInfo getIndexInfoFromAccessToken(Claims claims) {
+        String indexStr;
         Object accessE = claims.get("accessE");
         if (null == accessE) {
             Object accessF = claims.get("accessF");
             if (null != accessF) {
-                return new IndexInfo(FRANCHISEE, String.valueOf(accessF));
+                indexStr = String.valueOf(accessF);
+                return new IndexInfo(FRANCHISEE, Long.parseLong(indexStr));
             }
             throw new JwtRuntimeException(ExceptionState.INVALID_TOKEN, "Token doesn't have valid user info");
         }
-        return new IndexInfo(EMPLOYEE, String.valueOf(accessE));
+        indexStr = String.valueOf(accessE);
+        return new IndexInfo(EMPLOYEE, Long.parseLong(indexStr));
     }
 
     public static IndexInfo getIndexInfoFromRefreshToken(Claims claims) {
-        Object accessE = claims.get("refreshE");
-        if (null == accessE) {
-            Object accessF = claims.get("refreshF");
-            if (null != accessF) {
-                return new IndexInfo(FRANCHISEE, String.valueOf(accessF));
+        String indexStr;
+        Object refreshE = claims.get("refreshE");
+        if (null == refreshE) {
+            Object refreshF = claims.get("refreshF");
+            if (null != refreshF) {
+                indexStr = String.valueOf(refreshF);
+                return new IndexInfo(FRANCHISEE, Long.parseLong(indexStr));
             }
             throw new JwtRuntimeException(ExceptionState.INVALID_TOKEN, "Token doesn't have valid user info");
         }
-        return new IndexInfo(EMPLOYEE, String.valueOf(accessE));
+        indexStr = String.valueOf(refreshE);
+        return new IndexInfo(EMPLOYEE, Long.parseLong(indexStr));
     }
 
 }

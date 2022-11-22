@@ -80,7 +80,7 @@ public class AuthController {
     public ResponseEntity<String> accountDelete(
             @KtpIndexInfo IndexInfo indexInfo
     ){
-        String result = accountDeleteService.deleteAccount(indexInfo);
+        String result = accountDeleteService.deleteAccount(indexInfo.getIndex());
         return ResponseEntity.ok(result);
     }
 }

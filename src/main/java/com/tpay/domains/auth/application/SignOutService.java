@@ -31,7 +31,7 @@ public class SignOutService {
 
     @Transactional
     public void signOut(IndexInfo indexInfo) {
-        Long index = Long.parseLong(indexInfo.getIndex());
+        Long index = indexInfo.getIndex();
         if (FRANCHISEE == indexInfo.getUserSelector()) {
             franchiseeTokenRepository.deleteByFranchiseeEntityId(index);
             FranchiseeEntity franchisee = franchiseeFindService.findByIndex(index);

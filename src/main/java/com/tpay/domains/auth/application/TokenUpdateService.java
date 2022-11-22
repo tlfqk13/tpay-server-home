@@ -38,7 +38,7 @@ public class TokenUpdateService {
         validateRefreshToken(tokenInfo.getRefreshToken());
         AuthToken authToken = jwtUtils.convertAuthToken(tokenInfo.getRefreshToken());
         IndexInfo indexInfo = getIndexInfoFromRefreshToken(authToken.getData());
-        Long index = Long.parseLong(indexInfo.getIndex());
+        Long index = indexInfo.getIndex();
         AuthToken accessToken;
         if (FRANCHISEE == indexInfo.getUserSelector()) {
             FranchiseeTokenEntity franchiseeTokenEntity =

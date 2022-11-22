@@ -1,7 +1,6 @@
 package com.tpay.domains.auth.application;
 
 
-import com.tpay.commons.util.IndexInfo;
 import com.tpay.domains.auth.domain.FranchiseeTokenRepository;
 import com.tpay.domains.franchisee.application.FranchiseeFindService;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
@@ -37,9 +36,7 @@ public class AccountDeleteService {
     private final OrderRepository orderRepository;
 
     @Transactional
-    public String deleteAccount(IndexInfo indexInfo){
-
-        Long deleteIndex = Long.parseLong(indexInfo.getIndex());
+    public String deleteAccount(Long deleteIndex){
 
         //푸시토큰 삭제
         FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(deleteIndex);

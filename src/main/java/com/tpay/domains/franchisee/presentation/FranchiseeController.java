@@ -1,5 +1,7 @@
 package com.tpay.domains.franchisee.presentation;
 
+import com.tpay.commons.util.IndexInfo;
+import com.tpay.commons.util.resolver.KtpIndexInfo;
 import com.tpay.domains.franchisee.application.FranchiseeSettingService;
 import com.tpay.domains.franchisee.application.FranchiseeUpdateService;
 import com.tpay.domains.franchisee.application.MyPageFindService;
@@ -31,9 +33,10 @@ public class FranchiseeController {
     @PatchMapping("/{franchiseeIndex}/settings")
     public ResponseEntity<FranchiseeSettingDto.Response> changeSoundOrVibration(
         @PathVariable Long franchiseeIndex,
-        @RequestBody FranchiseeSettingDto.Request request
+        @RequestBody FranchiseeSettingDto.Request request,
+        @KtpIndexInfo IndexInfo indexInfo
     ) {
-        FranchiseeSettingDto.Response response = franchiseeSettingService.changeSoundOrVibration(franchiseeIndex, request);
+        FranchiseeSettingDto.Response response = franchiseeSettingService.changeSoundOrVibration(indexInfo.getIndex(), request);
         return ResponseEntity.ok(response);
     }
 
@@ -41,8 +44,9 @@ public class FranchiseeController {
      * 팝업 설정 변경
      */
     @PatchMapping("/{franchiseeIndex}/popUp")
-    public ResponseEntity<Boolean> updatePopUp(@PathVariable Long franchiseeIndex) {
-        boolean result = franchiseeUpdateService.updatePopUp(franchiseeIndex);
+    public ResponseEntity<Boolean> updatePopUp(@PathVariable Long franchiseeIndex,
+                                               @KtpIndexInfo IndexInfo indexInfo) {
+        boolean result = franchiseeUpdateService.updatePopUp(indexInfo.getIndex());
         return ResponseEntity.ok(result);
     }
 
@@ -51,8 +55,9 @@ public class FranchiseeController {
      */
     @GetMapping("/{franchiseeIndex}")
     public ResponseEntity<MyPageResponse> findMyPageInfo(
-        @PathVariable Long franchiseeIndex) {
-        MyPageResponse response = myPageFindService.findByFranchiseeIndex(franchiseeIndex);
+            @PathVariable Long franchiseeIndex,
+            @KtpIndexInfo IndexInfo indexInfo) {
+        MyPageResponse response = myPageFindService.findByFranchiseeIndex(indexInfo.getIndex());
         return ResponseEntity.ok(response);
     }
 
@@ -62,9 +67,10 @@ public class FranchiseeController {
     @PatchMapping("/{franchiseeIndex}")
     public ResponseEntity<FranchiseeUpdateDtoResponse> updateFranchisee(
         @PathVariable Long franchiseeIndex,
-        @RequestBody FranchiseeUpdateDtoRequest franchiseeUpdateDtoRequest
+        @RequestBody FranchiseeUpdateDtoRequest franchiseeUpdateDtoRequest,
+        @KtpIndexInfo IndexInfo indexInfo
     )  {
-        FranchiseeUpdateDtoResponse result = franchiseeUpdateService.updateFranchisee(franchiseeIndex, franchiseeUpdateDtoRequest);
+        FranchiseeUpdateDtoResponse result = franchiseeUpdateService.updateFranchisee(indexInfo.getIndex(), franchiseeUpdateDtoRequest);
         return ResponseEntity.ok(result);
     }
 }

@@ -1,5 +1,7 @@
 package com.tpay.domains.franchisee_applicant.presentation;
 
+import com.tpay.commons.util.IndexInfo;
+import com.tpay.commons.util.resolver.KtpIndexInfo;
 import com.tpay.domains.franchisee_applicant.application.FranchiseeReApplyService;
 import com.tpay.domains.franchisee_applicant.application.FranchiseeStatusFindService;
 import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeApplicantInfo;
@@ -38,8 +40,10 @@ public class FranchiseeApplicant {
      * 가맹점 재신청시 기존 정보 조회
      */
     @GetMapping("/reapply/{franchiseeIndex}")
-    public ResponseEntity<FranchiseeApplicantReapplyResponse> findBaseInfo(@PathVariable Long franchiseeIndex) {
-        FranchiseeApplicantReapplyResponse result = franchiseeReApplyService.findBaseInfo(franchiseeIndex);
+    public ResponseEntity<FranchiseeApplicantReapplyResponse> findBaseInfo(
+            @PathVariable Long franchiseeIndex,
+            @KtpIndexInfo IndexInfo indexInfo) {
+        FranchiseeApplicantReapplyResponse result = franchiseeReApplyService.findBaseInfo(indexInfo.getIndex());
         return ResponseEntity.ok(result);
     }
 

@@ -31,7 +31,6 @@ public class AuthToken {
         if (getData() == null) {
             throw new JwtRuntimeException(ExceptionState.INVALID_TOKEN, "Token Data Empty");
         }
-
         return true;
     }
 
