@@ -13,6 +13,7 @@ public interface FranchiseeAccessTokenRepository extends JpaRepository<Franchise
     void deleteByFranchiseeEntityId(Long franchiseeIndex);
 
     FranchiseeAccessTokenEntity findByFranchiseeEntity(FranchiseeEntity franchiseeEntity);
-    Optional<FranchiseeAccessTokenEntity> findByFranchiseeEntityBusinessNumber(String businessNumber);
+
+    boolean existsByFranchiseeEntityBusinessNumber(String businessNumber);
 
 }

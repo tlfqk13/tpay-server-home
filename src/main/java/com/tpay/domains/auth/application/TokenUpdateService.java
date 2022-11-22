@@ -1,25 +1,24 @@
 package com.tpay.domains.auth.application;
 
-import com.tpay.commons.exception.ExceptionState;
-import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.exception.detail.JwtRuntimeException;
 import com.tpay.commons.jwt.AuthToken;
 import com.tpay.commons.jwt.JwtUtils;
+import com.tpay.commons.util.IndexInfo;
+import com.tpay.commons.util.UserSelector;
 import com.tpay.domains.auth.application.dto.SignInTokenInfo;
+import com.tpay.domains.auth.application.dto.TokenRefreshVo;
 import com.tpay.domains.auth.domain.EmployeeTokenEntity;
 import com.tpay.domains.auth.domain.EmployeeTokenRepository;
 import com.tpay.domains.auth.domain.FranchiseeTokenEntity;
 import com.tpay.domains.auth.domain.FranchiseeTokenRepository;
-import com.tpay.domains.employee.application.EmployeeFindService;
 import com.tpay.domains.employee.domain.EmployeeEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
-
-import static com.tpay.commons.util.UserSelector.EMPLOYEE;
+import static com.tpay.commons.util.KtpCommonUtil.getIndexInfoFromRefreshToken;
 import static com.tpay.commons.util.UserSelector.FRANCHISEE;
 
 @Service
@@ -28,74 +27,54 @@ import static com.tpay.commons.util.UserSelector.FRANCHISEE;
 public class TokenUpdateService {
     private final FranchiseeTokenRepository franchiseeTokenRepository;
     private final EmployeeTokenRepository employeeTokenRepository;
-    private final EmployeeFindService employeeFindService;
     private final JwtUtils jwtUtils;
     private final AuthService authService;
 
+    /**
+     * @throws JwtRuntimeException : refresh token 인증과 관련된 에러메시지
+     */
     @Transactional
-    public SignInTokenInfo refresh(SignInTokenInfo signInTokenInfo) {
-        AuthToken refreshToken = jwtUtils.convertAuthToken(signInTokenInfo.getRefreshToken());
-        Long parsedIndex;
-        log.trace("Refresh Token Start");
-        if (signInTokenInfo.getUserSelector().equals(FRANCHISEE)) {
+    public SignInTokenInfo refresh(TokenRefreshVo.Request tokenInfo) {
+        validateRefreshToken(tokenInfo.getRefreshToken());
+        AuthToken authToken = jwtUtils.convertAuthToken(tokenInfo.getRefreshToken());
+        IndexInfo indexInfo = getIndexInfoFromRefreshToken(authToken.getData());
+        Long index = indexInfo.getIndex();
+        AuthToken accessToken;
+        if (FRANCHISEE == indexInfo.getUserSelector()) {
             FranchiseeTokenEntity franchiseeTokenEntity =
-                    franchiseeTokenRepository
-                            .findByFranchiseeEntityId(signInTokenInfo.getFranchiseeIndex())
+                    franchiseeTokenRepository.findByFranchiseeEntityId(index)
                             .orElseThrow(() -> new IllegalArgumentException("Invalid Franchisee"));
+            franchiseeTokenEntity.validToken(tokenInfo.getRefreshToken());
 
-            try {
-                //parsedIndex = Long.parseLong(String.valueOf(refreshToken.getData()));
-                parsedIndex = signInTokenInfo.getFranchiseeIndex();
-            } catch (Exception exception) {
-                throw new JwtRuntimeException(ExceptionState.FORCE_REFRESH);
-            }
-            franchiseeTokenEntity.validUser(parsedIndex);
-            franchiseeTokenEntity.validToken(refreshToken.getValue());
-
-            AuthToken accessToken =
-                    authService.createAccessToken(franchiseeTokenEntity.getFranchiseeEntity());
             FranchiseeEntity franchiseeEntity = franchiseeTokenEntity.getFranchiseeEntity();
-            authService.updateOrSaveAccessToken(franchiseeEntity,accessToken.getValue());
-            return SignInTokenInfo.builder()
-                    .signUpDate(signInTokenInfo.getSignUpDate())
-                    .franchiseeStatus(signInTokenInfo.getFranchiseeStatus())
-                    .franchiseeIndex(signInTokenInfo.getFranchiseeIndex())
-                    .businessNumber(signInTokenInfo.getBusinessNumber())
-                    .rejectReason(signInTokenInfo.getRejectReason())
-                    .popUp(signInTokenInfo.isPopUp())
-                    .accessToken(accessToken.getValue())
-                    .refreshToken(signInTokenInfo.getRefreshToken())
-                    .userSelector(FRANCHISEE)
-                    .build();
-        } else if (signInTokenInfo.getUserSelector().equals(EMPLOYEE)) {
-            EmployeeEntity employeeEntity = employeeFindService.findById(signInTokenInfo.getEmployeeIndex())
-                    .orElseThrow(() -> new IllegalArgumentException("Invalid Employee"));
-            EmployeeTokenEntity employeeTokenEntity = employeeTokenRepository.findByEmployeeEntity(employeeEntity)
-                    .orElseThrow(() -> new IllegalArgumentException("Invalid Employee Entity"));
-
-            try {
-                parsedIndex = Long.parseLong(String.valueOf(refreshToken.getData().get("employeeIndexJwt")));
-            } catch (Exception e) {
-                throw new JwtRuntimeException(ExceptionState.FORCE_REFRESH);
-            }
-
-            employeeTokenEntity.validUser(parsedIndex);
-            employeeTokenEntity.validToken(refreshToken.getValue());
-
-            AuthToken accessToken = authService.createAccessToken(employeeEntity);
-
-            return SignInTokenInfo.builder()
-                    .employeeIndex(signInTokenInfo.getEmployeeIndex())
-                    .userId(signInTokenInfo.getUserId())
-                    .name(signInTokenInfo.getName())
-                    .registeredDate(signInTokenInfo.getRegisteredDate())
-                    .accessToken(accessToken.getValue())
-                    .refreshToken(signInTokenInfo.getRefreshToken())
-                    .userSelector(EMPLOYEE)
-                    .build();
-
+            accessToken = authService.createAccessToken(franchiseeEntity);
+            authService.updateOrSaveAccessToken(franchiseeEntity, accessToken.getValue());
         } else {
-            throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Parse Failed");
+            EmployeeTokenEntity employeeTokenEntity = employeeTokenRepository.findByEmployeeEntityId(index)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid Employee Entity"));
+            employeeTokenEntity.validToken(tokenInfo.getRefreshToken());
+
+            EmployeeEntity employeeEntity = employeeTokenEntity.getEmployeeEntity();
+            accessToken = authService.createAccessToken(employeeEntity);
+            authService.updateOrSaveAccessToken(employeeEntity, accessToken.getValue());
         }
+
+//        TODO: 프론트 uri 변경작업 진행 시 다시 진행
+//        return new TokenRefreshVo(accessToken.getValue());
+
+        return buildSignInInfo(indexInfo.getUserSelector(), accessToken.getValue(), tokenInfo);
+    }
+
+    private void validateRefreshToken(String refreshToken) {
+        AuthToken authToken = jwtUtils.convertAuthToken(refreshToken);
+        authToken.validate();
+    }
+
+    private SignInTokenInfo buildSignInInfo(UserSelector userSelector, String newAccessToken, TokenRefreshVo.Request tokenInfo) {
+        return SignInTokenInfo.builder()
+                .accessToken(newAccessToken)
+                .refreshToken(tokenInfo.getRefreshToken())
+                .userSelector(userSelector)
+                .build();
     }
 }

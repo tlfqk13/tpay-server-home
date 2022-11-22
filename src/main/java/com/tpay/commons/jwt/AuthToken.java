@@ -27,10 +27,11 @@ public class AuthToken {
         this.key = key;
     }
 
-    public void validate() {
+    public boolean validate() {
         if (getData() == null) {
             throw new JwtRuntimeException(ExceptionState.INVALID_TOKEN, "Token Data Empty");
         }
+        return true;
     }
 
     public Claims getData() {

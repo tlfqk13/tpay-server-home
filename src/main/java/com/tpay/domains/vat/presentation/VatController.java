@@ -1,6 +1,8 @@
 package com.tpay.domains.vat.presentation;
 
 
+import com.tpay.commons.util.IndexInfo;
+import com.tpay.commons.util.resolver.KtpIndexInfo;
 import com.tpay.domains.vat.application.VatDownloadService;
 import com.tpay.domains.vat.application.VatHomeTaxService;
 import com.tpay.domains.vat.application.VatService;
@@ -24,22 +26,23 @@ public class VatController {
     private final VatDownloadService vatDownloadService;
     private final VatHomeTaxService homeTaxService;
 
-
     @GetMapping("/franchisee/{franchiseeIndex}/vat")
     public ResponseEntity<VatTotalDto.Response> vatReport(
-        @PathVariable Long franchiseeIndex,
-        @RequestParam String requestDate
+            @PathVariable Long franchiseeIndex,
+            @RequestParam String requestDate,
+            @KtpIndexInfo IndexInfo indexInfo
     ) {
-        VatTotalDto.Response result = vatService.vatReport(franchiseeIndex, requestDate);
+        VatTotalDto.Response result = vatService.vatReport(indexInfo.getIndex(), requestDate);
         return ResponseEntity.ok(result);
     }
 
     @GetMapping("/franchisee/{franchiseeIndex}/vat/detail")
     public ResponseEntity<VatDetailResponse> vatDetail(
-        @PathVariable Long franchiseeIndex,
-        @RequestParam String requestDate
+            @PathVariable Long franchiseeIndex,
+            @RequestParam String requestDate,
+            @KtpIndexInfo IndexInfo indexInfo
     ) {
-        VatDetailResponse vatDetailResponse = vatService.vatDetail(franchiseeIndex, requestDate);
+        VatDetailResponse vatDetailResponse = vatService.vatDetail(indexInfo.getIndex(), requestDate);
         return ResponseEntity.ok(vatDetailResponse);
     }
 
@@ -47,23 +50,27 @@ public class VatController {
     @GetMapping("/franchisee/{franchiseeIndex}/vat/downloads")
     public ResponseEntity<String> vatDownloads(
             @PathVariable Long franchiseeIndex,
-            @RequestParam String requestDate
-    ){
-        String downloadLink = vatDownloadService.vatDownloads(franchiseeIndex,requestDate);
+            @RequestParam String requestDate,
+            @KtpIndexInfo IndexInfo indexInfo
+    ) {
+        String downloadLink = vatDownloadService.vatDownloads(indexInfo.getIndex(), requestDate);
         return ResponseEntity.ok(downloadLink);
     }
+
     // API 호출로 관리자가 한번에 일괄 출력 기능
     @GetMapping("/franchisee/admin/vat/downloads")
     public ResponseEntity<String> vatAdminDownloads(
-            @RequestParam String requestDate){
+            @RequestParam String requestDate) {
         vatDownloadService.vatAdminDownloads(requestDate);
         return ResponseEntity.ok("ok");
     }
 
     @GetMapping("/franchisee/{franchiseeIndex}/vat/hometax")
-    public ResponseEntity<VatHomeTaxDto.Response> homeTaxFile(@PathVariable Long franchiseeIndex,
-                                              @RequestParam String requestDate) throws IOException {
-        VatHomeTaxDto.Response homeTaxResponse = homeTaxService.createHomeTaxUploadFile(franchiseeIndex, requestDate);
+    public ResponseEntity<VatHomeTaxDto.Response> homeTaxFile(
+            @PathVariable Long franchiseeIndex,
+            @RequestParam String requestDate,
+            @KtpIndexInfo IndexInfo indexInfo) throws IOException {
+        VatHomeTaxDto.Response homeTaxResponse = homeTaxService.createHomeTaxUploadFile(indexInfo.getIndex(), requestDate);
         return ResponseEntity.ok(homeTaxResponse);
     }
 }

@@ -1,5 +1,7 @@
 package com.tpay.domains.franchisee.presentation;
 
+import com.tpay.commons.util.IndexInfo;
+import com.tpay.commons.util.resolver.KtpIndexInfo;
 import com.tpay.domains.franchisee.application.PasswordResetService;
 import com.tpay.domains.franchisee.application.dto.PasswordChangeRequest;
 import lombok.RequiredArgsConstructor;
@@ -55,10 +57,11 @@ public class PasswordResetController {
      */
     @GetMapping("/equals/{franchiseeIndex}")
     public ResponseEntity<Boolean> correctPassword(
-        @PathVariable Long franchiseeIndex,
-        @RequestParam String password
-    ) {
-        boolean result = passwordResetService.correctPassword(franchiseeIndex, password);
+            @PathVariable Long franchiseeIndex,
+            @RequestParam String password,
+            @KtpIndexInfo IndexInfo indexInfo
+            ) {
+        boolean result = passwordResetService.correctPassword(indexInfo.getIndex(), password);
         return ResponseEntity.ok(result);
     }
 
@@ -68,8 +71,9 @@ public class PasswordResetController {
     @PatchMapping("/in/{franchiseeIndex}")
     public ResponseEntity<Boolean> resetPassword(
         @PathVariable Long franchiseeIndex,
-        @RequestBody PasswordChangeRequest passwordChangeRequest) {
-        boolean result = passwordResetService.change(franchiseeIndex, passwordChangeRequest);
+        @RequestBody PasswordChangeRequest passwordChangeRequest,
+        @KtpIndexInfo IndexInfo indexInfo) {
+        boolean result = passwordResetService.change(indexInfo.getIndex(), passwordChangeRequest);
         return ResponseEntity.ok(result);
     }
 }

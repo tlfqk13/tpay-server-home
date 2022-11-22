@@ -22,37 +22,32 @@ public class SignInService {
 
     @Transactional
     public SignInTokenInfo signIn(SignInRequest signInRequest) {
-        if (signInRequest.isForcedCheck()) {
-            if (signInRequest.getUserSelector().equals(FRANCHISEE)) {
-                return franchiseeSignInService.signIn(signInRequest.getBusinessNumber(), signInRequest.getPassword(), signInRequest.getPushToken());
-            } else if (signInRequest.getUserSelector().equals(EMPLOYEE)) {
-                return employeeSignInService.signIn(signInRequest.getUserId(), signInRequest.getPassword());
-            } else {
-                throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Parse Failed");
-            }
-        } else {
+        if (!signInRequest.isForcedCheck()) {
             if (duplicateSignIn(signInRequest)) {
                 throw new InvalidParameterException(ExceptionState.DUPLICATE_SIGNIN, "중복 로그인입니다");
-            } else {
-                if (signInRequest.getUserSelector().equals(FRANCHISEE)) {
-                    return franchiseeSignInService.signIn(signInRequest.getBusinessNumber(), signInRequest.getPassword(), signInRequest.getPushToken());
-                } else if (signInRequest.getUserSelector().equals(EMPLOYEE)) {
-                    return employeeSignInService.signIn(signInRequest.getUserId(), signInRequest.getPassword());
-                } else {
-                    throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Parse Failed");
-                }
             }
+        }
+        return signInProc(signInRequest);
+    }
+
+    private SignInTokenInfo signInProc(SignInRequest signInRequest) {
+        if (signInRequest.getUserSelector().equals(FRANCHISEE)) {
+            return franchiseeSignInService.signIn(signInRequest.getBusinessNumber(), signInRequest.getPassword(), signInRequest.getPushToken());
+        } else if (signInRequest.getUserSelector().equals(EMPLOYEE)) {
+            return employeeSignInService.signIn(signInRequest.getUserId(), signInRequest.getPassword());
+        } else {
+            throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Parse Failed");
         }
     }
 
     @Transactional(readOnly = true)
-    public Boolean duplicateSignIn(SignInRequest signInRequest) {
+    public boolean duplicateSignIn(SignInRequest signInRequest) {
         if (signInRequest.getUserSelector().equals(FRANCHISEE)) {
             String businessNumber = signInRequest.getBusinessNumber();
             businessNumber = businessNumber.replaceAll("-", "");
-            return accessTokenService.findByBusinessNumber(businessNumber);
+            return accessTokenService.existByBusinessNumber(businessNumber);
         } else {
-            return accessTokenService.findByEmployeeEntity_UserId(signInRequest.getUserId());
+            return accessTokenService.existByUserId(signInRequest.getUserId());
         }
     }
 }

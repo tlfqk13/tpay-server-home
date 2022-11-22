@@ -9,11 +9,17 @@ import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+
+/**
+ * refresh token과 refresh token을 관리하는 테이블이 다르고
+ * 연관관계를 각 토큰의 테이블에서 관리하기에 점주나 직원의 엔티티로 토큰을 관리하는 복잡성이 올라감
+ * 향후 토큰관리 테이블을 하나로 합치고 연관관계 재정립이 필요할 것으로 사료됨
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
