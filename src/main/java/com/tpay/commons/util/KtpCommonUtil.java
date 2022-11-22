@@ -20,10 +20,22 @@ public class KtpCommonUtil {
         return Duration.between(APPLICATION_START_TIME, LocalDateTime.now()).getSeconds() < ONE_MINUTE;
     }
 
-    public static IndexInfo getIndexInfoFromClaims(Claims claims) {
+    public static IndexInfo getIndexInfoFromAccessToken(Claims claims) {
         Object accessE = claims.get("accessE");
         if (null == accessE) {
             Object accessF = claims.get("accessF");
+            if (null != accessF) {
+                return new IndexInfo(FRANCHISEE, String.valueOf(accessF));
+            }
+            throw new JwtRuntimeException(ExceptionState.INVALID_TOKEN, "Token doesn't have valid user info");
+        }
+        return new IndexInfo(EMPLOYEE, String.valueOf(accessE));
+    }
+
+    public static IndexInfo getIndexInfoFromRefreshToken(Claims claims) {
+        Object accessE = claims.get("refreshE");
+        if (null == accessE) {
+            Object accessF = claims.get("refreshF");
             if (null != accessF) {
                 return new IndexInfo(FRANCHISEE, String.valueOf(accessF));
             }

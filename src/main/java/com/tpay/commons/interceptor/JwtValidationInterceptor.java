@@ -123,7 +123,7 @@ public class JwtValidationInterceptor implements HandlerInterceptor {
     private boolean compareUriWithToken(HttpServletRequest request) {
         AuthToken authToken = getAuthToken(request);
         Claims claims = authToken.getData();
-        IndexInfo tokenInfo = KtpCommonUtil.getIndexInfoFromClaims(claims);
+        IndexInfo tokenInfo = KtpCommonUtil.getIndexInfoFromAccessToken(claims);
         IndexInfo uriInfo = getIndexFromUri(request);
 
         UserSelector tokenUserSelector = tokenInfo.getUserSelector();

@@ -2,9 +2,11 @@ package com.tpay.commons.config;
 
 import com.tpay.commons.interceptor.JwtValidationInterceptor;
 import com.tpay.commons.interceptor.PrintRequestInterceptor;
+import com.tpay.commons.util.resolver.KtpIndexInfoResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -17,7 +19,7 @@ import java.util.List;
 public class WebMvcConfig implements WebMvcConfigurer {
     private final PrintRequestInterceptor printRequestInterceptor;
     private final JwtValidationInterceptor jwtValidationInterceptor;
-
+    private final KtpIndexInfoResolver indexInfoResolver;
     @Value("${spring.config.activate.on-profile}")
     private String profileName;
 
@@ -25,10 +27,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         List<String> exclusivePathList = new ArrayList<>(List.of("/sign-in",
                 "/sign-up",
-                "/sign-out",
                 "/duplicate-sign-out",
-                // TODO: 2022/09/07 계정 삭제 건 추가
-                "/delete-account",
                 "/refresh",
                 "/categories",
                 "/certifications/**",
@@ -88,5 +87,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .addMapping("/**")
                 .allowedOriginPatterns("*")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH");
+    }
+
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+        resolvers.add(indexInfoResolver);
     }
 }
