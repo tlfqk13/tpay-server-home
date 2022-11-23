@@ -21,7 +21,7 @@ public class RefundReceiptController {
     @PostMapping("/refund/receipt")
     public ResponseEntity<List<RefundReceiptDto.Response>> findRefundReceipt(
             @RequestBody RefundReceiptDto.Request request
-    ){
+    ) {
         List<RefundReceiptDto.Response> refundReceiptList = refundReceiptFindService.findRefundReceiptDetail(request);
         return ResponseEntity.ok(refundReceiptList);
     }
@@ -29,11 +29,8 @@ public class RefundReceiptController {
     @PostMapping("/refund/receipt/downloads")
     public ResponseEntity<String> downloadsRefundReceipt(
             @RequestBody RefundReceiptDto.Request request
-    ){
+    ) {
         refundReceiptDownloadsService.downloadsRefundReceipt(request);
         return ResponseEntity.ok("ok");
     }
-
-
-
 }

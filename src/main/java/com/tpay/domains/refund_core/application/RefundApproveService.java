@@ -40,7 +40,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 import static com.tpay.commons.util.UserSelector.EMPLOYEE;
-import static com.tpay.commons.util.UserSelector.FRANCHISEE;
 
 @Service
 @RequiredArgsConstructor
@@ -61,24 +60,23 @@ public class RefundApproveService {
     private final EmployeeAccessTokenRepository employeeAccessTokenRepository;
 
     @Transactional
-    public RefundResponse approve(RefundSaveRequest request) {
+    public RefundResponse approve(RefundSaveRequest request, IndexInfo indexInfo) {
 
-        // TODO: 2022/10/11 가격 조회 - 30,000 미만일 경우 알기 위해서
         int checkMinPrice = Integer.parseInt(request.getPrice());
         if (checkMinPrice < 30000) {
             log.debug(" @@ Item Price = {}", request.getPrice());
             throw new InvalidParameterException(ExceptionState.CHECK_ITEM_PRICE);
         }
 
-        validationCheckEmployee(request);
+        Long franchiseeIndex = getFranchiseeIndex(indexInfo);
 
         OrderEntity orderEntity = orderSaveService.save(request);
         log.debug("Order saved Id = {} ", orderEntity.getId());
         log.trace(" @@ orderEntity = {}", orderEntity.getTotalRefund());
 
-        updateUserDeviceInfo(request, orderEntity);
+        updateUserDeviceInfo(request, orderEntity, indexInfo);
 
-        FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(request.getFranchiseeIndex());
+        FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
         RefundApproveRequest refundApproveRequest = RefundApproveRequest.of(orderEntity);
 
         String uri = CustomValue.REFUND_SERVER + "/refund/approval";
@@ -215,51 +213,56 @@ public class RefundApproveService {
         refund.updateCancel();
     }
 
-    private void updateUserDeviceInfo(RefundSaveRequest request, OrderEntity orderEntity) {
-        if (request.getUserSelector().equals(EMPLOYEE)) {
-            EmployeeEntity employeeEntity = employeeFindService.findById(request.getEmployeeIndex())
-                    .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Employee not exists"));
+    private void updateUserDeviceInfo(RefundSaveRequest request, OrderEntity orderEntity, IndexInfo indexInfo) {
+        if (indexInfo.getUserSelector() == EMPLOYEE) {
+            EmployeeAccessTokenEntity employeeAccessTokenEntity =
+                    employeeAccessTokenRepository.findByEmployeeEntityId(indexInfo.getIndex())
+                            .orElseThrow(NullPointerException::new);
+
+            EmployeeEntity employeeEntity = employeeAccessTokenEntity.getEmployeeEntity();
             orderEntity.setEmployeeEntity(employeeEntity);
 
-            EmployeeAccessTokenEntity employeeAccessTokenEntity =
-                    employeeAccessTokenRepository.findByEmployeeEntityId(request.getEmployeeIndex())
-                            .orElseThrow(NullPointerException::new);
-
-            if (request.getDevice() == null) {
-                log.warn("Employee Device info no save Device is Null");
-            } else {
-                employeeAccessTokenEntity.updateDeviceInfo(
-                        request.getDevice().getName(),
-                        request.getDevice().getOs(),
-                        request.getDevice().getAppVersion());
-                log.trace("Employee Device info save");
-            }
-        } else if (request.getUserSelector().equals(FRANCHISEE)) {
-            FranchiseeAccessTokenEntity franchiseeTokenEntity =
-                    franchiseeAccessTokenRepository.findByFranchiseeEntityId(request.getFranchiseeIndex())
-                            .orElseThrow(NullPointerException::new);
-
-            if (request.getDevice() == null) {
-                log.warn("Franchisee Device info no save Device is Null");
-            } else {
-                franchiseeTokenEntity.updateDeviceInfo(
-                        request.getDevice().getName(),
-                        request.getDevice().getOs(),
-                        request.getDevice().getAppVersion());
-                log.trace("Franchisee Device info save");
-            }
+            updateEmployeeDeviceInfo(request, employeeAccessTokenEntity);
         } else {
-            throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "UserSelector must FRANCHISEE or EMPLOYEE");
+            FranchiseeAccessTokenEntity franchiseeTokenEntity =
+                    franchiseeAccessTokenRepository.findByFranchiseeEntityId(indexInfo.getIndex())
+                            .orElseThrow(NullPointerException::new);
+
+            updateFranchiseeDeviceInfo(request, franchiseeTokenEntity);
         }
     }
 
-    private void validationCheckEmployee(RefundSaveRequest request) {
-        if (request.getUserSelector().equals(EMPLOYEE)) {
-            EmployeeEntity employeeEntity = employeeFindService.findById(request.getEmployeeIndex())
-                    .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Employee not exists"));
-            request.updateFranchiseeIndex(employeeEntity);
-        } else if (!request.getUserSelector().equals(FRANCHISEE)) {
-            throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "UserSelector must FRANCHISEE or EMPLOYEE");
+    private void updateEmployeeDeviceInfo(RefundSaveRequest request, EmployeeAccessTokenEntity employeeAccessTokenEntity) {
+        if (request.getDevice() == null) {
+            log.warn("Employee Device info no save Device is Null");
+        } else {
+            employeeAccessTokenEntity.updateDeviceInfo(
+                    request.getDevice().getName(),
+                    request.getDevice().getOs(),
+                    request.getDevice().getAppVersion());
+            log.trace("Employee Device info save");
         }
+    }
+
+    private void updateFranchiseeDeviceInfo(RefundSaveRequest request, FranchiseeAccessTokenEntity franchiseeTokenEntity) {
+        if (request.getDevice() == null) {
+            log.warn("Franchisee Device info no save Device is Null");
+        } else {
+            franchiseeTokenEntity.updateDeviceInfo(
+                    request.getDevice().getName(),
+                    request.getDevice().getOs(),
+                    request.getDevice().getAppVersion());
+            log.trace("Franchisee Device info save");
+        }
+    }
+
+    private Long getFranchiseeIndex(IndexInfo indexInfo) {
+        if (EMPLOYEE == indexInfo.getUserSelector()) {
+            EmployeeEntity employeeEntity = employeeFindService.findById(indexInfo.getIndex())
+                    .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Employee not exists"));
+            return employeeEntity.getFranchiseeEntity().getId();
+        }
+
+        return indexInfo.getIndex();
     }
 }
