@@ -40,7 +40,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 "/refund/admin-cancel/**",
                 "/notice/**",
                 "/duplicate",
-                // TODO: 2022/09/26 NICE_VAN 관련 데이터 로직
                 "/order/**",
 
                 // 외부 연동 컨트롤러 (외부에서 접속하는 controller)
@@ -55,10 +54,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 "/api/**",          // KTP-API
 
                 // 테스트 관련 컨트롤러
-                // TODO: 2022/07/26 test url 권한 추가
-                "/test/admin/**",
-                "/test/refunds/**",
-                "/test/points/**",
+                "/test/**",
 
                 // h2 및 기타 설정파일
                 "/error",

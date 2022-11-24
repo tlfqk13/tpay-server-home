@@ -1,7 +1,6 @@
-package com.tpay.domains.refund_test.dto;
+package com.tpay.domains.refund.application.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
-import com.tpay.domains.refund.application.dto.RefundDetailTotalResponse;
 import lombok.*;
 
 import java.util.List;

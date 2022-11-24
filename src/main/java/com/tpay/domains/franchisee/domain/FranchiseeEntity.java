@@ -210,7 +210,7 @@ public class FranchiseeEntity extends BaseTimeEntity {
         return this;
     }
 
-    // TODO: 2022/08/19 어드민 상세보기 > 수정하기
+    // 2022/08/19 어드민 상세보기 > 수정하기
     public FranchiseeEntity updateFranchisee(DetailFranchiseeInfo request){
         this.storeName = request.getStoreName();
         this.sellerName = request.getSellerName();

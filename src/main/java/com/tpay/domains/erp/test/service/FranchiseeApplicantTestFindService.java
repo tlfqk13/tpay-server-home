@@ -1,4 +1,4 @@
-package com.tpay.domains.franchisee_applicant_test.application;
+package com.tpay.domains.erp.test.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tpay.commons.exception.ExceptionState;
@@ -96,7 +96,7 @@ public class FranchiseeApplicantTestFindService {
         return franchiseeApplicantEntity;
     }
 
-    // TODO: 2022/04/26 조회하려는 컬럼 분리
+    // 2022/04/26 조회하려는 컬럼 분리
     public FranchiseeApplicantFindResponse applicantFilter(FilterSelector filterSelector, String value, int page, String searchKeyword) {
         List<Boolean> booleanList = new ArrayList<>(List.of(false));
         List<FranchiseeStatus> franchiseeStatusList = new ArrayList<>();

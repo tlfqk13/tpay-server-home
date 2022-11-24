@@ -41,7 +41,7 @@ public class FranchiseeApplicantFindService {
         return franchiseeApplicantEntity;
     }
 
-    // TODO: 2022/07/21 관리자페이지 페이징 기능 개발
+    // 2022/07/21 관리자페이지 페이징 기능 개발
     public FranchiseeApplicantFindResponse findAll(int page, String searchKeyword) {
         PageRequest pageRequest = PageRequest.of(page, 15);
         Page<FranchiseeApplicantEntity> franchiseeApplicantEntityPage;
@@ -89,7 +89,7 @@ public class FranchiseeApplicantFindService {
     }
 
 
-    // TODO: 2022/04/26 조회하려는 컬럼 분리
+    // 2022/04/26 조회하려는 컬럼 분리
     public FranchiseeApplicantFindResponse applicantFilter(FilterSelector filterSelector, String value, int page, String searchKeyword) {
         List<Boolean> booleanList = new ArrayList<>(List.of(false));
         List<FranchiseeStatus> franchiseeStatusList = new ArrayList<>();

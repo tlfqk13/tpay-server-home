@@ -73,7 +73,7 @@ public class SaleAnalysisFindControllerTest {
             "    \"userSelector\": \"FRANCHISEE\"\n" +
             "}";
         RefundSaveRequest refundSaveRequest = objectMapper.readValue(json, RefundSaveRequest.class);
-        orderEntity = orderSaveService.save(refundSaveRequest);
+        orderEntity = orderSaveService.save(refundSaveRequest, 1L);
         refundEntity = refundService.save("0000", "123412341234", "99999999999", orderEntity);
 
     }

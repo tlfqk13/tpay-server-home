@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class SaleAnalysisFindService {
 
     private final RefundRepository refundRepository;
-    // TODO: 2022/08/01 가맹점 현황 > 환급 상세 > 환급 내역 총계
+    // 2022/08/01 가맹점 현황 > 환급 상세 > 환급 내역 총계
     public List<SaleAnalysisFindResponse> findByDateRange(
         Long franchiseeIndex, DateFilter dateFilter, LocalDate startDate, LocalDate endDate) {
 
