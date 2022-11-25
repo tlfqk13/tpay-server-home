@@ -1,4 +1,4 @@
-package com.tpay.domains.notice_test.application;
+package com.tpay.domains.erp.test.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tpay.commons.aws.S3FileUploader;
@@ -13,7 +13,6 @@ import com.tpay.domains.notice.domain.NoticeRepository;
 import com.tpay.domains.push.application.dto.PushNoticeDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;

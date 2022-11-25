@@ -1,14 +1,11 @@
-package com.tpay.domains.refund_test.application;
+package com.tpay.domains.erp.test.service;
 
 import com.tpay.domains.customer.application.CustomerService;
 import com.tpay.domains.customer.domain.CustomerEntity;
+import com.tpay.domains.erp.test.dto.RefundTestPagingFindResponse;
 import com.tpay.domains.refund.application.dto.*;
 import com.tpay.domains.refund.domain.RefundRepository;
 import com.tpay.domains.refund.domain.RefundStatus;
-import com.tpay.domains.refund_test.dto.RefundDetailTotalDto;
-import com.tpay.domains.refund_test.dto.RefundFindAllDto;
-import com.tpay.domains.refund_test.dto.RefundFindDto;
-import com.tpay.domains.refund_test.dto.RefundTestPagingFindResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -23,7 +20,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class RefundTestDetailFindService {
+public class ErpRefundDetailFindTestService {
 
     private final RefundRepository refundRepository;
     private final CustomerService customerService;

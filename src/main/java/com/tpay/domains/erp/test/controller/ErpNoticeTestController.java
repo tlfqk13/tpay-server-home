@@ -1,7 +1,6 @@
-package com.tpay.domains.notice_test.presentation;
+package com.tpay.domains.erp.test.controller;
 
-import com.tpay.domains.notice_test.application.NoticeTestService;
-import com.tpay.domains.notice.application.dto.AppNoticeFindDto;
+import com.tpay.domains.erp.test.service.NoticeTestService;
 import com.tpay.domains.notice.application.dto.CommonNoticeFindDto;
 import com.tpay.domains.notice.application.dto.DataList;
 import com.tpay.domains.notice.application.dto.InvisibleUpdateDto;
@@ -14,12 +13,12 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/test")
-public class NoticeTestController {
+@RequestMapping("/test/admin/notice")
+public class ErpNoticeTestController {
 
     private final NoticeTestService noticeTestService;
 
-    @PostMapping("/admin/notice")
+    @PostMapping
     public void registration(
         @RequestParam("dataList") String dataListString,
         @RequestParam(required = false) MultipartFile mainImg,
@@ -30,14 +29,14 @@ public class NoticeTestController {
         noticeTestService.registration(dataListString, mainImg, subImg1, subImg2, subImg3);
     }
 
-    @GetMapping("/admin/notice")
+    @GetMapping
     public ResponseEntity<List<CommonNoticeFindDto.FindAllResponse>> getAll(
     ) {
         List<CommonNoticeFindDto.FindAllResponse> all = noticeTestService.getAll();
         return ResponseEntity.ok(all);
     }
 
-    @GetMapping("/admin/notice/{noticeIndex}")
+    @GetMapping("/{noticeIndex}")
     public ResponseEntity<CommonNoticeFindDto.FindOneResponse> getOne(
         @PathVariable Long noticeIndex
     ) {
@@ -45,32 +44,21 @@ public class NoticeTestController {
         return ResponseEntity.ok(one);
     }
 
-    @PatchMapping("/admin/notice/{noticeIndex}")
+    @PatchMapping("/{noticeIndex}")
     public void updateInvisible(@PathVariable Long noticeIndex,
     @RequestBody InvisibleUpdateDto invisibleUpdateDto){
         noticeTestService.updateInvisible(noticeIndex,invisibleUpdateDto);
     }
 
-    @DeleteMapping("/admin/notice/{noticeIndex}")
+    @DeleteMapping("/{noticeIndex}")
     public void deleteNotification(@PathVariable Long noticeIndex){
         noticeTestService.deleteNotification(noticeIndex);
     }
 
-    @PutMapping("/admin/notice/{noticeIndex}")
+    @PutMapping("/{noticeIndex}")
     public void updateNotice(@PathVariable Long noticeIndex,
     @RequestBody DataList dataList ) {
         noticeTestService.updateNotice(noticeIndex,dataList);
     }
 
-    @GetMapping("/notice")
-    public ResponseEntity<AppNoticeFindDto.FindAllResponse> getAllApp(){
-        AppNoticeFindDto.FindAllResponse result = noticeTestService.getAllApp();
-        return ResponseEntity.ok(result);
-    }
-
-    @GetMapping("/notice/{noticeIndex}")
-    public ResponseEntity<CommonNoticeFindDto.FindOneResponse> getOneApp(@PathVariable Long noticeIndex){
-        CommonNoticeFindDto.FindOneResponse oneApp = noticeTestService.getOneApp(noticeIndex);
-        return ResponseEntity.ok(oneApp);
-    }
 }

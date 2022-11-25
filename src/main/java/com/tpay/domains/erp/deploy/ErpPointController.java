@@ -1,8 +1,11 @@
-package com.tpay.domains.point.presentation;
+package com.tpay.domains.erp.deploy;
 
 import com.tpay.domains.point.application.PointFindService;
 import com.tpay.domains.point.application.PointUpdateService;
-import com.tpay.domains.point.application.dto.*;
+import com.tpay.domains.point.application.dto.AdminPointResponse;
+import com.tpay.domains.point.application.dto.PointFindDetailResponse;
+import com.tpay.domains.point.application.dto.PointUpdateRequest;
+import com.tpay.domains.point.application.dto.WithdrawalStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/admin/points")
-public class AdminPointController {
+public class ErpPointController {
 
     private final PointFindService pointFindService;
     private final PointUpdateService pointUpdateService;

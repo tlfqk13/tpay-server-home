@@ -1,8 +1,11 @@
-package com.tpay.domains.point_test.presentation;
+package com.tpay.domains.erp.test.controller;
 
-import com.tpay.domains.point_test.application.PointTestFindService;
+import com.tpay.domains.erp.test.service.PointTestFindService;
 import com.tpay.domains.point.application.PointUpdateService;
-import com.tpay.domains.point.application.dto.*;
+import com.tpay.domains.point.application.dto.AdminPointResponse;
+import com.tpay.domains.point.application.dto.PointFindDetailResponse;
+import com.tpay.domains.point.application.dto.PointUpdateRequest;
+import com.tpay.domains.point.application.dto.WithdrawalStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/test/admin/points")
-public class AdminPointTestController {
+public class ErpPointTestController {
 
     private final PointTestFindService pointTestFindService;
     private final PointUpdateService pointUpdateService;

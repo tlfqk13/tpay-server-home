@@ -1,4 +1,4 @@
-package com.tpay.domains.search.application.dto;
+package com.tpay.domains.erp.deploy.dto;
 
 import lombok.*;
 

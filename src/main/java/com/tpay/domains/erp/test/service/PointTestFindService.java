@@ -1,4 +1,4 @@
-package com.tpay.domains.point_test.application;
+package com.tpay.domains.erp.test.service;
 
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;

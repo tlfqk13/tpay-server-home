@@ -1,6 +1,7 @@
-package com.tpay.domains.refund_test.dto;
+package com.tpay.domains.erp.test.dto;
 
 
+import com.tpay.domains.refund.application.dto.RefundFindAllDto;
 import lombok.*;
 
 import java.util.List;

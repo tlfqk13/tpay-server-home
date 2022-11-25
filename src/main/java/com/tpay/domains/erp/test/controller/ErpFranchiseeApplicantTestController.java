@@ -1,31 +1,19 @@
-package com.tpay.domains.franchisee_applicant_test.presentation;
+package com.tpay.domains.erp.test.controller;
 
+import com.tpay.domains.erp.test.service.FranchiseeApplicantTestFindService;
 import com.tpay.domains.franchisee_applicant.application.*;
 import com.tpay.domains.franchisee_applicant.application.dto.*;
-import com.tpay.domains.franchisee_applicant_test.application.FranchiseeApplicantTestFindService;
 import com.tpay.domains.franchisee_upload.application.FranchiseeUploadService;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-/**
- * 가맹점 신청 관련 Admin 페이지 기능
- * 가맹점 수락/거절
- * 가맹점 신청 기본/상세 조회
- * 사후면세판매장 지정증 업데이트
- * 읽음처리
- */
 @RestController
-@Api(tags = "어드민 - 가맹점 신청 관련")
-@RequestMapping("/test/admin/franchisee-applicants")
 @RequiredArgsConstructor
-@Slf4j
-public class AdminFranchiseeApplicantTest {
-
+@RequestMapping("/test/admin/franchisee-applicants")
+public class ErpFranchiseeApplicantTestController{
     private final FranchiseeApplicantAcceptService franchiseeApplicantAcceptService;
     private final FranchiseeApplicantDetailService franchiseeApplicantDetailService;
     private final FranchiseeApplicantSetNumberService franchiseeApplicantSetNumberService;
@@ -41,9 +29,9 @@ public class AdminFranchiseeApplicantTest {
     @PutMapping("/{franchiseeApplicantIndex}")
     @ApiOperation(value = "가맹점 신청 수락", notes = "어드민에서 가맹점 신청 수락시 로직")
     public ResponseEntity<FranchiseeFindRequest> accept(
-        @PathVariable Long franchiseeApplicantIndex, @RequestBody FranchiseeFindRequest franchiseeFindRequest) {
+            @PathVariable Long franchiseeApplicantIndex, @RequestBody FranchiseeFindRequest franchiseeFindRequest) {
         FranchiseeFindRequest response =
-            franchiseeApplicantAcceptService.accept(franchiseeApplicantIndex, franchiseeFindRequest);
+                franchiseeApplicantAcceptService.accept(franchiseeApplicantIndex, franchiseeFindRequest);
         return ResponseEntity.ok(response);
     }
 
@@ -53,10 +41,10 @@ public class AdminFranchiseeApplicantTest {
     @PatchMapping("/{franchiseeApplicantIndex}")
     @ApiOperation(value = "가맹점 신청 거절", notes = "어드민에서 가맹점 신청 거절시 로직")
     public ResponseEntity reject(
-        @PathVariable Long franchiseeApplicantIndex,
-        @RequestBody FranchiseeApplicantRejectRequest rejectRequest) {
+            @PathVariable Long franchiseeApplicantIndex,
+            @RequestBody FranchiseeApplicantRejectRequest rejectRequest) {
         franchiseeApplicantRejectService.reject(
-            franchiseeApplicantIndex, rejectRequest.getRejectReason());
+                franchiseeApplicantIndex, rejectRequest.getRejectReason());
         return ResponseEntity.ok().build();
     }
 
@@ -82,7 +70,7 @@ public class AdminFranchiseeApplicantTest {
         return ResponseEntity.ok(result);
     }
 
-    // TODO: 2022/08/19 가맹점 상세보기 > 회원정보 수정
+    // 2022/08/19 가맹점 상세보기 > 회원정보 수정
     @PatchMapping("/update/{franchiseeApplicantIndex}")
     public ResponseEntity<FranchiseeApplicantDetailUpdateResponse> updateFranchiseeInfo(
             @PathVariable Long franchiseeApplicantIndex,

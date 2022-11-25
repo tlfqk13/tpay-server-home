@@ -1,4 +1,4 @@
-package com.tpay.domains.franchisee_applicant.presentation;
+package com.tpay.domains.erp.deploy;
 
 import com.tpay.domains.franchisee_applicant.application.*;
 import com.tpay.domains.franchisee_applicant.application.dto.*;
@@ -21,8 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Api(tags = "어드민 - 가맹점 신청 관련")
 @RequestMapping("/admin/franchisee-applicants")
 @RequiredArgsConstructor
-public class AdminFranchiseeApplicant {
-
+public class ErpFranchiseeApplicantController {
     private final FranchiseeApplicantAcceptService franchiseeApplicantAcceptService;
     private final FranchiseeApplicantDetailService franchiseeApplicantDetailService;
     private final FranchiseeApplicantSetNumberService franchiseeApplicantSetNumberService;
@@ -31,7 +30,6 @@ public class AdminFranchiseeApplicant {
     private final FranchiseeApplicantRejectService franchiseeApplicantRejectService;
     private final FranchiseeApplicantSetBalancePerService franchiseeApplicantSetBalancePerService;
     private final FranchiseeUploadService franchiseeUploadService;
-
     private final FranchiseeApplicantUpdateService franchiseeApplicantUpdateService;
 
     /**
@@ -40,9 +38,9 @@ public class AdminFranchiseeApplicant {
     @PutMapping("/{franchiseeApplicantIndex}")
     @ApiOperation(value = "가맹점 신청 수락", notes = "어드민에서 가맹점 신청 수락시 로직")
     public ResponseEntity<FranchiseeFindRequest> accept(
-        @PathVariable Long franchiseeApplicantIndex, @RequestBody FranchiseeFindRequest franchiseeFindRequest) {
+            @PathVariable Long franchiseeApplicantIndex, @RequestBody FranchiseeFindRequest franchiseeFindRequest) {
         FranchiseeFindRequest response =
-            franchiseeApplicantAcceptService.accept(franchiseeApplicantIndex, franchiseeFindRequest);
+                franchiseeApplicantAcceptService.accept(franchiseeApplicantIndex, franchiseeFindRequest);
         return ResponseEntity.ok(response);
     }
 
@@ -51,11 +49,11 @@ public class AdminFranchiseeApplicant {
      */
     @PatchMapping("/{franchiseeApplicantIndex}")
     @ApiOperation(value = "가맹점 신청 거절", notes = "어드민에서 가맹점 신청 거절시 로직")
-    public ResponseEntity reject(
-        @PathVariable Long franchiseeApplicantIndex,
-        @RequestBody FranchiseeApplicantRejectRequest rejectRequest) {
+    public ResponseEntity<Void> reject(
+            @PathVariable Long franchiseeApplicantIndex,
+            @RequestBody FranchiseeApplicantRejectRequest rejectRequest) {
         franchiseeApplicantRejectService.reject(
-            franchiseeApplicantIndex, rejectRequest.getRejectReason());
+                franchiseeApplicantIndex, rejectRequest.getRejectReason());
         return ResponseEntity.ok().build();
     }
 

@@ -1,9 +1,9 @@
-package com.tpay.domains.refund_test.presentation;
+package com.tpay.domains.erp.test.controller;
 
+import com.tpay.domains.erp.test.dto.RefundTestPagingFindResponse;
+import com.tpay.domains.erp.test.service.ErpRefundDetailFindTestService;
+import com.tpay.domains.refund.application.dto.RefundDetailTotalDto;
 import com.tpay.domains.refund.domain.RefundStatus;
-import com.tpay.domains.refund_test.application.RefundTestDetailFindService;
-import com.tpay.domains.refund_test.dto.RefundDetailTotalDto;
-import com.tpay.domains.refund_test.dto.RefundTestPagingFindResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/test")
+@RequestMapping("/test/admin/refunds")
 @Slf4j
-public class RefundTestFindController {
-    private final RefundTestDetailFindService refundTestDetailFindService;
+public class ErpRefundFindTestController {
+    private final ErpRefundDetailFindTestService refundTestDetailFindService;
 
-    // TODO: 2022/10/26 환급 현황 All
-    @GetMapping("/admin/refunds")
+    // 2022/10/26 환급 현황 All
+    @GetMapping
     public ResponseEntity<RefundTestPagingFindResponse> findAll(
             @RequestParam int page,
             @RequestParam String startDate,
@@ -29,8 +29,8 @@ public class RefundTestFindController {
         return ResponseEntity.ok(response);
     }
 
-    // TODO: 2022/10/26  가맹점현황 > 환급현황
-    @GetMapping("/admin/refunds/{franchiseeIndex}")
+    // 2022/10/26  가맹점현황 > 환급현황
+    @GetMapping("/{franchiseeIndex}")
     public ResponseEntity<RefundDetailTotalDto.Response> findRefundDetail(
             @PathVariable Long franchiseeIndex,
             @RequestParam String startDate,
