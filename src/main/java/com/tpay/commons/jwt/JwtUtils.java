@@ -46,7 +46,7 @@ public class JwtUtils {
             bearerToken = token.substring(7);
         }
         log.trace("Auth Token Data : {} , {} ", bearerToken, key);
-        return new AuthToken(token, key);
+        return new AuthToken(bearerToken, key);
     }
 
     // TODO: 2022/09/07 자동 로그인 이슈 테스트 !!!!!!! * 테스트 반드시 수정
