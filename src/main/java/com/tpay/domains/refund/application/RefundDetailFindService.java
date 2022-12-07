@@ -35,7 +35,7 @@ public class RefundDetailFindService {
         DateTimeFormatter yyyyMMdd = DateTimeFormatter.ofPattern("yyyyMMdd");
         LocalDate startLocalDate = LocalDate.parse("20" + startDate, yyyyMMdd);
         LocalDate endLocalDate = LocalDate.parse("20" + endDate, yyyyMMdd).plusDays(1);
-        PageRequest pageRequest = PageRequest.of(page, 15);
+        PageRequest pageRequest = PageRequest.of(page, 10);
         boolean isBusinessNumber = searchKeyword.chars().allMatch(Character::isDigit);
 
         Page<RefundFindAllDto.Response> response = refundRepository.findRefundAll(pageRequest, startLocalDate, endLocalDate, searchKeyword.isEmpty()

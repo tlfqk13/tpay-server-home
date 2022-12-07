@@ -188,7 +188,7 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
                 return franchiseeEntity.businessNumber.eq(keyword).and(refundEntity.refundStatus.in(refundStatus));
             }else{
                 if(refundStatus.equals(RefundStatus.ALL)){
-                    return franchiseeEntity.businessNumber.eq(keyword);
+                    return franchiseeEntity.storeName.eq(keyword);
                 }
                 return franchiseeEntity.storeName.eq(keyword).and(refundEntity.refundStatus.in(refundStatus));
             }

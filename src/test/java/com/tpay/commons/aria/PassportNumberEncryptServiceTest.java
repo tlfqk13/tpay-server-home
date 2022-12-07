@@ -11,7 +11,7 @@ class PassportNumberEncryptServiceTest {
 
     @Test
     void passportEncryptionTest() {
-        String passportNumber = "SUCCESS15";
+        String passportNumber = "M16144743";
         String encryptPassportNumber = encryptService.encrypt(passportNumber);
         System.out.println("encryptPassportNumber = " + encryptPassportNumber);
         String decryptPassportNumber = decryptService.decrypt(encryptPassportNumber);

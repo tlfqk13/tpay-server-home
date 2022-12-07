@@ -158,7 +158,8 @@ public class CmsService {
         LocalDate startLocalDate = date.get(0);
         LocalDate endLocalDate = date.get(1);
 
-        String requestYearMonthly =  String.valueOf(endLocalDate.getYear()).substring(2) + endLocalDate.getMonthValue();
+        String requestYearMonthly =  String.valueOf(endLocalDate.getYear()).substring(2)
+                + endLocalDate.getMonthValue();
         log.trace(" @@ requestYearMonthly = {}", requestYearMonthly);
 
         List<List<String>> totalResult = refundDetailFindService.findFranchiseeId(startLocalDate,endLocalDate);
@@ -285,12 +286,17 @@ public class CmsService {
             monthInt = Integer.parseInt(requestDate.substring(2).replaceAll("0", ""));
         }
 
-        LocalDate startDate = LocalDate.of(yearInt,monthInt-1,1);
-        LocalDate endDate = LocalDate.of(yearInt,monthInt,1);
+        LocalDate startDate = LocalDate.of(yearInt,monthInt,1);
+        LocalDate endDate = LocalDate.of(yearInt,monthInt+1,1);
         startDate.format(DateTimeFormatter.BASIC_ISO_DATE);
         endDate.format(DateTimeFormatter.BASIC_ISO_DATE);
 
         List<LocalDate> dateList = new ArrayList<>();
+        endDate = endDate.minusDays(1);
+        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+        System.out.println(startDate);
+        System.out.println(endDate);
+        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
         dateList.add(startDate);
         dateList.add(endDate);
         return dateList;

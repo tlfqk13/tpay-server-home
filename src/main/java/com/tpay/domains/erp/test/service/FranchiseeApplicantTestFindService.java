@@ -54,7 +54,7 @@ public class FranchiseeApplicantTestFindService {
     }
 
     public FranchiseeApplicantFindResponse findAll(int page, String searchKeyword) {
-        PageRequest pageRequest = PageRequest.of(page, 15);
+        PageRequest pageRequest = PageRequest.of(page, 10);
         Page<FranchiseeApplicantEntity> franchiseeApplicantEntityPage;
 
         if (!searchKeyword.isEmpty()) {
@@ -98,7 +98,7 @@ public class FranchiseeApplicantTestFindService {
 
     // TODO: 2022/04/26 조회하려는 컬럼 분리
     public FranchiseeApplicantFindResponse applicantFilterTest(FilterSelector filterSelector, String value, int page, String searchKeyword) {
-        PageRequest pageRequest = PageRequest.of(page, 15);
+        PageRequest pageRequest = PageRequest.of(page, 10);
         boolean isBusinessNumber = searchKeyword.chars().allMatch(Character::isDigit);
         Page<FranchiseeApplicantEntity> franchiseeApplicantEntityList = null;
 

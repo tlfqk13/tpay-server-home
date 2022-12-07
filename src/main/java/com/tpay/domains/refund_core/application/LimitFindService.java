@@ -68,6 +68,7 @@ public class LimitFindService {
 
             // TODO: 2022/11/04 사후환급 신청 가맹점 여부 조회를 위해...
             if(request.getFranchiseeIndex() != null) {
+                log.trace(" @@ request.getFranchiseeIndex() ! null @@ ");
                 FranchiseeEntity franchiseeEntity = franchiseeRepository.findById(request.getFranchiseeIndex())
                         .orElseThrow(() -> new IllegalArgumentException("Invalid Franchisee Entity"));
                 return refundResponse.addCustomerInfo(customerEntityId, franchiseeEntity.getIsAfterRefund());

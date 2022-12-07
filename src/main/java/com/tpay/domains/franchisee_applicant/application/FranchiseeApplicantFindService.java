@@ -43,7 +43,7 @@ public class FranchiseeApplicantFindService {
 
     // 2022/07/21 관리자페이지 페이징 기능 개발
     public FranchiseeApplicantFindResponse findAll(int page, String searchKeyword) {
-        PageRequest pageRequest = PageRequest.of(page, 15);
+        PageRequest pageRequest = PageRequest.of(page, 10);
         Page<FranchiseeApplicantEntity> franchiseeApplicantEntityPage;
 
         if (!searchKeyword.isEmpty()) {
@@ -94,7 +94,7 @@ public class FranchiseeApplicantFindService {
         List<Boolean> booleanList = new ArrayList<>(List.of(false));
         List<FranchiseeStatus> franchiseeStatusList = new ArrayList<>();
         Page<FranchiseeApplicantEntity> franchiseeApplicantEntityList;
-        PageRequest pageRequest = PageRequest.of(page, 15);
+        PageRequest pageRequest = PageRequest.of(page, 10);
         boolean isBusinessNumber = searchKeyword.chars().allMatch(Character::isDigit);
 
         if (!searchKeyword.isEmpty()) {
