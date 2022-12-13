@@ -56,30 +56,24 @@ public class LimitFindService {
             Long customerEntityId;
             Optional<CustomerEntity> customerEntityOptional = customerService.findCustomerByNationAndPassportNumber(refundResponse.getPassportNumber(), refundResponse.getNationality());
             if (customerEntityOptional.isEmpty()) {
-                log.debug("Customer Not exists.");
                 CustomerEntity customerEntity = customerService.updateCustomerInfo(request.getName(), refundResponse.getPassportNumber(), refundResponse.getNationality());
                 customerEntityId = customerEntity.getId();
                 log.debug("Refund Limit customerID = {}", customerEntityId);
             } else {
-                log.debug("Customer already exists.");
-                customerEntityId = customerEntityOptional.get().getId();
+                CustomerEntity customerEntity = customerEntityOptional.get();
+                customerEntityId = customerEntity.getId();
+                if(customerEntity.getCustomerName().contentEquals(request.getName())){
+                    log.warn("saved name = {}, request name = {} is different", customerEntity.getCustomerName(), request.getName());
+                }
                 log.debug("Refund Limit customerID = {}", customerEntityId);
             }
-
             // TODO: 2022/11/04 사후환급 신청 가맹점 여부 조회를 위해...
-            if(request.getFranchiseeIndex() != null) {
-                log.trace(" @@ request.getFranchiseeIndex() ! null @@ ");
-                FranchiseeEntity franchiseeEntity = franchiseeRepository.findById(request.getFranchiseeIndex())
-                        .orElseThrow(() -> new IllegalArgumentException("Invalid Franchisee Entity"));
-                return refundResponse.addCustomerInfo(customerEntityId, franchiseeEntity.getIsAfterRefund());
-            }
-                return refundResponse.addCustomerInfo(customerEntityId);
-
+            FranchiseeEntity franchiseeEntity = franchiseeRepository.findById(request.getFranchiseeIndex()).orElseThrow(() -> new IllegalArgumentException("Invalid Franchisee Entity"));
+            return refundResponse.addCustomerInfo(customerEntityId,franchiseeEntity.getIsAfterRefund());
         } else {
             throw new InvalidPassportInfoException(ExceptionState.INVALID_PASSPORT_INFO, "한도조회 실패");
         }
     }
-
     private boolean checkNation(RefundLimitRequest request) {
         if(CheckNationValue.NATION_GERMANY_D.equals(request.getNationality())){
             log.debug(" @@ CheckNationValue = {}", request.getNationality());

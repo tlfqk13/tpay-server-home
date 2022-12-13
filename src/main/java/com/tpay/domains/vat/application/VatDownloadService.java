@@ -293,21 +293,28 @@ public class VatDownloadService {
         int yearInt = Integer.parseInt("20" + requestDate.substring(0, 2));
         int monthInt = Integer.parseInt(requestDate.substring(2));
 
-        if(monthInt <10){
+        if (monthInt < 10) {
             monthInt = Integer.parseInt(requestDate.substring(2).replaceAll("0", ""));
         }
 
-        LocalDate startDate = LocalDate.of(yearInt,monthInt,1);
-        LocalDate endDate = LocalDate.of(yearInt,monthInt+1,1);
+        LocalDate startDate = LocalDate.of(yearInt, monthInt, 1);
+        LocalDate endDate;
+
+        if (monthInt == 12) {
+            endDate = LocalDate.of(yearInt + 1, 1, 1);
+        } else {
+            endDate = LocalDate.of(yearInt, monthInt + 1, 1);
+        }
+
         startDate.format(DateTimeFormatter.BASIC_ISO_DATE);
         endDate.format(DateTimeFormatter.BASIC_ISO_DATE);
 
         List<LocalDate> dateList = new ArrayList<>();
         endDate = endDate.minusDays(1);
-        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-        System.out.println(startDate);
-        System.out.println(endDate);
-        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+
+        log.trace(" @@ startDate = {}", startDate);
+        log.trace(" @@ endDate = {}", endDate);
+
         dateList.add(startDate);
         dateList.add(endDate);
         return dateList;
