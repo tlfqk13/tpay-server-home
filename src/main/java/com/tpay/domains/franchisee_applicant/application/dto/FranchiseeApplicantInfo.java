@@ -19,7 +19,7 @@ public class FranchiseeApplicantInfo {
     private String createdDate;
     private Boolean isRefundOnce;
     private Boolean isRead;
-    private boolean isRefundAfter;
+    private String refundStep;
 
     public static FranchiseeApplicantInfo toResponse(FranchiseeApplicantEntity franchiseeApplicantEntity) {
         FranchiseeEntity franchiseeEntity = franchiseeApplicantEntity.getFranchiseeEntity();
@@ -33,11 +33,11 @@ public class FranchiseeApplicantInfo {
             .createdDate(franchiseeEntity.getCreatedDate().toString())
             .isRefundOnce(franchiseeEntity.getIsRefundOnce())
             .isRead(franchiseeApplicantEntity.getIsRead())
-            .isRefundAfter(franchiseeEntity.getIsAfterRefund())
+            .refundStep(franchiseeEntity.getRefundStep())
             .build();
     }
 
-    // TODO: 2022/11/14 쿼리 고도화 가맹점현황 filter
+    // 쿼리 고도화 가맹점현황 filter
     public static FranchiseeApplicantInfo toResponse(FranchiseeApplicantDto.Response response) {
         return FranchiseeApplicantInfo.builder()
                 .franchiseeApplicantIndex(response.getFranchiseeApplicantIndex())
@@ -48,6 +48,7 @@ public class FranchiseeApplicantInfo {
                 .createdDate(response.getCreatedDate().toString())
                 .isRefundOnce(response.isRefundOnce())
                 .isRead(response.isRead())
+                .refundStep(response.getRefundStep())
                 .build();
     }
 }

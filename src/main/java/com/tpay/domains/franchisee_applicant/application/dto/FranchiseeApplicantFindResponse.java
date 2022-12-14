@@ -12,5 +12,4 @@ public class FranchiseeApplicantFindResponse {
 
     private int totalPage;
     private List<FranchiseeApplicantInfo> franchiseeApplicantInfoList;
-    List<FranchiseeApplicantDto.Response> response;
 }

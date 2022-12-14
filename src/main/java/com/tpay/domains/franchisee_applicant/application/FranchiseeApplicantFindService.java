@@ -16,11 +16,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.tpay.domains.franchisee_applicant.application.dto.FilterSelector.*;
+import static com.tpay.domains.franchisee_applicant.application.dto.FilterSelector.BOTH;
+import static com.tpay.domains.franchisee_applicant.application.dto.FilterSelector.IS_READ;
 
 @Service
 @RequiredArgsConstructor
@@ -94,9 +94,7 @@ public class FranchiseeApplicantFindService {
 
     // 2022/04/26 조회하려는 컬럼 분리
     public FranchiseeApplicantFindResponse applicantFilter(FilterSelector filterSelector, String value, int page, String searchKeyword) {
-        List<Boolean> booleanList = new ArrayList<>(List.of(false));
-        List<FranchiseeStatus> franchiseeStatusList = new ArrayList<>();
-        Page<FranchiseeApplicantEntity> franchiseeApplicantEntityList;
+
         PageRequest pageRequest = PageRequest.of(page, 10);
         boolean isBusinessNumber = searchKeyword.chars().allMatch(Character::isDigit);
 
@@ -106,14 +104,13 @@ public class FranchiseeApplicantFindService {
         // TODO: 2022/11/11 가맹점 신청상태, 알림상태, 둘 다
 
         if (filterSelector.equals(IS_READ)) {
-            response = franchiseeApplicantRepository.findBusinessNumberFromDsl(pageRequest,searchKeyword,false,isBusinessNumber);
-            log.trace(" @@  here @@ " );
+            response = franchiseeApplicantRepository.findBusinessNumber(pageRequest,searchKeyword,false,isBusinessNumber);
         } else if (filterSelector.equals(BOTH)) {
             franchiseeStatus = FranchiseeStatus.valueOf(value);
-            response = franchiseeApplicantRepository.findBusinessNumberFromDsl(pageRequest, searchKeyword, franchiseeStatus,false,isBusinessNumber);
+            response = franchiseeApplicantRepository.findBusinessNumber(pageRequest, searchKeyword, franchiseeStatus,false,isBusinessNumber);
         } else {
             franchiseeStatus = FranchiseeStatus.valueOf(value);
-            response = franchiseeApplicantRepository.findBusinessNumberFromDsl(pageRequest, searchKeyword, franchiseeStatus,true,isBusinessNumber);
+            response = franchiseeApplicantRepository.findBusinessNumber(pageRequest, searchKeyword, franchiseeStatus,true,isBusinessNumber);
         }
 
         List<FranchiseeApplicantInfo> franchiseeApplicantInfoList =

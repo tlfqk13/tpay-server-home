@@ -17,7 +17,7 @@ public class FranchiseeApplicantDetailUpdateResponse {
     private final String storeNumber;
     private final String storeAddressBasic;
     private final String storeAddressDetail;
-    private final boolean isRefundAfter;
+    private final String refundStep;
     // Applicants
 
     private final String taxFreeStoreNumber;
@@ -45,7 +45,7 @@ public class FranchiseeApplicantDetailUpdateResponse {
         this.bankAccount = franchiseeBankEntity.getAccountNumber();
         this.withdrawalDate = franchiseeBankEntity.getWithdrawalDate();
         this.balancePercentage = franchiseeEntity.getBalancePercentage();
-        this.isRefundAfter = franchiseeEntity.getIsAfterRefund();
+        this.refundStep = franchiseeEntity.getRefundStep();
 
     }
     

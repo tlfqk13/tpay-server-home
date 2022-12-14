@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 
 import static com.tpay.domains.franchisee_applicant.application.dto.FilterSelector.BOTH;
 import static com.tpay.domains.franchisee_applicant.application.dto.FilterSelector.IS_READ;
+import static com.tpay.domains.refund_core.application.dto.RefundCustomValue.*;
 
 @Service
 @RequiredArgsConstructor
@@ -100,7 +101,6 @@ public class FranchiseeApplicantTestFindService {
     public FranchiseeApplicantFindResponse applicantFilterTest(FilterSelector filterSelector, String value, int page, String searchKeyword) {
         PageRequest pageRequest = PageRequest.of(page, 10);
         boolean isBusinessNumber = searchKeyword.chars().allMatch(Character::isDigit);
-        Page<FranchiseeApplicantEntity> franchiseeApplicantEntityList = null;
 
         FranchiseeStatus franchiseeStatus;
         Page<FranchiseeApplicantDto.Response> response;
@@ -108,14 +108,13 @@ public class FranchiseeApplicantTestFindService {
         // TODO: 2022/11/11 가맹점 신청상태, 알림상태, 둘 다
 
         if (filterSelector.equals(IS_READ)) {
-            response = franchiseeApplicantRepository.findBusinessNumberFromDsl(pageRequest,searchKeyword,false,isBusinessNumber);
-            log.trace(" @@  here @@ " );
+            response = franchiseeApplicantRepository.findBusinessNumber(pageRequest,searchKeyword,false,isBusinessNumber);
         } else if (filterSelector.equals(BOTH)) {
             franchiseeStatus = FranchiseeStatus.valueOf(value);
-            response = franchiseeApplicantRepository.findBusinessNumberFromDsl(pageRequest, searchKeyword, franchiseeStatus,false,isBusinessNumber);
+            response = franchiseeApplicantRepository.findBusinessNumber(pageRequest, searchKeyword, franchiseeStatus,false,isBusinessNumber);
         } else {
             franchiseeStatus = FranchiseeStatus.valueOf(value);
-            response = franchiseeApplicantRepository.findBusinessNumberFromDsl(pageRequest, searchKeyword, franchiseeStatus,true,isBusinessNumber);
+            response = franchiseeApplicantRepository.findBusinessNumber(pageRequest, searchKeyword, franchiseeStatus,true,isBusinessNumber);
         }
 
         List<FranchiseeApplicantInfo> franchiseeApplicantInfoList =
@@ -158,10 +157,12 @@ public class FranchiseeApplicantTestFindService {
             if (isNewUploadedImg.equals("true") || isNewUploadedImg.equals("TRUE")) {
                 String s3path = franchiseeUploadService.uploadImageAndBankInfo(franchiseeEntity.getId(), imageCategory, uploadImage);
             }
-            if ("O".equals(request.getRefundAfterShop())) {
-                franchiseeEntity.updateAfterRefund(true);
-            } else {
-                franchiseeEntity.updateAfterRefund(false);
+            if (REFUND_STEP_ONE.equals(request.getRefundStep())) {
+                franchiseeEntity.updateRefundStep(REFUND_STEP_ONE);
+            } else if(REFUND_STEP_TWO.equals(request.getRefundStep())) {
+                franchiseeEntity.updateRefundStep(REFUND_STEP_TWO);
+            }else {
+                franchiseeEntity.updateRefundStep(REFUND_STEP_THREE);
             }
         } catch (InvalidParameterException e) {
             franchiseeBankEntity = FranchiseeBankEntity.builder().build();

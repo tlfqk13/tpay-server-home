@@ -23,7 +23,7 @@ public class FranchiseeApplicantRepositoryImpl implements FranchiseeApplicantRep
         this.queryFactory = new JPAQueryFactory(em);
     }
     @Override
-    public Page<FranchiseeApplicantDto.Response> findBusinessNumberFromDsl(PageRequest pageRequest, String searchKeyword
+    public Page<FranchiseeApplicantDto.Response> findBusinessNumber(PageRequest pageRequest, String searchKeyword
             , FranchiseeStatus franchiseeStatus, boolean isRead, boolean isBusinessNumber) {
         List<FranchiseeApplicantDto.Response> content = queryFactory
                 .select(new QFranchiseeApplicantDto_Response(
@@ -34,7 +34,8 @@ public class FranchiseeApplicantRepositoryImpl implements FranchiseeApplicantRep
                         franchiseeEntity.sellerName,
                         franchiseeEntity.createdDate,
                         franchiseeEntity.isRefundOnce,
-                        franchiseeApplicantEntity.isRead
+                        franchiseeApplicantEntity.isRead,
+                        franchiseeEntity.refundStep
                 ))
                 .from(franchiseeApplicantEntity)
                 .leftJoin(franchiseeEntity).on(franchiseeApplicantEntity.id.eq(franchiseeEntity.id))
@@ -57,7 +58,7 @@ public class FranchiseeApplicantRepositoryImpl implements FranchiseeApplicantRep
     }
 
     @Override
-    public Page<FranchiseeApplicantDto.Response> findBusinessNumberFromDsl(PageRequest pageRequest, String searchKeyword, boolean isRead, boolean isBusinessNumber) {
+    public Page<FranchiseeApplicantDto.Response> findBusinessNumber(PageRequest pageRequest, String searchKeyword, boolean isRead, boolean isBusinessNumber) {
         List<FranchiseeApplicantDto.Response> content = queryFactory
                 .select(new QFranchiseeApplicantDto_Response(
                         franchiseeApplicantEntity.id,
@@ -67,7 +68,8 @@ public class FranchiseeApplicantRepositoryImpl implements FranchiseeApplicantRep
                         franchiseeEntity.sellerName,
                         franchiseeEntity.createdDate,
                         franchiseeEntity.isRefundOnce,
-                        franchiseeApplicantEntity.isRead
+                        franchiseeApplicantEntity.isRead,
+                        franchiseeEntity.refundStep
                 ))
                 .from(franchiseeApplicantEntity)
                 .leftJoin(franchiseeEntity).on(franchiseeApplicantEntity.id.eq(franchiseeEntity.id))

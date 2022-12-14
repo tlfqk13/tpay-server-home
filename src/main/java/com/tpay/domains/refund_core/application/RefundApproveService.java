@@ -7,6 +7,7 @@ import com.tpay.commons.exception.detail.WebfluxGeneralException;
 import com.tpay.commons.push.PushCategoryType;
 import com.tpay.commons.util.IndexInfo;
 import com.tpay.commons.webClient.WebRequestUtil;
+import com.tpay.domains.api.domain.vo.ApprovalDto;
 import com.tpay.domains.auth.domain.EmployeeAccessTokenEntity;
 import com.tpay.domains.auth.domain.EmployeeAccessTokenRepository;
 import com.tpay.domains.auth.domain.FranchiseeAccessTokenEntity;
@@ -40,6 +41,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 import static com.tpay.commons.util.UserSelector.EMPLOYEE;
+import static com.tpay.commons.util.UserSelector.FRANCHISEE;
 
 @Service
 @RequiredArgsConstructor
@@ -62,6 +64,7 @@ public class RefundApproveService {
     @Transactional
     public RefundResponse approve(RefundSaveRequest request, IndexInfo indexInfo) {
 
+        // 가격 조회 - 30,000 미만일 경우 알기 위해서
         int checkMinPrice = Integer.parseInt(request.getPrice());
         if (checkMinPrice < 30000) {
             log.debug(" @@ Item Price = {}", request.getPrice());
@@ -90,6 +93,7 @@ public class RefundApproveService {
                             refundResponse.getPurchaseSequenceNumber(),
                             refundResponse.getTakeoutNumber(),
                             orderEntity);
+
             log.debug("Refund approve entity id = {} ", refundEntity.getId());
 
             //2022/03/25 여권 스캔을 바코드모드로하고, 앱으로 승인진행할 때 이 플로우 탐
@@ -154,7 +158,7 @@ public class RefundApproveService {
                     .refundAfterMethod(refundAfterInfo.getRefundAfterMethod())
                     .build();
 
-            // 2022/11/04 사후 환급 포인트 적립
+            // 사후 환급 포인트 적립
             pointScheduledChangeService.change(refundEntity, SignType.POSITIVE, orderEntity.getFranchiseeEntity().getBalancePercentage());
             refundEntity.addRefundAfterEntity(refundAfterEntity);
         }

@@ -5,9 +5,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 public interface FranchiseeApplicantRepositoryCustom {
-    Page<FranchiseeApplicantDto.Response> findBusinessNumberFromDsl(PageRequest pageRequest, String searchKeyword
+    Page<FranchiseeApplicantDto.Response> findBusinessNumber(PageRequest pageRequest, String searchKeyword
             , FranchiseeStatus franchiseeStatus, boolean isRead, boolean isBusinessNumber);
 
-    Page<FranchiseeApplicantDto.Response> findBusinessNumberFromDsl(PageRequest pageRequest, String searchKeyword, boolean isRead, boolean isBusinessNumber);
+    Page<FranchiseeApplicantDto.Response> findBusinessNumber(PageRequest pageRequest, String searchKeyword, boolean isRead, boolean isBusinessNumber);
 }
 

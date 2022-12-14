@@ -39,11 +39,6 @@ public class FranchiseeApplicantDetailService {
             franchiseeBankEntity = FranchiseeBankEntity.builder().build();
         }
 
-        String refundAfterShop = "X";
-        if(franchiseeEntity.getIsAfterRefund()){
-            refundAfterShop = "O";
-        }
-
         FranchiseeApplicantDetailResponse franchiseeApplicantDetailResponse = FranchiseeApplicantDetailResponse.builder()
             .storeName(franchiseeEntity.getStoreName())
             .sellerName(franchiseeEntity.getSellerName())
@@ -59,7 +54,7 @@ public class FranchiseeApplicantDetailService {
             .storeAddressDetail(franchiseeEntity.getStoreAddressDetail())
             .createdDate(franchiseeEntity.getCreatedDate())
             .isRead(franchiseeApplicantEntity.getIsRead())
-            .refundAfterShop(refundAfterShop)
+            .refundStep(franchiseeEntity.getRefundStep())
 
             .imageUrl((Optional.ofNullable(franchiseeUploadEntity.getS3Path()).orElse("")))
             .taxFreeStoreNumber((Optional.ofNullable(franchiseeUploadEntity.getTaxFreeStoreNumber()).orElse("")))

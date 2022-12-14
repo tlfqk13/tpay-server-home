@@ -22,6 +22,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import static com.tpay.domains.refund_core.application.dto.RefundCustomValue.*;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -59,10 +61,12 @@ public class FranchiseeApplicantUpdateService {
             if (isNewUploadedImg.equals("true") || isNewUploadedImg.equals("TRUE")) {
                 String s3path = franchiseeUploadService.uploadImageAndBankInfo(franchiseeEntity.getId(), imageCategory, uploadImage);
             }
-            if ("O".equals(request.getRefundAfterShop())) {
-                franchiseeEntity.updateAfterRefund(true);
-            } else {
-                franchiseeEntity.updateAfterRefund(false);
+            if (REFUND_STEP_ONE.equals(request.getRefundStep())) {
+                franchiseeEntity.updateRefundStep(REFUND_STEP_ONE);
+            } else if(REFUND_STEP_TWO.equals(request.getRefundStep())) {
+                franchiseeEntity.updateRefundStep(REFUND_STEP_TWO);
+            }else {
+                franchiseeEntity.updateRefundStep(REFUND_STEP_THREE);
             }
         } catch (InvalidParameterException e) {
             franchiseeBankEntity = FranchiseeBankEntity.builder().build();

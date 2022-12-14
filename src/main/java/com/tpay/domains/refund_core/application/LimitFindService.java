@@ -8,7 +8,7 @@ import com.tpay.domains.customer.application.CustomerService;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeRepository;
-import com.tpay.domains.refund_core.application.dto.CheckNationValue;
+import com.tpay.domains.refund_core.application.dto.RefundCustomValue;
 import com.tpay.domains.refund_core.application.dto.RefundLimitRequest;
 import com.tpay.domains.refund_core.application.dto.RefundResponse;
 import lombok.RequiredArgsConstructor;
@@ -48,7 +48,7 @@ public class LimitFindService {
                 , request.getNationality()
                 , refundResponse.getNationality());
 
-        // TODO: 2022/11/11 스켄 or 수기 확인
+        // 한도조회 스켄 or 수기 확인
         log.trace(" @@ request.getMethod = {}", request.getMethod());
 
         // 한도 조회 요청 후, 성공되면 고객 정보 등록
@@ -67,15 +67,15 @@ public class LimitFindService {
                 }
                 log.debug("Refund Limit customerID = {}", customerEntityId);
             }
-            // TODO: 2022/11/04 사후환급 신청 가맹점 여부 조회를 위해...
+            // 사후환급 신청 가맹점 여부 조회를 위해...
             FranchiseeEntity franchiseeEntity = franchiseeRepository.findById(request.getFranchiseeIndex()).orElseThrow(() -> new IllegalArgumentException("Invalid Franchisee Entity"));
-            return refundResponse.addCustomerInfo(customerEntityId,franchiseeEntity.getIsAfterRefund());
+            return refundResponse.addCustomerInfo(customerEntityId, franchiseeEntity.getRefundStep());
         } else {
             throw new InvalidPassportInfoException(ExceptionState.INVALID_PASSPORT_INFO, "한도조회 실패");
         }
     }
     private boolean checkNation(RefundLimitRequest request) {
-        if(CheckNationValue.NATION_GERMANY_D.equals(request.getNationality())){
+        if(RefundCustomValue.NATION_GERMANY_D.equals(request.getNationality())){
             log.debug(" @@ CheckNationValue = {}", request.getNationality());
             return true;
         }else{
@@ -84,6 +84,6 @@ public class LimitFindService {
     }
 
     private void nationUpdate(RefundLimitRequest request){
-        request.nationUpdate(CheckNationValue.NATION_GERMANY_DEU);
+        request.nationUpdate(RefundCustomValue.NATION_GERMANY_DEU);
     }
 }
