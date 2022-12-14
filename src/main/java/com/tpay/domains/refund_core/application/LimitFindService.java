@@ -33,7 +33,7 @@ public class LimitFindService {
     public RefundResponse find(RefundLimitRequest request) {
         String uri = CustomValue.REFUND_SERVER + "/refund/limit";
 
-        // TODO: 2022/10/11 독일 여권일 경우, D -> DEU
+        // 2022/10/11 독일 여권일 경우, D -> DEU
         if(checkNation(request)){
             nationUpdate(request);
         }

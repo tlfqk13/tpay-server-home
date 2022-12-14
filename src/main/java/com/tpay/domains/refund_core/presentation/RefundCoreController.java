@@ -1,12 +1,8 @@
 package com.tpay.domains.refund_core.presentation;
 
-import com.tpay.commons.exception.ExceptionState;
-import com.tpay.commons.exception.detail.FranchiseeAuthenticationException;
-import com.tpay.commons.exception.detail.JwtRuntimeException;
-import com.tpay.commons.jwt.AuthToken;
-import com.tpay.commons.jwt.JwtUtils;
 import com.tpay.commons.util.IndexInfo;
 import com.tpay.commons.util.UserSelector;
+import com.tpay.commons.util.resolver.KtpIndexInfo;
 import com.tpay.domains.order.application.dto.OrderDto;
 import com.tpay.domains.refund.application.dto.RefundSaveRequest;
 import com.tpay.domains.refund_core.application.LimitFindService;
@@ -17,14 +13,10 @@ import com.tpay.domains.refund_core.application.dto.RefundLimitRequest;
 import com.tpay.domains.refund_core.application.dto.RefundResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-
-import static com.tpay.commons.util.KtpCommonUtil.getIndexInfoFromAccessToken;
 
 /**
  * 실질적인 관세청 통신 3개 기능
@@ -40,8 +32,6 @@ public class RefundCoreController {
     private final RefundCancelService refundCancelService;
     private final LimitFindService limitFindService;
 
-    private final JwtUtils jwtUtils;
-
     /**
      * 환급 승인 요청
      * URL에 있는 userSelector와 index는 jwt 추가검증 때문에 삽입. 서비스단에 사용되진 않음
@@ -50,13 +40,13 @@ public class RefundCoreController {
     public ResponseEntity<RefundResponse> refundApproval(
             @RequestBody RefundSaveRequest request,
             @PathVariable UserSelector userSelector,
-            @PathVariable Long index) {
+            @PathVariable Long index,
+            @KtpIndexInfo IndexInfo indexInfo) {
         log.debug("Refund Approval Start = {}", request);
-        RefundResponse response = refundApproveService.approve(request);
+        RefundResponse response = refundApproveService.approve(request, indexInfo);
         log.debug("Refund Approval Finish = {}", response);
         return ResponseEntity.ok(response);
     }
-
 
     /**
      * 환급 취소 요청
@@ -100,39 +90,13 @@ public class RefundCoreController {
     // TODO: 2022/09/15 tourCash_Admin 전용 RefundApprove
 
     /**
-     * TourCash - 환급 승인 요청
-     * URL에 있는 userSelector와 index는 jwt 추가검증 때문에 삽입. 서비스단에 사용되진 않음
-     */
-    @PostMapping("/approval/tourcash/{userSelector}/{index}")
-    public ResponseEntity<RefundResponse> tourCashRefundApproval(
-            @RequestBody RefundSaveRequest request,
-            @PathVariable UserSelector userSelector,
-            @PathVariable Long index) {
-        // tour_cash 가맹점 franchiseeIndex 가 아니면 예외처리
-        if (request.getFranchiseeIndex() != 95L) {
-            throw new FranchiseeAuthenticationException(
-                    ExceptionState.AUTHENTICATION_FAILED, "Token not exists");
-        }
-        log.debug("Refund Approval Start = {}", request);
-        RefundResponse response = refundApproveService.approve(request);
-        log.debug("Refund Approval Finish = {}", response);
-        return ResponseEntity.ok(response);
-    }
-
-    /**
      * 사후 환급 승인
      */
     @PostMapping("/after/approval")
     public ResponseEntity<RefundResponse> refundAfterApproval(
             HttpServletRequest request,
-            @RequestBody OrderDto.Request dto) {
-        String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (!StringUtils.hasText(bearerToken)) {
-            throw new JwtRuntimeException(ExceptionState.INVALID_TOKEN, "Token Data Empty");
-        }
-        AuthToken authToken = jwtUtils.convertAuthToken(bearerToken);
-        IndexInfo indexInfo = getIndexInfoFromAccessToken(authToken.getData());
-
+            @RequestBody OrderDto.Request dto,
+            @KtpIndexInfo IndexInfo indexInfo) {
         return ResponseEntity.ok(refundApproveService.approveAfter(dto, indexInfo));
     }
 

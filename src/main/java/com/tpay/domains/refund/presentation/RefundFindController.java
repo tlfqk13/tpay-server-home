@@ -1,12 +1,11 @@
 package com.tpay.domains.refund.presentation;
 
+import com.tpay.commons.util.IndexInfo;
+import com.tpay.commons.util.resolver.KtpIndexInfo;
 import com.tpay.domains.refund.application.RefundDetailFindService;
 import com.tpay.domains.refund.application.dto.RefundByCustomerDateResponse;
 import com.tpay.domains.refund.application.dto.RefundCustomerRequest;
 import com.tpay.domains.refund.application.dto.RefundFindResponseInterface;
-import com.tpay.domains.refund.application.dto.RefundPagingFindResponse;
-import com.tpay.domains.refund.domain.RefundStatus;
-import com.tpay.domains.refund_test.dto.RefundDetailTotalDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -25,40 +24,22 @@ public class RefundFindController {
     public ResponseEntity<List<RefundFindResponseInterface>> findList(
             @PathVariable Long franchiseeIndex,
             @RequestParam(required = false) LocalDate startDate,
-            @RequestParam(required = false) LocalDate endDate) {
+            @RequestParam(required = false) LocalDate endDate,
+            @KtpIndexInfo IndexInfo indexInfo) {
 
         List<RefundFindResponseInterface> responseList =
-                refundDetailFindService.findList(franchiseeIndex, startDate, endDate);
+                refundDetailFindService.findList(indexInfo.getIndex(), startDate, endDate);
         return ResponseEntity.ok(responseList);
-    }
-
-    @GetMapping("/admin/refunds")
-    public ResponseEntity<RefundPagingFindResponse> findAll(
-            @RequestParam int page,
-            @RequestParam String startDate,
-            @RequestParam String endDate,
-            @RequestParam RefundStatus refundStatus,
-            @RequestParam String searchKeyword
-    ) {
-        RefundPagingFindResponse response = refundDetailFindService.findAll(page,refundStatus,startDate, endDate,searchKeyword);
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/admin/refunds/{franchiseeIndex}")
-    public ResponseEntity<RefundDetailTotalDto.Response> findRefundDetail(
-            @PathVariable Long franchiseeIndex,
-            @RequestParam String startDate,
-            @RequestParam String endDate) {
-        RefundDetailTotalDto.Response result = refundDetailFindService.findRefundDetail(franchiseeIndex, startDate, endDate);
-        return ResponseEntity.ok(result);
     }
 
     @PostMapping("/refunds/customer/{franchiseeIndex}")
     public ResponseEntity<List<RefundByCustomerDateResponse>> findRefundsByCustomerInfo(
         @PathVariable Long franchiseeIndex,
-        @RequestBody RefundCustomerRequest refundCustomerRequest
+        @RequestBody RefundCustomerRequest refundCustomerRequest,
+        @KtpIndexInfo IndexInfo indexInfo
     ) {
-        List<RefundByCustomerDateResponse> result = refundDetailFindService.findRefundsByCustomerInfo(franchiseeIndex, refundCustomerRequest);
+        List<RefundByCustomerDateResponse> result
+                = refundDetailFindService.findRefundsByCustomerInfo(indexInfo.getIndex(), refundCustomerRequest);
         return ResponseEntity.ok(result);
     }
 

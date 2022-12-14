@@ -17,7 +17,6 @@ public class FranchiseeApplicantDetailUpdateResponse {
     private final String storeNumber;
     private final String storeAddressBasic;
     private final String storeAddressDetail;
-    // TODO: 2022/11/10
     private final boolean isRefundAfter;
     // Applicants
 

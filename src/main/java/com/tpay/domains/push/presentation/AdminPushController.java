@@ -12,30 +12,31 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
+@RequestMapping("/admin/push")
 public class AdminPushController {
 
     private final AdminPushService adminPushService;
 
-    @PostMapping("/admin/push")
+    @PostMapping
     public ResponseEntity<AdminNotificationDto.Response> requestFcmPush(@RequestBody AdminNotificationDto.Request request) {
         AdminNotificationDto.Response response = adminPushService.sendMessageByAdmin(request);
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/admin/push")
+    @GetMapping
     public ResponseEntity<PushFindDto.FindAllResponse> findAll(
     ) {
         PushFindDto.FindAllResponse response = adminPushService.findAll();
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/admin/push/{pushIndex}")
+    @GetMapping("/{pushIndex}")
     public ResponseEntity<PushFindDto.Response> findDetail(@PathVariable Long pushIndex) {
         PushFindDto.Response response = adminPushService.findDetail(pushIndex);
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/admin/push/notice")
+    @GetMapping("/notice")
     public ResponseEntity<PushNoticeDto> findAllNotice(){
         PushNoticeDto pushNoticeDto = adminPushService.findAllNotice();
         return ResponseEntity.ok(pushNoticeDto);

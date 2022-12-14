@@ -1,7 +1,7 @@
 package com.tpay.domains.franchisee_applicant.domain;
 
+import com.tpay.domains.erp.deploy.dto.SearchListInterface;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
-import com.tpay.domains.search.application.dto.SearchListInterface;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
