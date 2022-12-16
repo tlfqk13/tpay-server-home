@@ -109,8 +109,8 @@ public class CmsService {
             XSSFWorkbook xssfWorkbook = new XSSFWorkbook(fileInputStream);
             XSSFSheet sheet = xssfWorkbook.getSheetAt(0);
             XSSFSheet sheet1 = xssfWorkbook.getSheetAt(1);
-            // TODO: 2022/02/03 엑셀파일 일부 write 후 저장까지 테스트 완료 포멧에 맞게 입력하는 로직 정해지면 구현할 것
-            // TODO: 2022/07/14 CMS 청구내역 엑셀파일 양식 새롭게 받음.
+            // 2022/02/03 엑셀파일 일부 write 후 저장까지 테스트 완료 포멧에 맞게 입력하는 로직 정해지면 구현할 것
+            // 2022/07/14 CMS 청구내역 엑셀파일 양식 새롭게 받음.
 
             List<LocalDate> date = setUpDate(requestDate);
             LocalDate startLocalDate = date.get(0);
@@ -204,7 +204,7 @@ public class CmsService {
         CellStyle detailResultRowCellStyle = cellStyleCustom(xssfWorkbook);
         if(isPaging){
             for(int i=0;i<detailMonthlyResult.size();i++) {
-                // TODO: 2022/07/15 엑셀양식 15개 max 라서 건수 많으면 추가로 그릴 시트 요청 필요.
+                // 2022/07/15 엑셀양식 15개 max 라서 건수 많으면 추가로 그릴 시트 요청 필요.
                 XSSFRow detailResultRow = sheet.getRow(i + CmsCustomValue.DETAILRESULT_ROW_PAGING);
                 detailResultRow.createCell(0, STRING).setCellStyle(detailResultRowCellStyle);
                 detailResultRow.getCell(0).setCellValue(i + 1);
@@ -227,7 +227,7 @@ public class CmsService {
         }
         else {
             for (int i = 0; i < detailMonthlyResult.size(); i++) {
-                // TODO: 2022/07/15 엑셀양식 15개 max 라서 건수 많으면 추가로 그릴 시트 요청 필요.
+                // 2022/07/15 엑셀양식 15개 max 라서 건수 많으면 추가로 그릴 시트 요청 필요.
                 XSSFRow detailResultRow = sheet.getRow(i + CmsCustomValue.DETAILRESULT_ROW);
                 detailResultRow.createCell(0, STRING).setCellStyle(detailResultRowCellStyle);
                 detailResultRow.getCell(0).setCellValue(i + 1);

@@ -89,7 +89,7 @@ public class CustomerController {
     public ResponseEntity<CustomerMyPageDto.Response> myPage(
             @RequestBody CustomerDto.Request customerInfo){
 
-        // TODO: 2022/11/02 cash or credit, 즉시환급과 110만원 미만 영수증 건수
+        // 2022/11/02 cash or credit, 즉시환급과 110만원 미만 영수증 건수
         CustomerMyPageDto.Response response = customerService.getMyPage(customerInfo);
 
         return ResponseEntity.ok(response);

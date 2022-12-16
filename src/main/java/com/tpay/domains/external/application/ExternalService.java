@@ -52,7 +52,6 @@ public class ExternalService {
             ExternalStatusRequestResponse externalStatusRequestResponse = new ExternalStatusRequestResponse(ExternalResultStatus.SUCCESS, refundData, "");
             return ResponseEntity.status(HttpStatus.OK).body(externalStatusRequestResponse);
         } else {
-            // TODO: 2022/04/29 Exception
             ExternalStatusRequestResponse externalStatusRequestResponse = new ExternalStatusRequestResponse(ExternalResultStatus.IN_PROGRESS, new RefundData(), "Payment is in progress.");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(externalStatusRequestResponse);
         }
