@@ -67,9 +67,16 @@ public class LimitFindService {
                 }
                 log.debug("Refund Limit customerID = {}", customerEntityId);
             }
-            // 사후환급 신청 가맹점 여부 조회를 위해...
-            FranchiseeEntity franchiseeEntity = franchiseeRepository.findById(request.getFranchiseeIndex()).orElseThrow(() -> new IllegalArgumentException("Invalid Franchisee Entity"));
-            return refundResponse.addCustomerInfo(customerEntityId, franchiseeEntity.getRefundStep());
+
+            // TODO: 2022/11/04 사후환급 신청 가맹점 여부 조회를 위해...
+            if(request.getFranchiseeIndex() != null) {
+                log.trace(" @@ request.getFranchiseeIndex() ! null @@ ");
+                FranchiseeEntity franchiseeEntity = franchiseeRepository.findById(request.getFranchiseeIndex())
+                        .orElseThrow(() -> new IllegalArgumentException("Invalid Franchisee Entity"));
+                return refundResponse.addCustomerInfo(customerEntityId, franchiseeEntity.getRefundStep());
+            }
+                return refundResponse.addCustomerInfo(customerEntityId);
+
         } else {
             throw new InvalidPassportInfoException(ExceptionState.INVALID_PASSPORT_INFO, "한도조회 실패");
         }
