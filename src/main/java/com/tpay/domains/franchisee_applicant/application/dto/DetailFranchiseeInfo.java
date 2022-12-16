@@ -26,7 +26,8 @@ public class DetailFranchiseeInfo {
     private String storeAddressDetail;
     private String createdDate;
     private Boolean isRead;
-    private String refundAfterShop;    // 2022/11/10 사후환급 관리자 승인
+    // 사후환급 관리자 승인
+    private String refundStep;
     // Applicants
     private String imageUrl;
     private String taxFreeStoreNumber;

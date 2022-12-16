@@ -4,11 +4,14 @@ package com.tpay.domains.erp.deploy.service;
 import com.tpay.domains.erp.deploy.dto.SearchAllResponse;
 import com.tpay.domains.erp.deploy.dto.SearchListInterface;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantRepository;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor

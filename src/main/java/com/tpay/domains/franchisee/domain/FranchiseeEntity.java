@@ -11,6 +11,8 @@ import org.hibernate.annotations.ColumnDefault;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
+import static com.tpay.domains.refund_core.application.dto.RefundCustomValue.REFUND_STEP_ONE;
+
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -84,8 +86,8 @@ public class FranchiseeEntity extends BaseTimeEntity {
     @ColumnDefault("false") // ddl auto-create 아니면 쓸모는 없음
     private Boolean isRefundOnce;
 
-    @Column(name = "isAfterRefund", length = 5)
-    private Boolean isAfterRefund;
+    @Column(length = 2)
+    private String refundStep;
 
     @Column(name = "popUp", length = 1)
     private boolean popUp;
@@ -146,7 +148,7 @@ public class FranchiseeEntity extends BaseTimeEntity {
         this.isActiveSound = true;
         this.isActiveVibration = true;
         this.isConnectedPos = false;
-        this.isAfterRefund = false;
+        this.refundStep = REFUND_STEP_ONE;
         this.posType = PosType.INIT;
         this.balancePercentage = balancePercentage;
     }
@@ -231,7 +233,7 @@ public class FranchiseeEntity extends BaseTimeEntity {
         return balancePercentage;
     }
 
-    public void updateAfterRefund(boolean isAfterRefund) {
-        this.isAfterRefund = isAfterRefund;
+    public void updateRefundStep(String refundStep) {
+        this.refundStep = refundStep;
     }
 }

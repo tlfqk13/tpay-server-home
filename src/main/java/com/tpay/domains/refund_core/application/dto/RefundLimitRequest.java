@@ -14,6 +14,8 @@ public class RefundLimitRequest {
     private String totalAmount;
     private String saleDate;
     private Long franchiseeIndex;
+    // TODO: 2022/11/11 한도조회 스켄 or 수기 
+    private String method;
 
     public RefundLimitRequest nationUpdate(String nationality){
         this.nationality = nationality;

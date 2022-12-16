@@ -1,4 +1,4 @@
-package com.tpay.domains.erp.test.service;
+package com.tpay.domains.franchisee_applicant_test.application;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tpay.commons.exception.ExceptionState;
@@ -22,11 +22,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.tpay.domains.franchisee_applicant.application.dto.FilterSelector.FRANCHISEE_STATUS;
+import static com.tpay.domains.franchisee_applicant.application.dto.FilterSelector.BOTH;
+import static com.tpay.domains.franchisee_applicant.application.dto.FilterSelector.IS_READ;
+import static com.tpay.domains.refund_core.application.dto.RefundCustomValue.*;
 
 @Service
 @RequiredArgsConstructor
@@ -54,7 +55,7 @@ public class FranchiseeApplicantTestFindService {
     }
 
     public FranchiseeApplicantFindResponse findAll(int page, String searchKeyword) {
-        PageRequest pageRequest = PageRequest.of(page, 15);
+        PageRequest pageRequest = PageRequest.of(page, 10);
         Page<FranchiseeApplicantEntity> franchiseeApplicantEntityPage;
 
         if (!searchKeyword.isEmpty()) {
@@ -96,46 +97,34 @@ public class FranchiseeApplicantTestFindService {
         return franchiseeApplicantEntity;
     }
 
-    // 2022/04/26 조회하려는 컬럼 분리
-    public FranchiseeApplicantFindResponse applicantFilter(FilterSelector filterSelector, String value, int page, String searchKeyword) {
-        List<Boolean> booleanList = new ArrayList<>(List.of(false));
-        List<FranchiseeStatus> franchiseeStatusList = new ArrayList<>();
-        Page<FranchiseeApplicantEntity> franchiseeApplicantEntityList = null;
-        Page<FranchiseeApplicantDto.Response> dslList;
-        PageRequest pageRequest = PageRequest.of(page, 15);
+    // TODO: 2022/04/26 조회하려는 컬럼 분리
+    public FranchiseeApplicantFindResponse applicantFilterTest(FilterSelector filterSelector, String value, int page, String searchKeyword) {
+        PageRequest pageRequest = PageRequest.of(page, 10);
         boolean isBusinessNumber = searchKeyword.chars().allMatch(Character::isDigit);
 
-        if (!searchKeyword.isEmpty()) {
-            if (filterSelector.equals(FRANCHISEE_STATUS)) {
-                booleanList.add(true);
-                franchiseeStatusList.add(FranchiseeStatus.valueOf(value));
-                if (isBusinessNumber) {
-                    franchiseeApplicantEntityList = franchiseeApplicantRepository.filterAndBusinessNumber(booleanList, franchiseeStatusList, pageRequest, searchKeyword);
-                } else {
-                    franchiseeApplicantEntityList = franchiseeApplicantRepository.filterAndStoreName(booleanList, franchiseeStatusList, pageRequest, searchKeyword);
-                }
-            } else {
-                if (isBusinessNumber) {
-                    franchiseeApplicantEntityList = franchiseeApplicantRepository.filterIsReadAndBusinessNumber(booleanList.get(0), pageRequest, searchKeyword);
-                } else {
-                    franchiseeApplicantEntityList = franchiseeApplicantRepository.filterIsReadAndStoreName(booleanList.get(0), pageRequest, searchKeyword);
-                }
-            }
+        FranchiseeStatus franchiseeStatus;
+        Page<FranchiseeApplicantDto.Response> response;
+
+        // TODO: 2022/11/11 가맹점 신청상태, 알림상태, 둘 다
+
+        if (filterSelector.equals(IS_READ)) {
+            response = franchiseeApplicantRepository.findBusinessNumber(pageRequest,searchKeyword,false,isBusinessNumber);
+        } else if (filterSelector.equals(BOTH)) {
+            franchiseeStatus = FranchiseeStatus.valueOf(value);
+            response = franchiseeApplicantRepository.findBusinessNumber(pageRequest, searchKeyword, franchiseeStatus,false,isBusinessNumber);
         } else {
-            if (filterSelector.equals(FRANCHISEE_STATUS)) {
-                booleanList.add(true);
-                franchiseeStatusList.add(FranchiseeStatus.valueOf(value));
-                franchiseeApplicantEntityList = franchiseeApplicantRepository.findByIsReadInAndFranchiseeStatusInOrderByIdDesc(booleanList, franchiseeStatusList, pageRequest);
-            } else {
-                franchiseeApplicantEntityList = franchiseeApplicantRepository.findByIsReadOrderByIdDesc(booleanList.get(0), pageRequest);
-            }
+            franchiseeStatus = FranchiseeStatus.valueOf(value);
+            response = franchiseeApplicantRepository.findBusinessNumber(pageRequest, searchKeyword, franchiseeStatus,true,isBusinessNumber);
         }
 
-        List<FranchiseeApplicantInfo> franchiseeApplicantInfoList = franchiseeApplicantEntityList.stream().map(FranchiseeApplicantInfo::toResponse).collect(Collectors.toList());
-        int totalPage = franchiseeApplicantEntityList.getTotalPages();
+        List<FranchiseeApplicantInfo> franchiseeApplicantInfoList =
+                response.stream().map(FranchiseeApplicantInfo::toResponse).collect(Collectors.toList());
+
+        int totalPage = response.getTotalPages();
         if (totalPage != 0) {
             totalPage = totalPage - 1;
         }
+
         FranchiseeApplicantFindResponse franchiseeApplicantFindResponse = FranchiseeApplicantFindResponse.builder()
                 .totalPage(totalPage)
                 .franchiseeApplicantInfoList(franchiseeApplicantInfoList)
@@ -162,20 +151,22 @@ public class FranchiseeApplicantTestFindService {
             franchiseeBankEntity = franchiseeBankFindService.findByFranchiseeEntity(franchiseeEntity);
             franchiseeBankEntity = franchiseeBankEntity.updateBankInfoFromAdmin(request);
             franchiseeUploadEntity = franchiseeUploadFindService.findByFranchiseeIndex(franchiseeEntity.getId());
-            if(!request.getTaxFreeStoreNumber().isEmpty()){
+            if (!request.getTaxFreeStoreNumber().isEmpty()) {
                 taxFreeStoreNumberUpdate = franchiseeUploadEntity.updateTaxFreeStoreNumber(request.getTaxFreeStoreNumber());
             }
             if (isNewUploadedImg.equals("true") || isNewUploadedImg.equals("TRUE")) {
                 String s3path = franchiseeUploadService.uploadImageAndBankInfo(franchiseeEntity.getId(), imageCategory, uploadImage);
             }
-            if("O".equals(request.getRefundAfterShop())){
-                franchiseeEntity.updateAfterRefund(true);
-            }else{
-                franchiseeEntity.updateAfterRefund(false);
+            if (REFUND_STEP_ONE.equals(request.getRefundStep())) {
+                franchiseeEntity.updateRefundStep(REFUND_STEP_ONE);
+            } else if(REFUND_STEP_TWO.equals(request.getRefundStep())) {
+                franchiseeEntity.updateRefundStep(REFUND_STEP_TWO);
+            }else {
+                franchiseeEntity.updateRefundStep(REFUND_STEP_THREE);
             }
         } catch (InvalidParameterException e) {
             franchiseeBankEntity = FranchiseeBankEntity.builder().build();
-        }catch (Exception e) {
+        } catch (Exception e) {
             throw new UnknownException(ExceptionState.UNKNOWN, "detailFranchiseeInfo data parsing error");
         }
 

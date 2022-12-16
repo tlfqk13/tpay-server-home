@@ -59,12 +59,12 @@ public class CmsService {
         }
 
         return VatTotalDto.Response.builder()
-            .totalCount(response.getTotalCount())
-            .totalAmount(response.getTotalAmount())
-            .totalRefund(response.getTotalRefund())
-            .totalCommission(response.getTotalCommission())
-            .totalVat(response.getTotalVat())
-            .build();
+                .totalCount(response.getTotalCount())
+                .totalAmount(response.getTotalAmount())
+                .totalRefund(response.getTotalRefund())
+                .totalCommission(response.getTotalCommission())
+                .totalVat(response.getTotalVat())
+                .build();
 
     }
 
@@ -73,13 +73,13 @@ public class CmsService {
         LocalDate startLocalDate = date.get(0);
         LocalDate endLocalDate = date.get(1);
 
-        VatTotalDto.Response vatTotalResponse  = orderRepository.findMonthlyTotal(franchiseeIndex, startLocalDate, endLocalDate);
+        VatTotalDto.Response vatTotalResponse = orderRepository.findMonthlyTotal(franchiseeIndex, startLocalDate, endLocalDate);
         CmsDetailDto.Response cmsTotalResponse = orderRepository.findCmsBankInfo(franchiseeIndex);
 
         if (vatTotalResponse == null) {
             return CmsDetailResponse.builder()
-                .commissionInfoList(Arrays.asList("0", "0", "0", "0"))
-                .customerInfoList(Arrays.asList("", "", "", "", "0")).build();
+                    .commissionInfoList(Arrays.asList("0", "0", "0", "0"))
+                    .customerInfoList(Arrays.asList("", "", "", "", "0")).build();
         }
         List<String> commissionInfoList = new ArrayList<>();
         List<String> customerInfoList = new ArrayList<>();
@@ -109,102 +109,108 @@ public class CmsService {
             XSSFWorkbook xssfWorkbook = new XSSFWorkbook(fileInputStream);
             XSSFSheet sheet = xssfWorkbook.getSheetAt(0);
             XSSFSheet sheet1 = xssfWorkbook.getSheetAt(1);
-            // 2022/02/03 엑셀파일 일부 write 후 저장까지 테스트 완료 포멧에 맞게 입력하는 로직 정해지면 구현할 것
-            // 2022/07/14 CMS 청구내역 엑셀파일 양식 새롭게 받음.
+            // TODO: 2022/02/03 엑셀파일 일부 write 후 저장까지 테스트 완료 포멧에 맞게 입력하는 로직 정해지면 구현할 것
+            // TODO: 2022/07/14 CMS 청구내역 엑셀파일 양식 새롭게 받음.
 
             List<LocalDate> date = setUpDate(requestDate);
             LocalDate startLocalDate = date.get(0);
             LocalDate endLocalDate = date.get(1);
 
             // 1. 물품판매 상세내역
-            boolean isPaging  = true;
-            List<List<String>> detailMonthlyResult = orderService.findCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate,!isPaging);
+            boolean isPaging = true;
+            List<List<String>> detailMonthlyResult = orderService.findCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate, !isPaging);
             // 2. 물품판매 총합계
             List<String> totalResult = orderService.findCmsVatTotal(franchiseeIndex, startLocalDate, endLocalDate);
             // TopSection
-            List<String> topSectionInfo = this.topSectionInfo(franchiseeIndex,startLocalDate,endLocalDate);
+            List<String> topSectionInfo = this.topSectionInfo(franchiseeIndex, startLocalDate, endLocalDate);
 
             // 최상단 영역
-            topSection(sheet,topSectionInfo);
+            topSection(sheet, topSectionInfo);
             // [매장명] [날짜] 영역
-            secondSection(xssfWorkbook,sheet,topSectionInfo);
+            secondSection(xssfWorkbook, sheet, topSectionInfo);
             // 총 건수 . 청구 금액
-            totalResultRow(sheet,totalResult);
+            totalResultRow(sheet, totalResult);
 
             log.trace("detailMonthlyResult.size() : {} ", detailMonthlyResult.size());
             log.trace("franchiseeIndex : {} ", franchiseeIndex);
 
-            if(detailMonthlyResult.size() == 15){
+            if (detailMonthlyResult.size() == 15) {
                 // 물품상세 내역
-                detailResultRow(xssfWorkbook,sheet,detailMonthlyResult,totalResult,false);
-                detailMonthlyResult = orderService.findCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate,isPaging);
-                detailResultRow(xssfWorkbook,sheet1,detailMonthlyResult,totalResult,isPaging);
-            }else{
-                detailMonthlyResult = orderService.findCmsVatDetail(franchiseeIndex,startLocalDate,endLocalDate,true);
-                detailResultRow(xssfWorkbook,sheet,detailMonthlyResult,totalResult,false);
+                detailResultRow(xssfWorkbook, sheet, detailMonthlyResult, totalResult, false);
+                detailMonthlyResult = orderService.findCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate, isPaging);
+                detailResultRow(xssfWorkbook, sheet1, detailMonthlyResult, totalResult, isPaging);
+            } else {
+                detailMonthlyResult = orderService.findCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate, true);
+                detailResultRow(xssfWorkbook, sheet, detailMonthlyResult, totalResult, false);
             }
 
-           StringBuilder fileName = new StringBuilder();
-           fileName.append(topSectionInfo.get(2)).append("_").append(startLocalDate.getMonthValue()).append("월").append("_cms");
-           String result = s3FileUploader.uploadXlsx(franchiseeIndex, xssfWorkbook,fileName, String.valueOf(startLocalDate.getMonthValue()),true);
+            StringBuilder fileName = new StringBuilder();
+            fileName.append(topSectionInfo.get(2)).append("_").append(startLocalDate.getMonthValue()).append("월").append("_cms");
+            String result = s3FileUploader.uploadXlsx(franchiseeIndex, xssfWorkbook, fileName, String.valueOf(startLocalDate.getMonthValue()), true);
             return result;
         } catch (IOException e) {
             throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "File Input Failed");
         }
     }
+
     public void cmsAdminDownloads(String requestDate) {
 
         List<LocalDate> date = setUpDate(requestDate);
         LocalDate startLocalDate = date.get(0);
         LocalDate endLocalDate = date.get(1);
 
-        String requestYearMonthly =  String.valueOf(endLocalDate.getYear()).substring(2) + endLocalDate.getMonthValue();
+        String requestYearMonthly = String.valueOf(endLocalDate.getYear()).substring(2)
+                + endLocalDate.getMonthValue();
         log.trace(" @@ requestYearMonthly = {}", requestYearMonthly);
 
-        List<List<String>> totalResult = refundDetailFindService.findFranchiseeId(startLocalDate,endLocalDate);
+        List<List<String>> totalResult = refundDetailFindService.findFranchiseeId(startLocalDate, endLocalDate);
         for (List<String> strings : totalResult) {
             this.cmsDownloads(Long.valueOf(strings.get(0)), requestYearMonthly);
         }
 
     }
+
     private void topSection(XSSFSheet sheet, List<String> topSectionInfo) {
-        for(int i=CmsCustomValue.TOPSECTION_STARTROW; i<=CmsCustomValue.TOPSECTION_ENDROW; i+=2){
+        for (int i = CmsCustomValue.TOPSECTION_STARTROW; i <= CmsCustomValue.TOPSECTION_ENDROW; i += 2) {
             XSSFRow topSection = sheet.getRow(i);
-            if(i == 8){
+            if (i == 8) {
                 topSection.createCell(CmsCustomValue.TOPSECTION_FIRSTCELL);
                 topSection.createCell(CmsCustomValue.TOPSECTION_SECONDCELL);
                 topSection.getCell(CmsCustomValue.TOPSECTION_FIRSTCELL).setCellValue(topSectionInfo.get(0));
                 topSection.getCell(CmsCustomValue.TOPSECTION_SECONDCELL).setCellValue(topSectionInfo.get(1));
-            }else if(i == 10){
+            } else if (i == 10) {
                 topSection.createCell(CmsCustomValue.TOPSECTION_FIRSTCELL);
                 topSection.getCell(CmsCustomValue.TOPSECTION_FIRSTCELL).setCellValue(topSectionInfo.get(2));
-            }else if(i == 12){
+            } else if (i == 12) {
                 topSection.createCell(CmsCustomValue.TOPSECTION_FIRSTCELL);
                 topSection.getCell(CmsCustomValue.TOPSECTION_FIRSTCELL).setCellValue("참조");
-            }else{
+            } else {
                 topSection.createCell(CmsCustomValue.TOPSECTION_FIRSTCELL);
                 topSection.getCell(CmsCustomValue.TOPSECTION_FIRSTCELL).setCellValue(topSectionInfo.get(3));
             }
         }
     }
-    private void totalResultRow(XSSFSheet sheet, List<String> totalResult){
+
+    private void totalResultRow(XSSFSheet sheet, List<String> totalResult) {
         XSSFRow totalResultRow = sheet.getRow(CmsCustomValue.TOTALRESULT_ROW);
         totalResultRow.createCell(CmsCustomValue.TOTALRESULT_FIRSTCELL);
         totalResultRow.createCell(CmsCustomValue.TOTALRESULT_SECONDCELL);
         totalResultRow.getCell(CmsCustomValue.TOTALRESULT_FIRSTCELL).setCellValue(totalResult.get(0));
         totalResultRow.getCell(CmsCustomValue.TOTALRESULT_SECONDCELL).setCellValue(totalResult.get(4)); // 청구내역
     }
-    private void secondSection(XSSFWorkbook xssfWorkbook,XSSFSheet sheet, List<String> topSectionInfo) {
+
+    private void secondSection(XSSFWorkbook xssfWorkbook, XSSFSheet sheet, List<String> topSectionInfo) {
         XSSFRow secondSection = sheet.getRow(CmsCustomValue.SECONDSECTION_ROW);
         CellStyle secondSectionCellStyle = secondSectionCellStyle(xssfWorkbook);
         secondSection.createCell(CmsCustomValue.SECONDSECTION_CELL).setCellStyle(secondSectionCellStyle);
-        secondSection.getCell(CmsCustomValue.SECONDSECTION_CELL).setCellValue(topSectionInfo.get(2) + "대표님의 " +  topSectionInfo.get(4)+" 환급세액 청구서입니다");
+        secondSection.getCell(CmsCustomValue.SECONDSECTION_CELL).setCellValue(topSectionInfo.get(2) + "대표님의 " + topSectionInfo.get(4) + " 환급세액 청구서입니다");
     }
-    private void detailResultRow(XSSFWorkbook xssfWorkbook,XSSFSheet sheet, List<List<String>> detailMonthlyResult, List<String> totalResult,boolean isPaging) {
+
+    private void detailResultRow(XSSFWorkbook xssfWorkbook, XSSFSheet sheet, List<List<String>> detailMonthlyResult, List<String> totalResult, boolean isPaging) {
         CellStyle detailResultRowCellStyle = cellStyleCustom(xssfWorkbook);
-        if(isPaging){
-            for(int i=0;i<detailMonthlyResult.size();i++) {
-                // 2022/07/15 엑셀양식 15개 max 라서 건수 많으면 추가로 그릴 시트 요청 필요.
+        if (isPaging) {
+            for (int i = 0; i < detailMonthlyResult.size(); i++) {
+                // TODO: 2022/07/15 엑셀양식 15개 max 라서 건수 많으면 추가로 그릴 시트 요청 필요.
                 XSSFRow detailResultRow = sheet.getRow(i + CmsCustomValue.DETAILRESULT_ROW_PAGING);
                 detailResultRow.createCell(0, STRING).setCellStyle(detailResultRowCellStyle);
                 detailResultRow.getCell(0).setCellValue(i + 1);
@@ -224,10 +230,9 @@ public class CmsService {
                     }
                 }
             }
-        }
-        else {
+        } else {
             for (int i = 0; i < detailMonthlyResult.size(); i++) {
-                // 2022/07/15 엑셀양식 15개 max 라서 건수 많으면 추가로 그릴 시트 요청 필요.
+                // TODO: 2022/07/15 엑셀양식 15개 max 라서 건수 많으면 추가로 그릴 시트 요청 필요.
                 XSSFRow detailResultRow = sheet.getRow(i + CmsCustomValue.DETAILRESULT_ROW);
                 detailResultRow.createCell(0, STRING).setCellStyle(detailResultRowCellStyle);
                 detailResultRow.getCell(0).setCellValue(i + 1);
@@ -256,14 +261,15 @@ public class CmsService {
             }
         }
     }
-    private List<String> topSectionInfo(Long franchiseeIndex,LocalDate startLocalDate, LocalDate endLocalDate) {
+
+    private List<String> topSectionInfo(Long franchiseeIndex, LocalDate startLocalDate, LocalDate endLocalDate) {
 
         String year = String.valueOf(startLocalDate.getYear());
         String month = String.valueOf(endLocalDate.getMonthValue());
         String nowMonth = String.valueOf(LocalDate.now().getMonthValue());
 
-        if(nowMonth.length() == 1){
-            nowMonth= "0" + nowMonth;
+        if (nowMonth.length() == 1) {
+            nowMonth = "0" + nowMonth;
         }
 
         FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
@@ -271,8 +277,8 @@ public class CmsService {
         result.add("KTP 제 " + year + month); // 문서 번호
         result.add(year + nowMonth + "05"); // 발송일자
         result.add(franchiseeEntity.getStoreName()); //수신
-        result.add(franchiseeEntity.getStoreName() + month +"월 " + "내국세 환급세액 청구" ); // 제목
-        result.add("[ "+ year + "년" + month + "월 01일 ~ " + month + "월 31일 ]" );
+        result.add(franchiseeEntity.getStoreName() + month + "월 " + "내국세 환급세액 청구"); // 제목
+        result.add("[ " + year + "년" + month + "월 01일 ~ " + month + "월 31일 ]");
         return result;
     }
 
@@ -281,21 +287,35 @@ public class CmsService {
         int yearInt = Integer.parseInt("20" + requestDate.substring(0, 2));
         int monthInt = Integer.parseInt(requestDate.substring(2));
 
-        if(monthInt <10){
+        if (monthInt < 10) {
             monthInt = Integer.parseInt(requestDate.substring(2).replaceAll("0", ""));
         }
 
-        LocalDate startDate = LocalDate.of(yearInt,monthInt-1,1);
-        LocalDate endDate = LocalDate.of(yearInt,monthInt,1);
+        LocalDate startDate = LocalDate.of(yearInt, monthInt, 1);
+        LocalDate endDate;
+
+        if (monthInt == 12) {
+            endDate = LocalDate.of(yearInt + 1, 1, 1);
+        } else {
+            endDate = LocalDate.of(yearInt, monthInt + 1, 1);
+        }
+
+
         startDate.format(DateTimeFormatter.BASIC_ISO_DATE);
         endDate.format(DateTimeFormatter.BASIC_ISO_DATE);
 
         List<LocalDate> dateList = new ArrayList<>();
+        endDate = endDate.minusDays(1);
+
+        log.trace(" @@ startDate = {}", startDate);
+        log.trace(" @@ endDate = {}", endDate);
+
         dateList.add(startDate);
         dateList.add(endDate);
         return dateList;
     }
-    private CellStyle cellStyleCustom(XSSFWorkbook xssfWorkbook){
+
+    private CellStyle cellStyleCustom(XSSFWorkbook xssfWorkbook) {
         CellStyle cellStyle = xssfWorkbook.createCellStyle();
         cellStyle.setBorderBottom(BorderStyle.THIN);
         cellStyle.setBorderTop(BorderStyle.THIN);
