@@ -43,10 +43,10 @@ public class OrderSaveService {
     private final RefundRateCondition refundRateCondition;
 
     @Transactional
-    public OrderEntity save(RefundSaveRequest request) {
+    public OrderEntity save(RefundSaveRequest request, Long franchiseeIndex) {
 
         FranchiseeEntity franchiseeEntity =
-                franchiseeFindService.findByIndex(request.getFranchiseeIndex());
+                franchiseeFindService.findByIndex(franchiseeIndex);
 
         CustomerEntity customerEntity = customerService.findByIndex(request.getCustomerIndex());
 

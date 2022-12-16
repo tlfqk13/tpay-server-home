@@ -22,11 +22,14 @@ import static com.tpay.domains.franchisee_upload.domain.QFranchiseeUploadEntity.
 import static com.tpay.domains.order.domain.QOrderEntity.orderEntity;
 import static com.tpay.domains.point_scheduled.domain.QPointScheduledEntity.pointScheduledEntity;
 import static com.tpay.domains.refund.domain.QRefundEntity.refundEntity;
+
 public class RefundRepositoryImpl implements RefundRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
 
-    public RefundRepositoryImpl(EntityManager em){this.queryFactory = new JPAQueryFactory(em);}
+    public RefundRepositoryImpl(EntityManager em) {
+        this.queryFactory = new JPAQueryFactory(em);
+    }
 
     @Override
     public List<RefundReceiptDto.Response> findRefundReceipt(String encryptPassportNumber, boolean refundAfter) {
@@ -48,10 +51,10 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
                         refundEntity.createdDate
                 ))
                 .from(orderEntity)
-                .leftJoin(orderEntity.refundEntity,refundEntity)
+                .leftJoin(orderEntity.refundEntity, refundEntity)
                 .leftJoin(pointScheduledEntity).on(pointScheduledEntity.orderEntity.id.eq(orderEntity.id))
-                .leftJoin(orderEntity.franchiseeEntity,franchiseeEntity)
-                .leftJoin(orderEntity.customerEntity,customerEntity)
+                .leftJoin(orderEntity.franchiseeEntity, franchiseeEntity)
+                .leftJoin(orderEntity.customerEntity, customerEntity)
                 .leftJoin(franchiseeUploadEntity).on(franchiseeEntity.id.eq(franchiseeUploadEntity.franchiseeIndex))
                 .where(customerEntity.passportNumber.eq(encryptPassportNumber)
                         .and(isRefundAfter(refundAfter)))
@@ -80,10 +83,10 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
                         refundEntity.createdDate
                 ))
                 .from(orderEntity)
-                .leftJoin(orderEntity.refundEntity,refundEntity)
+                .leftJoin(orderEntity.refundEntity, refundEntity)
                 .leftJoin(pointScheduledEntity).on(pointScheduledEntity.orderEntity.id.eq(orderEntity.id))
-                .leftJoin(orderEntity.franchiseeEntity,franchiseeEntity)
-                .leftJoin(orderEntity.customerEntity,customerEntity)
+                .leftJoin(orderEntity.franchiseeEntity, franchiseeEntity)
+                .leftJoin(orderEntity.customerEntity, customerEntity)
                 .leftJoin(franchiseeUploadEntity).on(franchiseeEntity.id.eq(franchiseeUploadEntity.franchiseeIndex))
                 .where(customerEntity.passportNumber.eq(encryptPassportNumber)
                         .and(isRefundAfter(refundAfter)))
@@ -95,7 +98,7 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
 
     @Override
     public List<RefundFindDto.Response> findRefundDetail(Long franchiseeIndex, LocalDate startLocalDate, LocalDate endLocalDate) {
-       List<RefundFindDto.Response> content = queryFactory
+        List<RefundFindDto.Response> content = queryFactory
                 .select(new QRefundFindDto_Response(
                         refundEntity.id,
                         refundEntity.refundStatus,
@@ -105,20 +108,20 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
                         (orderEntity.totalAmount.castToNum(Integer.class)
                                 .subtract(refundEntity.totalRefund.castToNum(Integer.class)))
                 ))
-               .from(refundEntity)
-               .innerJoin(refundEntity.orderEntity,orderEntity)
-               .leftJoin(orderEntity.franchiseeEntity,franchiseeEntity)
-               .where(franchiseeEntity.id.eq(franchiseeIndex)
-                       .and(refundEntity.createdDate
-                               .between(startLocalDate.atStartOfDay(),LocalDateTime.of(endLocalDate, LocalTime.MAX))))
-               .fetch();
+                .from(refundEntity)
+                .innerJoin(refundEntity.orderEntity, orderEntity)
+                .leftJoin(orderEntity.franchiseeEntity, franchiseeEntity)
+                .where(franchiseeEntity.id.eq(franchiseeIndex)
+                        .and(refundEntity.createdDate
+                                .between(startLocalDate.atStartOfDay(), LocalDateTime.of(endLocalDate, LocalTime.MAX))))
+                .fetch();
 
         return content;
     }
 
     @Override
     public Page<RefundFindAllDto.Response> findRefundAll(Pageable pageable, LocalDate startLocalDate, LocalDate endLocalDate
-            , boolean isKeywordEmpty, boolean businessNumber, String searchKeyword,RefundStatus refundStatus) {
+            , boolean isKeywordEmpty, boolean businessNumber, String searchKeyword, RefundStatus refundStatus) {
 
         List<RefundFindAllDto.Response> content = queryFactory
                 .select(new QRefundFindAllDto_Response(
@@ -135,12 +138,12 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
                         franchiseeEntity.storeName
                 ))
                 .from(refundEntity)
-                .innerJoin(refundEntity.orderEntity,orderEntity)
-                .leftJoin(orderEntity.franchiseeEntity,franchiseeEntity)
-                .leftJoin(orderEntity.customerEntity,customerEntity)
-                .where(refundEntity.createdDate.between(startLocalDate.atStartOfDay(),LocalDateTime.of(endLocalDate, LocalTime.MAX))
+                .innerJoin(refundEntity.orderEntity, orderEntity)
+                .leftJoin(orderEntity.franchiseeEntity, franchiseeEntity)
+                .leftJoin(orderEntity.customerEntity, customerEntity)
+                .where(refundEntity.createdDate.between(startLocalDate.atStartOfDay(), LocalDateTime.of(endLocalDate, LocalTime.MAX))
                         .and(franchiseeEntity.storeName.ne("석세스모드"))
-                        .and(isKeywordEmpty(isKeywordEmpty,businessNumber,searchKeyword,refundStatus)))
+                        .and(isKeywordEmpty(isKeywordEmpty, businessNumber, searchKeyword, refundStatus)))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(refundEntity.id.desc())
@@ -148,58 +151,61 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
 
         JPAQuery<Long> countQuery = queryFactory.select(refundEntity.count())
                 .from(refundEntity)
-                .innerJoin(refundEntity.orderEntity,orderEntity)
-                .leftJoin(orderEntity.franchiseeEntity,franchiseeEntity)
-                .leftJoin(orderEntity.customerEntity,customerEntity);
+                .innerJoin(refundEntity.orderEntity, orderEntity)
+                .leftJoin(orderEntity.franchiseeEntity, franchiseeEntity)
+                .leftJoin(orderEntity.customerEntity, customerEntity);
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }
 
     @Override
-    public List<CmsDto.Response> findFranchiseeIdCmsService(LocalDate startDate,LocalDate endDate) {
+    public List<CmsDto.Response> findFranchiseeIdCmsService(LocalDate startDate, LocalDate endDate) {
         List<CmsDto.Response> content = queryFactory
                 .select(new QCmsDto_Response(
                         franchiseeEntity.id
                 ))
                 .from(refundEntity)
-                .innerJoin(refundEntity.orderEntity,orderEntity)
-                .leftJoin(orderEntity.franchiseeEntity,franchiseeEntity)
-                .where(orderEntity.createdDate.between(startDate.atStartOfDay(),LocalDateTime.of(endDate, LocalTime.MAX))
+                .innerJoin(refundEntity.orderEntity, orderEntity)
+                .leftJoin(orderEntity.franchiseeEntity, franchiseeEntity)
+                .where(orderEntity.createdDate.between(startDate.atStartOfDay(), LocalDateTime.of(endDate, LocalTime.MAX))
                         .and(refundEntity.refundStatus.eq(RefundStatus.APPROVAL)
-                        .and(franchiseeEntity.id.ne(152L))))
+                                .and(franchiseeEntity.id.ne(152L))))
                 .groupBy(franchiseeEntity.id)
                 .fetch();
 
         return content;
     }
 
-    private BooleanExpression isKeywordEmpty(Boolean isKeywordEmpty, Boolean businessNumber, String keyword,RefundStatus refundStatus) {
-        if(isKeywordEmpty){
-            if(refundStatus.equals(RefundStatus.ALL)){
+    private BooleanExpression isKeywordEmpty(Boolean isKeywordEmpty, Boolean businessNumber, String keyword, RefundStatus refundStatus) {
+        if (isKeywordEmpty) {
+            if (refundStatus.equals(RefundStatus.ALL)) {
                 return null;
-            }else {
+            } else {
                 return refundEntity.refundStatus.in(refundStatus);
             }
-        }else{
-            if(businessNumber){
-                if(refundStatus.equals(RefundStatus.ALL)){
+        } else {
+            if (businessNumber) {
+                if (refundStatus.equals(RefundStatus.ALL)) {
                     return franchiseeEntity.businessNumber.eq(keyword);
+                } else {
+                    return franchiseeEntity.businessNumber.eq(keyword)
+                            .and(refundEntity.refundStatus.in(refundStatus));
                 }
-                return franchiseeEntity.businessNumber.eq(keyword).and(refundEntity.refundStatus.in(refundStatus));
-            }else{
-                if(refundStatus.equals(RefundStatus.ALL)){
+            } else {
+                if (refundStatus.equals(RefundStatus.ALL)) {
                     return franchiseeEntity.storeName.eq(keyword);
+                } else {
+                    return franchiseeEntity.storeName.eq(keyword).and(refundEntity.refundStatus.in(refundStatus));
                 }
-                return franchiseeEntity.storeName.eq(keyword).and(refundEntity.refundStatus.in(refundStatus));
             }
         }
     }
 
     private BooleanExpression isRefundAfter(Boolean refundAfter) {
-        if(refundAfter){
+        if (refundAfter) {
             return refundEntity.refundAfterEntity.isNotNull()
                     .and(refundEntity.totalRefund.castToNum(Integer.class).goe(80000));
-        }else{
+        } else {
             return refundEntity.totalRefund.castToNum(Integer.class).loe(74000);
         }
     }

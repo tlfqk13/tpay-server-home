@@ -160,7 +160,8 @@ public class ErpRefundDetailFindTestService {
         LocalDate endLocalDate = LocalDate.parse("20" + endDate, yyyyMMdd).plusDays(1);
         PageRequest pageRequest = PageRequest.of(page, 10);
         boolean isBusinessNumber = searchKeyword.chars().allMatch(Character::isDigit);
-
+        System.out.println("isBusinessNumber -> " + isBusinessNumber);
+        System.out.println("searchKeyword.isEmpty() -> " + searchKeyword.isEmpty());
         Page<RefundFindAllDto.Response> response = refundRepository.findRefundAll(pageRequest, startLocalDate, endLocalDate, searchKeyword.isEmpty()
                 ,isBusinessNumber,searchKeyword,refundStatus);
 

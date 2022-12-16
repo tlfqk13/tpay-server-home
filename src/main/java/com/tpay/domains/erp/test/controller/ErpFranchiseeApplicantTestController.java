@@ -1,6 +1,5 @@
 package com.tpay.domains.erp.test.controller;
 
-import com.tpay.domains.erp.test.service.FranchiseeApplicantTestFindService;
 import com.tpay.domains.franchisee_applicant.application.*;
 import com.tpay.domains.franchisee_applicant.application.dto.*;
 import com.tpay.domains.franchisee_upload.application.FranchiseeUploadService;
@@ -17,9 +16,10 @@ public class ErpFranchiseeApplicantTestController{
     private final FranchiseeApplicantAcceptService franchiseeApplicantAcceptService;
     private final FranchiseeApplicantDetailService franchiseeApplicantDetailService;
     private final FranchiseeApplicantSetNumberService franchiseeApplicantSetNumberService;
-    private final FranchiseeApplicantTestFindService franchiseeApplicantTestFindService;
+    private final FranchiseeApplicantFindService franchiseeApplicantFindService;
     private final FranchiseeApplicantReadService franchiseeApplicantReadService;
     private final FranchiseeApplicantRejectService franchiseeApplicantRejectService;
+    private final FranchiseeApplicantSetBalancePerService franchiseeApplicantSetBalancePerService;
     private final FranchiseeUploadService franchiseeUploadService;
     private final FranchiseeApplicantUpdateService franchiseeApplicantUpdateService;
 
@@ -56,7 +56,7 @@ public class ErpFranchiseeApplicantTestController{
             @RequestParam int page,
             @RequestParam String searchKeyword
     ){
-        FranchiseeApplicantFindResponse responseList = franchiseeApplicantTestFindService.findAll(page,searchKeyword);
+        FranchiseeApplicantFindResponse responseList = franchiseeApplicantFindService.findAll(page,searchKeyword);
         return ResponseEntity.ok(responseList);
     }
 
@@ -79,7 +79,7 @@ public class ErpFranchiseeApplicantTestController{
             @RequestParam(required = false) MultipartFile uploadImage,
             @RequestParam String isNewUploadedImg){
         FranchiseeApplicantDetailUpdateResponse result =
-                franchiseeApplicantTestFindService.updateFranchiseeApplicantInfo(franchiseeApplicantIndex,imageCategory,detailFranchiseeInfo,uploadImage,isNewUploadedImg);
+                franchiseeApplicantUpdateService.updateFranchiseeApplicantInfo(franchiseeApplicantIndex,imageCategory,detailFranchiseeInfo,uploadImage,isNewUploadedImg);
         return ResponseEntity.ok(result);
     }
     /**
@@ -92,7 +92,7 @@ public class ErpFranchiseeApplicantTestController{
             @PathVariable String value,
             int page,
             @RequestParam(defaultValue = "") String searchKeyword){
-        FranchiseeApplicantFindResponse result = franchiseeApplicantTestFindService.applicantFilterTest(filterSelector, value, page, searchKeyword);
+        FranchiseeApplicantFindResponse result = franchiseeApplicantFindService.applicantFilter(filterSelector, value, page, searchKeyword);
         return ResponseEntity.ok(result);
     }
 
@@ -133,7 +133,7 @@ public class ErpFranchiseeApplicantTestController{
     public ResponseEntity<String> updateBalancePercentage(
             @PathVariable Long franchiseeApplicantIndex
             ,@RequestBody FranchiseeApplicantUpdateDto.balancePercentageRequest request) {
-        String result = String.valueOf(franchiseeApplicantUpdateService.updateBalancePercentage(franchiseeApplicantIndex, request));
+        String result = String.valueOf(franchiseeApplicantSetBalancePerService.updateBalancePercentage(franchiseeApplicantIndex, request));
         return ResponseEntity.ok(result);
     }
 }

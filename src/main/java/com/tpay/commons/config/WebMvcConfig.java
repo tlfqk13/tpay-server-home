@@ -1,11 +1,12 @@
 package com.tpay.commons.config;
 
-import com.tpay.commons.interceptor.AuthInterceptor;
 import com.tpay.commons.interceptor.JwtValidationInterceptor;
 import com.tpay.commons.interceptor.PrintRequestInterceptor;
+import com.tpay.commons.util.resolver.KtpIndexInfoResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -86,7 +87,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH");
     }
 
-    @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(indexInfoResolver);
     }

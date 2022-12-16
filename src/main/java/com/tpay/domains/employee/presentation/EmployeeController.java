@@ -1,5 +1,7 @@
 package com.tpay.domains.employee.presentation;
 
+import com.tpay.commons.util.IndexInfo;
+import com.tpay.commons.util.resolver.KtpIndexInfo;
 import com.tpay.domains.employee.application.*;
 import com.tpay.domains.employee.application.dto.*;
 import com.tpay.domains.employee.domain.EmployeeEntity;
@@ -64,9 +66,6 @@ public class EmployeeController {
         @PathVariable Long franchiseeIndex,
         @RequestBody EmployeeUpdateRequest employeeUpdateRequest) {
         boolean result = employeeUpdateService.update(employeeUpdateRequest);
-            @PathVariable Long employeeIndex,
-            @RequestBody EmployeeUpdateRequest employeeUpdateRequest) {
-        boolean result = employeeUpdateService.update(employeeIndex, employeeUpdateRequest);
         return ResponseEntity.ok(result);
     }
 
