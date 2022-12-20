@@ -89,6 +89,8 @@ public class FranchiseeEntity extends BaseTimeEntity {
     @Column(length = 2)
     private String refundStep;
 
+    private Boolean isAfterRefund;
+
     @Column(name = "popUp", length = 1)
     private boolean popUp;
 

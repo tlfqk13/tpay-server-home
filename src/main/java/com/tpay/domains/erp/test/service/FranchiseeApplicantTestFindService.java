@@ -1,4 +1,4 @@
-package com.tpay.domains.franchisee_applicant_test.application;
+package com.tpay.domains.erp.test.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tpay.commons.exception.ExceptionState;

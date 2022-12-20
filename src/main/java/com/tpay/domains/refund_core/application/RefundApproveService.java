@@ -7,7 +7,6 @@ import com.tpay.commons.exception.detail.WebfluxGeneralException;
 import com.tpay.commons.push.PushCategoryType;
 import com.tpay.commons.util.IndexInfo;
 import com.tpay.commons.webClient.WebRequestUtil;
-import com.tpay.domains.api.domain.vo.ApprovalDto;
 import com.tpay.domains.auth.domain.EmployeeAccessTokenEntity;
 import com.tpay.domains.auth.domain.EmployeeAccessTokenRepository;
 import com.tpay.domains.auth.domain.FranchiseeAccessTokenEntity;
@@ -41,7 +40,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 import static com.tpay.commons.util.UserSelector.EMPLOYEE;
-import static com.tpay.commons.util.UserSelector.FRANCHISEE;
 
 @Service
 @RequiredArgsConstructor
@@ -218,6 +216,11 @@ public class RefundApproveService {
         refund.updateCancel();
     }
 
+    public void cancelRefundAfter(Long refundIndex) {
+        RefundEntity refund = refundService.getRefundByRefundId(refundIndex);
+        refund.updateCancel();
+    }
+
     private void updateUserDeviceInfo(RefundSaveRequest request, OrderEntity orderEntity, IndexInfo indexInfo) {
         if (indexInfo.getUserSelector() == EMPLOYEE) {
             EmployeeAccessTokenEntity employeeAccessTokenEntity =
@@ -270,4 +273,6 @@ public class RefundApproveService {
 
         return indexInfo.getIndex();
     }
+
+
 }

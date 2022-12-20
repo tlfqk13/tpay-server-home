@@ -34,10 +34,9 @@ public class LimitFindService {
         String uri = CustomValue.REFUND_SERVER + "/refund/limit";
 
         // 2022/10/11 독일 여권일 경우, D -> DEU
-        if(checkNation(request)){
+        if (checkNation(request)) {
             nationUpdate(request);
         }
-
         // 한도 조회 요청
         RefundResponse refundResponse = webRequestUtil.post(uri, request);
         log.debug("request.passportNumber = {} , refundResponse.getPassportNumber() = {}"
@@ -51,46 +50,56 @@ public class LimitFindService {
         // 한도조회 스켄 or 수기 확인
         log.trace(" @@ request.getMethod = {}", request.getMethod());
 
+        String customerName = "";
+        if (request.getName() == null) {
+            customerName = " ";
+        }
+
         // 한도 조회 요청 후, 성공되면 고객 정보 등록
-        if(refundResponse.getResponseCode().equals("0000")) {
+        if (refundResponse.getResponseCode().equals("0000")) {
             Long customerEntityId;
             Optional<CustomerEntity> customerEntityOptional = customerService.findCustomerByNationAndPassportNumber(refundResponse.getPassportNumber(), refundResponse.getNationality());
             if (customerEntityOptional.isEmpty()) {
-                CustomerEntity customerEntity = customerService.updateCustomerInfo(request.getName(), refundResponse.getPassportNumber(), refundResponse.getNationality());
+                CustomerEntity customerEntity = customerService.updateCustomerInfo(customerName, refundResponse.getPassportNumber(), refundResponse.getNationality());
                 customerEntityId = customerEntity.getId();
                 log.debug("Refund Limit customerID = {}", customerEntityId);
             } else {
                 CustomerEntity customerEntity = customerEntityOptional.get();
                 customerEntityId = customerEntity.getId();
-                if(customerEntity.getCustomerName().contentEquals(request.getName())){
-                    log.warn("saved name = {}, request name = {} is different", customerEntity.getCustomerName(), request.getName());
+                if (customerEntity.getCustomerName().contentEquals(customerName)) {
+                    log.warn("saved name = {}, request name = {} is different", customerEntity.getCustomerName(), customerName);
                 }
                 log.debug("Refund Limit customerID = {}", customerEntityId);
             }
 
             // TODO: 2022/11/04 사후환급 신청 가맹점 여부 조회를 위해...
-            if(request.getFranchiseeIndex() != null) {
+            if (request.getFranchiseeIndex() != null) {
                 log.trace(" @@ request.getFranchiseeIndex() ! null @@ ");
                 FranchiseeEntity franchiseeEntity = franchiseeRepository.findById(request.getFranchiseeIndex())
                         .orElseThrow(() -> new IllegalArgumentException("Invalid Franchisee Entity"));
-                return refundResponse.addCustomerInfo(customerEntityId, franchiseeEntity.getRefundStep());
-            }
+
+                String refundStep = franchiseeEntity.getRefundStep();
+
+                return refundResponse.addCustomerInfo(customerEntityId, refundStep);
+            } else {
                 return refundResponse.addCustomerInfo(customerEntityId);
+            }
 
         } else {
             throw new InvalidPassportInfoException(ExceptionState.INVALID_PASSPORT_INFO, "한도조회 실패");
         }
     }
+
     private boolean checkNation(RefundLimitRequest request) {
-        if(RefundCustomValue.NATION_GERMANY_D.equals(request.getNationality())){
+        if (RefundCustomValue.NATION_GERMANY_D.equals(request.getNationality())) {
             log.debug(" @@ CheckNationValue = {}", request.getNationality());
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
-    private void nationUpdate(RefundLimitRequest request){
+    private void nationUpdate(RefundLimitRequest request) {
         request.nationUpdate(RefundCustomValue.NATION_GERMANY_DEU);
     }
 }

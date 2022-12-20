@@ -30,7 +30,9 @@ public enum ExceptionState {
     INVALID_EXTERNAL_REFUND_INDEX(400,HttpStatus.BAD_REQUEST,"G0001","Invalid External Refund Index"),
     ALREADY_CANCELLED(409, HttpStatus.BAD_REQUEST, "G0002", "Already Cancelled Index"),
     CUSTOMER_NOT_FOUND(400,HttpStatus.BAD_REQUEST,"C0001","Customer not Found"),
-    WEBFLUX_GENERAL(400,HttpStatus.BAD_REQUEST, "G0003","Webflux General Exception");
+    WEBFLUX_GENERAL(400,HttpStatus.BAD_REQUEST, "G0003","Webflux General Exception"),
+
+    INVALID_NATION(400,HttpStatus.BAD_REQUEST, "G0004","Invalid Passport Nation");
 
     private final int value;
     private final HttpStatus httpStatus;

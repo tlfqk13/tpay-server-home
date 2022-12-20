@@ -32,6 +32,7 @@ public class RefundFindController {
         return ResponseEntity.ok(responseList);
     }
 
+    // 환급 취소 > 환급 리스트
     @PostMapping("/refunds/customer/{franchiseeIndex}")
     public ResponseEntity<List<RefundByCustomerDateResponse>> findRefundsByCustomerInfo(
         @PathVariable Long franchiseeIndex,

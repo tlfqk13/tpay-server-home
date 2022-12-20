@@ -15,6 +15,7 @@ import com.tpay.domains.refund.domain.RefundEntity;
 import com.tpay.domains.refund_core.application.dto.RefundCancelRequest;
 import com.tpay.domains.refund_core.application.dto.RefundResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -22,6 +23,7 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class RefundCancelService {
 
     private final CustomerService customerService;
@@ -30,16 +32,30 @@ public class RefundCancelService {
     private final ExternalRepository externalRepository;
     private final WebRequestUtil webRequestUtil;
 
+    private final RefundApproveService refundApproveService;
+
     @Transactional
     public RefundResponse cancel(Long customerIndex, Long refundIndex) {
         CustomerEntity customerEntity = customerService.findByIndex(customerIndex);
         RefundEntity refundEntity = refundFindService.findById(refundIndex);
         RefundCancelRequest refundCancelRequest = RefundCancelRequest.of(customerEntity, refundEntity);
 
-        //2022/03/25 포스기에서 승인한건 포스기에서만 취소 가능
+        // 포스기에서 승인한건 포스기에서만 취소 가능 -- external index 확인
         Optional<ExternalRefundEntity> optionalExternalRefundEntity = externalRepository.findByRefundEntity(refundEntity);
         if (optionalExternalRefundEntity.isPresent()) {
+            log.trace(" @@ optionalExternalRefundEntity = {}", refundIndex);
             throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "POS approval must be canceled by POS");
+        }
+
+        if(Integer.parseInt(refundEntity.getTotalRefund()) > 75000){
+            log.trace(" @@ refundEntity.getTotalRefund() = {}", Integer.parseInt(refundEntity.getTotalRefund()));
+            refundApproveService.cancelRefundAfter(refundIndex);
+            log.trace(" @@  cancelRefundAfter finish @@ = {} ", refundEntity.getId());
+
+            double balancePercentage = refundEntity.getOrderEntity().getFranchiseeEntity().getBalancePercentage();
+            pointScheduledChangeService.change(refundEntity, SignType.NEGATIVE, balancePercentage);
+
+            return null;
         }
 
         String uri = CustomValue.REFUND_SERVER + "/refund/cancel";

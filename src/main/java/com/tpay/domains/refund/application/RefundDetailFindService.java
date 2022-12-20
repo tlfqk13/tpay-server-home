@@ -82,21 +82,9 @@ public class RefundDetailFindService {
         LocalDate endDate = refundCustomerDateRequest.getEndDate().plusDays(1);
         String orderCheck = refundCustomerDateRequest.getOrderCheck();
 
-        String name = refundCustomerInfoRequest.getName();
         String nation = refundCustomerInfoRequest.getNationality();
         String passportNumber = refundCustomerInfoRequest.getPassportNumber();
         Optional<CustomerEntity> customerEntityOptional = customerService.findCustomerByNationAndPassportNumber(passportNumber, nation);
-
-        /*if (includeZeroInPassportNumber(passportNumber)) {
-            List<String> availPassportNumbers = getAvailPassportNumberList(passportNumber);
-            for (String passportNum : availPassportNumbers) {
-                customerEntityOptional = customerUpdateService.findCustomerByNationAndPassportNumber(passportNum, nation);
-                if(customerEntityOptional.isPresent()) {
-                    log.debug("Applied passport Number = {}", passportNum);
-                    break;
-                }
-            }
-        }*/
 
         if(customerEntityOptional.isEmpty()) {
             return Collections.emptyList();

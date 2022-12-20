@@ -47,4 +47,9 @@ public class RefundService {
         return refundRepository.findByTakeOutNumber(tkOutNum)
                 .orElseThrow(() -> new OrderNotFoundException(ExceptionState.ORDER_NOT_FOUND, "TkOutNumber 로 주문을 찾을 수 없음"));
     }
+
+    public RefundEntity getRefundByRefundId(Long refundIndex) {
+        return refundRepository.findById(refundIndex)
+                .orElseThrow(() -> new OrderNotFoundException(ExceptionState.ORDER_NOT_FOUND, "TkOutNumber 로 주문을 찾을 수 없음"));
+    }
 }
