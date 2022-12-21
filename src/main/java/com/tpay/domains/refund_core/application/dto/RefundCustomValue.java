@@ -1,6 +1,7 @@
 package com.tpay.domains.refund_core.application.dto;
 
-import java.util.List;
+import java.util.Arrays;
+import java.util.HashSet;
 
 public abstract class RefundCustomValue {
     public static final String NATION_GERMANY_D = "D";
@@ -8,8 +9,8 @@ public abstract class RefundCustomValue {
     public static final String REFUND_STEP_ONE = "1";
     public static final String REFUND_STEP_TWO = "2";
     public static final String REFUND_STEP_THREE = "3";
-
-    public static final List<String> nationalityCode = List.of("AND",
+    public static final HashSet<String> nationCode = new HashSet<>(Arrays.asList(
+            "AND",
             "ARE", "AFG", "ATG", "AIA", "ALB", "ARM", "AGO", "ATA", "ARG", "ASM",
             "AUT", "AUS", "ABW", "ALA", "AZE", "BIH", "BRB", "BGD", "BEL", "BFA",
             "BGR", "BHR", "BDI", "BEN", "BLM", "BMU", "BRN", "BOL", "BES", "BRA",
@@ -34,5 +35,6 @@ public abstract class RefundCustomValue {
             "SXM", "SYR", "SWZ", "TCA", "TCD", "ATF", "TGO", "THA", "TJK", "TKL",
             "TLS", "TKM", "TUN", "TON", "TUR", "TTO", "TUV", "TWN", "TZA", "UKR",
             "UGA", "UMI", "USA", "URY", "UZB", "VAT", "VCT", "VEN", "VGB", "VIR",
-            "VNM", "VUT", "WLF", "WSM", "YEM", "MYT", "ZAF", "ZMB", "ZWE");
+            "VNM", "VUT", "WLF", "WSM", "YEM", "MYT", "ZAF", "ZMB", "ZWE"
+    ));
 }

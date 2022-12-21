@@ -2,6 +2,7 @@ package com.tpay.domains.refund_core.application;
 
 import com.tpay.commons.custom.CustomValue;
 import com.tpay.commons.exception.ExceptionState;
+import com.tpay.commons.exception.detail.InvalidNationException;
 import com.tpay.commons.exception.detail.InvalidPassportInfoException;
 import com.tpay.commons.webClient.WebRequestUtil;
 import com.tpay.domains.customer.application.CustomerService;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Optional;
+
+import static com.tpay.domains.refund_core.application.dto.RefundCustomValue.nationCode;
 
 
 @RequiredArgsConstructor
@@ -50,31 +53,26 @@ public class LimitFindService {
         // 한도조회 스켄 or 수기 확인
         log.trace(" @@ request.getMethod = {}", request.getMethod());
 
-        String customerName = "";
-        if (request.getName() == null) {
-            customerName = " ";
-        }
-
         // 한도 조회 요청 후, 성공되면 고객 정보 등록
         if (refundResponse.getResponseCode().equals("0000")) {
             Long customerEntityId;
             Optional<CustomerEntity> customerEntityOptional = customerService.findCustomerByNationAndPassportNumber(refundResponse.getPassportNumber(), refundResponse.getNationality());
+            CustomerEntity customerEntity;
             if (customerEntityOptional.isEmpty()) {
-                CustomerEntity customerEntity = customerService.updateCustomerInfo(customerName, refundResponse.getPassportNumber(), refundResponse.getNationality());
+                customerEntity = customerService.updateCustomerInfo(request.getName(), refundResponse.getPassportNumber(), refundResponse.getNationality());
                 customerEntityId = customerEntity.getId();
-                log.debug("Refund Limit customerID = {}", customerEntityId);
             } else {
-                CustomerEntity customerEntity = customerEntityOptional.get();
+                customerEntity = customerEntityOptional.get();
                 customerEntityId = customerEntity.getId();
-                if (customerEntity.getCustomerName().contentEquals(customerName)) {
-                    log.warn("saved name = {}, request name = {} is different", customerEntity.getCustomerName(), customerName);
+                if (customerEntity.getCustomerName().contentEquals(request.getName())) {
+                    log.warn("saved name = {}, request name = {} is different", customerEntity.getCustomerName(), request.getName());
                 }
-                log.debug("Refund Limit customerID = {}", customerEntityId);
             }
+            log.debug("Refund Limit customerID = {}", customerEntityId);
 
             // TODO: 2022/11/04 사후환급 신청 가맹점 여부 조회를 위해...
             if (request.getFranchiseeIndex() != null) {
-                log.trace(" @@ request.getFranchiseeIndex() ! null @@ ");
+                log.debug(" @@ request.getFranchiseeIndex() ! null @@ ");
                 FranchiseeEntity franchiseeEntity = franchiseeRepository.findById(request.getFranchiseeIndex())
                         .orElseThrow(() -> new IllegalArgumentException("Invalid Franchisee Entity"));
 
@@ -101,5 +99,18 @@ public class LimitFindService {
 
     private void nationUpdate(RefundLimitRequest request) {
         request.nationUpdate(RefundCustomValue.NATION_GERMANY_DEU);
+    }
+
+    private void invalidNation(RefundLimitRequest request) {
+        // 독일 여권일 경우, D -> DEU
+        if (checkNation(request)) {
+            nationUpdate(request);
+        }
+        // 국적 확인
+        log.debug(" @@ invalidNation ={} ", request.getNationality());
+        boolean isInvalidNation = nationCode.contains(request.getNationality());
+        if (!isInvalidNation) {
+            throw new InvalidNationException(ExceptionState.INVALID_NATION, "국가 정보가 틀렸습니다");
+        }
     }
 }

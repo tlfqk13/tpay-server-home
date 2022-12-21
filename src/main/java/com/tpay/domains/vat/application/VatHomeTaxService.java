@@ -45,7 +45,7 @@ public class VatHomeTaxService {
     private static final String TEMP_SUB_COMPANY_NUM = "0000";
 
     // TODO 주민번호 앞자리 또는 법인등록번호로 레코드 만드는 부분 추가 필요(OWNER_RESIDENT_OR_CORPORATION_NUMBER)
-    private static final String TEMP_CORP_NUM = "7777777777";
+    private static final String TEMP_CORP_NUM = "";
     private static final String CHARSET = "EUC-KR";
     private static final String REFUND_CORP_NUM = "2390401226";
 
