@@ -70,7 +70,7 @@ public class LimitFindService {
             }
             log.debug("Refund Limit customerID = {}", customerEntityId);
 
-            // TODO: 2022/11/04 사후환급 신청 가맹점 여부 조회를 위해...
+            // 사후환급 신청 가맹점 여부 조회
             if (request.getFranchiseeIndex() != null) {
                 log.debug(" @@ request.getFranchiseeIndex() ! null @@ ");
                 FranchiseeEntity franchiseeEntity = franchiseeRepository.findById(request.getFranchiseeIndex())
