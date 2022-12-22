@@ -3,7 +3,6 @@ package com.tpay.domains.order.presentation;
 
 import com.tpay.commons.util.IndexInfo;
 import com.tpay.commons.util.resolver.KtpIndexInfo;
-import com.tpay.domains.erp.test.dto.RefundType;
 import com.tpay.domains.order.application.CmsService;
 import com.tpay.domains.order.application.dto.CmsDetailResponse;
 import com.tpay.domains.vat.application.dto.VatTotalDto;
@@ -47,8 +46,8 @@ public class CmsController {
             @RequestParam String requestDate,
             @KtpIndexInfo IndexInfo indexInfo
     ) {
-        String downloadLink = cmsService.cmsDownloads(indexInfo.getIndex(), requestDate, RefundType.ALL);
-        return ResponseEntity.ok(downloadLink);
+//        String downloadLink = cmsService.buildCmsFile(indexInfo.getIndex(), requestDate);
+        return ResponseEntity.ok("");
     }
 
 

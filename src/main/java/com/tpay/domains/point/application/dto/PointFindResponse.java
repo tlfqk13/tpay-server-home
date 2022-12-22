@@ -12,4 +12,7 @@ public class PointFindResponse {
     private String startDate;
     private String endDate;
     private List<PointInfo> pointInfoList;
+    private Long totalPoints;
+    private Long scheduledPoints;
+    private Long disappearPoints;
 }

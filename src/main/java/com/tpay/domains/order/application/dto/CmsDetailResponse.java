@@ -11,4 +11,5 @@ import java.util.List;
 public class CmsDetailResponse {
     private List<String> commissionInfoList;
     private List<String> customerInfoList;
+    private String downloadLink;
 }
