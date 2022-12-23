@@ -3,6 +3,7 @@ package com.tpay.domains.refund.domain;
 import com.tpay.domains.BaseTimeEntity;
 import com.tpay.domains.order.domain.OrderEntity;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -14,6 +15,7 @@ import java.util.List;
 @Table(name = "refund")
 @Entity
 @ToString
+@Slf4j
 public class RefundEntity extends BaseTimeEntity {
 
     @Id
@@ -41,11 +43,26 @@ public class RefundEntity extends BaseTimeEntity {
     public RefundEntity(String responseCode, String orderNumber, String takeOutNumber, OrderEntity orderEntity) {
         this.orderEntity = orderEntity;
         this.totalRefund = orderEntity.getTotalRefund();
-        this.refundStatus = responseCode.equals("0000") ? RefundStatus.APPROVAL : RefundStatus.REJECT;
+        this.refundStatus = updateRefundStatus(responseCode);
         this.takeOutNumber = takeOutNumber;
 
         orderEntity.setOrderNumber(orderNumber);
         orderEntity.setRefundEntity(this);
+    }
+
+    // 2022/12/07 - 1010 , 4008 이면 RefundStatus.PRE_APPROVAL
+    private RefundStatus updateRefundStatus(String responseCode){
+        switch (responseCode) {
+            case "0000":
+                log.trace(" @@ responseCode = {}", responseCode);
+                return RefundStatus.APPROVAL;
+            case "1010":
+            case "4008":
+                log.trace(" @@ responseCode = {}", responseCode);
+                return RefundStatus.PRE_APPROVAL;
+        }
+        log.trace(" @@ responseCode = {}", responseCode);
+        return RefundStatus.REJECT;
     }
 
     /**

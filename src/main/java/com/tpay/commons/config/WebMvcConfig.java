@@ -33,7 +33,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 "/certifications/**",
                 "/franchisee/password/exists/**",
                 "/franchisee/password/selfCertification",
-                "/franchisee/password/out",
+                "/franchisee/password/out/**",
+                "/admin/**",
                 "/validate/**",
                 "/refund/limit",
                 "/refund/receipt",
@@ -86,7 +87,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH");
     }
 
-    @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(indexInfoResolver);
     }

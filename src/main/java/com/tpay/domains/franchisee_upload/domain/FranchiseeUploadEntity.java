@@ -39,7 +39,7 @@ public class FranchiseeUploadEntity {
     }
 
     public String updateTaxFreeStoreNumber(String taxFreeStoreNumber) {
-        this.taxFreeStoreNumber = "제 " + taxFreeStoreNumber.substring(0, 3) + "-" + taxFreeStoreNumber.substring(3) + "호";
+        this.taxFreeStoreNumber = taxFreeStoreNumber.substring(0, 3) + taxFreeStoreNumber.substring(3);
         return this.taxFreeStoreNumber;
     }
 }

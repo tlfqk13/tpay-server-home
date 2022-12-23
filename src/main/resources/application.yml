@@ -5,6 +5,7 @@ spring:
   servlet:
     multipart:
       max-file-size: 2MB
+
 jasypt:
   encryptor:
     iv-generator-classname: org.jasypt.iv.NoIvGenerator
@@ -79,6 +80,9 @@ custom:
     server: ENC(vIOoRRzJSa0iqX39B4ogkiYcB9p++ieiU4J6sGZXUAXXWm4/TDvC6A==)
 server:
   port: 80
+  servlet:
+    encoding:
+      charset: UTF-8
 
 ---
 
@@ -106,6 +110,10 @@ custom:
     server: ENC(1G1Em0TfqKIRa78TPL1+wmAhlykscw4z7FmXUHFKlXmovCBJ/yQdMQ==)
 server:
   port: 50921
+  servlet:
+    encoding:
+      charset: UTF-8
+
 
 
 ---

@@ -61,11 +61,11 @@ public class EmployeeController {
     /**
      * 직원 정보 수정 - 가맹점주가 설정
      */
-    @PatchMapping("/{employeeIndex}")
+    @PatchMapping("/{franchiseeIndex}")
     public ResponseEntity<Boolean> update(
-            @PathVariable Long employeeIndex,
-            @RequestBody EmployeeUpdateRequest employeeUpdateRequest) {
-        boolean result = employeeUpdateService.update(employeeIndex, employeeUpdateRequest);
+        @PathVariable Long franchiseeIndex,
+        @RequestBody EmployeeUpdateRequest employeeUpdateRequest) {
+        boolean result = employeeUpdateService.update(employeeUpdateRequest);
         return ResponseEntity.ok(result);
     }
 

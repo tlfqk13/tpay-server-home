@@ -83,7 +83,7 @@ public class RefundCoreController {
             @RequestBody RefundLimitRequest request) {
         log.debug("Refund Limit Find Start = {}", request);
         RefundResponse response = limitFindService.find(request);
-        log.debug("Refund Limit Find Finish = {}", request);
+        log.debug("Refund Limit Find Finish = {}", response);
         return ResponseEntity.ok(response);
     }
 
