@@ -12,8 +12,8 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
-public interface FranchiseeApplicantRepository
-    extends JpaRepository<FranchiseeApplicantEntity, Long>{
+public interface FranchiseeApplicantRepository extends JpaRepository<FranchiseeApplicantEntity, Long>,
+                 FranchiseeApplicantRepositoryCustom {
 
     void deleteByFranchiseeEntity(FranchiseeEntity franchiseeEntity);
     Optional<FranchiseeApplicantEntity> findByFranchiseeEntityBusinessNumber(String businessNumber);

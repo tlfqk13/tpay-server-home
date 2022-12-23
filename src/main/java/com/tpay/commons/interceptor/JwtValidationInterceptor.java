@@ -58,10 +58,10 @@ public class JwtValidationInterceptor implements HandlerInterceptor {
     // 인터셉터 프리핸들 메서드 오버라이드
     @Override
     public boolean preHandle(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object handler) throws Exception {
-        if(hasToken(request) && validateToken(request)){
+        if (hasToken(request) && validateToken(request)) {
             AuthToken authToken = getAuthToken(request);
             IndexInfo tokenInfo = KtpCommonUtil.getIndexInfoFromAccessToken(authToken.getData());
-            checkDuplicateSignIn(tokenInfo, authToken.getValue());
+            return checkDuplicateSignIn(tokenInfo, authToken.getValue());
         }
         return false;
     }
@@ -84,7 +84,7 @@ public class JwtValidationInterceptor implements HandlerInterceptor {
         }
     }
 
-    void checkDuplicateSignIn(IndexInfo indexInfo, String tokenValue) {
+    boolean checkDuplicateSignIn(IndexInfo indexInfo, String tokenValue) {
         String lastAccessToken;
         if (FRANCHISEE == indexInfo.getUserSelector()) {
             FranchiseeAccessTokenEntity franchiseeAccessTokenEntity =
@@ -101,12 +101,14 @@ public class JwtValidationInterceptor implements HandlerInterceptor {
         if (isDifferentTokenValue(tokenValue, lastAccessToken)) {
             log.debug("authToken = {}, latest = {} ", tokenValue, lastAccessToken);
             throw new JwtRuntimeException(ExceptionState.DUPLICATE_SIGNOUT);
+        } else {
+            return true;
         }
     }
 
     private boolean validateToken(HttpServletRequest request) {
         log.debug("URI = {}", request.getRequestURI());
-        log.debug("Header - Authentication = {}" , request.getHeader(HttpHeaders.AUTHORIZATION));
+        log.debug("Header - Authentication = {}", request.getHeader(HttpHeaders.AUTHORIZATION));
         log.trace("Duplicate _ Validation Check Start");
 
         AuthToken authToken = getAuthToken(request);

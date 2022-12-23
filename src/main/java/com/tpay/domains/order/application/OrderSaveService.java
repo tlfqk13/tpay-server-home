@@ -1,6 +1,8 @@
 package com.tpay.domains.order.application;
 
 import com.tpay.commons.custom.RefundRateCondition;
+import com.tpay.commons.exception.ExceptionState;
+import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.util.IndexInfo;
 import com.tpay.domains.api.domain.vo.ApprovalDto;
 import com.tpay.domains.customer.application.CustomerService;
@@ -50,15 +52,14 @@ public class OrderSaveService {
 
         ProductEntity productEntity;
 
-        // 2022/11/11 환급요율표 미업데이트 가맹점 대상에 대해 적용
-        String refund = request.getRefund();
-        if (refund == null) {
-            refund = refundRateCondition.refundRate(Integer.parseInt(request.getPrice()));
+        // 환급요율표 미업데이트 가맹점 대상
+        if(request.getRefund() == null) {
+            throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Refund Update did not Franchisee");
+        }else {
+            productEntity =
+                    productFindService.findOrElseSave(
+                            franchiseeEntity.getProductCategory(), request.getPrice(), request.getRefund());
         }
-        productEntity =
-                productFindService.findOrElseSave(
-                        franchiseeEntity.getProductCategory(), request.getPrice(), refund);
-
         return this.save(franchiseeEntity, customerEntity, productEntity, null);
     }
 

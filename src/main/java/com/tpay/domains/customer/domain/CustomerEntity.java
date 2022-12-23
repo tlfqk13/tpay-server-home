@@ -52,6 +52,7 @@ public class CustomerEntity extends BaseTimeEntity {
         this.passportNumber = passportNumber;
         this.customerName = customerName;
         this.nation = nation;
+        this.isRegister = false;
     }
 
     public void registerAfterRefundCustomer(String passportNumber, String customerName, String nation,
