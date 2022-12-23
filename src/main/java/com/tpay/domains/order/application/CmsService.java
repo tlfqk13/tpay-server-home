@@ -95,7 +95,7 @@ public class CmsService {
         customerInfoList.add(cmsTotalResponse.getWithdrawalDate() + "일");
         customerInfoList.add(NumberFormatConverter.addCommaToNumber(vatTotalResponse.getTotalCommission()));
 
-        String downloadLink = buildCmsFile(franchiseeIndex, requestDate, RefundType.ALL);
+        String downloadLink = buildCmsFile(franchiseeIndex, requestDate, RefundType.ALL, vatTotalResponse);
 
         return CmsDetailResponse.builder()
                 .commissionInfoList(commissionInfoList)
@@ -104,7 +104,11 @@ public class CmsService {
                 .build();
     }
 
-    public String cmsDownloads(Long franchiseeIndex, String requestDate, RefundType refundType) {
+    private String buildCmsFile(Long franchiseeIndex, String requestDate, RefundType refundType) {
+        return buildCmsFile(franchiseeIndex, requestDate, refundType, null);
+    }
+
+    private String buildCmsFile(Long franchiseeIndex, String requestDate, RefundType refundType, VatTotalDto.Response vatTotalResponse) {
         try {
             ClassPathResource resource = new ClassPathResource("KTP_CMS_Form.xlsx");
             File file1;
@@ -128,7 +132,12 @@ public class CmsService {
             boolean isCms = true; // cms 는 사후,즉시 구분이 없기때문에
             List<List<String>> detailMonthlyResult = orderService.findCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate, isPaging, refundType, isCms);
             // 2. 물품판매 총합계
-            List<String> totalResult = orderService.findCmsVatTotal(franchiseeIndex, startLocalDate, endLocalDate, refundType,isCms);
+            List<String> totalResult;
+            if (null == vatTotalResponse) {
+                totalResult = orderService.findCmsVatTotal(franchiseeIndex, startLocalDate, endLocalDate, refundType, isCms);
+            } else {
+                totalResult = vatTotalResponseToStringList(vatTotalResponse);
+            }
             // TopSection
             List<String> topSectionInfo = this.topSectionInfo(franchiseeIndex, startLocalDate, endLocalDate);
 
@@ -142,14 +151,10 @@ public class CmsService {
             log.trace("detailMonthlyResult.size() : {} ", detailMonthlyResult.size());
             log.trace("franchiseeIndex : {} ", franchiseeIndex);
 
-            if (detailMonthlyResult.size() == 15) {
+            detailResultRow(xssfWorkbook, sheet, detailMonthlyResult, totalResult, false);
+            if (detailMonthlyResult.size() >= 15) {
                 // 물품상세 내역
-                detailResultRow(xssfWorkbook, sheet, detailMonthlyResult, totalResult, false);
-                detailMonthlyResult = orderService.findCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate, isPaging, refundType, isCms);
                 detailResultRow(xssfWorkbook, sheet1, detailMonthlyResult, totalResult, isPaging);
-            } else {
-                detailMonthlyResult = orderService.findCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate, true, refundType, isCms);
-                detailResultRow(xssfWorkbook, sheet, detailMonthlyResult, totalResult, false);
             }
 
             StringBuilder fileName = new StringBuilder();
@@ -161,8 +166,17 @@ public class CmsService {
         }
     }
 
-    public void cmsAdminDownloads(String requestDate, RefundType refundType) {
+    private List<String> vatTotalResponseToStringList(VatTotalDto.Response response) {
+        return Arrays.asList(
+                NumberFormatConverter.addCommaToNumber(response.getTotalCount())
+                , NumberFormatConverter.addCommaToNumber(response.getTotalAmount())
+                , NumberFormatConverter.addCommaToNumber(response.getTotalVat())
+                , NumberFormatConverter.addCommaToNumber(response.getTotalRefund())
+                , NumberFormatConverter.addCommaToNumber(response.getTotalCommission())
+        );
+    }
 
+    public void cmsAdminDownloads(String requestDate, RefundType refundType) {
         List<LocalDate> date = setUpDate(requestDate);
         LocalDate startLocalDate = date.get(0);
         LocalDate endLocalDate = date.get(1);
@@ -173,7 +187,7 @@ public class CmsService {
 
         List<List<String>> totalResult = refundDetailFindService.findFranchiseeId(startLocalDate, endLocalDate);
         for (List<String> strings : totalResult) {
-            this.cmsDownloads(Long.valueOf(strings.get(0)), requestYearMonthly, refundType);
+            this.buildCmsFile(Long.valueOf(strings.get(0)), requestYearMonthly, refundType);
         }
 
     }
