@@ -101,6 +101,16 @@ public class RefundCoreController {
     }
 
     /**
+     * 사후 환급 확인
+     */
+    @GetMapping("/after/approval/{purchaseSn}")
+    public ResponseEntity<RefundResponse> refundAfterApprovalConfirm(
+            HttpServletRequest request,
+            @KtpIndexInfo IndexInfo indexInfo, @PathVariable String purchaseSn) {
+        return ResponseEntity.ok(refundApproveService.confirmApproveAfter(purchaseSn));
+    }
+
+    /**
      * 사후 환급 취소
      */
     @PostMapping("/after/cancel")
