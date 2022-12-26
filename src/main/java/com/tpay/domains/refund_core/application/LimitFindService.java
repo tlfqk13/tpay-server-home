@@ -2,7 +2,6 @@ package com.tpay.domains.refund_core.application;
 
 import com.tpay.commons.custom.CustomValue;
 import com.tpay.commons.exception.ExceptionState;
-import com.tpay.commons.exception.detail.InvalidNationException;
 import com.tpay.commons.exception.detail.InvalidPassportInfoException;
 import com.tpay.commons.webClient.WebRequestUtil;
 import com.tpay.domains.customer.application.CustomerService;
@@ -19,8 +18,6 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
-
-import static com.tpay.domains.refund_core.application.dto.RefundCustomValue.nationCode;
 
 
 @RequiredArgsConstructor
@@ -101,18 +98,5 @@ public class LimitFindService {
 
     private void nationUpdate(RefundLimitRequest request) {
         request.nationUpdate(RefundCustomValue.NATION_GERMANY_DEU);
-    }
-
-    private void invalidNation(RefundLimitRequest request) {
-        // 독일 여권일 경우, D -> DEU
-        if (checkNation(request)) {
-            nationUpdate(request);
-        }
-        // 국적 확인
-        log.debug(" @@ invalidNation ={} ", request.getNationality());
-        boolean isInvalidNation = nationCode.contains(request.getNationality());
-        if (!isInvalidNation) {
-            throw new InvalidNationException(ExceptionState.INVALID_NATION, "국가 정보가 틀렸습니다");
-        }
     }
 }
