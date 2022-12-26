@@ -118,6 +118,7 @@ public class VanService {
         return "N";
     }
 
+    // 2022/12/23 반출 , 미반출 , 반출거절
     private String checkRefundStatus(String customCleanceYn) {
         switch (customCleanceYn) {
             case "0":   // APPROVAL

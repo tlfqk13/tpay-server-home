@@ -31,15 +31,16 @@ public class RefundDetailFindService {
         return refundRepository.findAllByFranchiseeIndex(franchiseeIndex, startDate.atTime(0, 0), newEnd.atTime(0, 0));
     }
 
-    public RefundPagingFindResponse findAll(int page, RefundStatus refundStatus, String startDate, String endDate, String searchKeyword) {
+    public RefundPagingFindResponse findAll(int page, RefundStatus refundStatus, String startDate, String endDate, String searchKeyword, boolean isRefundAfter) {
         DateTimeFormatter yyyyMMdd = DateTimeFormatter.ofPattern("yyyyMMdd");
         LocalDate startLocalDate = LocalDate.parse("20" + startDate, yyyyMMdd);
         LocalDate endLocalDate = LocalDate.parse("20" + endDate, yyyyMMdd).plusDays(1);
         PageRequest pageRequest = PageRequest.of(page, 10);
         boolean isBusinessNumber = searchKeyword.chars().allMatch(Character::isDigit);
 
-        Page<RefundFindAllDto.Response> response = refundRepository.findRefundAll(pageRequest, startLocalDate, endLocalDate, searchKeyword.isEmpty()
-                ,isBusinessNumber,searchKeyword,refundStatus);
+        Page<RefundFindAllDto.Response> response = refundRepository.findRefundAll(
+                pageRequest, startLocalDate, endLocalDate, searchKeyword.isEmpty()
+                ,isBusinessNumber,searchKeyword,refundStatus,isRefundAfter);
 
         int totalPage = response.getTotalPages();
         if(totalPage != 0){

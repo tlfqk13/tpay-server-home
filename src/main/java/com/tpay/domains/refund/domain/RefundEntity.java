@@ -50,7 +50,7 @@ public class RefundEntity extends BaseTimeEntity {
         orderEntity.setRefundEntity(this);
     }
 
-    // 2022/12/07 - 1010 , 4008 이면 RefundStatus.PRE_APPROVAL
+    // 1010 , 4008 이면 RefundStatus.PRE_APPROVAL
     private RefundStatus updateRefundStatus(String responseCode){
         switch (responseCode) {
             case "0000":
@@ -61,7 +61,6 @@ public class RefundEntity extends BaseTimeEntity {
                 log.trace(" @@ responseCode = {}", responseCode);
                 return RefundStatus.PRE_APPROVAL;
         }
-        log.trace(" @@ responseCode = {}", responseCode);
         return RefundStatus.REJECT;
     }
 

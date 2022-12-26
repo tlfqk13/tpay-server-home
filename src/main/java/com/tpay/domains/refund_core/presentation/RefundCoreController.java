@@ -64,7 +64,7 @@ public class RefundCoreController {
         return ResponseEntity.ok(response);
     }
 
-    // TODO: 2022/08/18 관리자가 직접 가맹점 환급 취소시 사용
+    // 관리자가 직접 가맹점 환급 취소시 사용
     @PatchMapping("/admin-cancel/{userSelector}/{index}")
     public ResponseEntity<RefundResponse> refundCancelFromAdmin(
             @RequestParam Long customerIndex, @RequestParam Long refundIndex,
@@ -86,8 +86,6 @@ public class RefundCoreController {
         log.debug("Refund Limit Find Finish = {}", response);
         return ResponseEntity.ok(response);
     }
-
-    // TODO: 2022/09/15 tourCash_Admin 전용 RefundApprove
 
     /**
      * 사후 환급 승인
@@ -116,7 +114,7 @@ public class RefundCoreController {
     @PostMapping("/after/cancel")
     public ResponseEntity<String> cancelRefundAfter(
             @RequestBody RefundAfterCancelDto.Request request) {
-        refundApproveService.cancelRefundAfter(request.getTkOutNum());
+        refundCancelService.cancelRefundAfter(request.getTkOutNum());
         return ResponseEntity.ok(request.getTkOutNum());
     }
 }

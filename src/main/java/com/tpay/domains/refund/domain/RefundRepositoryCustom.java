@@ -15,7 +15,7 @@ public interface RefundRepositoryCustom {
     List<RefundReceiptDto.Response> downloadsRefundReceipt(String encryptPassportNumber, boolean refundAfter);
     List<RefundFindDto.Response> findRefundDetail(Long franchiseeIndex,LocalDate startLocalDate, LocalDate endLocalDate);
     Page<RefundFindAllDto.Response> findRefundAll(Pageable pageable, LocalDate startLocalDate, LocalDate endLocalDate
-            , boolean isKeywordEmpty, boolean businessNumber, String searchKeyword,RefundStatus  refundStatus);
-    // TODO: 2022/10/27 CMS Service
+            , boolean isKeywordEmpty, boolean businessNumber, String searchKeyword,RefundStatus  refundStatus
+            , boolean isRefundAfter);
     List<CmsDto.Response> findFranchiseeIdCmsService(LocalDate start,LocalDate end);
 }

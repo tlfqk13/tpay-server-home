@@ -1,6 +1,5 @@
 package com.tpay.domains.order.application;
 
-import com.tpay.commons.custom.RefundRateCondition;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.util.IndexInfo;
@@ -40,7 +39,6 @@ public class OrderSaveService {
     private final CustomerService customerService;
     private final ProductFindService productFindService;
     private final OrderLineSaveService orderLineSaveService;
-    private final RefundRateCondition refundRateCondition;
 
     @Transactional
     public OrderEntity save(RefundSaveRequest request, Long franchiseeIndex) {
@@ -59,6 +57,8 @@ public class OrderSaveService {
             productEntity =
                     productFindService.findOrElseSave(
                             franchiseeEntity.getProductCategory(), request.getPrice(), request.getRefund());
+            log.warn(" @@ request.getPrice() = {}", request.getPrice());
+            log.warn(" @@ request.getRefund() = {}", request.getRefund());
         }
         return this.save(franchiseeEntity, customerEntity, productEntity, null);
     }
@@ -120,6 +120,10 @@ public class OrderSaveService {
         }
         FranchiseeEntity franchisee = franchiseeFindService.findByIndex(franchiseIndex);
         CustomerEntity customer = customerService.findByIndex(orderDto.getCustomerIndex());
+
+        log.warn(" @@ customer= {}", customer.getNation());
+        log.warn(" @@ orderDto = {}", orderDto.getPrice());
+
         ProductEntity productEntity =
                 productFindService.findOrElseSave(
                         franchisee.getProductCategory(), orderDto.getPrice(), orderDto.getRefund());
@@ -128,7 +132,6 @@ public class OrderSaveService {
 
         return new OrderDto.Response(savedOrder.getOrderNumber());
     }
-
     private String createPurchaseSn() {
         return "990" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS"));
     }

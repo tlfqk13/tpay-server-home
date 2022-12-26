@@ -2,6 +2,7 @@ package com.tpay.domains.refund.application;
 
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
+import com.tpay.commons.exception.detail.OrderNotFoundException;
 import com.tpay.domains.order.domain.OrderEntity;
 import com.tpay.domains.refund.domain.RefundEntity;
 import com.tpay.domains.refund.domain.RefundRepository;
@@ -31,5 +32,15 @@ public class RefundFindService {
 
     public RefundEntity findByOrderEntity(OrderEntity orderEntity) throws NullPointerException{
         return refundRepository.findByOrderEntity(orderEntity).get();
+    }
+
+    public RefundEntity getRefundByTkOutNumber(String tkOutNum) {
+        return refundRepository.findByTakeOutNumber(tkOutNum)
+                .orElseThrow(() -> new OrderNotFoundException(ExceptionState.ORDER_NOT_FOUND, "TkOutNumber 로 주문을 찾을 수 없음"));
+    }
+
+    public RefundEntity getRefundByRefundId(Long refundIndex) {
+        return refundRepository.findById(refundIndex)
+                .orElseThrow(() -> new OrderNotFoundException(ExceptionState.ORDER_NOT_FOUND, "TkOutNumber 로 주문을 찾을 수 없음"));
     }
 }

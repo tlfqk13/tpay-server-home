@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 
 import static com.tpay.domains.refund_core.application.dto.RefundCustomValue.nationCode;
@@ -36,7 +37,7 @@ public class LimitFindService {
     public RefundResponse find(RefundLimitRequest request) {
         String uri = CustomValue.REFUND_SERVER + "/refund/limit";
 
-        // 2022/10/11 독일 여권일 경우, D -> DEU
+        // 독일 여권일 경우, D -> DEU
         if (checkNation(request)) {
             nationUpdate(request);
         }
@@ -54,7 +55,7 @@ public class LimitFindService {
         log.trace(" @@ request.getMethod = {}", request.getMethod());
 
         // 한도 조회 요청 후, 성공되면 고객 정보 등록
-        if (refundResponse.getResponseCode().equals("0000")) {
+        if ((List.of("0000", "4008").contains(refundResponse.getResponseCode()))) {
             Long customerEntityId;
             Optional<CustomerEntity> customerEntityOptional = customerService.findCustomerByNationAndPassportNumber(refundResponse.getPassportNumber(), refundResponse.getNationality());
             CustomerEntity customerEntity;
@@ -68,15 +69,16 @@ public class LimitFindService {
                     log.warn("saved name = {}, request name = {} is different", customerEntity.getCustomerName(), request.getName());
                 }
             }
+
             log.debug("Refund Limit customerID = {}", customerEntityId);
 
             // 사후환급 신청 가맹점 여부 조회
             if (request.getFranchiseeIndex() != null) {
-                log.debug(" @@ request.getFranchiseeIndex() ! null @@ ");
                 FranchiseeEntity franchiseeEntity = franchiseeRepository.findById(request.getFranchiseeIndex())
                         .orElseThrow(() -> new IllegalArgumentException("Invalid Franchisee Entity"));
 
                 String refundStep = franchiseeEntity.getRefundStep();
+                log.trace(" @@ refundStep = {}", refundStep);
 
                 return refundResponse.addCustomerInfo(customerEntityId, refundStep);
             } else {

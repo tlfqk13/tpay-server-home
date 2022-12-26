@@ -32,13 +32,12 @@ public class RefundCancelService {
     private final ExternalRepository externalRepository;
     private final WebRequestUtil webRequestUtil;
 
-    private final RefundApproveService refundApproveService;
-
     @Transactional
     public RefundResponse cancel(Long customerIndex, Long refundIndex) {
         CustomerEntity customerEntity = customerService.findByIndex(customerIndex);
         RefundEntity refundEntity = refundFindService.findById(refundIndex);
         RefundCancelRequest refundCancelRequest = RefundCancelRequest.of(customerEntity, refundEntity);
+        RefundResponse refundResponse = null;
 
         // 포스기에서 승인한건 포스기에서만 취소 가능 -- external index 확인
         Optional<ExternalRefundEntity> optionalExternalRefundEntity = externalRepository.findByRefundEntity(refundEntity);
@@ -47,27 +46,39 @@ public class RefundCancelService {
             throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "POS approval must be canceled by POS");
         }
 
-        if(Integer.parseInt(refundEntity.getTotalRefund()) > 75000){
-            log.trace(" @@ refundEntity.getTotalRefund() = {}", Integer.parseInt(refundEntity.getTotalRefund()));
-            refundApproveService.cancelRefundAfter(refundIndex);
-            log.trace(" @@  cancelRefundAfter finish @@ = {} ", refundEntity.getId());
+        if (refundEntity.getRefundAfterEntity().getId() != null) {
+            this.cancelRefundAfter(refundIndex);
+            log.trace(" 사후환급 취소 " );
+            refundResponse = RefundResponse.builder()
+                    .responseCode("0000")
+                    .build();
+        } else {
 
+            String uri = CustomValue.REFUND_SERVER + "/refund/cancel";
+            refundResponse = webRequestUtil.post(uri, refundCancelRequest);
+
+            if (refundResponse.getResponseCode().equals("0000")) {
+                refundEntity.updateCancel();
+            }
             double balancePercentage = refundEntity.getOrderEntity().getFranchiseeEntity().getBalancePercentage();
             pointScheduledChangeService.change(refundEntity, SignType.NEGATIVE, balancePercentage);
-
-            return null;
         }
 
-        String uri = CustomValue.REFUND_SERVER + "/refund/cancel";
-        RefundResponse refundResponse = webRequestUtil.post(uri, refundCancelRequest);
-
-        if (refundResponse.getResponseCode().equals("0000")) {
-            refundEntity.updateCancel();
-        }
-
-        double balancePercentage = refundEntity.getOrderEntity().getFranchiseeEntity().getBalancePercentage();
-        pointScheduledChangeService.change(refundEntity, SignType.NEGATIVE, balancePercentage);
+        log.warn(" @@ refundResponse = {}", refundResponse.getResponseCode());
 
         return refundResponse;
+    }
+
+    @org.springframework.transaction.annotation.Transactional
+    public void cancelRefundAfter(String tkOutNumber) {
+        RefundEntity refund = refundFindService.getRefundByTkOutNumber(tkOutNumber);
+        refund.updateCancel();
+    }
+
+    public void cancelRefundAfter(Long refundIndex) {
+        RefundEntity refund = refundFindService.getRefundByRefundId(refundIndex);
+        double balancePercentage = refund.getOrderEntity().getFranchiseeEntity().getBalancePercentage();
+        pointScheduledChangeService.change(refund, SignType.NEGATIVE, balancePercentage);
+        refund.updateCancel();
     }
 }
