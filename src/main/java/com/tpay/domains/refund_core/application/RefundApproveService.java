@@ -210,6 +210,19 @@ public class RefundApproveService {
         }
     }
 
+    public RefundResponse confirmApproveAfter(String purchaseSn) {
+        OrderEntity order = orderService.findOrderByPurchaseSn(purchaseSn);
+        RefundAfterBaseDto baseDto = RefundAfterBaseDto.builder()
+                .cusCode("040")
+                .refundAfterMethod(RefundAfterMethod.MANUAL)
+                .retry(false)
+                .build();
+        RefundItemDto.Request refundItemDto = RefundItemDto.Request.builder().docId(order.getOrderNumber()).build();
+        RefundAfterDto.Request refundAfterDto = new RefundAfterDto.Request(baseDto, refundItemDto);
+
+        return approveAfter(refundAfterDto);
+    }
+
     @Transactional
     public void cancelRefundAfter(String tkOutNumber) {
         RefundEntity refund = refundService.getRefundByTkOutNumber(tkOutNumber);
