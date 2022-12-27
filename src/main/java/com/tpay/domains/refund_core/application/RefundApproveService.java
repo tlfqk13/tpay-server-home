@@ -7,7 +7,6 @@ import com.tpay.commons.exception.detail.WebfluxGeneralException;
 import com.tpay.commons.push.PushCategoryType;
 import com.tpay.commons.util.IndexInfo;
 import com.tpay.commons.webClient.WebRequestUtil;
-import com.tpay.domains.api.domain.vo.ApprovalDto;
 import com.tpay.domains.auth.domain.EmployeeAccessTokenEntity;
 import com.tpay.domains.auth.domain.EmployeeAccessTokenRepository;
 import com.tpay.domains.auth.domain.FranchiseeAccessTokenEntity;
@@ -41,7 +40,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 import static com.tpay.commons.util.UserSelector.EMPLOYEE;
-import static com.tpay.commons.util.UserSelector.FRANCHISEE;
 
 @Service
 @RequiredArgsConstructor
@@ -217,7 +215,7 @@ public class RefundApproveService {
         RefundAfterBaseDto baseDto = RefundAfterBaseDto.builder()
                 .cusCode("040")
                 .refundAfterMethod(RefundAfterMethod.MANUAL)
-                .retry(false)
+                .retry(true)
                 .build();
         RefundItemDto.Request refundItemDto = RefundItemDto.Request.builder().docId(order.getOrderNumber()).build();
         RefundAfterDto.Request refundAfterDto = new RefundAfterDto.Request(baseDto, refundItemDto);
