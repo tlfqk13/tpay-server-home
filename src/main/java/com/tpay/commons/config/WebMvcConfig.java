@@ -42,6 +42,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 "/notice/**",
                 "/duplicate",
                 "/order/**",
+                "/refunds/confirm", // refund 서버에서 사후환급 상태 업데이트
 
                 // 외부 연동 컨트롤러 (외부에서 접속하는 controller)
                 "/admin/**",        // ERP
