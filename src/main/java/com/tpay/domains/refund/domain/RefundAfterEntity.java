@@ -36,7 +36,6 @@ public class RefundAfterEntity extends BaseTimeEntity {
     @JoinColumn(name = "payment_id")
     private PaymentEntity payment;
 
-
     public void addPayment(PaymentEntity payment) {
         this.payment = payment;
     }

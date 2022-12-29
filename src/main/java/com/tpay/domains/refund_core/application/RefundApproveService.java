@@ -165,6 +165,8 @@ public class RefundApproveService {
                     .build();
 
             // 사후 환급 포인트 적립
+            log.trace(" @@ refundAfterEntity.getId() = {}", refundAfterEntity.getId());
+            log.trace(" @@ refundEntity.getId() = {}", refundEntity.getId());
             pointScheduledChangeService.change(refundEntity, SignType.POSITIVE, orderEntity.getFranchiseeEntity().getBalancePercentage());
             refundEntity.addRefundAfterEntity(refundAfterEntity);
         }

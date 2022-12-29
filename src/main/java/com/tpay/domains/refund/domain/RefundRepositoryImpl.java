@@ -36,6 +36,7 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
+    // 2022-12-28 바코드 주소를 넣어야합니다?
     @Override
     public List<RefundReceiptDto.Response> findRefundReceipt(String encryptPassportNumber, boolean refundAfter) {
         List<RefundReceiptDto.Response> content = queryFactory
@@ -153,7 +154,7 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
                 .leftJoin(orderEntity.franchiseeEntity, franchiseeEntity)
                 .leftJoin(orderEntity.customerEntity, customerEntity)
                 .where(refundEntity.createdDate.between(startLocalDate.atStartOfDay(), LocalDateTime.of(endLocalDate, LocalTime.MAX))
-                        //.and(franchiseeEntity.storeName.ne("석세스모드"))
+                        .and(franchiseeEntity.storeName.ne("석세스모드"))
                         .and(isKeywordEmpty(isKeywordEmpty, businessNumber, searchKeyword, refundStatus))
                         .and(refundFilter(refundType, refundStatus, departureStatus, paymentStatus)))
                 .offset(pageable.getOffset())
@@ -165,7 +166,11 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
                 .from(refundEntity)
                 .innerJoin(refundEntity.orderEntity, orderEntity)
                 .leftJoin(orderEntity.franchiseeEntity, franchiseeEntity)
-                .leftJoin(orderEntity.customerEntity, customerEntity);
+                .leftJoin(orderEntity.customerEntity, customerEntity)
+                .where(refundEntity.createdDate.between(startLocalDate.atStartOfDay(), LocalDateTime.of(endLocalDate, LocalTime.MAX))
+                        .and(franchiseeEntity.storeName.ne("석세스모드"))
+                        .and(isKeywordEmpty(isKeywordEmpty, businessNumber, searchKeyword, refundStatus))
+                        .and(refundFilter(refundType, refundStatus, departureStatus, paymentStatus)));
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }

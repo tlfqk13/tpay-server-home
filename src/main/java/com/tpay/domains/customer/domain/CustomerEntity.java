@@ -70,7 +70,7 @@ public class CustomerEntity extends BaseTimeEntity {
         this.customerAccountNumber = customerInfo.getAccountNumber();
     }
 
-    public void updateAfterRefundCustomer(){
+    public void updateDepartureStatus(){
         this.departureStatus = DepartureStatus.DEPARTURE_WAIT;
     }
 

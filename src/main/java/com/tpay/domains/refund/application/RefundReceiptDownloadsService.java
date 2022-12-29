@@ -1,6 +1,5 @@
 package com.tpay.domains.refund.application;
 
-import com.tpay.commons.aws.S3FileUploader;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.util.converter.NumberFormatConverter;
@@ -29,7 +28,6 @@ import static com.tpay.domains.refund.application.RefundReceiptCustomValue.*;
 @Slf4j
 public class RefundReceiptDownloadsService {
     private final RefundReceiptFindService refundReceiptFindService;
-    private final S3FileUploader s3FileUploader;
     public void downloadsRefundReceipt(RefundReceiptDto.Request request) {
 
         try {

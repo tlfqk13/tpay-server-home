@@ -11,6 +11,7 @@ import com.tpay.domains.external.domain.ExternalRepository;
 import com.tpay.domains.point.domain.SignType;
 import com.tpay.domains.point_scheduled.application.PointScheduledChangeService;
 import com.tpay.domains.refund.application.RefundFindService;
+import com.tpay.domains.refund.domain.RefundAfterEntity;
 import com.tpay.domains.refund.domain.RefundEntity;
 import com.tpay.domains.refund_core.application.dto.RefundCancelRequest;
 import com.tpay.domains.refund_core.application.dto.RefundResponse;
@@ -46,14 +47,15 @@ public class RefundCancelService {
             throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "POS approval must be canceled by POS");
         }
 
-        if (refundEntity.getRefundAfterEntity().getId() != null) {
+        RefundAfterEntity refundAfterEntity = refundEntity.getRefundAfterEntity();
+
+        if (refundAfterEntity != null) {
             this.cancelRefundAfter(refundIndex);
-            log.trace(" 사후환급 취소 " );
+            log.trace(" 사후환급 취소 ");
             refundResponse = RefundResponse.builder()
                     .responseCode("0000")
                     .build();
         } else {
-
             String uri = CustomValue.REFUND_SERVER + "/refund/cancel";
             refundResponse = webRequestUtil.post(uri, refundCancelRequest);
 
