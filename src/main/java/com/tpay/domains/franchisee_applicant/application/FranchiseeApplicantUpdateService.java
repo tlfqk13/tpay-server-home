@@ -2,7 +2,9 @@ package com.tpay.domains.franchisee_applicant.application;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
+import com.tpay.commons.exception.detail.UnknownException;
 import com.tpay.domains.franchisee.application.FranchiseeFindService;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee_applicant.application.dto.DetailFranchiseeInfo;
@@ -72,7 +74,7 @@ public class FranchiseeApplicantUpdateService {
         } catch (InvalidParameterException e) {
             franchiseeBankEntity = FranchiseeBankEntity.builder().build();
         }catch (Exception e) {
-            e.printStackTrace();
+            throw new UnknownException(ExceptionState.UNKNOWN, "detailFranchiseeInfo data parsing error");
         }
 
         log.trace("Franchisee Update : {} ", franchiseeEntityUpdate.getStoreName());
