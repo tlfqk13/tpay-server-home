@@ -97,9 +97,9 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
     @Override
     public List<OrderEntity> findRefundAfterOrdersBetweenDates(Long franchiseeIndex, LocalDate startDate, LocalDate endDate) {
         return queryFactory.selectFrom(orderEntity)
-                .leftJoin(orderEntity.refundEntity, refundEntity).fetchJoin()
-                .leftJoin(orderEntity.refundEntity.refundAfterEntity, refundAfterEntity).fetchJoin()
-                .leftJoin(orderEntity.franchiseeEntity, franchiseeEntity).fetchJoin()
+                .leftJoin(orderEntity.refundEntity, refundEntity)
+                .leftJoin(orderEntity.refundEntity.refundAfterEntity, refundAfterEntity)
+                .leftJoin(orderEntity.franchiseeEntity, franchiseeEntity)
                 .where(orderEntity.franchiseeEntity.id.eq(franchiseeIndex),
                         orderEntity.refundEntity.refundStatus.eq(RefundStatus.APPROVAL),
                         orderEntity.createdDate.between(startDate.atStartOfDay(), endDate.atStartOfDay()),
@@ -116,9 +116,11 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                                 orderEntity.totalRefund.castToNum(Integer.class).sum().stringValue(),
                                 orderEntity.totalVat.castToNum(Integer.class).sum().stringValue()
                         ))
+                .innerJoin(orderEntity.refundEntity, refundEntity)
                 .leftJoin(orderEntity.franchiseeEntity, franchiseeEntity).fetchJoin()
                 .from(orderEntity)
                 .where(orderEntity.franchiseeEntity.id.eq(franchiseeIndex),
+                        orderEntity.refundEntity.refundStatus.eq(RefundStatus.APPROVAL),
                         orderEntity.createdDate.between(startDate.atStartOfDay(), endDate.atStartOfDay())
                         )
                 .fetchOne();

@@ -49,7 +49,7 @@ public class VatHomeTaxService {
     private static final String TEMP_SUB_COMPANY_NUM = "0000";
 
     // TODO 주민번호 앞자리 또는 법인등록번호로 레코드 만드는 부분 추가 필요(OWNER_RESIDENT_OR_CORPORATION_NUMBER)
-    private static final String TEMP_CORP_NUM = "          ";
+    private static final String TEMP_CORP_NUM = "0000000000";
     private static final String CHARSET = "EUC-KR";
     private static final String REFUND_CORP_NUM = "2390401226";
 
@@ -109,18 +109,18 @@ public class VatHomeTaxService {
         log.debug("홈택스 레코드 생성 시작 franchisee Index = {}", franchiseeIndex);
         String immediateHometaxFile = createImmediateHometaxFile(franchiseeEntity, startDate, endDate);
         log.debug("홈텍스 즉시 환급 관련 파일 생성 완료");
-        String generalHometaxFile = createGeneralHometaxFile(franchiseeEntity, startDate, endDate);
+//        String generalHometaxFile = createGeneralHometaxFile(franchiseeEntity, startDate, endDate);
         log.debug("홈택스 레코드 생성 완료 franchisee Index = {}", franchiseeIndex);
 
         // I(전자신고용 변환파일임을 나타냄) + 사업자등록번호 + V178(서식코드)
         String immediateHometaxFileName = "I" + franchiseeEntity.getBusinessNumber() + ".V178";
         // F(일반환급 전자신고용)
-        String generalHometaxFileName = "F" + franchiseeEntity.getBusinessNumber() + ".V178";
+        //String generalHometaxFileName = "F" + franchiseeEntity.getBusinessNumber() + ".V178";
 //        byte[] homeTaxUploadData = convertByteArrayUsingCharset(immediateHometaxFile);
 
         // TODO 데이터 저장 위치와 형태, 제목 설정하고 저장하는 로직 추가
         uploadHometaxFile(endDate, franchiseeEntity.getStoreName(), immediateHometaxFile, immediateHometaxFileName);
-        uploadHometaxFile(endDate, franchiseeEntity.getStoreName(), generalHometaxFile, generalHometaxFileName);
+        //uploadHometaxFile(endDate, franchiseeEntity.getStoreName(), generalHometaxFile, generalHometaxFileName);
 
     }
 
