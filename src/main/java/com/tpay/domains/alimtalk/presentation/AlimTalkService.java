@@ -79,7 +79,7 @@ public class AlimTalkService {
             // 평일
             if (hour < 17) {
                 // 17시 이전
-                return AlimTalkTemplate.SJT_085720;
+                return AlimTalkTemplate.SJT_085829;
             } else {
                 // 17시 이후
                 if (DayOfWeek.FRIDAY == dayOfWeek) {
