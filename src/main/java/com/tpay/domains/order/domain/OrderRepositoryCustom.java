@@ -1,6 +1,7 @@
 package com.tpay.domains.order.domain;
 
 import com.tpay.domains.order.application.dto.CmsDetailDto;
+import com.tpay.domains.vat.application.dto.HometaxTailDto;
 import com.tpay.domains.vat.application.dto.VatDetailDto;
 import com.tpay.domains.vat.application.dto.VatTotalDto;
 
@@ -14,4 +15,8 @@ public interface OrderRepositoryCustom {
     VatTotalDto.Response findMonthlyTotal(Long franchiseeIndex, LocalDate startLocalDate, LocalDate endLocalDate);
 
     CmsDetailDto.Response findCmsBankInfo(Long franchiseeIndex);
+
+    List<OrderEntity> findRefundAfterOrdersBetweenDates(Long franchiseeIndex, LocalDate startDate, LocalDate endDate);
+
+    HometaxTailDto findRefundAfterOrdersTotalBetweenDates(Long franchiseeIndex, LocalDate startDate, LocalDate endDate);
 }
