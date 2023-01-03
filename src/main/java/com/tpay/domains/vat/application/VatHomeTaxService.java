@@ -8,8 +8,8 @@ import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee_upload.application.FranchiseeUploadFindService;
 import com.tpay.domains.franchisee_upload.domain.FranchiseeUploadEntity;
 import com.tpay.domains.order.application.OrderService;
-import com.tpay.domains.refund.application.RefundDetailFindService;
 import com.tpay.domains.order.domain.OrderEntity;
+import com.tpay.domains.refund.application.RefundDetailFindService;
 import com.tpay.domains.refund.domain.RefundEntity;
 import com.tpay.domains.vat.application.dto.HometaxTailDto;
 import com.tpay.domains.vat.application.dto.VatDetailResponseInterface;
@@ -49,7 +49,7 @@ public class VatHomeTaxService {
     private static final String TEMP_SUB_COMPANY_NUM = "0000";
 
     // TODO 주민번호 앞자리 또는 법인등록번호로 레코드 만드는 부분 추가 필요(OWNER_RESIDENT_OR_CORPORATION_NUMBER)
-    private static final String TEMP_CORP_NUM = "";
+    private static final String TEMP_CORP_NUM = "          ";
     private static final String CHARSET = "EUC-KR";
     private static final String REFUND_CORP_NUM = "2390401226";
 
@@ -63,7 +63,6 @@ public class VatHomeTaxService {
         for (List<String> strings : totalResult) {
             this.createHomeTaxUploadFile(Long.valueOf(strings.get(0)), requestDate);
         }
-
     }
 
     public VatHomeTaxDto.Response createHomeTaxUploadFile(Long franchiseeIndex, String requestDate) throws IOException {
@@ -107,13 +106,15 @@ public class VatHomeTaxService {
             throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "환급을 받은 기록이 없는 사용자입니다");
         }
 
-        log.trace("홈택스 레코드 생성 시작");
+        log.debug("홈택스 레코드 생성 시작 franchisee Index = {}", franchiseeIndex);
         String immediateHometaxFile = createImmediateHometaxFile(franchiseeEntity, startDate, endDate);
+        log.debug("홈텍스 즉시 환급 관련 파일 생성 완료");
         String generalHometaxFile = createGeneralHometaxFile(franchiseeEntity, startDate, endDate);
-        log.trace("홈택스 레코드 생성 완료");
+        log.debug("홈택스 레코드 생성 완료 franchisee Index = {}", franchiseeIndex);
 
         // I(전자신고용 변환파일임을 나타냄) + 사업자등록번호 + V178(서식코드)
         String immediateHometaxFileName = "I" + franchiseeEntity.getBusinessNumber() + ".V178";
+        // F(일반환급 전자신고용)
         String generalHometaxFileName = "F" + franchiseeEntity.getBusinessNumber() + ".V178";
 //        byte[] homeTaxUploadData = convertByteArrayUsingCharset(immediateHometaxFile);
 
@@ -266,7 +267,7 @@ public class VatHomeTaxService {
         FranchiseeUploadEntity uploadEntity = franchiseeUploadFindService.findByFranchiseeIndex(franchiseeEntity.getId());
 
         fillCommonRecord(sendData, section, endDate, franchiseeEntity.getBusinessNumber());
-        fillRecordIntoSendData(sendData, TEMP_CORP_NUM, SUB_COMPANY_NUMBER);
+        fillRecordIntoSendData(sendData, TEMP_SUB_COMPANY_NUM, SUB_COMPANY_NUMBER);
         fillRecordIntoSendData(sendData, uploadEntity.getTaxFreeStoreNumber(), TAX_FREE_STORE_NUMBER);
         fillRecordIntoSendData(sendData, dto.getTotalCount(), TOTAL_COUNT);
         fillRecordIntoSendData(sendData, dto.getTotalAmount(), TOTAL_PRICE_WITH_TAX);
