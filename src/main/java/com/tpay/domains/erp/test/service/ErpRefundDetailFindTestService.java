@@ -1,14 +1,14 @@
 package com.tpay.domains.erp.test.service;
 
+import com.tpay.commons.exception.ExceptionState;
+import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.domains.customer.application.CustomerService;
 import com.tpay.domains.customer.application.dto.DepartureStatus;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.erp.test.dto.RefundTestPagingFindResponse;
 import com.tpay.domains.erp.test.dto.RefundType;
 import com.tpay.domains.refund.application.dto.*;
-import com.tpay.domains.refund.domain.PaymentStatus;
-import com.tpay.domains.refund.domain.RefundRepository;
-import com.tpay.domains.refund.domain.RefundStatus;
+import com.tpay.domains.refund.domain.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 public class ErpRefundDetailFindTestService {
 
     private final RefundRepository refundRepository;
+    private final RefundAfterRepository refundAfterRepository;
     private final CustomerService customerService;
 
     public List<RefundFindResponseInterface> findList(Long franchiseeIndex, LocalDate startDate, LocalDate endDate) {
@@ -97,6 +98,30 @@ public class ErpRefundDetailFindTestService {
         }
 
         return refundByCustomerDateResponseList;
+    }
+
+    public RefundPaymentDto.Response findPaymentDetail(Long refundIndex) {
+
+        RefundDetailDto.Response detailRefundInfo = refundRepository.findRefundDetail(refundIndex);
+        RefundPaymentDetailDto.Response detailPaymentInfo = refundRepository.findRefundPaymentDetail(refundIndex);
+
+        RefundPaymentDto.Response response =
+                RefundPaymentDto.Response.builder()
+                        .detailRefundInfo(detailRefundInfo)
+                        .detailPaymentInfo(detailPaymentInfo)
+                        .paymentStatus(detailRefundInfo.getPaymentStatus())
+                        .build();
+
+        return response;
+    }
+
+    public void updatePaymentDetail(Long refundIndex, RefundPaymentDto.Request request) {
+
+        RefundAfterEntity refundAfterEntity = refundAfterRepository.findById(refundIndex)
+                .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid RefundIndex"));
+
+        refundAfterEntity.updatePaymentStatus(request.getPaymentStatus());
+
     }
 
     private static class ResponseCompAsc implements Comparator<RefundByCustomerResponse> {

@@ -272,6 +272,48 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
         return content;
     }
 
+    @Override
+    public RefundDetailDto.Response findRefundDetail(Long refundIndex) {
+        RefundDetailDto.Response content = queryFactory
+                .select(new QRefundDetailDto_Response(
+                        refundEntity.createdDate,
+                        franchiseeEntity.storeName,
+                        customerEntity.customerName,
+                        customerEntity.nation,
+                        orderEntity.totalAmount,
+                        refundEntity.totalRefund,
+                        customerEntity.departureStatus,
+                        refundEntity.refundAfterEntity.paymentStatus
+                ))
+                .from(orderEntity)
+                .leftJoin(orderEntity.refundEntity, refundEntity)
+                .leftJoin(orderEntity.customerEntity, customerEntity)
+                .leftJoin(orderEntity.franchiseeEntity, franchiseeEntity)
+                .leftJoin(refundEntity.refundAfterEntity,refundAfterEntity)
+                .where(refundEntity.id.eq(refundIndex))
+                .fetchOne();
+
+        return content;
+    }
+
+    @Override
+    public RefundPaymentDetailDto.Response findRefundPaymentDetail(Long refundIndex) {
+        RefundPaymentDetailDto.Response content = queryFactory
+                .select(new QRefundPaymentDetailDto_Response(
+                        customerEntity.customerPaymentType,
+                        customerEntity.customerBankName,
+                        customerEntity.customerAccountNumber,
+                        customerEntity.customerCreditNumber
+                ))
+                .from(orderEntity)
+                .leftJoin(orderEntity.customerEntity,customerEntity)
+                .leftJoin(orderEntity.refundEntity, refundEntity)
+                .where(refundEntity.id.eq(refundIndex))
+                .fetchOne();
+
+        return content;
+    }
+
     private BooleanExpression isKeywordEmpty(Boolean isKeywordEmpty, Boolean businessNumber, String keyword, RefundStatus refundStatus) {
         if (isKeywordEmpty) {
             if (refundStatus.equals(RefundStatus.ALL)) {

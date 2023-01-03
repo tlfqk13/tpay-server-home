@@ -5,6 +5,7 @@ import com.tpay.domains.erp.test.dto.RefundTestPagingFindResponse;
 import com.tpay.domains.erp.test.dto.RefundType;
 import com.tpay.domains.erp.test.service.ErpRefundDetailFindTestService;
 import com.tpay.domains.refund.application.dto.RefundDetailTotalDto;
+import com.tpay.domains.refund.application.dto.RefundPaymentDto;
 import com.tpay.domains.refund.domain.PaymentStatus;
 import com.tpay.domains.refund.domain.RefundStatus;
 import lombok.RequiredArgsConstructor;
@@ -45,5 +46,23 @@ public class ErpRefundFindTestController {
             @RequestParam String endDate) {
         RefundDetailTotalDto.Response result = refundTestDetailFindService.findRefundDetail(franchiseeIndex, startDate, endDate);
         return ResponseEntity.ok(result);
+    }
+
+    // TODO: 2023/01/03 환급현황 > 환급 상세 ( 송금 정보 등)
+    @GetMapping("/detail/{refundIndex}")
+    public ResponseEntity<RefundPaymentDto.Response> findPaymentDetail(
+            @PathVariable Long refundIndex
+    ) {
+        RefundPaymentDto.Response result = refundTestDetailFindService.findPaymentDetail(refundIndex);
+        return ResponseEntity.ok(result);
+    }
+
+    @PatchMapping("/detail/{refundIndex}")
+    public ResponseEntity<String> updatePaymentDetail(
+            @PathVariable Long refundIndex,
+            @RequestBody RefundPaymentDto.Request request
+            ) {
+        refundTestDetailFindService.updatePaymentDetail(refundIndex,request);
+        return ResponseEntity.ok("updatePaymentDetail");
     }
 }

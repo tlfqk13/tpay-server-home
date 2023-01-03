@@ -77,5 +77,4 @@ public class CustomerEntity extends BaseTimeEntity {
     public void updateRegister() {
         this.isRegister = true;
     }
-
 }

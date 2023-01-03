@@ -43,4 +43,8 @@ public class RefundAfterEntity extends BaseTimeEntity {
     public void updateApprovalFinishDate(String approvalFinishDate) {
         this.approvalFinishDate = approvalFinishDate;
     }
+
+    public void updatePaymentStatus(PaymentStatus paymentStatus) {
+        this.paymentStatus = paymentStatus;
+    }
 }
