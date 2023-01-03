@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -33,11 +34,10 @@ public class LimitFindService {
     public RefundResponse find(RefundLimitRequest request) {
         String uri = CustomValue.REFUND_SERVER + "/refund/limit";
 
-        // 2022/10/11 독일 여권일 경우, D -> DEU
-        if(checkNation(request)){
+        // 독일 여권일 경우, D -> DEU
+        if (checkNation(request)) {
             nationUpdate(request);
         }
-
         // 한도 조회 요청
         RefundResponse refundResponse = webRequestUtil.post(uri, request);
         log.debug("request.passportNumber = {} , refundResponse.getPassportNumber() = {}"
@@ -52,45 +52,51 @@ public class LimitFindService {
         log.trace(" @@ request.getMethod = {}", request.getMethod());
 
         // 한도 조회 요청 후, 성공되면 고객 정보 등록
-        if(refundResponse.getResponseCode().equals("0000")) {
+        if ((List.of("0000", "4008").contains(refundResponse.getResponseCode()))) {
             Long customerEntityId;
             Optional<CustomerEntity> customerEntityOptional = customerService.findCustomerByNationAndPassportNumber(refundResponse.getPassportNumber(), refundResponse.getNationality());
+            CustomerEntity customerEntity;
             if (customerEntityOptional.isEmpty()) {
-                CustomerEntity customerEntity = customerService.updateCustomerInfo(request.getName(), refundResponse.getPassportNumber(), refundResponse.getNationality());
+                customerEntity = customerService.updateCustomerInfo(request.getName(), refundResponse.getPassportNumber(), refundResponse.getNationality());
                 customerEntityId = customerEntity.getId();
-                log.debug("Refund Limit customerID = {}", customerEntityId);
             } else {
-                CustomerEntity customerEntity = customerEntityOptional.get();
+                customerEntity = customerEntityOptional.get();
                 customerEntityId = customerEntity.getId();
-                if(customerEntity.getCustomerName().contentEquals(request.getName())){
+                if (customerEntity.getCustomerName().contentEquals(request.getName())) {
                     log.warn("saved name = {}, request name = {} is different", customerEntity.getCustomerName(), request.getName());
                 }
-                log.debug("Refund Limit customerID = {}", customerEntityId);
             }
 
-            // TODO: 2022/11/04 사후환급 신청 가맹점 여부 조회를 위해...
-            if(request.getFranchiseeIndex() != null) {
-                log.trace(" @@ request.getFranchiseeIndex() ! null @@ ");
+            log.debug("Refund Limit customerID = {}", customerEntityId);
+
+            // 사후환급 신청 가맹점 여부 조회
+            if (request.getFranchiseeIndex() != null) {
                 FranchiseeEntity franchiseeEntity = franchiseeRepository.findById(request.getFranchiseeIndex())
                         .orElseThrow(() -> new IllegalArgumentException("Invalid Franchisee Entity"));
-                return refundResponse.addCustomerInfo(customerEntityId, franchiseeEntity.getRefundStep());
-            }
+
+                String refundStep = franchiseeEntity.getRefundStep();
+                log.trace(" @@ refundStep = {}", refundStep);
+
+                return refundResponse.addCustomerInfo(customerEntityId, refundStep);
+            } else {
                 return refundResponse.addCustomerInfo(customerEntityId);
+            }
 
         } else {
             throw new InvalidPassportInfoException(ExceptionState.INVALID_PASSPORT_INFO, "한도조회 실패");
         }
     }
+
     private boolean checkNation(RefundLimitRequest request) {
-        if(RefundCustomValue.NATION_GERMANY_D.equals(request.getNationality())){
+        if (RefundCustomValue.NATION_GERMANY_D.equals(request.getNationality())) {
             log.debug(" @@ CheckNationValue = {}", request.getNationality());
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
-    private void nationUpdate(RefundLimitRequest request){
+    private void nationUpdate(RefundLimitRequest request) {
         request.nationUpdate(RefundCustomValue.NATION_GERMANY_DEU);
     }
 }

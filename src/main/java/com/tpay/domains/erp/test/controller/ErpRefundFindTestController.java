@@ -25,10 +25,9 @@ public class ErpRefundFindTestController {
             @RequestParam RefundStatus refundStatus,
             @RequestParam String searchKeyword
     ) {
-        RefundTestPagingFindResponse response = refundTestDetailFindService.findAll(page,refundStatus,startDate, endDate,searchKeyword);
+        RefundTestPagingFindResponse response = refundTestDetailFindService.findAll(page,refundStatus,startDate, endDate,searchKeyword,false);
         return ResponseEntity.ok(response);
     }
-
     // 2022/10/26  가맹점현황 > 환급현황
     @GetMapping("/{franchiseeIndex}")
     public ResponseEntity<RefundDetailTotalDto.Response> findRefundDetail(

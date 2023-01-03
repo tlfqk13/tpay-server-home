@@ -8,6 +8,7 @@ import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee_upload.application.FranchiseeUploadFindService;
 import com.tpay.domains.franchisee_upload.domain.FranchiseeUploadEntity;
 import com.tpay.domains.order.application.OrderService;
+import com.tpay.domains.refund.application.RefundDetailFindService;
 import com.tpay.domains.vat.HomeTaxConstant;
 import com.tpay.domains.vat.application.dto.VatDetailResponseInterface;
 import com.tpay.domains.vat.application.dto.VatHomeTaxDto;
@@ -38,6 +39,7 @@ public class VatHomeTaxService {
     private final OrderService orderService;
     private final FranchiseeFindService franchiseeFindService;
     private final FranchiseeUploadFindService franchiseeUploadFindService;
+    private final RefundDetailFindService refundDetailFindService;
 
     private static final String TEST_BIZ_NUM = "2390401226";
 
@@ -45,15 +47,27 @@ public class VatHomeTaxService {
     private static final String TEMP_SUB_COMPANY_NUM = "0000";
 
     // TODO 주민번호 앞자리 또는 법인등록번호로 레코드 만드는 부분 추가 필요(OWNER_RESIDENT_OR_CORPORATION_NUMBER)
-    private static final String TEMP_CORP_NUM = "7777777777";
+    private static final String TEMP_CORP_NUM = "";
     private static final String CHARSET = "EUC-KR";
     private static final String REFUND_CORP_NUM = "2390401226";
+
+
+    public void homeTaxAdminDownloads(String requestDate) throws IOException {
+        List<LocalDate> localDates = setUpDate(requestDate);
+        LocalDate startDate = localDates.get(0);
+        LocalDate endDate = localDates.get(1);
+
+        List<List<String>> totalResult = refundDetailFindService.findFranchiseeId(startDate, endDate);
+        for (List<String> strings : totalResult) {
+            this.createHomeTaxUploadFile(Long.valueOf(strings.get(0)), requestDate);
+        }
+
+    }
 
     public VatHomeTaxDto.Response createHomeTaxUploadFile(Long franchiseeIndex, String requestDate) throws IOException {
         List<LocalDate> localDates = setUpDate(requestDate);
         LocalDate startDate = localDates.get(0);
         LocalDate endDate = localDates.get(1);
-
         createHomeTaxRecords(franchiseeIndex, startDate, endDate);
 
         return new VatHomeTaxDto.Response(false);
@@ -79,6 +93,7 @@ public class VatHomeTaxService {
         }
         dateList.add(startDate);
         dateList.add(endDate);
+
         return dateList;
     }
 
@@ -182,10 +197,9 @@ public class VatHomeTaxService {
 
         VatTotalResponseInterface total = orderService.findTotalBetweenDates(franchiseeEntity.getId(), startDate, endDate);
         FranchiseeUploadEntity uploadEntity = franchiseeUploadFindService.findByFranchiseeIndex(franchiseeEntity.getId());
-
         final String TAIL_RECORD_SECTION = "IT";
         fillCommonRecord(sendData, TAIL_RECORD_SECTION, endDate, franchiseeEntity.getBusinessNumber());
-        fillRecordIntoSendData(sendData, TEMP_CORP_NUM, SUB_COMPANY_NUMBER);
+        fillRecordIntoSendData(sendData, TEMP_CORP_NUM, SUB_COMPANY_NUMBER); // 여기가 문제다
         fillRecordIntoSendData(sendData, uploadEntity.getTaxFreeStoreNumber(), TAX_FREE_STORE_NUMBER);
 //        fillRecordIntoSendData(sendData, "12341234", TAX_FREE_STORE_NUMBER); // test
         fillRecordIntoSendData(sendData, total.getTotalCount(), TOTAL_COUNT);
@@ -193,7 +207,7 @@ public class VatHomeTaxService {
         fillRecordIntoSendData(sendData, total.getTotalVat(), TOTAL_VAT);
         fillRecordIntoSendData(sendData, total.getTotalRefund(), TOTAL_TAX_REFUND_AMOUNT);
         fillRecordIntoSendData(sendData, REFUND_CORP_NUM, REFUND_BUSINESS_NUMBER);
-
+        log.trace(" @@ createTailRecord " );
         return sendData;
     }
 

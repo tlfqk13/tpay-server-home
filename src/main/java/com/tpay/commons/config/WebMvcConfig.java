@@ -52,6 +52,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 "/tourcash/refund/approval**",
                 "/franchisee/admin/cms/downloads",
                 "/franchisee/admin/vat/downloads",
+                "/franchisee/admin/hometax/downloads",
                 "/customer/**",
                 "/api/**",          // KTP-API
 

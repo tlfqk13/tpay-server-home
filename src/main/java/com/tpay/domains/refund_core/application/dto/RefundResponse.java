@@ -25,10 +25,12 @@ public class RefundResponse {
     private Long customerIndex;
 
     private String refundStep;
+    private boolean refundAfterShop;
 
     public RefundResponse addCustomerInfo(Long customerIndex, String refundStep) {
         this.customerIndex = customerIndex;
         this.refundStep = refundStep;
+        this.refundAfterShop = true;
         return this;
     }
 

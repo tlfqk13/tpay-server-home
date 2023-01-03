@@ -26,11 +26,14 @@ public enum ExceptionState {
     DUPLICATE_SIGNOUT(400, HttpStatus.UNAUTHORIZED, "A0006", "Duplicate sign-out force"),
     REFUND(400, HttpStatus.BAD_REQUEST, "R0001", "Refund Exception"),
     ORDER_NOT_FOUND(400, HttpStatus.BAD_REQUEST, "R0002", "Order Not Found, create Order First"),
+    KOR_CUSTOMER(400, HttpStatus.BAD_REQUEST, "R0003", "KOR Customer"),
     INVALID_PASSPORT_INFO(400, HttpStatus.BAD_REQUEST, "E0001", "Contact Backend Developer"),
     INVALID_EXTERNAL_REFUND_INDEX(400,HttpStatus.BAD_REQUEST,"G0001","Invalid External Refund Index"),
     ALREADY_CANCELLED(409, HttpStatus.BAD_REQUEST, "G0002", "Already Cancelled Index"),
+    INVALID_NATION(400,HttpStatus.BAD_REQUEST, "G0004","Invalid Passport Nation"),
     CUSTOMER_NOT_FOUND(400,HttpStatus.BAD_REQUEST,"C0001","Customer not Found"),
-    WEBFLUX_GENERAL(400,HttpStatus.BAD_REQUEST, "G0003","Webflux General Exception");
+    WEBFLUX_GENERAL(400,HttpStatus.BAD_REQUEST, "G0003","Webflux General Exception"),
+    ;
 
     private final int value;
     private final HttpStatus httpStatus;

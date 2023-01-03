@@ -6,5 +6,4 @@ public abstract class RefundCustomValue {
     public static final String REFUND_STEP_ONE = "1";
     public static final String REFUND_STEP_TWO = "2";
     public static final String REFUND_STEP_THREE = "3";
-
 }

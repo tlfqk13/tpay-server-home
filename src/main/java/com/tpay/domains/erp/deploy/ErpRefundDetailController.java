@@ -22,7 +22,7 @@ public class ErpRefundDetailController {
             @RequestParam RefundStatus refundStatus,
             @RequestParam String searchKeyword
     ) {
-        RefundPagingFindResponse response = refundDetailFindService.findAll(page,refundStatus,startDate, endDate,searchKeyword);
+        RefundPagingFindResponse response = refundDetailFindService.findAll(page,refundStatus,startDate, endDate,searchKeyword,false);
         return ResponseEntity.ok(response);
     }
 

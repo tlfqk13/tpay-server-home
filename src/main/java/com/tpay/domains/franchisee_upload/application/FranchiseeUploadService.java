@@ -47,7 +47,8 @@ public class FranchiseeUploadService {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             FranchiseeBankInfo franchiseeBankInfo = objectMapper.readValue(franchiseeBankInfoString, FranchiseeBankInfo.class);
-            if(franchiseeBankInfo.getBankName().isEmpty()) {
+            // 은행 정보 저장 이슈 2022/12/22
+            if (!franchiseeBankInfo.getBankName().isEmpty()) {
                 FranchiseeBankEntity franchiseeBankEntity = FranchiseeBankEntity.builder()
                         .accountNumber(franchiseeBankInfo.getAccountNumber().replaceAll("-", ""))
                         .bankName(franchiseeBankInfo.getBankName())
@@ -56,7 +57,10 @@ public class FranchiseeUploadService {
                         .build();
                 franchiseeBankRepository.save(franchiseeBankEntity);
                 printNewFranchisee();
+            } else {
+                printNewFranchisee();
             }
+
             s3Path = s3FileUploader.uploadJpg(franchiseeIndex, imageCategory, uploadImage);
             FranchiseeUploadEntity franchiseeUploadEntity = FranchiseeUploadEntity.builder()
                     .franchiseeIndex(franchiseeIndex).imageCategory(imageCategory)
@@ -78,7 +82,7 @@ public class FranchiseeUploadService {
 
     @Transactional
     public String uploadUpdateImageAndBankInfo(Long franchiseeIndex, String franchiseeBankInfoString, String imageCategory, MultipartFile uploadImage) {
-        log.trace(" 가맹점 회원 계정 생성 " );
+        log.trace(" 가맹점 회원 계정 생성 ");
         printUpdateFranchisee();
         String message;
         FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
@@ -109,7 +113,7 @@ public class FranchiseeUploadService {
     }
 
     @Transactional
-    public String uploadImageAndBankInfo(Long franchiseeIndex,String imageCategory, MultipartFile uploadImage) {
+    public String uploadImageAndBankInfo(Long franchiseeIndex, String imageCategory, MultipartFile uploadImage) {
         printUpdateFranchisee();
         String message;
         FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);

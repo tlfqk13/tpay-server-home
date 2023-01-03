@@ -21,6 +21,7 @@ public class SaleAnalysisFindService {
 
     private final RefundRepository refundRepository;
     // 2022/08/01 가맹점 현황 > 환급 상세 > 환급 내역 총계
+    // TODO: 2022/12/20 매출내역 3단계 카운팅 X 이슈
     public List<SaleAnalysisFindResponse> findByDateRange(
         Long franchiseeIndex, DateFilter dateFilter, LocalDate startDate, LocalDate endDate) {
 

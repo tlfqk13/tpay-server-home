@@ -44,10 +44,10 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long>, Ref
     @Query(
             value =
                     "select date(o.created_date)                                                                   as formatDate\n" +
-                            "     , cast(sum(if(r.refund_status = 0, tot_amt, 0)) as integer)                      as totalAmount\n" +
-                            "     , cast(sum(if(r.refund_status = 0, r.tot_refund, 0)) as integer)                   as totalRefund\n" +
-                            "     , cast(sum(if(r.refund_status = 0, tot_amt, 0)) - sum(if(r.refund_status = 0, r.tot_refund, 0)) as integer) as actualAmount\n" +
-                            "     , sum(if(r.refund_status = 0, 1, 0))                                                     as saleCount\n" +
+                            "     , cast(sum(if(r.refund_status in ( 0, 4 ) , tot_amt, 0)) as integer)                      as totalAmount\n" +
+                            "     , cast(sum(if(r.refund_status in ( 0, 4 ), r.tot_refund, 0)) as integer)                   as totalRefund\n" +
+                            "     , cast(sum(if(r.refund_status in ( 0, 4 ), tot_amt, 0)) - sum(if(r.refund_status in ( 0, 4 ), r.tot_refund, 0)) as integer) as actualAmount\n" +
+                            "     , sum(if(r.refund_status in ( 0, 4 ), 1, 0))                                                     as saleCount\n" +
                             "     , sum(if(r.refund_status = 2, 1, 0))                                                     as cancelCount\n" +
                             "from orders o\n" +
                             "         left join refund r on o.id = r.order_id\n" +
@@ -63,10 +63,10 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long>, Ref
     @Query(
             value =
                     "select date(o.created_date)                                                                   as formatDate\n" +
-                            "     , sum(if(r.refund_status = 0, tot_amt, 0))                                               as totalAmount\n" +
-                            "     , sum(if(r.refund_status = 0, r.tot_refund, 0))                                            as totalRefund\n" +
-                            "     , sum(if(r.refund_status = 0, tot_amt, 0)) - sum(if(r.refund_status = 0, r.tot_refund, 0)) as actualAmount\n" +
-                            "     , sum(if(r.refund_status = 0, 1, 0))                                                     as saleCount\n" +
+                            "     , sum(if(r.refund_status in ( 0, 4 ) , tot_amt, 0))                                               as totalAmount\n" +
+                            "     , sum(if(r.refund_status in ( 0, 4 ), r.tot_refund, 0))                                            as totalRefund\n" +
+                            "     , sum(if(r.refund_status in ( 0, 4 ), tot_amt, 0)) - sum(if(r.refund_status in ( 0, 4 ), r.tot_refund, 0)) as actualAmount\n" +
+                            "     , sum(if(r.refund_status in ( 0, 4 ), 1, 0))                                                     as saleCount\n" +
                             "     , sum(if(r.refund_status = 2, 1, 0))                                                     as cancelCount\n" +
                             "from orders o\n" +
                             "         left join refund r on o.id = r.order_id\n" +
@@ -95,7 +95,7 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long>, Ref
             "         left join franchisee f on o.franchisee_id = f.id\n" +
             "where o.franchisee_id = :franchiseeIndex\n" +
             "  and r.created_date between :startDate and :endDate\n" +
-            "  and r.refund_status = 0\n" +
+            "  and r.refund_status in ( 0, 4 )\n" +
             "  and customer_id = :customerIndex\n" +
             "order by 3", nativeQuery = true)
     List<RefundFindResponseInterface> findRefundsByCustomerInfo(
@@ -105,11 +105,11 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long>, Ref
             @Param("customerIndex") Long customerIndex);
 
     @Query(value =
-            "select cast(sum(if(r.refund_status = 0, o.tot_amt, 0)) as integer)      as totalAmount,\n" +
-                    "       (cast(sum(if(r.refund_status = 0, o.tot_amt, 0)) as integer)) -\n" +
-                    "       (cast(sum(if(r.refund_status = 0, r.tot_refund, 0)) as integer)) as totalActualAmount,\n" +
-                    "       cast(sum(if(r.refund_status = 0, r.tot_refund, 0)) as integer)   as totalRefund,\n" +
-                    "       cast(sum(if(r.refund_status = 0, 1, 0)) as integer)              as totalCount,\n" +
+            "select cast(sum(if(r.refund_status in ( 0, 4 ), o.tot_amt, 0)) as integer)      as totalAmount,\n" +
+                    "       (cast(sum(if(r.refund_status in ( 0, 4 ), o.tot_amt, 0)) as integer)) -\n" +
+                    "       (cast(sum(if(r.refund_status in ( 0, 4 ), r.tot_refund, 0)) as integer)) as totalActualAmount,\n" +
+                    "       cast(sum(if(r.refund_status in ( 0, 4 ), r.tot_refund, 0)) as integer)   as totalRefund,\n" +
+                    "       cast(sum(if(r.refund_status in ( 0, 4 ), 1, 0)) as integer)              as totalCount,\n" +
                     "       sum(if(r.refund_status = 2, 1, 0))                                 as totalCancel\n" +
                     "from orders o\n" +
                     "         left join refund r on o.id = r.order_id\n" +
@@ -121,11 +121,11 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long>, Ref
     );
 
     @Query(value =
-            "select cast(sum(if(r.refund_status = 0, o.tot_amt, 0)) as integer)      as totalAmount,\n" +
-                    "       (cast(sum(if(r.refund_status = 0, o.tot_amt, 0)) as integer)) -\n" +
-                    "       (cast(sum(if(r.refund_status = 0, r.tot_refund, 0)) as integer)) as totalActualAmount,\n" +
-                    "       cast(sum(if(r.refund_status = 0, r.tot_refund, 0)) as integer)   as totalRefund,\n" +
-                    "       cast(sum(if(r.refund_status = 0, 1, 0)) as integer)              as totalCount,\n" +
+            "select cast(sum(if(r.refund_status in ( 0, 4 ), o.tot_amt, 0)) as integer)      as totalAmount,\n" +
+                    "       (cast(sum(if(r.refund_status in ( 0, 4 ), o.tot_amt, 0)) as integer)) -\n" +
+                    "       (cast(sum(if(r.refund_status in ( 0, 4 ), r.tot_refund, 0)) as integer)) as totalActualAmount,\n" +
+                    "       cast(sum(if(r.refund_status in ( 0, 4 ), r.tot_refund, 0)) as integer)   as totalRefund,\n" +
+                    "       cast(sum(if(r.refund_status in ( 0, 4 ), 1, 0)) as integer)              as totalCount,\n" +
                     "       sum(if(r.refund_status = 2, 1, 0))                                 as totalCancel\n" +
                     "from orders o\n" +
                     "         left join refund r on o.id = r.order_id\n" +
@@ -138,11 +138,11 @@ public interface RefundRepository extends JpaRepository<RefundEntity, Long>, Ref
 
 
     @Query(value =
-            "select cast(sum(if(r.refund_status = 0, o.tot_amt, 0)) as integer)      as totalAmount,\n" +
-                    "       (cast(sum(if(r.refund_status = 0, o.tot_amt, 0)) as integer)) -\n" +
-                    "       (cast(sum(if(r.refund_status = 0, r.tot_refund, 0)) as integer)) as totalActualAmount,\n" +
-                    "       cast(sum(if(r.refund_status = 0, r.tot_refund, 0)) as integer)   as totalRefund,\n" +
-                    "       cast(sum(if(r.refund_status = 0, 1, 0)) as integer)              as totalCount,\n" +
+            "select cast(sum(if(r.refund_status in ( 0, 4 ) o.tot_amt, 0)) as integer)      as totalAmount,\n" +
+                    "       (cast(sum(if(r.refund_status in ( 0, 4 ), o.tot_amt, 0)) as integer)) -\n" +
+                    "       (cast(sum(if(r.refund_status in ( 0, 4 ), r.tot_refund, 0)) as integer)) as totalActualAmount,\n" +
+                    "       cast(sum(if(r.refund_status in ( 0, 4 ), r.tot_refund, 0)) as integer)   as totalRefund,\n" +
+                    "       cast(sum(if(r.refund_status in ( 0, 4 ), 1, 0)) as integer)              as totalCount,\n" +
                     "       sum(if(r.refund_status = 2, 1, 0))                                 as totalCancel\n" +
                     "from orders o\n" +
                     "         left join refund r on o.id = r.order_id\n" +

@@ -11,6 +11,8 @@ import com.tpay.domains.auth.domain.EmployeeAccessTokenEntity;
 import com.tpay.domains.auth.domain.EmployeeAccessTokenRepository;
 import com.tpay.domains.auth.domain.FranchiseeAccessTokenEntity;
 import com.tpay.domains.auth.domain.FranchiseeAccessTokenRepository;
+import com.tpay.domains.customer.application.CustomerService;
+import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.employee.application.EmployeeFindService;
 import com.tpay.domains.employee.domain.EmployeeEntity;
 import com.tpay.domains.external.domain.ExternalRefundEntity;
@@ -58,6 +60,7 @@ public class RefundApproveService {
     private final NonBatchPushService nonBatchPushService;
     private final FranchiseeAccessTokenRepository franchiseeAccessTokenRepository;
     private final EmployeeAccessTokenRepository employeeAccessTokenRepository;
+    private final CustomerService customerService;
 
     @Transactional
     public RefundResponse approve(RefundSaveRequest request, IndexInfo indexInfo) {
@@ -69,8 +72,13 @@ public class RefundApproveService {
             throw new InvalidParameterException(ExceptionState.CHECK_ITEM_PRICE);
         }
 
-        Long franchiseeIndex = getFranchiseeIndex(indexInfo);
+        CustomerEntity customerEntity = customerService.findByIndex(request.getCustomerIndex());
+        if("KOR".equals(customerEntity.getNation())){
+            log.trace(" @@ customerEntity.getNation() = {}", customerEntity.getNation());
+            throw new InvalidParameterException(ExceptionState.KOR_CUSTOMER);
+        }
 
+        Long franchiseeIndex = getFranchiseeIndex(indexInfo);
         OrderEntity orderEntity = orderSaveService.save(request, franchiseeIndex);
         log.debug("Order saved Id = {} ", orderEntity.getId());
         log.trace(" @@ orderEntity = {}", orderEntity.getTotalRefund());
@@ -223,11 +231,6 @@ public class RefundApproveService {
         return approveAfter(refundAfterDto);
     }
 
-    @Transactional
-    public void cancelRefundAfter(String tkOutNumber) {
-        RefundEntity refund = refundService.getRefundByTkOutNumber(tkOutNumber);
-        refund.updateCancel();
-    }
 
     private void updateUserDeviceInfo(RefundSaveRequest request, OrderEntity orderEntity, IndexInfo indexInfo) {
         if (indexInfo.getUserSelector() == EMPLOYEE) {
@@ -281,4 +284,6 @@ public class RefundApproveService {
 
         return indexInfo.getIndex();
     }
+
+
 }

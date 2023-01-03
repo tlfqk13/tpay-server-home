@@ -121,7 +121,8 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
 
     @Override
     public Page<RefundFindAllDto.Response> findRefundAll(Pageable pageable, LocalDate startLocalDate, LocalDate endLocalDate
-            , boolean isKeywordEmpty, boolean businessNumber, String searchKeyword, RefundStatus refundStatus) {
+            , boolean isKeywordEmpty, boolean businessNumber, String searchKeyword, RefundStatus refundStatus
+            , boolean isRefundAfter) {
 
         List<RefundFindAllDto.Response> content = queryFactory
                 .select(new QRefundFindAllDto_Response(
@@ -143,7 +144,8 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
                 .leftJoin(orderEntity.customerEntity, customerEntity)
                 .where(refundEntity.createdDate.between(startLocalDate.atStartOfDay(), LocalDateTime.of(endLocalDate, LocalTime.MAX))
                         .and(franchiseeEntity.storeName.ne("석세스모드"))
-                        .and(isKeywordEmpty(isKeywordEmpty, businessNumber, searchKeyword, refundStatus)))
+                        .and(isKeywordEmpty(isKeywordEmpty, businessNumber, searchKeyword, refundStatus))
+                        .and(isRefundAfter(isRefundAfter)))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(refundEntity.id.desc())

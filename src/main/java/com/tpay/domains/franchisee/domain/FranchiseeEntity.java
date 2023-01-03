@@ -89,6 +89,8 @@ public class FranchiseeEntity extends BaseTimeEntity {
     @Column(length = 2)
     private String refundStep;
 
+    private Boolean isAfterRefund;
+
     @Column(name = "popUp", length = 1)
     private boolean popUp;
 
@@ -225,6 +227,7 @@ public class FranchiseeEntity extends BaseTimeEntity {
         this.storeAddressBasic = request.getStoreAddressBasic();
         this.storeAddressDetail = request.getStoreAddressDetail();
         this.balancePercentage = request.getBalancePercentage();
+        this.refundStep = request.getRefundStep();
         return this;
     }
 
