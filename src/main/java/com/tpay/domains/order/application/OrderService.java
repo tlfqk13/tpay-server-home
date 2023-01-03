@@ -117,4 +117,12 @@ public class OrderService {
         return orderRepository.findByOrderNumber(purchaseSn)
                 .orElseThrow(() -> new OrderNotFoundException(ExceptionState.ORDER_NOT_FOUND));
     }
+
+    public List<OrderEntity> findOrderDetailsRefundAfterBetweenDates(Long franchiseeId, LocalDate startDate, LocalDate endDate) {
+        return orderRepository.findRefundAfterOrdersBetweenDates(franchiseeId, startDate, endDate);
+    }
+
+    public HometaxTailDto findOrderDetailsTotalRefundAfterBetweenDates(Long franchiseeId, LocalDate startDate, LocalDate endDate) {
+        return orderRepository.findRefundAfterOrdersTotalBetweenDates(franchiseeId, startDate, endDate);
+    }
 }
