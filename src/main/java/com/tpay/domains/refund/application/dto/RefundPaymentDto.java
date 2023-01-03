@@ -10,13 +10,13 @@ public class RefundPaymentDto {
     @Builder
     public static class Response{
       private RefundDetailDto.Response detailRefundInfo;
-      private RefundPaymentDetailDto.Response detailPaymentInfo;
+      private RefundPaymentInfoDto.Response detailPaymentInfo;
       private PaymentStatus paymentStatus;
     }
 
     @Getter
     public static class Request{
-        private RefundPaymentDetailDto.Response detailPaymentInfo;
+        private RefundPaymentInfoDto.Response detailPaymentInfo;
         private PaymentStatus paymentStatus;
     }
 }

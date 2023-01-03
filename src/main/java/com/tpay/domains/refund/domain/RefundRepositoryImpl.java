@@ -346,4 +346,12 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
             return isImmediate();
         }
     }
+
+    private BooleanExpression paymentType(Boolean refundAfter) {
+        if (refundAfter) {
+            return isRefundAfterEntity().and(isAfter());
+        } else {
+            return isImmediate();
+        }
+    }
 }

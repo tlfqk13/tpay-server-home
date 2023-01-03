@@ -3,6 +3,7 @@ package com.tpay.domains.erp.test.service;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.domains.customer.application.CustomerService;
+import com.tpay.domains.customer.application.dto.CustomerPaymentType;
 import com.tpay.domains.customer.application.dto.DepartureStatus;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.erp.test.dto.RefundTestPagingFindResponse;
@@ -103,7 +104,21 @@ public class ErpRefundDetailFindTestService {
     public RefundPaymentDto.Response findPaymentDetail(Long refundIndex) {
 
         RefundDetailDto.Response detailRefundInfo = refundRepository.findRefundDetail(refundIndex);
-        RefundPaymentDetailDto.Response detailPaymentInfo = refundRepository.findRefundPaymentDetail(refundIndex);
+        RefundPaymentDetailDto.Response detailPaymentDto = refundRepository.findRefundPaymentDetail(refundIndex);
+
+        String paymentInfo;
+        if(CustomerPaymentType.CASH.equals(detailPaymentDto.getCustomerPaymentType())){
+            paymentInfo = detailPaymentDto.getCustomerAccountNumber();
+        }else{
+            paymentInfo = detailPaymentDto.getCustomerCreditNumber();
+        }
+
+        RefundPaymentInfoDto.Response detailPaymentInfo =
+                RefundPaymentInfoDto.Response.builder()
+                        .customerPaymentType(detailPaymentDto.getCustomerPaymentType())
+                        .paymentInfo(paymentInfo)
+                        .build();
+
 
         RefundPaymentDto.Response response =
                 RefundPaymentDto.Response.builder()

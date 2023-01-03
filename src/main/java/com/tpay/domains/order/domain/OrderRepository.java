@@ -83,8 +83,7 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long>, Order
             "               left join refund r on o.id = r.order_id" +
             "               left join refund_after rf on r.refund_after_id = rf.refund_after_id\n" +
             " where c.cus_pass_no = :passportNumber\n" +
-            " and r.refund_after_id is not null\n" +
-            " and r.tk_out_conf_no = ''\n" +
+            " and r.refund_after_id is not null and r.tk_out_conf_no = ''\n" +
             " and rf.payment_id is null\n" +
             " order by r.id desc ",nativeQuery = true
     )
