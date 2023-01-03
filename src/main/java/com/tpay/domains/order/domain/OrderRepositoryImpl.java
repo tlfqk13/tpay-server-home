@@ -4,10 +4,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tpay.domains.order.application.dto.CmsDetailDto;
 import com.tpay.domains.order.application.dto.QCmsDetailDto_Response;
 import com.tpay.domains.refund.domain.RefundStatus;
-import com.tpay.domains.vat.application.dto.QVatDetailDto_Response;
-import com.tpay.domains.vat.application.dto.QVatTotalDto_Response;
-import com.tpay.domains.vat.application.dto.VatDetailDto;
-import com.tpay.domains.vat.application.dto.VatTotalDto;
+import com.tpay.domains.vat.application.dto.*;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
@@ -16,22 +13,26 @@ import java.time.LocalTime;
 import java.util.List;
 
 import static com.tpay.domains.customer.domain.QCustomerEntity.customerEntity;
+import static com.tpay.domains.franchisee.domain.QFranchiseeEntity.franchiseeEntity;
 import static com.tpay.domains.franchisee_upload.domain.QFranchiseeBankEntity.franchiseeBankEntity;
 import static com.tpay.domains.order.domain.QOrderEntity.orderEntity;
+import static com.tpay.domains.refund.domain.QRefundAfterEntity.refundAfterEntity;
 import static com.tpay.domains.refund.domain.QRefundEntity.refundEntity;
 
-public class OrderRepositoryImpl implements OrderRepositoryCustom{
+public class OrderRepositoryImpl implements OrderRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
 
-    public OrderRepositoryImpl(EntityManager em){this.queryFactory = new JPAQueryFactory(em);}
+    public OrderRepositoryImpl(EntityManager em) {
+        this.queryFactory = new JPAQueryFactory(em);
+    }
 
     @Override
     public List<VatDetailDto.Response> findMonthlyCmsVatDetail(Long franchiseeIndex, LocalDate startLocalDate, LocalDate endLocalDate, int pageData) {
         List<VatDetailDto.Response> content = queryFactory
                 .select(new QVatDetailDto_Response(
                         orderEntity.orderNumber,
-                        orderEntity.createdDate.stringValue().substring(0,10),
+                        orderEntity.createdDate.stringValue().substring(0, 10),
                         refundEntity.takeOutNumber,
                         refundEntity.totalRefund,
                         orderEntity.totalAmount,
@@ -40,8 +41,8 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom{
                         customerEntity.nation
                 ))
                 .from(refundEntity)
-                .innerJoin(refundEntity.orderEntity,orderEntity)
-                .leftJoin(orderEntity.customerEntity,customerEntity)
+                .innerJoin(refundEntity.orderEntity, orderEntity)
+                .leftJoin(orderEntity.customerEntity, customerEntity)
                 .where(orderEntity.franchiseeEntity.id.eq(franchiseeIndex)
                         .and(refundEntity.refundStatus.eq(RefundStatus.APPROVAL))
                         .and(refundEntity.createdDate.between(startLocalDate.atStartOfDay(), LocalDateTime.of(endLocalDate, LocalTime.MAX)))
@@ -66,8 +67,8 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom{
                                 .subtract(orderEntity.totalVat.castToNum(Integer.class))).sum().stringValue() // 공급가 = 판매금액 - 부가가치세
                 ))
                 .from(refundEntity)
-                .innerJoin(refundEntity.orderEntity,orderEntity)
-                .leftJoin(orderEntity.customerEntity,customerEntity)
+                .innerJoin(refundEntity.orderEntity, orderEntity)
+                .leftJoin(orderEntity.customerEntity, customerEntity)
                 .where(orderEntity.franchiseeEntity.id.eq(franchiseeIndex)
                         .and(refundEntity.refundStatus.eq(RefundStatus.APPROVAL))
                         .and(refundEntity.createdDate.between(startLocalDate.atStartOfDay(), LocalDateTime.of(endLocalDate, LocalTime.MAX)))
@@ -91,5 +92,35 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom{
                 .fetchOne();
 
         return content;
+    }
+
+    @Override
+    public List<OrderEntity> findRefundAfterOrdersBetweenDates(Long franchiseeIndex, LocalDate startDate, LocalDate endDate) {
+        return queryFactory.selectFrom(orderEntity)
+                .leftJoin(orderEntity.refundEntity, refundEntity).fetchJoin()
+                .leftJoin(orderEntity.refundEntity.refundAfterEntity, refundAfterEntity).fetchJoin()
+                .leftJoin(orderEntity.franchiseeEntity, franchiseeEntity).fetchJoin()
+                .where(orderEntity.franchiseeEntity.id.eq(franchiseeIndex),
+                        orderEntity.refundEntity.refundStatus.eq(RefundStatus.APPROVAL),
+                        orderEntity.createdDate.between(startDate.atStartOfDay(), endDate.atStartOfDay()),
+                        orderEntity.refundEntity.refundAfterEntity.isNotNull())
+                .fetch();
+    }
+
+    @Override
+    public HometaxTailDto findRefundAfterOrdersTotalBetweenDates(Long franchiseeIndex, LocalDate startDate, LocalDate endDate) {
+        return queryFactory.select(
+                        new QHometaxTailDto(
+                                orderEntity.count().stringValue(),
+                                orderEntity.totalAmount.castToNum(Integer.class).sum().stringValue(),
+                                orderEntity.totalRefund.castToNum(Integer.class).sum().stringValue(),
+                                orderEntity.totalVat.castToNum(Integer.class).sum().stringValue()
+                        ))
+                .leftJoin(orderEntity.franchiseeEntity, franchiseeEntity).fetchJoin()
+                .from(orderEntity)
+                .where(orderEntity.franchiseeEntity.id.eq(franchiseeIndex),
+                        orderEntity.createdDate.between(startDate.atStartOfDay(), endDate.atStartOfDay())
+                        )
+                .fetchOne();
     }
 }
