@@ -63,7 +63,6 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long>, Order
             "                  left join customer c on c.id = o.customer_id\n" +
             "    where franchisee_id = :franchiseeIndex\n" +
             "    and refund_status = 'APPROVAL' and o.created_date between :startDate and :endDate\n" +
-            "    and r.refund_after_id is null\n" +
             "    order by 3 desc", nativeQuery = true)
     List<VatDetailResponseInterface> findQuarterlyVatDetail(@Param("franchiseeIndex") Long franchiseeIndex, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
     Optional<OrderEntity> findByFranchiseeEntityId(Long franchiseeIndex);

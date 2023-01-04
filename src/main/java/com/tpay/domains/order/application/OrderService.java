@@ -3,6 +3,7 @@ package com.tpay.domains.order.application;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.OrderNotFoundException;
 import com.tpay.commons.util.converter.NumberFormatConverter;
+import com.tpay.domains.erp.test.dto.RefundType;
 import com.tpay.domains.order.domain.OrderEntity;
 import com.tpay.domains.order.domain.OrderRepository;
 import com.tpay.domains.vat.application.dto.*;
@@ -50,9 +51,9 @@ public class OrderService {
         return result;
     }
 
-    public List<String> findCmsVatTotal(Long franchiseeIndex, LocalDate startLocalDate, LocalDate endLocalDate) {
+    public List<String> findCmsVatTotal(Long franchiseeIndex, LocalDate startLocalDate, LocalDate endLocalDate, RefundType refundType) {
 
-      VatTotalDto.Response vatTotalResponse = orderRepository.findMonthlyTotal(franchiseeIndex, startLocalDate, endLocalDate);
+      VatTotalDto.Response vatTotalResponse = orderRepository.findMonthlyTotal(franchiseeIndex, startLocalDate, endLocalDate, refundType);
 
       List<String> result = new ArrayList<>();
       result.add(NumberFormatConverter.addCommaToNumber(vatTotalResponse.getTotalCount()));
@@ -64,13 +65,15 @@ public class OrderService {
       return result;
     }
 
-    public List<List<String>> findCmsVatDetail(Long franchiseeIndex, LocalDate startLocalDate, LocalDate endLocalDate, boolean isPaging) {
+    public List<List<String>> findCmsVatDetail(Long franchiseeIndex, LocalDate startLocalDate, LocalDate endLocalDate, boolean isPaging, RefundType refundType) {
         int pageData = 15;
         if(isPaging){
             pageData = 100;
         }
 
-        List<VatDetailDto.Response> vatDetailResponse = orderRepository.findMonthlyCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate,pageData);
+        List<VatDetailDto.Response> vatDetailResponse = orderRepository.findMonthlyCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate,
+                pageData, refundType);
+
         List<List<String>> detailResult = new ArrayList<>();
 
         for (VatDetailDto.Response response : vatDetailResponse) {
@@ -83,6 +86,8 @@ public class OrderService {
             baseList.add(NumberFormatConverter.addCommaToNumber(response.getRefundAmount()));
             baseList.add(response.getCustomerName());
             baseList.add(response.getCustomerNational());
+            baseList.add(response.getFinishDate()); // 반출일자
+            baseList.add(response.getPaymentFinishDate()); // 환급(송금)일자
             detailResult.add(baseList);
         }
         return detailResult;

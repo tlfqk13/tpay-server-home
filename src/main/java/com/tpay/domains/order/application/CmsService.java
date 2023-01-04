@@ -5,6 +5,7 @@ import com.tpay.commons.aws.S3FileUploader;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.util.converter.NumberFormatConverter;
+import com.tpay.domains.erp.test.dto.RefundType;
 import com.tpay.domains.franchisee.application.FranchiseeFindService;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.order.application.dto.CmsDetailDto;
@@ -52,7 +53,7 @@ public class CmsService {
         List<LocalDate> date = setUpDate(requestDate);
         LocalDate startLocalDate = date.get(0);
         LocalDate endLocalDate = date.get(1);
-        VatTotalDto.Response response = orderRepository.findMonthlyTotal(franchiseeIndex, startLocalDate, endLocalDate);
+        VatTotalDto.Response response = orderRepository.findMonthlyTotal(franchiseeIndex, startLocalDate, endLocalDate, RefundType.ALL);
 
         if (response == null) {
             return VatTotalDto.Response.builder().totalAmount("0").totalCount("0").totalVat("0").totalCommission("0").build();
@@ -73,7 +74,7 @@ public class CmsService {
         LocalDate startLocalDate = date.get(0);
         LocalDate endLocalDate = date.get(1);
 
-        VatTotalDto.Response vatTotalResponse = orderRepository.findMonthlyTotal(franchiseeIndex, startLocalDate, endLocalDate);
+        VatTotalDto.Response vatTotalResponse = orderRepository.findMonthlyTotal(franchiseeIndex, startLocalDate, endLocalDate, RefundType.ALL);
         CmsDetailDto.Response cmsTotalResponse = orderRepository.findCmsBankInfo(franchiseeIndex);
 
         if (vatTotalResponse == null) {
@@ -97,7 +98,7 @@ public class CmsService {
         return CmsDetailResponse.builder().commissionInfoList(commissionInfoList).customerInfoList(customerInfoList).build();
     }
 
-    public String cmsDownloads(Long franchiseeIndex, String requestDate) {
+    public String cmsDownloads(Long franchiseeIndex, String requestDate, RefundType refundType) {
         try {
             ClassPathResource resource = new ClassPathResource("KTP_CMS_Form.xlsx");
             File file1;
@@ -118,9 +119,9 @@ public class CmsService {
 
             // 1. 물품판매 상세내역
             boolean isPaging = true;
-            List<List<String>> detailMonthlyResult = orderService.findCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate, isPaging);
+            List<List<String>> detailMonthlyResult = orderService.findCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate, !isPaging, refundType);
             // 2. 물품판매 총합계
-            List<String> totalResult = orderService.findCmsVatTotal(franchiseeIndex, startLocalDate, endLocalDate);
+            List<String> totalResult = orderService.findCmsVatTotal(franchiseeIndex, startLocalDate, endLocalDate, refundType);
             // TopSection
             List<String> topSectionInfo = this.topSectionInfo(franchiseeIndex, startLocalDate, endLocalDate);
 
@@ -137,10 +138,10 @@ public class CmsService {
             if (detailMonthlyResult.size() == 15) {
                 // 물품상세 내역
                 detailResultRow(xssfWorkbook, sheet, detailMonthlyResult, totalResult, false);
-                detailMonthlyResult = orderService.findCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate, isPaging);
+                detailMonthlyResult = orderService.findCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate, isPaging, refundType);
                 detailResultRow(xssfWorkbook, sheet1, detailMonthlyResult, totalResult, isPaging);
             } else {
-                detailMonthlyResult = orderService.findCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate, true);
+                detailMonthlyResult = orderService.findCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate, true, refundType);
                 detailResultRow(xssfWorkbook, sheet, detailMonthlyResult, totalResult, false);
             }
 
@@ -153,7 +154,7 @@ public class CmsService {
         }
     }
 
-    public void cmsAdminDownloads(String requestDate) {
+    public void cmsAdminDownloads(String requestDate, RefundType refundType) {
 
         List<LocalDate> date = setUpDate(requestDate);
         LocalDate startLocalDate = date.get(0);
@@ -165,7 +166,7 @@ public class CmsService {
 
         List<List<String>> totalResult = refundDetailFindService.findFranchiseeId(startLocalDate, endLocalDate);
         for (List<String> strings : totalResult) {
-            this.cmsDownloads(Long.valueOf(strings.get(0)), requestYearMonthly);
+            this.cmsDownloads(Long.valueOf(strings.get(0)), requestYearMonthly, refundType);
         }
 
     }

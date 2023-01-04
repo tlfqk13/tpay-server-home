@@ -343,7 +343,7 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
         if (refundAfter) {
             return isRefundAfterEntity().and(isAfter());
         } else {
-            return isImmediate();
+            return isImmediate().and(refundEntity.refundAfterEntity.isNull());
         }
     }
 

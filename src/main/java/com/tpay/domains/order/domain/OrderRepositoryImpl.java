@@ -1,6 +1,8 @@
 package com.tpay.domains.order.domain;
 
+import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.tpay.domains.erp.test.dto.RefundType;
 import com.tpay.domains.order.application.dto.CmsDetailDto;
 import com.tpay.domains.order.application.dto.QCmsDetailDto_Response;
 import com.tpay.domains.refund.domain.RefundStatus;
@@ -28,7 +30,7 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
     }
 
     @Override
-    public List<VatDetailDto.Response> findMonthlyCmsVatDetail(Long franchiseeIndex, LocalDate startLocalDate, LocalDate endLocalDate, int pageData) {
+    public List<VatDetailDto.Response> findMonthlyCmsVatDetail(Long franchiseeIndex, LocalDate startLocalDate, LocalDate endLocalDate, int pageData, RefundType refundType) {
         List<VatDetailDto.Response> content = queryFactory
                 .select(new QVatDetailDto_Response(
                         orderEntity.orderNumber,
@@ -38,7 +40,9 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                         orderEntity.totalAmount,
                         orderEntity.totalVat,
                         customerEntity.customerName,
-                        customerEntity.nation
+                        customerEntity.nation,
+                        refundEntity.refundAfterEntity.approvalFinishDate.substring(0,10),
+                        refundEntity.refundAfterEntity.modifiedDate.stringValue().substring(0,10)
                 ))
                 .from(refundEntity)
                 .innerJoin(refundEntity.orderEntity, orderEntity)
@@ -46,6 +50,7 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                 .where(orderEntity.franchiseeEntity.id.eq(franchiseeIndex)
                         .and(refundEntity.refundStatus.eq(RefundStatus.APPROVAL))
                         .and(refundEntity.createdDate.between(startLocalDate.atStartOfDay(), LocalDateTime.of(endLocalDate, LocalTime.MAX)))
+                        .and(refundFilter(refundType))
                 )
                 .limit(pageData)
                 .fetch();
@@ -54,7 +59,7 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
     }
 
     @Override
-    public VatTotalDto.Response findMonthlyTotal(Long franchiseeIndex, LocalDate startLocalDate, LocalDate endLocalDate) {
+    public VatTotalDto.Response findMonthlyTotal(Long franchiseeIndex, LocalDate startLocalDate, LocalDate endLocalDate, RefundType refundType) {
         VatTotalDto.Response content = queryFactory
                 .select(new QVatTotalDto_Response(
                         orderEntity.orderNumber.count().stringValue(),
@@ -72,10 +77,23 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                 .where(orderEntity.franchiseeEntity.id.eq(franchiseeIndex)
                         .and(refundEntity.refundStatus.eq(RefundStatus.APPROVAL))
                         .and(refundEntity.createdDate.between(startLocalDate.atStartOfDay(), LocalDateTime.of(endLocalDate, LocalTime.MAX)))
+                        .and(refundFilter(refundType))
                 )
                 .fetchOne();
 
         return content;
+    }
+
+    private Predicate refundFilter(RefundType refundType){
+        if(RefundType.IMMEDIATE.equals(refundType)){
+            return orderEntity.totalAmount.castToNum(Integer.class).lt(50000);
+        }else if (RefundType.AFTER.equals(refundType)){
+            return refundEntity.totalRefund.castToNum(Integer.class).goe(50000)
+                    .or(refundEntity.refundAfterEntity.isNotNull());
+        }else {
+            return null;
+        }
+
     }
 
     @Override
