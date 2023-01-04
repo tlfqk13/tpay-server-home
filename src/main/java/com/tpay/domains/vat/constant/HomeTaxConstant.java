@@ -59,9 +59,17 @@ public enum HomeTaxConstant {
     TOTAL_COUNT(NUMERIC, 30, 11), // 합계 건수
     TOTAL_PRICE_WITH_TAX(NUMERIC, 41, 15), // 세금 포함 판매가격 합계
     TOTAL_VAT(NUMERIC, 56, 15), // 부가가치세 합계
+
+    // TAIL - 즉시 환급
     TOTAL_TAX_REFUND_AMOUNT(NUMERIC, 71, 15), // 즉시환급액 합계
     REFUND_BUSINESS_NUMBER(NUMERIC, 86, 10), // 환급 창구 운영 사업자등록번호
-    TAIL_RECORD_SPACE(CHAR, 96, 104)
+    TAIL_RECORD_SPACE(CHAR, 96, 104),
+
+    // TAIL - 일반 환급
+    TOTAL_IND(NUMERIC, 71, 15), // 개별소비세 합계
+    TOTAL_EDU(NUMERIC, 86, 15), // 교육세 합계
+    TOTAL_RURAL(NUMERIC, 101, 15), // 농어촌세 합계
+
     ;
 
     public enum VatConstType {
