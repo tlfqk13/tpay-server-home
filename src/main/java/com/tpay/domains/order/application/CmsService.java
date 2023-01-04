@@ -118,7 +118,7 @@ public class CmsService {
 
             // 1. 물품판매 상세내역
             boolean isPaging = true;
-            List<List<String>> detailMonthlyResult = orderService.findCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate, !isPaging);
+            List<List<String>> detailMonthlyResult = orderService.findCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate, isPaging);
             // 2. 물품판매 총합계
             List<String> totalResult = orderService.findCmsVatTotal(franchiseeIndex, startLocalDate, endLocalDate);
             // TopSection

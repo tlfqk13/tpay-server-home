@@ -1,8 +1,11 @@
 package com.tpay.domains.erp.test.controller;
 
+import com.tpay.domains.customer.application.dto.DepartureStatus;
 import com.tpay.domains.erp.test.dto.RefundTestPagingFindResponse;
+import com.tpay.domains.erp.test.dto.RefundType;
 import com.tpay.domains.erp.test.service.ErpRefundDetailFindTestService;
 import com.tpay.domains.refund.application.dto.RefundDetailTotalDto;
+import com.tpay.domains.refund.domain.PaymentStatus;
 import com.tpay.domains.refund.domain.RefundStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,10 +25,16 @@ public class ErpRefundFindTestController {
             @RequestParam int page,
             @RequestParam String startDate,
             @RequestParam String endDate,
+            @RequestParam String searchKeyword,
+            @RequestParam RefundType refundType,
             @RequestParam RefundStatus refundStatus,
-            @RequestParam String searchKeyword
-    ) {
-        RefundTestPagingFindResponse response = refundTestDetailFindService.findAll(page,refundStatus,startDate, endDate,searchKeyword,false);
+            @RequestParam DepartureStatus departureStatus,
+            @RequestParam PaymentStatus paymentStatus
+            ) {
+
+        //refundType departureStatus, paymentStatus
+        RefundTestPagingFindResponse response = refundTestDetailFindService.findAll(page, startDate, endDate, searchKeyword
+                , refundType, refundStatus, departureStatus, paymentStatus);
         return ResponseEntity.ok(response);
     }
     // 2022/10/26  가맹점현황 > 환급현황

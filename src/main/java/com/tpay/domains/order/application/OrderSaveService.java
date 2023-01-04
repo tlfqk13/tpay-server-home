@@ -120,7 +120,8 @@ public class OrderSaveService {
         }
         FranchiseeEntity franchisee = franchiseeFindService.findByIndex(franchiseIndex);
         CustomerEntity customer = customerService.findByIndex(orderDto.getCustomerIndex());
-
+        customer.updateAfterRefundCustomer();
+        log.trace(" @@  updateRefundAfterCustomer @@ ");
         log.warn(" @@ customer= {}", customer.getNation());
         log.warn(" @@ orderDto = {}", orderDto.getPrice());
 

@@ -1,11 +1,15 @@
 package com.tpay.domains.refund.domain;
 
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.tpay.domains.customer.application.dto.DepartureStatus;
+import com.tpay.domains.erp.test.dto.RefundType;
 import com.tpay.domains.order.application.dto.CmsDto;
 import com.tpay.domains.order.application.dto.QCmsDto_Response;
 import com.tpay.domains.refund.application.dto.*;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
@@ -21,6 +25,7 @@ import static com.tpay.domains.franchisee.domain.QFranchiseeEntity.franchiseeEnt
 import static com.tpay.domains.franchisee_upload.domain.QFranchiseeUploadEntity.franchiseeUploadEntity;
 import static com.tpay.domains.order.domain.QOrderEntity.orderEntity;
 import static com.tpay.domains.point_scheduled.domain.QPointScheduledEntity.pointScheduledEntity;
+import static com.tpay.domains.refund.domain.QRefundAfterEntity.refundAfterEntity;
 import static com.tpay.domains.refund.domain.QRefundEntity.refundEntity;
 
 public class RefundRepositoryImpl implements RefundRepositoryCustom {
@@ -36,7 +41,7 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
         List<RefundReceiptDto.Response> content = queryFactory
                 .select(new QRefundReceiptDto_Response(
                         orderEntity.orderNumber,
-                        refundEntity.refundAfterEntity.isNotNull(),
+                        isRefundAfterEntity(),
                         franchiseeUploadEntity.taxFreeStoreNumber,
                         orderEntity.createdDate.stringValue(),
                         franchiseeEntity.storeName,
@@ -68,7 +73,7 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
         List<RefundReceiptDto.Response> content = queryFactory
                 .select(new QRefundReceiptDto_Response(
                         orderEntity.orderNumber,
-                        refundEntity.refundAfterEntity.isNotNull(),
+                        isRefundAfterEntity(),
                         franchiseeUploadEntity.taxFreeStoreNumber,
                         orderEntity.createdDate.stringValue(),
                         franchiseeEntity.storeName,
@@ -120,9 +125,11 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
     }
 
     @Override
-    public Page<RefundFindAllDto.Response> findRefundAll(Pageable pageable, LocalDate startLocalDate, LocalDate endLocalDate
-            , boolean isKeywordEmpty, boolean businessNumber, String searchKeyword, RefundStatus refundStatus
-            , boolean isRefundAfter) {
+    public Page<RefundFindAllDto.Response> findRefundAll(
+            Pageable pageable, LocalDate startLocalDate, LocalDate endLocalDate
+            , boolean isKeywordEmpty, boolean businessNumber, String searchKeyword
+            , RefundStatus refundStatus, RefundType refundType
+            , DepartureStatus departureStatus, PaymentStatus paymentStatus) {
 
         List<RefundFindAllDto.Response> content = queryFactory
                 .select(new QRefundFindAllDto_Response(
@@ -136,16 +143,19 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
                                 .subtract(refundEntity.totalRefund.castToNum(Integer.class))),
                         refundEntity.refundStatus,
                         franchiseeEntity.businessNumber,
-                        franchiseeEntity.storeName
+                        franchiseeEntity.storeName,
+                        refundEntity.refundAfterEntity.paymentStatus,
+                        customerEntity.departureStatus
                 ))
                 .from(refundEntity)
                 .innerJoin(refundEntity.orderEntity, orderEntity)
+                .leftJoin(refundEntity.refundAfterEntity, refundAfterEntity)
                 .leftJoin(orderEntity.franchiseeEntity, franchiseeEntity)
                 .leftJoin(orderEntity.customerEntity, customerEntity)
                 .where(refundEntity.createdDate.between(startLocalDate.atStartOfDay(), LocalDateTime.of(endLocalDate, LocalTime.MAX))
-                        .and(franchiseeEntity.storeName.ne("석세스모드"))
+                        //.and(franchiseeEntity.storeName.ne("석세스모드"))
                         .and(isKeywordEmpty(isKeywordEmpty, businessNumber, searchKeyword, refundStatus))
-                        .and(isRefundAfter(isRefundAfter)))
+                        .and(refundFilter(refundType, refundStatus, departureStatus, paymentStatus)))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(refundEntity.id.desc())
@@ -158,6 +168,85 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
                 .leftJoin(orderEntity.customerEntity, customerEntity);
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
+    }
+
+    private Predicate refundFilter(RefundType refundType, RefundStatus refundStatus, DepartureStatus departureStatus, PaymentStatus paymentStatus) {
+        if (refundType.equals(RefundType.IMMEDIATE)) { // 즉시
+            if (refundStatus.equals(RefundStatus.APPROVAL)) {
+                return isImmediate()
+                        .and(isRefundStatus(refundStatus));
+            } else if (refundStatus.equals(RefundStatus.CANCEL)) {
+                return isImmediate()
+                        .and(isRefundStatus(refundStatus));
+            } else {
+                return isImmediate();
+            }
+        } else if (refundType.equals(RefundType.AFTER)) { // 사후
+            return departurePaymentStatus(paymentStatus,departureStatus)
+                    .and(isRefundAfterEntity())
+                    .and(isAfter());
+        } else { // 전체
+            if (refundStatus.equals(RefundStatus.APPROVAL)) {
+                return isRefundStatus(refundStatus);
+            } else if (refundStatus.equals(RefundStatus.CANCEL)) {
+                return isRefundStatus(refundStatus);
+            } else {
+                return null;
+            }
+        }
+    }
+
+    private BooleanExpression isRefundStatus(RefundStatus refundStatus) {
+        return refundEntity.refundStatus.in(refundStatus);
+    }
+
+    private BooleanExpression departurePaymentStatus(PaymentStatus paymentStatus, DepartureStatus departureStatus) {
+        if (departureStatus.equals(DepartureStatus.DEPARTURE_WAIT)) {
+            if (paymentStatus.equals(PaymentStatus.PAYMENT_WAIT)) {
+                return isDeparturePaymentStatus(paymentStatus, departureStatus)
+                        .and(isRefundAfterEntity());
+            } else {
+                return isRefundAfterEntity();
+            }
+        } else if (departureStatus.equals(DepartureStatus.DEPARTURE_COMPLETE)) {
+            if (paymentStatus.equals(PaymentStatus.PAYMENT_WAIT)) {
+                return isDeparturePaymentStatus(paymentStatus, departureStatus)
+                        .and(isRefundAfterEntity());
+            } else if (paymentStatus.equals(PaymentStatus.PAYMENT_COMPLETE)) {
+                return isDeparturePaymentStatus(paymentStatus, departureStatus)
+                        .and(isRefundAfterEntity());
+            }
+        } else { // Departure ALL
+            if (paymentStatus.equals(PaymentStatus.PAYMENT_WAIT)) {
+                return isDeparturePaymentStatus(paymentStatus, departureStatus)
+                        .and(isRefundAfterEntity());
+            } else if (paymentStatus.equals(PaymentStatus.PAYMENT_COMPLETE)) {
+                return isDeparturePaymentStatus(paymentStatus, departureStatus)
+                        .and(isRefundAfterEntity());
+            } else {
+                return isRefundAfterEntity();
+            }
+        }
+        return isRefundAfterEntity();
+    }
+
+    private BooleanExpression isDeparturePaymentStatus(PaymentStatus paymentStatus, DepartureStatus departureStatus) {
+        return customerEntity.departureStatus.in(departureStatus)
+                .and(refundEntity.refundAfterEntity.paymentStatus.in(paymentStatus));
+    }
+
+    private BooleanExpression isRefundAfterEntity() {
+        return refundEntity.refundAfterEntity.isNotNull();
+    }
+
+    @NotNull
+    private BooleanExpression isAfter() {
+        return refundEntity.totalRefund.castToNum(Integer.class).goe(80000);
+    }
+
+    @NotNull
+    private BooleanExpression isImmediate() {
+        return refundEntity.totalRefund.castToNum(Integer.class).loe(74000);
     }
 
     @Override
@@ -183,7 +272,7 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
             if (refundStatus.equals(RefundStatus.ALL)) {
                 return null;
             } else {
-                return refundEntity.refundStatus.in(refundStatus);
+                return isRefundStatus(refundStatus);
             }
         } else {
             if (businessNumber) {
@@ -191,13 +280,13 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
                     return franchiseeEntity.businessNumber.eq(keyword);
                 } else {
                     return franchiseeEntity.businessNumber.eq(keyword)
-                            .and(refundEntity.refundStatus.in(refundStatus));
+                            .and(isRefundStatus(refundStatus));
                 }
             } else {
                 if (refundStatus.equals(RefundStatus.ALL)) {
                     return franchiseeEntity.storeName.eq(keyword);
                 } else {
-                    return franchiseeEntity.storeName.eq(keyword).and(refundEntity.refundStatus.in(refundStatus));
+                    return franchiseeEntity.storeName.eq(keyword).and(isRefundStatus(refundStatus));
                 }
             }
         }
@@ -205,10 +294,9 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
 
     private BooleanExpression isRefundAfter(Boolean refundAfter) {
         if (refundAfter) {
-            return refundEntity.refundAfterEntity.isNotNull()
-                    .and(refundEntity.totalRefund.castToNum(Integer.class).goe(80000));
+            return isRefundAfterEntity().and(isAfter());
         } else {
-            return refundEntity.totalRefund.castToNum(Integer.class).loe(74000);
+            return isImmediate();
         }
     }
 }

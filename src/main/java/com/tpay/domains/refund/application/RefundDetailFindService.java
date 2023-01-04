@@ -1,9 +1,12 @@
 package com.tpay.domains.refund.application;
 
 import com.tpay.domains.customer.application.CustomerService;
+import com.tpay.domains.customer.application.dto.DepartureStatus;
 import com.tpay.domains.customer.domain.CustomerEntity;
+import com.tpay.domains.erp.test.dto.RefundType;
 import com.tpay.domains.order.application.dto.CmsDto;
 import com.tpay.domains.refund.application.dto.*;
+import com.tpay.domains.refund.domain.PaymentStatus;
 import com.tpay.domains.refund.domain.RefundRepository;
 import com.tpay.domains.refund.domain.RefundStatus;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +43,8 @@ public class RefundDetailFindService {
 
         Page<RefundFindAllDto.Response> response = refundRepository.findRefundAll(
                 pageRequest, startLocalDate, endLocalDate, searchKeyword.isEmpty()
-                ,isBusinessNumber,searchKeyword,refundStatus,isRefundAfter);
+                ,isBusinessNumber, searchKeyword, refundStatus, RefundType.IMMEDIATE
+                , DepartureStatus.ALL, PaymentStatus.ALL);
 
         int totalPage = response.getTotalPages();
         if(totalPage != 0){

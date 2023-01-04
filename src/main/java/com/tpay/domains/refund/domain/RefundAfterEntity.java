@@ -29,9 +29,13 @@ public class RefundAfterEntity extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private RefundAfterMethod refundAfterMethod;
 
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus paymentStatus;
+
     @OneToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_id")
     private PaymentEntity payment;
+
 
     public void addPayment(PaymentEntity payment) {
         this.payment = payment;

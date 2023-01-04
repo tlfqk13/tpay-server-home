@@ -1,9 +1,12 @@
 package com.tpay.domains.erp.test.service;
 
 import com.tpay.domains.customer.application.CustomerService;
+import com.tpay.domains.customer.application.dto.DepartureStatus;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.erp.test.dto.RefundTestPagingFindResponse;
+import com.tpay.domains.erp.test.dto.RefundType;
 import com.tpay.domains.refund.application.dto.*;
+import com.tpay.domains.refund.domain.PaymentStatus;
 import com.tpay.domains.refund.domain.RefundRepository;
 import com.tpay.domains.refund.domain.RefundStatus;
 import lombok.RequiredArgsConstructor;
@@ -47,14 +50,14 @@ public class ErpRefundDetailFindTestService {
             List<String> availPassportNumbers = getAvailPassportNumberList(passportNumber);
             for (String passportNum : availPassportNumbers) {
                 customerEntityOptional = customerService.findCustomerByNationAndPassportNumber(passportNum, nation);
-                if(customerEntityOptional.isPresent()) {
+                if (customerEntityOptional.isPresent()) {
                     log.debug("Applied passport Number = {}", passportNum);
                     break;
                 }
             }
         }
 
-        if(customerEntityOptional.isEmpty()) {
+        if (customerEntityOptional.isEmpty()) {
             return Collections.emptyList();
         }
         Long customerIndex = customerEntityOptional.get().getId();
@@ -64,13 +67,13 @@ public class ErpRefundDetailFindTestService {
             return Collections.emptyList();
         }
         List<RefundByCustomerResponse> refundByCustomerResponseList =
-            refundsByCustomerInfo.stream()
-                .map(RefundByCustomerResponse::from)
-                .collect(Collectors.toList());
+                refundsByCustomerInfo.stream()
+                        .map(RefundByCustomerResponse::from)
+                        .collect(Collectors.toList());
         Queue<RefundByCustomerResponse> refundByCustomerResponseQueue = new PriorityQueue<>();
         if (orderCheck.equals("ASC")) {
             refundByCustomerResponseQueue = new PriorityQueue<>(new ResponseCompAsc());
-        }else if (orderCheck.equals("DESC")) {
+        } else if (orderCheck.equals("DESC")) {
             refundByCustomerResponseQueue = new PriorityQueue<>(new ResponseCompDesc());
         }
         refundByCustomerResponseQueue.addAll(refundByCustomerResponseList);
@@ -103,6 +106,7 @@ public class ErpRefundDetailFindTestService {
         }
 
     }
+
     private static class ResponseCompDesc implements Comparator<RefundByCustomerResponse> {
         @Override
         public int compare(RefundByCustomerResponse o1, RefundByCustomerResponse o2) {
@@ -137,7 +141,7 @@ public class ErpRefundDetailFindTestService {
         LocalDate startLocalDate = LocalDate.parse("20" + startDate, yyyyMMdd);
         LocalDate endLocalDate = LocalDate.parse("20" + endDate, yyyyMMdd).plusDays(1);
 
-        List<RefundFindDto.Response> findAFranchiseeList = refundRepository.findRefundDetail(franchiseeIndex,startLocalDate,endLocalDate);
+        List<RefundFindDto.Response> findAFranchiseeList = refundRepository.findRefundDetail(franchiseeIndex, startLocalDate, endLocalDate);
         RefundFindResponseInterface refundDetailList = refundRepository.findRefundDetailSaleTotalQuery(franchiseeIndex, startLocalDate, endLocalDate);
 
         RefundDetailTotalResponse refundDetail = RefundDetailTotalResponse.builder()
@@ -154,7 +158,9 @@ public class ErpRefundDetailFindTestService {
                 .build();
     }
 
-    public RefundTestPagingFindResponse findAll(int page, RefundStatus refundStatus, String startDate, String endDate, String searchKeyword, boolean isRefundAfter) {
+    public RefundTestPagingFindResponse findAll(int page, String startDate, String endDate, String searchKeyword
+            , RefundType refundType, RefundStatus refundStatus, DepartureStatus departureStatus, PaymentStatus paymentStatus) {
+
         DateTimeFormatter yyyyMMdd = DateTimeFormatter.ofPattern("yyyyMMdd");
         LocalDate startLocalDate = LocalDate.parse("20" + startDate, yyyyMMdd);
         LocalDate endLocalDate = LocalDate.parse("20" + endDate, yyyyMMdd).plusDays(1);
@@ -162,12 +168,13 @@ public class ErpRefundDetailFindTestService {
         boolean isBusinessNumber = searchKeyword.chars().allMatch(Character::isDigit);
 
         Page<RefundFindAllDto.Response> response = refundRepository.findRefundAll(
-                pageRequest, startLocalDate, endLocalDate, searchKeyword.isEmpty()
-                ,isBusinessNumber,searchKeyword,refundStatus,isRefundAfter);
+                    pageRequest, startLocalDate, endLocalDate, searchKeyword.isEmpty()
+                    , isBusinessNumber, searchKeyword, refundStatus, refundType
+                    , departureStatus, paymentStatus);
 
         int totalPage = response.getTotalPages();
-        if(totalPage != 0){
-            totalPage = totalPage -1;
+        if (totalPage != 0) {
+            totalPage = totalPage - 1;
         }
 
         return RefundTestPagingFindResponse.builder()

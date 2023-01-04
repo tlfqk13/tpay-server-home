@@ -3,6 +3,7 @@ package com.tpay.domains.customer.domain;
 import com.tpay.domains.BaseTimeEntity;
 import com.tpay.domains.customer.application.dto.CustomerDto;
 import com.tpay.domains.customer.application.dto.CustomerPaymentType;
+import com.tpay.domains.customer.application.dto.DepartureStatus;
 import lombok.*;
 
 import javax.persistence.*;
@@ -46,6 +47,8 @@ public class CustomerEntity extends BaseTimeEntity {
 
     @Column(name = "isRegister", length = 5)
     private Boolean isRegister;
+    @Enumerated(EnumType.STRING)
+    private DepartureStatus departureStatus;
 
     @Builder
     public CustomerEntity(String passportNumber, String customerName, String nation) {
@@ -67,7 +70,12 @@ public class CustomerEntity extends BaseTimeEntity {
         this.customerAccountNumber = customerInfo.getAccountNumber();
     }
 
+    public void updateAfterRefundCustomer(){
+        this.departureStatus = DepartureStatus.DEPARTURE_WAIT;
+    }
+
     public void updateRegister() {
         this.isRegister = true;
     }
+
 }
