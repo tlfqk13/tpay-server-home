@@ -57,8 +57,8 @@ public class OrderSaveService {
             productEntity =
                     productFindService.findOrElseSave(
                             franchiseeEntity.getProductCategory(), request.getPrice(), request.getRefund());
-            log.warn(" @@ request.getPrice() = {}", request.getPrice());
-            log.warn(" @@ request.getRefund() = {}", request.getRefund());
+            log.trace(" @@ request.getPrice() = {}", request.getPrice());
+            log.trace(" @@ request.getRefund() = {}", request.getRefund());
         }
         return this.save(franchiseeEntity, customerEntity, productEntity, null);
     }
@@ -120,9 +120,10 @@ public class OrderSaveService {
         }
         FranchiseeEntity franchisee = franchiseeFindService.findByIndex(franchiseIndex);
         CustomerEntity customer = customerService.findByIndex(orderDto.getCustomerIndex());
-
-        log.warn(" @@ customer= {}", customer.getNation());
-        log.warn(" @@ orderDto = {}", orderDto.getPrice());
+        customer.updateDepartureStatus();
+        log.trace(" @@  updateRefundAfterCustomer @@ ");
+        log.trace(" @@ customer= {}", customer.getNation());
+        log.trace(" @@ orderDto = {}", orderDto.getPrice());
 
         ProductEntity productEntity =
                 productFindService.findOrElseSave(

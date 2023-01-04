@@ -40,7 +40,6 @@ public class VanRefundController {
         String responseCode = "0000";
         for (RefundItemDto.Request refundItem : refundItems) {
             RefundAfterDto.Request refundAfterDto = RefundAfterDto.Request.of(vanRefundDto.getRefundAfterBaseInfo(), refundItem);
-
             // payment info refund after 와 엮음
             try {
                 RefundResponse refundResponse = refundService.approveAfter(refundAfterDto, payment);
@@ -64,10 +63,9 @@ public class VanRefundController {
         List<RefundItemDto.Request> refundItems = vanFinalDto.getRefundItems();
         for (RefundItemDto.Request refundItem : refundItems) {
             RefundAfterDto.Request refundAfterDto = RefundAfterDto.Request.of(vanFinalDto, refundItem);
-
             refundService.approveAfter(refundAfterDto);
         }
 
-        return ResponseEntity.ok("ok");
+        return ResponseEntity.ok("0000");
     }
 }

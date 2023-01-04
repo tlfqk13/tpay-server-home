@@ -44,7 +44,9 @@ public class EmployeeSignInService {
         AuthToken accessToken = authService.createAccessToken(employeeEntity);
         AuthToken refreshToken = authService.createRefreshToken(employeeEntity);
         authService.updateOrSave(employeeEntity, refreshToken.getValue());
+        log.trace(" @@ employeeEntity.getId updateOrSaveAccessToken_start = {}", employeeEntity.getId());
         authService.updateOrSaveAccessToken(employeeEntity,accessToken.getValue());
+        log.trace(" @@ employeeEntity.getId updateOrSaveAccessToken_end = {}", employeeEntity.getId());
 
         //직원 로그인시 푸쉬
         nonBatchPushService.nonBatchPushNSave(PushCategoryType.CASE_FOURTEEN, franchiseeApplicantEntity.getFranchiseeEntity().getId(), employeeEntity.getName());

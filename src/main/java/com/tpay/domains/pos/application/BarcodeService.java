@@ -65,4 +65,27 @@ public class BarcodeService {
         return after.toString();
     }
 
+    // 구매일련번호 바코드 생성
+    public String createBarcode(String orderNumber,Long orderId) {
+        String uri = "";
+
+        try {
+            //바코드 생성
+            Barcode barcode = BarcodeFactory.createCode128A(orderNumber);
+            barcode.setBarHeight(100);
+            BufferedImage image = BarcodeImageHandler.getImage(barcode);
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            ImageIO.write(image, "jpeg", os);
+
+            //Input stream 생성
+            InputStream is = new ByteArrayInputStream(os.toByteArray());
+
+            //S3 업로드
+            uri = s3FileUploader.uploadBarcode(orderId, is);
+        } catch (OutputException | BarcodeException | IOException e) {
+            e.printStackTrace();
+            log.error("Barcode Create Error : {}", e.getMessage());
+        }
+        return uri;
+    }
 }

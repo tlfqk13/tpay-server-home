@@ -4,6 +4,7 @@ package com.tpay.domains.vat.application;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.util.converter.NumberFormatConverter;
+import com.tpay.domains.erp.test.dto.RefundType;
 import com.tpay.domains.franchisee.application.FranchiseeFindService;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee_upload.application.FranchiseeUploadFindService;
@@ -37,7 +38,7 @@ public class VatService {
         LocalDate startLocalDate = (LocalDate) localDates.get(0);
         LocalDate endLocalDate = (LocalDate) localDates.get(1);
 
-        VatTotalDto.Response vatTotalResponse  = orderRepository.findMonthlyTotal(franchiseeIndex, startLocalDate, endLocalDate);
+        VatTotalDto.Response vatTotalResponse  = orderRepository.findMonthlyTotal(franchiseeIndex, startLocalDate, endLocalDate, RefundType.ALL);
         if (vatTotalResponse == null) {
             return VatTotalDto.Response.builder().totalAmount("0").totalCount("0").totalVat("0").totalCommission("0").build();
         }
@@ -59,7 +60,7 @@ public class VatService {
         //1. 제출자 인적사항
         List<String> personalInfoResult = this.findPersonalInfo(franchiseeIndex, saleTerm);
         //2. 물품판매 총합계
-        List<String> totalResult = orderService.findCmsVatTotal(franchiseeIndex, startLocalDate, startEndDate);
+        List<String> totalResult = orderService.findCmsVatTotal(franchiseeIndex, startLocalDate, startEndDate, RefundType.ALL);
         //3. 물품판매 명세
         // TODO: 2022/11/03 vatDetailApp - > 고객이름, 국적 빼고 보내줘야함
         List<List<String>> detailResult = this.findCmsVatDetailFromApp(franchiseeIndex, startLocalDate, startEndDate);
@@ -115,7 +116,7 @@ public class VatService {
 
         int pageData = 100;
 
-        List<VatDetailDto.Response> vatDetailResponse = orderRepository.findMonthlyCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate,pageData);
+        List<VatDetailDto.Response> vatDetailResponse = orderRepository.findMonthlyCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate,pageData, RefundType.ALL);
         List<List<String>> detailResult = new ArrayList<>();
 
         for (VatDetailDto.Response response : vatDetailResponse) {

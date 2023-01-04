@@ -8,7 +8,7 @@ import java.util.Arrays;
 @Getter
 @AllArgsConstructor
 public enum TokenType {
-    ACCESS_TOKEN("accessToken", 24 * 7 * 4),
+    ACCESS_TOKEN("accessToken", 24 * 7 * 4 * 6),
     REFRESH_TOKEN("refreshToken", 24 * 7 * 4 * 6);
 
     private String name;

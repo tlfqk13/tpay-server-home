@@ -63,6 +63,7 @@ public class VatHomeTaxService {
         for (List<String> strings : totalResult) {
             this.createHomeTaxUploadFile(Long.valueOf(strings.get(0)), requestDate);
         }
+
     }
 
     public VatHomeTaxDto.Response createHomeTaxUploadFile(Long franchiseeIndex, String requestDate) throws IOException {
@@ -382,7 +383,6 @@ public class VatHomeTaxService {
 
         return data;
     }
-
     // 홈텍스 zipFile 만들기
     private void zipFileDown(int i, String homeTaxFileName, String storeName, LocalDate endDate) throws IOException {
 
