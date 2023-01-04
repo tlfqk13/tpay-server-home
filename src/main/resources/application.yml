@@ -37,6 +37,9 @@ custom:
     base-uri: ENC(XdSikIGy5Xl70+0BXM8scfYUK3jA4Y7Oj/9AM4K55jfHXeTp/hepZdGKWOPKGjkJwZgcQaqwI10AH/IC4ngDKA==)
   api:
     test: ENC(pX5jIPw6xaZabSqmoYFI3XS69rtgh5Xt)
+  alimtalk:
+    key: ENC(cI7sTPXIF/y29CK34LjSBlM0zqMsJ077)
+    addr: ENC(H0QwX6tU1+eOYvmaNHAChvKZk/OkHD8eBl56ddrP71NpjC9o9rZr/Q==)
 cloud:
   aws:
     credentials:
