@@ -6,10 +6,7 @@ import com.tpay.domains.vat.application.VatDownloadService;
 import com.tpay.domains.vat.application.VatHomeTaxService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
@@ -29,6 +26,14 @@ public class AdminCmsVatController {
             @RequestParam RefundType refundType) {
         vatDownloadService.vatAdminDownloads(requestDate,refundType);
         return ResponseEntity.ok("Admin VatDownloads");
+    }
+
+    @GetMapping("/vat/quarterly/downloads")
+    public ResponseEntity<String> vatAdminDownloadsQuarterly(
+            @RequestParam String requestDate,
+            @RequestParam RefundType refundType) {
+        vatDownloadService.vatAdminDownloadsQuarterly(requestDate,refundType);
+        return ResponseEntity.ok("Admin vatAdminDownloads Quarterly ");
     }
 
     // 2022/07/29 관리자가 한번에 cms 청구서 뽑는 기능

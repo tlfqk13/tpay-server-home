@@ -119,9 +119,10 @@ public class CmsService {
 
             // 1. 물품판매 상세내역
             boolean isPaging = true;
-            List<List<String>> detailMonthlyResult = orderService.findCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate, isPaging, refundType);
+            boolean isCms = true; // cms 는 사후,즉시 구분이 없기때문에
+            List<List<String>> detailMonthlyResult = orderService.findCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate, isPaging, refundType, isCms);
             // 2. 물품판매 총합계
-            List<String> totalResult = orderService.findCmsVatTotal(franchiseeIndex, startLocalDate, endLocalDate, refundType);
+            List<String> totalResult = orderService.findCmsVatTotal(franchiseeIndex, startLocalDate, endLocalDate, refundType,isCms);
             // TopSection
             List<String> topSectionInfo = this.topSectionInfo(franchiseeIndex, startLocalDate, endLocalDate);
 
@@ -138,10 +139,10 @@ public class CmsService {
             if (detailMonthlyResult.size() == 15) {
                 // 물품상세 내역
                 detailResultRow(xssfWorkbook, sheet, detailMonthlyResult, totalResult, false);
-                detailMonthlyResult = orderService.findCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate, isPaging, refundType);
+                detailMonthlyResult = orderService.findCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate, isPaging, refundType, isCms);
                 detailResultRow(xssfWorkbook, sheet1, detailMonthlyResult, totalResult, isPaging);
             } else {
-                detailMonthlyResult = orderService.findCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate, true, refundType);
+                detailMonthlyResult = orderService.findCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate, true, refundType, isCms);
                 detailResultRow(xssfWorkbook, sheet, detailMonthlyResult, totalResult, false);
             }
 

@@ -65,7 +65,7 @@ public class BarcodeService {
         return after.toString();
     }
 
-    // 구매일련번호 바코드 생성
+    // 구매일련번호 바코드 생성 - ktaxpay 영수증용
     public String createBarcode(String orderNumber,Long orderId) {
         String uri = "";
 

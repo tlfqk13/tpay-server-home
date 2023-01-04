@@ -65,7 +65,6 @@ public class RefundApproveService {
     @Transactional
     public RefundResponse approve(RefundSaveRequest request, IndexInfo indexInfo) {
 
-        // 가격 조회 - 30,000 미만일 경우 알기 위해서
         int checkMinPrice = Integer.parseInt(request.getPrice());
         if (checkMinPrice < 30000) {
             log.debug(" @@ Item Price = {}", request.getPrice());

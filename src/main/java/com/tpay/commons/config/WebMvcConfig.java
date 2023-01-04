@@ -53,6 +53,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 "/franchisee/admin/cms/downloads",
                 "/franchisee/admin/vat/downloads",
                 "/franchisee/admin/hometax/downloads",
+                "/franchisee/admin/vat/quarterly/downloads", // 분기별 다운 - 관리자 버전
                 "/customer/**",
                 "/api/**",          // KTP-API
 
