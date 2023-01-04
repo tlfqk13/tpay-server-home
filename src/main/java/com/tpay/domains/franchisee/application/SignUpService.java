@@ -7,6 +7,8 @@ import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.exception.detail.InvalidPasswordException;
 import com.tpay.commons.regex.RegExType;
 import com.tpay.commons.regex.RegExUtils;
+import com.tpay.domains.alimtalk.domain.dto.AlimTalkApiDto;
+import com.tpay.domains.alimtalk.presentation.AlimTalkService;
 import com.tpay.domains.franchisee.application.dto.FranchiseeSignUpRequest;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeRepository;
@@ -32,6 +34,7 @@ public class SignUpService {
     private final FranchiseeApplicantSaveService franchiseeApplicantSaveService;
     private final UserPushTokenService userPushTokenService;
     private final PushTokenService pushTokenService;
+    private final AlimTalkService alimTalkService;
 
     @Transactional
     public Long signUp(FranchiseeSignUpRequest request, boolean isApi) {
@@ -39,12 +42,12 @@ public class SignUpService {
         String businessNumber = request.getBusinessNumber();
         if (!regExUtils.validate(RegExType.BUSINESS_NUMBER, businessNumber)) {
             throw new InvalidBusinessNumberException(
-                ExceptionState.INVALID_BUSINESS_NUMBER,
-                "Required Business Number Format : (XXX-XX-XXXXX)");
+                    ExceptionState.INVALID_BUSINESS_NUMBER,
+                    "Required Business Number Format : (XXX-XX-XXXXX)");
         }
 
         String password = request.getPassword();
-        if(!isApi) {
+        if (!isApi) {
             if (!regExUtils.validate(RegExType.PASSWORD, password)) {
                 throw new InvalidPasswordException(
                         ExceptionState.INVALID_PASSWORD, "Invalid Password Format");
@@ -65,22 +68,22 @@ public class SignUpService {
         }
         double defaultBalancePercentage = 0;
         FranchiseeEntity franchiseeEntity =
-            FranchiseeEntity.builder()
-                .businessNumber(request.getBusinessNumber())
-                .storeName(request.getStoreName())
-                .storeAddressNumber(request.getStoreAddressNumber())
-                .storeAddressBasic(request.getStoreAddressBasic())
-                .storeAddressDetail(request.getStoreAddressDetail())
-                .sellerName(request.getSellerName())
-                .storeTel(request.getStoreTel().replaceAll("-", ""))
-                .productCategory(request.getProductCategory())
-                .password(encodedPassword)
-                .signboard(request.getSignboard())
-                .storeNumber(request.getStoreNumber().replaceAll("-", ""))
-                .email(request.getEmail())
-                .isTaxRefundShop(request.getIsTaxRefundShop())
-                .balancePercentage(defaultBalancePercentage)
-                .build();
+                FranchiseeEntity.builder()
+                        .businessNumber(request.getBusinessNumber())
+                        .storeName(request.getStoreName())
+                        .storeAddressNumber(request.getStoreAddressNumber())
+                        .storeAddressBasic(request.getStoreAddressBasic())
+                        .storeAddressDetail(request.getStoreAddressDetail())
+                        .sellerName(request.getSellerName())
+                        .storeTel(request.getStoreTel().replaceAll("-", ""))
+                        .productCategory(request.getProductCategory())
+                        .password(encodedPassword)
+                        .signboard(request.getSignboard())
+                        .storeNumber(request.getStoreNumber().replaceAll("-", ""))
+                        .email(request.getEmail())
+                        .isTaxRefundShop(request.getIsTaxRefundShop())
+                        .balancePercentage(defaultBalancePercentage)
+                        .build();
         franchiseeRepository.save(franchiseeEntity);
         franchiseeApplicantSaveService.save(franchiseeEntity);
 
@@ -89,18 +92,27 @@ public class SignUpService {
         log.trace("[가맹점  명] : {}", request.getStoreName());
         log.trace("[대표자  명] : {}", request.getSellerName());
         // 토큰 테이블에 토큰 저장
-        if(!(request.getPushToken() == null)) {
+        if (!(request.getPushToken() == null)) {
             PushTokenEntity pushTokenEntity = new PushTokenEntity(request.getPushToken());
             PushTokenEntity findPushTokenEntity = pushTokenService.saveIfNotExists(pushTokenEntity);
-        // 유저-토큰 테이블 세이브 (기존 데이터는 삭제)
+            // 유저-토큰 테이블 세이브 (기존 데이터는 삭제)
             userPushTokenService.deleteIfExistsAndSave(franchiseeEntity, findPushTokenEntity);
-        } else{
+        } else {
             log.trace("===================토큰없이 회원가입 완료====================");
         }
+
+        // 알림톡 메시지 전달
+        AlimTalkApiDto.Request message
+                = alimTalkService.createAlimtalkMessage(request.getStoreName(), request.getStoreNumber());
+        alimTalkService.sendAlimTalkApiMessage(message);
         return franchiseeEntity.getId();
     }
 
-    public Long signUp(FranchiseeSignUpRequest request){
+    private String joinStrings(String... strings) {
+        return String.join("|", strings);
+    }
+
+    public Long signUp(FranchiseeSignUpRequest request) {
         return signUp(request, false);
     }
 }
