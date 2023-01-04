@@ -16,6 +16,8 @@ public class CustomValue {
     public static String FIREBASE_SDK_PATH;
     public static String S3_BASE_URI;
     public static String API_TEST_SERVER;
+    public static String ALIMTALK_SEVER;
+    public static String ALIMTALK_KEY;
 
     @Value("${custom.push.sdk-path}")
     public void setFirebaseSdkPath(String firebaseSdkPath) {FIREBASE_SDK_PATH = firebaseSdkPath;}
@@ -55,4 +57,13 @@ public class CustomValue {
     @Value("${custom.api.test}")
     public void setApiTestServer(String addr) {API_TEST_SERVER = addr;}
 
+    @Value("${custom.alimtalk.addr}")
+    public void setAlimtalkSever(String addr) {
+        ALIMTALK_SEVER = addr;
+    }
+
+    @Value("${custom.alimtalk.key}")
+    public void setAlimtalkKey(String key) {
+        ALIMTALK_KEY = key;
+    }
 }

@@ -62,7 +62,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 // h2 및 기타 설정파일
                 "/error",
                 "/h2-console/**",
-                "/favicon.ico"
+                "/favicon.ico",
+
+                // dev 전용
+                "/dev/**"
         ));
 
         if (!profileName.equals("deploy")) {
