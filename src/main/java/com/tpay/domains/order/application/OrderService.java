@@ -53,26 +53,35 @@ public class OrderService {
 
     public List<String> findCmsVatTotal(Long franchiseeIndex, LocalDate startLocalDate, LocalDate endLocalDate, RefundType refundType) {
 
-      VatTotalDto.Response vatTotalResponse = orderRepository.findMonthlyTotal(franchiseeIndex, startLocalDate, endLocalDate, refundType);
+        VatTotalDto.Response vatTotalResponse = orderRepository.findMonthlyTotal(franchiseeIndex, startLocalDate, endLocalDate);
 
-      List<String> result = new ArrayList<>();
-      result.add(NumberFormatConverter.addCommaToNumber(vatTotalResponse.getTotalCount()));
-      result.add(NumberFormatConverter.addCommaToNumber(vatTotalResponse.getTotalAmount()));
-      result.add(NumberFormatConverter.addCommaToNumber(vatTotalResponse.getTotalVat()));
-      result.add(NumberFormatConverter.addCommaToNumber(vatTotalResponse.getTotalRefund()));
-      result.add(NumberFormatConverter.addCommaToNumber(vatTotalResponse.getTotalCommission()));
+        if (RefundType.AFTER.equals(refundType)) {
+            vatTotalResponse = orderRepository.findMonthlyTotal(franchiseeIndex, startLocalDate, endLocalDate, refundType);
+        }
 
-      return result;
+        List<String> result = new ArrayList<>();
+        result.add(NumberFormatConverter.addCommaToNumber(vatTotalResponse.getTotalCount()));
+        result.add(NumberFormatConverter.addCommaToNumber(vatTotalResponse.getTotalAmount()));
+        result.add(NumberFormatConverter.addCommaToNumber(vatTotalResponse.getTotalVat()));
+        result.add(NumberFormatConverter.addCommaToNumber(vatTotalResponse.getTotalRefund()));
+        result.add(NumberFormatConverter.addCommaToNumber(vatTotalResponse.getTotalCommission()));
+
+        return result;
     }
 
     public List<List<String>> findCmsVatDetail(Long franchiseeIndex, LocalDate startLocalDate, LocalDate endLocalDate, boolean isPaging, RefundType refundType) {
         int pageData = 15;
-        if(isPaging){
+        if (isPaging) {
             pageData = 100;
         }
 
-        List<VatDetailDto.Response> vatDetailResponse = orderRepository.findMonthlyCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate,
-                pageData, refundType);
+        List<VatDetailDto.Response> vatDetailResponse = orderRepository.findMonthlyCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate, pageData);
+
+        if (RefundType.AFTER.equals(refundType)) {
+            vatDetailResponse = orderRepository.findMonthlyCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate,
+                    pageData, refundType);
+        }
+
 
         List<List<String>> detailResult = new ArrayList<>();
 
@@ -92,6 +101,7 @@ public class OrderService {
         }
         return detailResult;
     }
+
     @Transactional
     public Long sumTotalSaleAmountByFranchiseeIndex(Long franchiseeIndex) {
         Optional<Long> optionalResult = orderRepository.sumTotalSaleAmountByFranchiseeIndex(franchiseeIndex);

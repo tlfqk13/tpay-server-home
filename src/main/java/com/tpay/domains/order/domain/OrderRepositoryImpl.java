@@ -21,7 +21,7 @@ import static com.tpay.domains.order.domain.QOrderEntity.orderEntity;
 import static com.tpay.domains.refund.domain.QRefundAfterEntity.refundAfterEntity;
 import static com.tpay.domains.refund.domain.QRefundEntity.refundEntity;
 
-public class OrderRepositoryImpl implements OrderRepositoryCustom {
+public class OrderRepositoryImpl implements OrderRepositoryCustom{
 
     private final JPAQueryFactory queryFactory;
 
@@ -47,6 +47,7 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                 .from(refundEntity)
                 .innerJoin(refundEntity.orderEntity, orderEntity)
                 .leftJoin(orderEntity.customerEntity, customerEntity)
+                .leftJoin(refundEntity.refundAfterEntity,refundAfterEntity)
                 .where(orderEntity.franchiseeEntity.id.eq(franchiseeIndex)
                         .and(refundEntity.refundStatus.eq(RefundStatus.APPROVAL))
                         .and(refundEntity.createdDate.between(startLocalDate.atStartOfDay(), LocalDateTime.of(endLocalDate, LocalTime.MAX)))
@@ -72,8 +73,9 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                                 .subtract(orderEntity.totalVat.castToNum(Integer.class))).sum().stringValue() // 공급가 = 판매금액 - 부가가치세
                 ))
                 .from(refundEntity)
-                .innerJoin(refundEntity.orderEntity, orderEntity)
-                .leftJoin(orderEntity.customerEntity, customerEntity)
+                .innerJoin(refundEntity.orderEntity,orderEntity)
+                .leftJoin(orderEntity.customerEntity,customerEntity)
+                .leftJoin(refundEntity.refundAfterEntity,refundAfterEntity)
                 .where(orderEntity.franchiseeEntity.id.eq(franchiseeIndex)
                         .and(refundEntity.refundStatus.eq(RefundStatus.APPROVAL))
                         .and(refundEntity.createdDate.between(startLocalDate.atStartOfDay(), LocalDateTime.of(endLocalDate, LocalTime.MAX)))
@@ -86,11 +88,13 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
 
     private Predicate refundFilter(RefundType refundType){
         if(RefundType.IMMEDIATE.equals(refundType)){
-            return orderEntity.totalAmount.castToNum(Integer.class).lt(50000);
+            return orderEntity.totalAmount.castToNum(Integer.class).lt(500000)
+                    .and(refundEntity.refundAfterEntity.isNull());
         }else if (RefundType.AFTER.equals(refundType)){
-            return refundEntity.totalRefund.castToNum(Integer.class).goe(50000)
+            return orderEntity.totalAmount.castToNum(Integer.class).goe(500000)
                     .or(refundEntity.refundAfterEntity.isNotNull());
         }else {
+            System.out.println("refund Fileter ALL");
             return null;
         }
 
@@ -142,5 +146,58 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                         orderEntity.createdDate.between(startDate.atStartOfDay(), endDate.atStartOfDay())
                         )
                 .fetchOne();
+    }
+
+    @Override
+    public VatTotalDto.Response findMonthlyTotal(Long franchiseeIndex, LocalDate startLocalDate, LocalDate endLocalDate) {
+        VatTotalDto.Response content = queryFactory
+                .select(new QVatTotalDto_Response(
+                        orderEntity.orderNumber.count().stringValue(),
+                        orderEntity.totalAmount.castToNum(Integer.class).sum().stringValue(), //판매금액
+                        orderEntity.totalVat.castToNum(Integer.class).sum().stringValue(), // 부가가치세
+                        refundEntity.totalRefund.castToNum(Integer.class).sum().stringValue(), // 즉시환급상당액
+                        (orderEntity.totalVat.castToNum(Integer.class)
+                                .subtract(refundEntity.totalRefund.castToNum(Integer.class))).sum().stringValue(), // 환급 수수료
+                        (orderEntity.totalAmount.castToNum(Integer.class)
+                                .subtract(orderEntity.totalVat.castToNum(Integer.class))).sum().stringValue() // 공급가 = 판매금액 - 부가가치세
+                ))
+                .from(refundEntity)
+                .innerJoin(refundEntity.orderEntity,orderEntity)
+                .leftJoin(orderEntity.customerEntity,customerEntity)
+                .where(orderEntity.franchiseeEntity.id.eq(franchiseeIndex)
+                        .and(refundEntity.refundStatus.eq(RefundStatus.APPROVAL))
+                        .and(refundEntity.createdDate.between(startLocalDate.atStartOfDay(), LocalDateTime.of(endLocalDate, LocalTime.MAX)))
+                )
+                .fetchOne();
+
+        return content;
+    }
+
+    @Override
+    public List<VatDetailDto.Response> findMonthlyCmsVatDetail(Long franchiseeIndex, LocalDate startLocalDate, LocalDate endLocalDate, int pageData) {
+        List<VatDetailDto.Response> content = queryFactory
+                .select(new QVatDetailDto_Response(
+                        orderEntity.orderNumber,
+                        orderEntity.createdDate.stringValue().substring(0, 10),
+                        refundEntity.takeOutNumber,
+                        refundEntity.totalRefund,
+                        orderEntity.totalAmount,
+                        orderEntity.totalVat,
+                        customerEntity.customerName,
+                        customerEntity.nation,
+                        orderEntity.createdDate.stringValue().substring(0, 10),
+                        orderEntity.createdDate.stringValue().substring(0, 10)
+                ))
+                .from(refundEntity)
+                .innerJoin(refundEntity.orderEntity, orderEntity)
+                .leftJoin(orderEntity.customerEntity, customerEntity)
+                .where(orderEntity.franchiseeEntity.id.eq(franchiseeIndex)
+                        .and(refundEntity.refundStatus.eq(RefundStatus.APPROVAL))
+                        .and(refundEntity.createdDate.between(startLocalDate.atStartOfDay(), LocalDateTime.of(endLocalDate, LocalTime.MAX)))
+                )
+                .limit(pageData)
+                .fetch();
+
+        return content;
     }
 }

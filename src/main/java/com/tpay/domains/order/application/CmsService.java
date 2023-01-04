@@ -119,7 +119,7 @@ public class CmsService {
 
             // 1. 물품판매 상세내역
             boolean isPaging = true;
-            List<List<String>> detailMonthlyResult = orderService.findCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate, !isPaging, refundType);
+            List<List<String>> detailMonthlyResult = orderService.findCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate, isPaging, refundType);
             // 2. 물품판매 총합계
             List<String> totalResult = orderService.findCmsVatTotal(franchiseeIndex, startLocalDate, endLocalDate, refundType);
             // TopSection
@@ -253,7 +253,7 @@ public class CmsService {
                     }
                 }
                 if (i == detailMonthlyResult.size() - 1) {
-                    detailResultRow = sheet.getRow(45);
+                    detailResultRow = sheet.getRow(74);
                     detailResultRow.createCell(5, STRING).setCellStyle(detailResultRowCellStyle);
                     detailResultRow.createCell(7, STRING).setCellStyle(detailResultRowCellStyle);
                     detailResultRow.getCell(5).setCellValue(totalResult.get(1));

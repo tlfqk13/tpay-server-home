@@ -166,7 +166,11 @@ public class VatDownloadService {
             detailMonthlyResultSection(xssfWorkbook, sheet, detailMonthlyResult, refundType);
 
             StringBuilder fileName = new StringBuilder();
-            fileName.append(personalInfoResult.get(2)).append("_").append(startLocalDate.getMonthValue()).append("월").append("_실적명세서");
+            String typeName = "즉시 환급";
+            if(RefundType.AFTER.equals(refundType)){
+                typeName = "사후 환급";
+            }
+            fileName.append(personalInfoResult.get(2)).append("_").append(startLocalDate.getMonthValue()).append("월_").append(typeName).append("_실적명세서");
             String result = s3FileUploader.uploadXlsx(franchiseeIndex, xssfWorkbook, fileName, String.valueOf(startLocalDate.getMonthValue()), false);
 
         } catch (IOException e) {
@@ -199,8 +203,20 @@ public class VatDownloadService {
             XSSFRow personalInfoResultRow = sheet.getRow(VatCustomValue.PERSONALINFORESULT_ROW1);
             personalInfoResultRow.createCell(5, STRING).setCellStyle(personalInfoResultCellStyle);
             personalInfoResultRow.createCell(18, STRING).setCellStyle(personalInfoResultCellStyle);
-            personalInfoResultRow.getCell(VatCustomValue.PERSONALINFORESULT_COLUMN_INDEX1).setCellValue(personalInfoResult.get(0));
-            personalInfoResultRow.getCell(VatCustomValue.PERSONALINFORESULT_COLUMN_INDEX2).setCellValue(personalInfoResult.get(1));
+            personalInfoResultRow.getCell(5).setCellValue(personalInfoResult.get(0));
+            personalInfoResultRow.getCell(18).setCellValue(personalInfoResult.get(1));
+
+            personalInfoResultRow = sheet.getRow(7);
+            personalInfoResultRow.createCell(5, STRING).setCellStyle(personalInfoResultCellStyle);
+            personalInfoResultRow.createCell(18, STRING).setCellStyle(personalInfoResultCellStyle);
+            personalInfoResultRow.getCell(5).setCellValue(personalInfoResult.get(2));
+            personalInfoResultRow.getCell(18).setCellValue(personalInfoResult.get(3));
+
+            personalInfoResultRow = sheet.getRow(8);
+            personalInfoResultRow.createCell(5, STRING).setCellStyle(personalInfoResultCellStyle);
+            personalInfoResultRow.createCell(21, STRING).setCellStyle(personalInfoResultCellStyle);
+            personalInfoResultRow.getCell(5).setCellValue(personalInfoResult.get(4));
+            personalInfoResultRow.getCell(21).setCellValue(personalInfoResult.get(5));
 
 
         } else {
@@ -231,6 +247,7 @@ public class VatDownloadService {
         CellStyle costCellStyle = costCellStyleCustom(xssfWorkbook);
 
         if (RefundType.AFTER.equals(refundType)) {
+            totalResultRow = sheet.getRow(VatCustomValue.TOTALRESULT_ROW - 1);
             totalResultRow.createCell(3, STRING).setCellStyle(personalInfoResultCellStyle); // 건수
             totalResultRow.createCell(7, STRING).setCellStyle(personalInfoResultCellStyle); // 판매금액
             totalResultRow.createCell(13, STRING).setCellStyle(personalInfoResultCellStyle); // 부가가치세
@@ -258,7 +275,7 @@ public class VatDownloadService {
         if (RefundType.AFTER.equals(refundType)) {
             for (int i = 0; i < detailMonthlyResult.size(); i++) {
                 System.out.println("i--> " + i);
-                XSSFRow detailResultRow = sheet.getRow(i + VatCustomValue.DETAILRESULT_ROW);
+                XSSFRow detailResultRow = sheet.getRow(i + VatCustomValue.DETAILRESULT_ROW - 1);
                 CellStyle personalInfoResultCellStyle = cellStyleCustom(xssfWorkbook);
                 CellStyle costCellStyle = costCellStyleCustom(xssfWorkbook);
                 detailResultRow.getCell(1).setCellValue(i + 1);
