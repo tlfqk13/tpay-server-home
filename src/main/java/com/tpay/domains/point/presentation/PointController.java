@@ -26,9 +26,8 @@ public class PointController {
     /**
      * 포인트 조회 하단
      */
-    @GetMapping("/{franchiseeIndex}")
+    @GetMapping
     public ResponseEntity<PointFindResponse> findPoints(
-            @PathVariable Long franchiseeIndex,
             @RequestParam Integer week,
             @RequestParam Integer month,
             @RequestParam Integer page,
@@ -44,9 +43,8 @@ public class PointController {
     /**
      * 포인트 조회 상단
      */
-    @GetMapping("/{franchiseeIndex}/total")
-    public ResponseEntity<PointTotalResponseInterface> findPointsTotal(@PathVariable Long franchiseeIndex,
-                                                                       @KtpIndexInfo IndexInfo indexInfo) {
+    @GetMapping("/total")
+    public ResponseEntity<PointTotalResponseInterface> findPointsTotal(@KtpIndexInfo IndexInfo indexInfo) {
         PointTotalResponseInterface pointTotalResponseInterface = pointFindService.findPointsTotal(indexInfo.getIndex());
         return ResponseEntity.ok(pointTotalResponseInterface);
     }
@@ -54,9 +52,8 @@ public class PointController {
     /**
      * 포인트 출금 요청
      */
-    @PostMapping("/{franchiseeIndex}")
+    @PostMapping
     public ResponseEntity<PointWithdrawalResponse> pointWithdrawal(
-            @PathVariable Long franchiseeIndex,
             @RequestBody PointWithdrawalRequest pointWithdrawalRequest,
             @KtpIndexInfo IndexInfo indexInfo
     ) {

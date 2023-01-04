@@ -2,13 +2,11 @@ package com.tpay.domains.franchisee_applicant.presentation;
 
 import com.tpay.commons.util.IndexInfo;
 import com.tpay.commons.util.resolver.KtpIndexInfo;
-import com.tpay.domains.franchisee_applicant.application.FranchiseeApplicantFindService;
 import com.tpay.domains.franchisee_applicant.application.FranchiseeReApplyService;
+import com.tpay.domains.franchisee_applicant.application.FranchiseeStatusFindService;
 import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeApplicantInfo;
 import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeApplicantReapplyResponse;
 import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeApplicantStatusInfo;
-import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
-import com.tpay.domains.push.domain.PushHistoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,32 +22,25 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/franchisee-applicants")
 public class FranchiseeApplicant {
+
+    private final FranchiseeStatusFindService franchiseeStatusFindService;
     private final FranchiseeReApplyService franchiseeReApplyService;
-    private final FranchiseeApplicantFindService franchiseeApplicantFindService;
-    private final PushHistoryRepository pushHistoryRepository;
+
     /**
      * 가맹점 신청 상태조회
      */
     @GetMapping("/{franchiseeApplicantIndex}")
     public ResponseEntity<FranchiseeApplicantStatusInfo> findByIndex(
-        @PathVariable Long franchiseeApplicantIndex) {
-        FranchiseeApplicantEntity franchiseeApplicant
-                = franchiseeApplicantFindService.findByIndex(franchiseeApplicantIndex);
-        long count = pushHistoryRepository.countByUserIdAndIsRead(franchiseeApplicant.getFranchiseeEntity().getId(), false);
-
-        FranchiseeApplicantStatusInfo response = FranchiseeApplicantStatusInfo.builder()
-                .franchiseeStatus(franchiseeApplicant.getFranchiseeStatus())
-                .count(count)
-                .build();
+            @PathVariable Long franchiseeApplicantIndex) {
+        FranchiseeApplicantStatusInfo response = franchiseeStatusFindService.findByIndex(franchiseeApplicantIndex);
         return ResponseEntity.ok(response);
     }
 
     /**
      * 가맹점 재신청시 기존 정보 조회
      */
-    @GetMapping("/reapply/{franchiseeIndex}")
+    @GetMapping
     public ResponseEntity<FranchiseeApplicantReapplyResponse> findBaseInfo(
-            @PathVariable Long franchiseeIndex,
             @KtpIndexInfo IndexInfo indexInfo) {
         FranchiseeApplicantReapplyResponse result = franchiseeReApplyService.findBaseInfo(indexInfo.getIndex());
         return ResponseEntity.ok(result);

@@ -1,6 +1,5 @@
 package com.tpay.domains.franchisee_upload.presentation;
 
-
 import com.tpay.commons.util.IndexInfo;
 import com.tpay.commons.util.resolver.KtpIndexInfo;
 import com.tpay.domains.franchisee_upload.application.FranchiseeBankService;
@@ -22,9 +21,8 @@ public class FranchiseeBankController {
     /**
      * 은행 정보 조회
      */
-    @GetMapping("/{franchiseeIndex}")
-    public ResponseEntity<FranchiseeBankInfo> findMyAccount(@PathVariable Long franchiseeIndex,
-                                                            @KtpIndexInfo IndexInfo indexInfo) {
+    @GetMapping
+    public ResponseEntity<FranchiseeBankInfo> findMyAccount(@KtpIndexInfo IndexInfo indexInfo) {
         FranchiseeBankInfo result = franchiseeBankService.findMyAccount(indexInfo.getIndex());
         return ResponseEntity.ok(result);
     }
@@ -32,11 +30,10 @@ public class FranchiseeBankController {
     /**
      * 은행 정보 업데이트
      */
-    @PatchMapping("/{franchiseeIndex}")
+    @PatchMapping
     public ResponseEntity<FranchiseeBankInfo> updateMyAccount(
-        @PathVariable Long franchiseeIndex,
-        @RequestBody FranchiseeBankInfo franchiseeBankInfo,
-        @KtpIndexInfo IndexInfo indexInfo) {
+            @RequestBody FranchiseeBankInfo franchiseeBankInfo,
+            @KtpIndexInfo IndexInfo indexInfo) {
         FranchiseeBankInfo result = franchiseeBankService.updateMyAccount(indexInfo.getIndex(), franchiseeBankInfo);
         return ResponseEntity.ok(result);
     }

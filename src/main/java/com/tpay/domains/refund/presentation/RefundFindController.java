@@ -20,9 +20,8 @@ import java.util.List;
 public class RefundFindController {
     private final RefundDetailFindService refundDetailFindService;
 
-    @GetMapping("/refunds/franchisee/{franchiseeIndex}")
+    @GetMapping("/refunds/franchisee")
     public ResponseEntity<List<RefundFindResponseInterface>> findList(
-            @PathVariable Long franchiseeIndex,
             @RequestParam(required = false) LocalDate startDate,
             @RequestParam(required = false) LocalDate endDate,
             @KtpIndexInfo IndexInfo indexInfo) {
@@ -33,11 +32,10 @@ public class RefundFindController {
     }
 
     // 환급 취소 > 환급 리스트
-    @PostMapping("/refunds/customer/{franchiseeIndex}")
+    @PostMapping("/refunds/customer")
     public ResponseEntity<List<RefundByCustomerDateResponse>> findRefundsByCustomerInfo(
-        @PathVariable Long franchiseeIndex,
-        @RequestBody RefundCustomerRequest refundCustomerRequest,
-        @KtpIndexInfo IndexInfo indexInfo
+            @RequestBody RefundCustomerRequest refundCustomerRequest,
+            @KtpIndexInfo IndexInfo indexInfo
     ) {
         List<RefundByCustomerDateResponse> result
                 = refundDetailFindService.findRefundsByCustomerInfo(indexInfo.getIndex(), refundCustomerRequest);
@@ -46,7 +44,7 @@ public class RefundFindController {
 
     // TODO: 2022/08/25 중복 로그인 이슈 환급하기 눌러서 가짜 요청 날리기?
     @GetMapping("/refunds/duplicate-check")
-    public ResponseEntity<String> refundDuplicateCheck(){
+    public ResponseEntity<String> refundDuplicateCheck() {
         return ResponseEntity.ok("ok");
     }
 
