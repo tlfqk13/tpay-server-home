@@ -132,11 +132,10 @@ public class ErpRefundDetailFindTestService {
 
     public void updatePaymentDetail(Long refundIndex, RefundPaymentDto.Request request) {
 
-        RefundAfterEntity refundAfterEntity = refundAfterRepository.findById(refundIndex)
+        RefundEntity refundEntity = refundRepository.findById(refundIndex)
                 .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid RefundIndex"));
 
-        refundAfterEntity.updatePaymentStatus(request.getPaymentStatus());
-
+        refundEntity.getRefundAfterEntity().updatePaymentStatus(request.getPaymentStatus());
     }
 
     private static class ResponseCompAsc implements Comparator<RefundByCustomerResponse> {

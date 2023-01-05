@@ -1,4 +1,4 @@
-package com.tpay.domains.erp.deploy;
+package com.tpay.domains.zdeveloper;
 
 import com.tpay.domains.erp.test.dto.RefundType;
 import com.tpay.domains.order.application.CmsService;
@@ -16,7 +16,7 @@ import java.io.IOException;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/franchisee/admin")
-public class ErpDocumentController {
+public class AdminCmsVatController {
 
     private final VatDownloadService vatDownloadService;
     private final CmsService cmsService;
