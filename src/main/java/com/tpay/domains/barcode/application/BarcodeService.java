@@ -1,8 +1,13 @@
-package com.tpay.domains.pos.application;
+package com.tpay.domains.barcode.application;
 
 import com.tpay.commons.aws.S3FileUploader;
 import com.tpay.commons.exception.ExceptionState;
+import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.exception.detail.InvalidPassportInfoException;
+import com.tpay.domains.barcode.domain.BarcodeEntity;
+import com.tpay.domains.barcode.domain.BarcodeRepository;
+import com.tpay.domains.refund.domain.RefundAfterEntity;
+import com.tpay.domains.refund.domain.RefundAfterRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.sourceforge.barbecue.Barcode;
@@ -25,6 +30,8 @@ import java.io.InputStream;
 public class BarcodeService {
 
     private final S3FileUploader s3FileUploader;
+    private final BarcodeRepository barcodeRepository;
+    private final RefundAfterRepository refundAfterRepository;
 
     public String createBarcode(Long id, String deduction) {
 
@@ -66,7 +73,7 @@ public class BarcodeService {
     }
 
     // 구매일련번호 바코드 생성 - ktaxpay 영수증용
-    public String createBarcode(String orderNumber,Long orderId) {
+    public String createBarcode(String orderNumber,Long refundAfterId) {
         String uri = "";
 
         try {
@@ -81,11 +88,23 @@ public class BarcodeService {
             InputStream is = new ByteArrayInputStream(os.toByteArray());
 
             //S3 업로드
-            uri = s3FileUploader.uploadBarcode(orderId, is);
+            uri = s3FileUploader.uploadBarcode(refundAfterId, is);
+
+            saveBarcode(refundAfterId, uri);
+
         } catch (OutputException | BarcodeException | IOException e) {
             e.printStackTrace();
             log.error("Barcode Create Error : {}", e.getMessage());
         }
         return uri;
+    }
+
+    private void saveBarcode(Long refundAfterId, String uri) {
+        RefundAfterEntity refundAfterEntity = refundAfterRepository.findById(refundAfterId)
+                .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid RefundIndex"));
+
+        BarcodeEntity barcodeEntity = barcodeRepository.save(BarcodeEntity.builder().s3Path(uri).build());
+
+        refundAfterEntity.addBarcode(barcodeEntity);
     }
 }

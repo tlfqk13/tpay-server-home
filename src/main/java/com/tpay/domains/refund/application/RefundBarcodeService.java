@@ -2,9 +2,9 @@ package com.tpay.domains.refund.application;
 
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.OrderNotFoundException;
+import com.tpay.domains.barcode.application.BarcodeService;
 import com.tpay.domains.order.domain.OrderEntity;
 import com.tpay.domains.order.domain.OrderRepository;
-import com.tpay.domains.pos.application.BarcodeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

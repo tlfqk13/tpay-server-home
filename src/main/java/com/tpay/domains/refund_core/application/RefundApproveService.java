@@ -11,6 +11,8 @@ import com.tpay.domains.auth.domain.EmployeeAccessTokenEntity;
 import com.tpay.domains.auth.domain.EmployeeAccessTokenRepository;
 import com.tpay.domains.auth.domain.FranchiseeAccessTokenEntity;
 import com.tpay.domains.auth.domain.FranchiseeAccessTokenRepository;
+import com.tpay.domains.barcode.application.BarcodeService;
+import com.tpay.domains.barcode.domain.BarcodeRepository;
 import com.tpay.domains.customer.application.CustomerService;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.employee.application.EmployeeFindService;
@@ -61,6 +63,8 @@ public class RefundApproveService {
     private final FranchiseeAccessTokenRepository franchiseeAccessTokenRepository;
     private final EmployeeAccessTokenRepository employeeAccessTokenRepository;
     private final CustomerService customerService;
+    private final BarcodeService barcodeService;
+    private final BarcodeRepository barcodeRepository;
 
     @Transactional
     public RefundResponse approve(RefundSaveRequest request, IndexInfo indexInfo) {
@@ -168,6 +172,9 @@ public class RefundApproveService {
             log.trace(" @@ refundEntity.getId() = {}", refundEntity.getId());
             pointScheduledChangeService.change(refundEntity, SignType.POSITIVE, orderEntity.getFranchiseeEntity().getBalancePercentage());
             refundEntity.addRefundAfterEntity(refundAfterEntity);
+
+            // 바코드 생성
+            barcodeService.createBarcode(refundEntity.getOrderEntity().getOrderNumber(), refundAfterEntity.getId());
         }
 
         // VAN 으로 사전 생성된 엔티티들은 이미 환급을 위한 데이터 일부를 사전에 생성

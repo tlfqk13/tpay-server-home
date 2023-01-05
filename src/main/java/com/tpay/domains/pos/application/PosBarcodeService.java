@@ -1,6 +1,7 @@
 package com.tpay.domains.pos.application;
 
 import com.tpay.commons.webClient.WebRequestUtil;
+import com.tpay.domains.barcode.application.BarcodeService;
 import com.tpay.domains.customer.application.CustomerService;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.external.application.ExternalService;

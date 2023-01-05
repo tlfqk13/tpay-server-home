@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 public class ErpRefundDetailFindTestService {
 
     private final RefundRepository refundRepository;
-    private final RefundAfterRepository refundAfterRepository;
     private final CustomerService customerService;
 
     public List<RefundFindResponseInterface> findList(Long franchiseeIndex, LocalDate startDate, LocalDate endDate) {
@@ -133,9 +132,10 @@ public class ErpRefundDetailFindTestService {
     public void updatePaymentDetail(Long refundIndex, RefundPaymentDto.Request request) {
 
         RefundEntity refundEntity = refundRepository.findById(refundIndex)
-                .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid RefundIndex"));
+                        .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid RefundIndex"));
 
         refundEntity.getRefundAfterEntity().updatePaymentStatus(request.getPaymentStatus());
+
     }
 
     private static class ResponseCompAsc implements Comparator<RefundByCustomerResponse> {

@@ -212,7 +212,7 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
             return null;
         } else {
             return orderEntity.totalAmount.castToNum(Integer.class).lt(500000)
-                    .and(orderEntity.orderNumber.contains("B"));
+                    .and(refundEntity.takeOutNumber.contains("B"));
         }
     }
 }
