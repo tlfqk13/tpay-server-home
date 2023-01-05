@@ -43,7 +43,7 @@ public class RefundDetailFindService {
 
         Page<RefundFindAllDto.Response> response = refundRepository.findRefundAll(
                 pageRequest, startLocalDate, endLocalDate, searchKeyword.isEmpty()
-                ,isBusinessNumber, searchKeyword, refundStatus, RefundType.IMMEDIATE
+                ,isBusinessNumber, searchKeyword, refundStatus, RefundType.ALL
                 , DepartureStatus.ALL, PaymentStatus.ALL);
 
         int totalPage = response.getTotalPages();
