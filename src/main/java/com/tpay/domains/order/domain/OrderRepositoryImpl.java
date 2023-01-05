@@ -119,13 +119,15 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom{
     @Override
     public List<OrderEntity> findRefundAfterOrdersBetweenDates(Long franchiseeIndex, LocalDate startDate, LocalDate endDate) {
         return queryFactory.selectFrom(orderEntity)
-                .leftJoin(orderEntity.refundEntity, refundEntity)
-                .leftJoin(orderEntity.refundEntity.refundAfterEntity, refundAfterEntity)
-                .leftJoin(orderEntity.franchiseeEntity, franchiseeEntity)
+                .leftJoin(orderEntity.refundEntity, refundEntity).fetchJoin()
+                .leftJoin(refundEntity.refundAfterEntity, refundAfterEntity).fetchJoin()
+                .leftJoin(orderEntity.franchiseeEntity, franchiseeEntity).fetchJoin()
                 .where(orderEntity.franchiseeEntity.id.eq(franchiseeIndex),
                         orderEntity.refundEntity.refundStatus.eq(RefundStatus.APPROVAL),
                         orderEntity.createdDate.between(startDate.atStartOfDay(), endDate.atStartOfDay()),
-                        orderEntity.refundEntity.refundAfterEntity.isNotNull())
+                        orderEntity.refundEntity.refundAfterEntity.isNotNull(),
+                        refundAfterEntity.approvalFinishDate.isNotNull()
+                        )
                 .fetch();
     }
 
@@ -138,13 +140,16 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom{
                                 orderEntity.totalRefund.castToNum(Integer.class).sum().stringValue(),
                                 orderEntity.totalVat.castToNum(Integer.class).sum().stringValue()
                         ))
-                .innerJoin(orderEntity.refundEntity, refundEntity)
-                .leftJoin(orderEntity.franchiseeEntity, franchiseeEntity).fetchJoin()
                 .from(orderEntity)
+                .leftJoin(orderEntity.refundEntity, refundEntity)
+                .leftJoin(refundEntity.refundAfterEntity, refundAfterEntity)
+                .leftJoin(orderEntity.franchiseeEntity, franchiseeEntity)
                 .where(orderEntity.franchiseeEntity.id.eq(franchiseeIndex),
-                        orderEntity.refundEntity.refundStatus.eq(RefundStatus.APPROVAL),
+                        refundEntity.refundStatus.eq(RefundStatus.APPROVAL),
+                        refundAfterEntity.approvalFinishDate.isNotNull(),
+                        orderEntity.refundEntity.refundAfterEntity.isNotNull(),
                         orderEntity.createdDate.between(startDate.atStartOfDay(), endDate.atStartOfDay())
-                        )
+                )
                 .fetchOne();
     }
 
