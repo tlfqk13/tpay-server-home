@@ -19,12 +19,14 @@ import com.tpay.domains.vat.constant.HomeTaxConstant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.io.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -49,7 +51,7 @@ public class VatHomeTaxService {
     private static final String TEMP_SUB_COMPANY_NUM = "0000";
 
     // TODO 주민번호 앞자리 또는 법인등록번호로 레코드 만드는 부분 추가 필요(OWNER_RESIDENT_OR_CORPORATION_NUMBER)
-    private static final String TEMP_CORP_NUM = "0000000000";
+    private static final String TEMP_CORP_NUM = "000000000";
     private static final String CHARSET = "EUC-KR";
     private static final String REFUND_CORP_NUM = "2390401226";
 
@@ -112,25 +114,29 @@ public class VatHomeTaxService {
 
         log.debug("홈택스 레코드 생성 시작 franchisee Index = {}", franchiseeIndex);
         String immediateHometaxFile = createImmediateHometaxFile(franchiseeEntity, startDate, endDate);
-        log.debug("홈텍스 즉시 환급 관련 파일 생성 완료");
         String generalHometaxFile = createGeneralHometaxFile(franchiseeEntity, startDate, endDate);
         log.debug("홈택스 레코드 생성 완료 franchisee Index = {}", franchiseeIndex);
 
-        // I(전자신고용 변환파일임을 나타냄) + 사업자등록번호 + V178(서식코드)
-        String immediateHometaxFileName = "I" + franchiseeEntity.getBusinessNumber() + ".V178";
-        // F(일반환급 전자신고용)
-        String generalHometaxFileName = "F" + franchiseeEntity.getBusinessNumber() + ".V178";
-//        byte[] homeTaxUploadData = convertByteArrayUsingCharset(immediateHometaxFile);
+        if (!StringUtils.hasText(immediateHometaxFile)) {
+            // I(전자신고용 변환파일임을 나타냄) + 사업자등록번호 + V178(서식코드)
+            String immediateHometaxFileName = "I" + franchiseeEntity.getBusinessNumber() + ".V178";
+            uploadHometaxFile(endDate, franchiseeEntity.getStoreName(), immediateHometaxFile, immediateHometaxFileName);
+        }
 
-        // TODO 데이터 저장 위치와 형태, 제목 설정하고 저장하는 로직 추가
-        uploadHometaxFile(endDate, franchiseeEntity.getStoreName(), immediateHometaxFile, immediateHometaxFileName);
-        uploadHometaxFile(endDate, franchiseeEntity.getStoreName(), generalHometaxFile, generalHometaxFileName);
-
+        if (!StringUtils.hasText(generalHometaxFile)) {
+            // F(일반환급 전자신고용)
+            String generalHometaxFileName = "F" + franchiseeEntity.getBusinessNumber() + ".V178";
+            uploadHometaxFile(endDate, franchiseeEntity.getStoreName(), generalHometaxFile, generalHometaxFileName);
+        }
+        //        zipFileDown(1, fileName, storeName, endDate);
     }
 
     private String createImmediateHometaxFile(FranchiseeEntity franchiseeEntity, LocalDate startDate, LocalDate endDate) {
         byte[] head = creatHeadRecord(franchiseeEntity, endDate, "IH");
         List<byte[]> dataRecords = createDataRecord(franchiseeEntity, startDate, endDate, "ID");
+        if (dataRecords.isEmpty()) {
+            return null;
+        }
         byte[] tail = createTailRecord(franchiseeEntity, startDate, endDate, "IT");
 
         return concatHometaxBytes(head, dataRecords, tail);
@@ -139,6 +145,9 @@ public class VatHomeTaxService {
     private String createGeneralHometaxFile(FranchiseeEntity franchiseeEntity, LocalDate startDate, LocalDate endDate) {
         byte[] head = creatHeadRecord(franchiseeEntity, endDate, "FH");
         List<byte[]> dataRecords = createDataRecord(franchiseeEntity, startDate, endDate, "FD");
+        if (dataRecords.isEmpty()) {
+            return null;
+        }
         byte[] tail = createTailRecord(franchiseeEntity, startDate, endDate, "FT");
 
         return concatHometaxBytes(head, dataRecords, tail);
@@ -157,7 +166,7 @@ public class VatHomeTaxService {
     }
 
     private void uploadHometaxFile(LocalDate endDate, String storeName, String hometaxFile, String fileName) throws IOException {
-        File file = new File("/home/success/downloads/" + fileName);
+        File file = new File("/home/ec2-user/hometax_temp/" + fileName);
         try (FileOutputStream outStream = new FileOutputStream(file)) {
             outStream.write(convertByteArrayUsingCharset(hometaxFile));
             log.trace("Home tax upload file save success = {} ", fileName);
@@ -165,7 +174,6 @@ public class VatHomeTaxService {
             log.error("Home tax upload file saved failed");
             throw new UnknownException(ExceptionState.UNKNOWN, "홈택스 파일 쓰기 실패");
         }
-        zipFileDown(1, fileName, storeName, endDate);
     }
 
     private byte[] creatHeadRecord(FranchiseeEntity franchiseeEntity, LocalDate endDate, String section) {
@@ -196,8 +204,8 @@ public class VatHomeTaxService {
                 = orderService.findDetailBetweenDates(franchiseeId, startDate, endDate);
 
         if (details.isEmpty()) {
-            log.error("기간 내 환급 내역이 존재하지 않습니다.");
-            throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "기간 내 환급 내역 존재하지 않음");
+            log.error("기간 내 즉시 환급 내역이 존재하지 않습니다.");
+            return Collections.emptyList();
         }
 
         List<byte[]> records = new ArrayList<>();
@@ -228,8 +236,8 @@ public class VatHomeTaxService {
         List<OrderEntity> orders = orderService.findOrderDetailsRefundAfterBetweenDates(franchiseeId, startDate, endDate);
 
         if (orders.isEmpty()) {
-            log.error("기간 내 환급 내역이 존재하지 않습니다.");
-            throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "기간 내 환급 내역 존재하지 않음");
+            log.error("기간 내 사후 환급 내역이 존재하지 않습니다.");
+            return Collections.emptyList();
         }
 
         List<byte[]> records = new ArrayList<>();
@@ -247,8 +255,10 @@ public class VatHomeTaxService {
             fillRecordIntoSendData(sendData, order.getCreatedDate().format(datePattern), SALE_DATE);
             RefundEntity refund = order.getRefundEntity();
             fillRecordIntoSendData(sendData, refund.getRefundAfterEntity().getApprovalFinishDate().substring(0, 9), TAKEOUT_DATE);
+            String refundDate = refund.getRefundAfterEntity().getApprovalFinishDate().substring(0, 9);
+            fillRecordIntoSendData(sendData, refundDate, TAKEOUT_DATE);
             fillRecordIntoSendData(sendData, refund.getTakeOutNumber(), F_CARRY_OUT_PERMISSION_NUMBER);
-            fillRecordIntoSendData(sendData, refund.getCreatedDate().format(datePattern), REFUND_DATE);
+            fillRecordIntoSendData(sendData, refundDate, REFUND_DATE);
             fillRecordIntoSendData(sendData, order.getTotalRefund(), F_TAX_REFUND_AMOUNT);
             fillRecordIntoSendData(sendData, order.getTotalAmount(), F_PRICE_WITH_TAX);
             fillRecordIntoSendData(sendData, order.getTotalVat(), F_VAT);
@@ -272,7 +282,7 @@ public class VatHomeTaxService {
 
         fillCommonRecord(sendData, section, endDate, franchiseeEntity.getBusinessNumber());
         fillRecordIntoSendData(sendData, TEMP_SUB_COMPANY_NUM, SUB_COMPANY_NUMBER);
-        fillRecordIntoSendData(sendData, uploadEntity.getTaxFreeStoreNumber(), TAX_FREE_STORE_NUMBER);
+        fillRecordIntoSendData(sendData, parseTaxFreeStoreNumber(uploadEntity.getTaxFreeStoreNumber()), TAX_FREE_STORE_NUMBER);
         fillRecordIntoSendData(sendData, dto.getTotalCount(), TOTAL_COUNT);
         fillRecordIntoSendData(sendData, dto.getTotalAmount(), TOTAL_PRICE_WITH_TAX);
         fillRecordIntoSendData(sendData, dto.getTotalVat(), TOTAL_VAT);
@@ -286,6 +296,17 @@ public class VatHomeTaxService {
             fillRecordIntoSendData(sendData, "0", TOTAL_RURAL);
         }
         return sendData;
+    }
+
+    private String parseTaxFreeStoreNumber(String unparsedStoreNumber) {
+        StringBuilder returnStringBuilder = new StringBuilder();
+        char[] chars = unparsedStoreNumber.toCharArray();
+        for (char aChar : chars) {
+            if (Character.isDigit(aChar)) {
+                returnStringBuilder.append(aChar);
+            }
+        }
+        return String.valueOf(returnStringBuilder);
     }
 
     private HometaxTailDto createTailDto(FranchiseeEntity franchiseeEntity, LocalDate startDate, LocalDate endDate, String section) {
@@ -396,7 +417,7 @@ public class VatHomeTaxService {
     // 홈텍스 zipFile 만들기
     private void zipFileDown(int i, String homeTaxFileName, String storeName, LocalDate endDate) throws IOException {
 
-        final String folder = "/home/success/downloads/";
+        final String folder = "/home/ec2-user/hometax_temp/";
 
         List<File> files = new ArrayList<>();
         for (int j = 0; j < i; j++) {
