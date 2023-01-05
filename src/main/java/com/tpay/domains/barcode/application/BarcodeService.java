@@ -2,12 +2,12 @@ package com.tpay.domains.barcode.application;
 
 import com.tpay.commons.aws.S3FileUploader;
 import com.tpay.commons.exception.ExceptionState;
-import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.exception.detail.InvalidPassportInfoException;
+import com.tpay.commons.exception.detail.OrderNotFoundException;
 import com.tpay.domains.barcode.domain.BarcodeEntity;
 import com.tpay.domains.barcode.domain.BarcodeRepository;
-import com.tpay.domains.refund.domain.RefundAfterEntity;
-import com.tpay.domains.refund.domain.RefundAfterRepository;
+import com.tpay.domains.order.domain.OrderEntity;
+import com.tpay.domains.order.domain.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.sourceforge.barbecue.Barcode;
@@ -31,7 +31,7 @@ public class BarcodeService {
 
     private final S3FileUploader s3FileUploader;
     private final BarcodeRepository barcodeRepository;
-    private final RefundAfterRepository refundAfterRepository;
+    private final OrderRepository orderRepository;
 
     public String createBarcode(Long id, String deduction) {
 
@@ -73,7 +73,7 @@ public class BarcodeService {
     }
 
     // 구매일련번호 바코드 생성 - ktaxpay 영수증용
-    public String createBarcode(String orderNumber,Long refundAfterId) {
+    public String createBarcode(String orderNumber,Long orderId) {
         String uri = "";
 
         try {
@@ -88,9 +88,9 @@ public class BarcodeService {
             InputStream is = new ByteArrayInputStream(os.toByteArray());
 
             //S3 업로드
-            uri = s3FileUploader.uploadBarcode(refundAfterId, is);
+            uri = s3FileUploader.uploadBarcode(orderId, is);
 
-            saveBarcode(refundAfterId, uri);
+            saveBarcode(orderId, uri);
 
         } catch (OutputException | BarcodeException | IOException e) {
             e.printStackTrace();
@@ -99,12 +99,14 @@ public class BarcodeService {
         return uri;
     }
 
-    private void saveBarcode(Long refundAfterId, String uri) {
-        RefundAfterEntity refundAfterEntity = refundAfterRepository.findById(refundAfterId)
-                .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid RefundIndex"));
+    private void saveBarcode(Long orderId, String uri) {
 
+        OrderEntity orderEntity = orderRepository.findById(orderId)
+                .orElseThrow(
+                        () -> new OrderNotFoundException(ExceptionState.ORDER_NOT_FOUND)
+                );
         BarcodeEntity barcodeEntity = barcodeRepository.save(BarcodeEntity.builder().s3Path(uri).build());
 
-        refundAfterEntity.addBarcode(barcodeEntity);
+        orderEntity.addBarcode(barcodeEntity);
     }
 }

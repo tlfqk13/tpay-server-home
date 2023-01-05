@@ -1,6 +1,7 @@
 package com.tpay.domains.order.domain;
 
 import com.tpay.domains.BaseTimeEntity;
+import com.tpay.domains.barcode.domain.BarcodeEntity;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.employee.domain.EmployeeEntity;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
@@ -60,6 +61,10 @@ public class OrderEntity extends BaseTimeEntity {
     @ManyToOne
     @JoinColumn(name = "employee_id")
     private EmployeeEntity employeeEntity;
+
+    @OneToOne
+    @JoinColumn(name = "barcode_id")
+    private BarcodeEntity barcodeEntity;
 
     @Builder
     public OrderEntity(CustomerEntity customerEntity, FranchiseeEntity franchiseeEntity, String purchaseSn) {
@@ -141,4 +146,6 @@ public class OrderEntity extends BaseTimeEntity {
     public void setEmployeeEntity(EmployeeEntity employeeEntity) {
         this.employeeEntity = employeeEntity;
     }
+
+    public void addBarcode(BarcodeEntity barcode){this.barcodeEntity = barcode;}
 }

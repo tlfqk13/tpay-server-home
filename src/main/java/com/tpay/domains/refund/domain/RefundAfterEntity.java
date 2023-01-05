@@ -1,7 +1,6 @@
 package com.tpay.domains.refund.domain;
 
 import com.tpay.domains.BaseTimeEntity;
-import com.tpay.domains.barcode.domain.BarcodeEntity;
 import com.tpay.domains.van.domain.PaymentEntity;
 import lombok.*;
 
@@ -37,10 +36,6 @@ public class RefundAfterEntity extends BaseTimeEntity {
     @JoinColumn(name = "payment_id")
     private PaymentEntity payment;
 
-    @OneToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
-    @JoinColumn(name = "barcode_id")
-    private BarcodeEntity barcode;
-
     public void addPayment(PaymentEntity payment) {
         this.payment = payment;
     }
@@ -52,7 +47,4 @@ public class RefundAfterEntity extends BaseTimeEntity {
     public void updatePaymentStatus(PaymentStatus paymentStatus) {
         this.paymentStatus = paymentStatus;
     }
-
-    public void addBarcode(BarcodeEntity barcode){this.barcode = barcode;}
-
 }

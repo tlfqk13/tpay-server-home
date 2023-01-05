@@ -9,7 +9,7 @@ import javax.persistence.*;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "customer")
+@Table(name = "barcode")
 @Entity
 public class BarcodeEntity {
 
@@ -17,6 +17,7 @@ public class BarcodeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "s3path")
     private String s3Path;
 
     @Builder
