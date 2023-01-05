@@ -1,5 +1,6 @@
-package com.tpay.domains.erp.deploy;
+package com.tpay.domains.zdeveloper;
 
+import com.tpay.domains.erp.test.dto.RefundType;
 import com.tpay.domains.order.application.CmsService;
 import com.tpay.domains.vat.application.VatDownloadService;
 import com.tpay.domains.vat.application.VatHomeTaxService;
@@ -15,7 +16,7 @@ import java.io.IOException;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/franchisee/admin")
-public class ErpDocumentController {
+public class AdminCmsVatController {
 
     private final VatDownloadService vatDownloadService;
     private final CmsService cmsService;
@@ -24,16 +25,18 @@ public class ErpDocumentController {
     // API 호출로 관리자가 한번에 일괄 출력 기능
     @GetMapping("/vat/downloads")
     public ResponseEntity<String> vatAdminDownloads(
-            @RequestParam String requestDate) {
-        vatDownloadService.vatAdminDownloads(requestDate);
+            @RequestParam String requestDate,
+            @RequestParam RefundType refundType) {
+        vatDownloadService.vatAdminDownloads(requestDate,refundType);
         return ResponseEntity.ok("Admin VatDownloads");
     }
 
     // 2022/07/29 관리자가 한번에 cms 청구서 뽑는 기능
     @GetMapping("cms/downloads")
     public ResponseEntity<String> adminCmsDownloads(
-            @RequestParam String requestDate){
-        cmsService.cmsAdminDownloads(requestDate);
+            @RequestParam String requestDate,
+            @RequestParam RefundType refundType){
+        cmsService.cmsAdminDownloads(requestDate,refundType);
         return ResponseEntity.ok("Admin CmsDownloads");
     }
 

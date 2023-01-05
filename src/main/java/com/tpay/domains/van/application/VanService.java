@@ -1,6 +1,5 @@
 package com.tpay.domains.van.application;
 
-import com.tpay.commons.aria.PassportNumberDecryptService;
 import com.tpay.commons.aria.PassportNumberEncryptService;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.CustomerNotFoundException;
@@ -35,7 +34,6 @@ public class VanService {
     private final CustomerRepository customerRepository;
 
     private final RefundService refundService;
-    private final PassportNumberDecryptService decryptService;
     private final PassportNumberEncryptService encryptService;
 
     @Transactional
@@ -69,7 +67,6 @@ public class VanService {
                     .cityRefundCenterCode("")
                     .refundAfterMethod(refundAfterInfo.getRefundAfterMethod())
                     .build();
-
             refundEntity.addRefundAfterEntity(refundAfterEntity);
         }
     }
@@ -119,14 +116,16 @@ public class VanService {
     }
 
     // 2022/12/23 반출 , 미반출 , 반출거절
+    //  해당 사항에 대해 반출거절 코드(* 반출거절 : C) 로 내려주시면 유인창구에서 수기 반출 확인 이후 환급 진행합니다.
+
     private String checkRefundStatus(String customCleanceYn) {
         switch (customCleanceYn) {
             case "0":   // APPROVAL
                 return "Y";
             case "1":  // REJECT
-                return "C";
-            case "4":  // PRE_APPROVAL
                 return "N";
+            case "4":  // PRE_APPROVAL
+                return "C";
         }
         return "N";
     }

@@ -43,15 +43,14 @@ public class RefundEntity extends BaseTimeEntity {
     public RefundEntity(String responseCode, String orderNumber, String takeOutNumber, OrderEntity orderEntity) {
         this.orderEntity = orderEntity;
         this.totalRefund = orderEntity.getTotalRefund();
-        this.refundStatus = updateRefundStatus(responseCode);
+        this.refundStatus = updateRefundStatus(responseCode,totalRefund);
         this.takeOutNumber = takeOutNumber;
-
         orderEntity.setOrderNumber(orderNumber);
         orderEntity.setRefundEntity(this);
     }
 
     // 1010 , 4008 이면 RefundStatus.PRE_APPROVAL
-    private RefundStatus updateRefundStatus(String responseCode){
+    private RefundStatus updateRefundStatus(String responseCode, String totalRefund){
         switch (responseCode) {
             case "0000":
                 log.trace(" @@ responseCode = {}", responseCode);
@@ -61,6 +60,11 @@ public class RefundEntity extends BaseTimeEntity {
                 log.trace(" @@ responseCode = {}", responseCode);
                 return RefundStatus.PRE_APPROVAL;
         }
+
+        if(Integer.parseInt(totalRefund) > 74000){
+            return RefundStatus.PRE_APPROVAL;
+        }
+
         return RefundStatus.REJECT;
     }
 
@@ -73,7 +77,6 @@ public class RefundEntity extends BaseTimeEntity {
         this.totalRefund = orderEntity.getTotalRefund();
         this.takeOutNumber = takeOutNumber;
         this.refundStatus = getResponseCode(responseCode, takeOutNumber);
-
         orderEntity.setRefundEntity(this);
     }
 
@@ -107,6 +110,7 @@ public class RefundEntity extends BaseTimeEntity {
         this.refundStatus = RefundStatus.APPROVAL;
         // VAN 에서 요청들어오면 그 시간으로 넣어줘야함
         this.refundAfterEntity.updateApprovalFinishDate(approvalFinishDate);
+        // 반출승인번호 나오는 시점 = 고객 출국 시점 = 고객 출국 상태 업데이트
     }
 
     public void updateTakeOutInfo(String takeOutNumber) {

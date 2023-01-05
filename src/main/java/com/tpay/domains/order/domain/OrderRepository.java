@@ -45,7 +45,8 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long>, Order
         "      ,IFNULL(sum( cast (r.tot_refund as INTEGER)),0) as totalRefund\n" +
         "      from orders o inner join refund r on o.id = r.order_id\n" +
         "      where franchisee_id = :franchiseeIndex\n" +
-        "      and refund_status = 'APPROVAL' and o.created_date between :startDate and :endDate and r.refund_after_id is null", nativeQuery = true)
+        "      and refund_status = 'APPROVAL' and o.created_date between :startDate and :endDate\n" +
+            "    and r.refund_after_id is null\n" , nativeQuery = true)
     VatTotalResponseInterface findQuarterlyTotal(@Param("franchiseeIndex") Long franchiseeIndex, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
 
@@ -61,7 +62,7 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long>, Order
             "    from orders o inner join refund r on o.id = r.order_id\n" +
             "                  left join customer c on c.id = o.customer_id\n" +
             "    where franchisee_id = :franchiseeIndex\n" +
-            "    and refund_status = 'APPROVAL' and o.created_date between :startDate and :endDate and r.refund_after_id is null\n" +
+            "    and refund_status = 'APPROVAL' and o.created_date between :startDate and :endDate\n" +
             "    order by 3 desc", nativeQuery = true)
     List<VatDetailResponseInterface> findQuarterlyVatDetail(@Param("franchiseeIndex") Long franchiseeIndex, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
     Optional<OrderEntity> findByFranchiseeEntityId(Long franchiseeIndex);
@@ -80,7 +81,10 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long>, Order
             "               left join customer c on c.id = o.customer_id\n" +
             "               left join refund r on o.id = r.order_id" +
             "               left join refund_after rf on r.refund_after_id = rf.refund_after_id\n" +
-            " where c.cus_pass_no = :passportNumber and r.refund_after_id is not null" ,nativeQuery = true
+            " where c.cus_pass_no = :passportNumber\n" +
+            " and r.refund_after_id is not null and r.tk_out_conf_no = ''\n" +
+            " and rf.payment_id is null\n" +
+            " order by r.id desc ",nativeQuery = true
     )
     List<OrdersDtoInterface> findVanOrdersDetail(@Param("passportNumber") String passportNumber);
 

@@ -9,7 +9,9 @@ public class VatDetailDto {
     public static class Response{
         String purchaseSerialNumber;
         String saleDate;
+        String finishDate; // 반출 일자 - 사후
         String takeOutConfirmNumber;
+        String paymentFinishDate; // 송금 일자
         String refundAmount;
         String amount;
         String vat;
@@ -18,7 +20,8 @@ public class VatDetailDto {
 
         @QueryProjection
         public Response(String purchaseSerialNumber,String saleDate, String takeOutConfirmNumber,String refundAmount,
-                        String amount, String vat, String customerName,String customerNational ){
+                        String amount, String vat, String customerName,String customerNational,
+                        String finishDate, String paymentFinishDate){
             this.purchaseSerialNumber = purchaseSerialNumber;
             this.saleDate = saleDate;
             this.takeOutConfirmNumber = takeOutConfirmNumber;
@@ -27,6 +30,8 @@ public class VatDetailDto {
             this.vat = vat;
             this.customerName = customerName;
             this.customerNational = customerNational;
+            this.finishDate = finishDate;
+            this.paymentFinishDate = paymentFinishDate;
         }
     }
 }

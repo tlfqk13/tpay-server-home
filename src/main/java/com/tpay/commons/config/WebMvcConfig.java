@@ -49,7 +49,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 "/push/**",         // FCM, ADMIN 과 연동
                 "/external/**",     // 그로잉세일즈
                 "/van/**",          // NICE VAN
-                "/tourcash/refund/approval**",
+                "/tourcash/refund/approval",
                 "/franchisee/admin/cms/downloads",
                 "/franchisee/admin/vat/downloads",
                 "/franchisee/admin/hometax/downloads",
@@ -58,6 +58,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
                 // 테스트 관련 컨트롤러
                 "/test/**",
+                "/refund/receipt/barcode/**",
 
                 // h2 및 기타 설정파일
                 "/error",
