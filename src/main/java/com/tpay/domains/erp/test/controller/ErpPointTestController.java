@@ -2,11 +2,9 @@ package com.tpay.domains.erp.test.controller;
 
 import com.tpay.domains.erp.test.service.PointTestFindService;
 import com.tpay.domains.point.application.PointUpdateService;
-import com.tpay.domains.point.application.dto.AdminPointResponse;
-import com.tpay.domains.point.application.dto.PointFindDetailResponse;
-import com.tpay.domains.point.application.dto.PointUpdateRequest;
-import com.tpay.domains.point.application.dto.WithdrawalStatus;
+import com.tpay.domains.point.application.dto.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,12 +23,12 @@ public class ErpPointTestController {
      * 기본 조회
      */
     @GetMapping("/{isAll}/{withdrawalStatus}")
-    public ResponseEntity<AdminPointResponse> findPointsAdmin(
+    public ResponseEntity<Page<AdminPointInfo>> findPointsAdmin(
         @PathVariable Boolean isAll,
         @PathVariable WithdrawalStatus withdrawalStatus,
         @RequestParam int page,
-        @RequestParam String searchKeyword) {
-        AdminPointResponse pointsAdmin = pointTestFindService.findPointsAdmin(isAll, withdrawalStatus,page,searchKeyword);
+        @RequestParam(defaultValue = "") String searchKeyword) {
+        Page<AdminPointInfo> pointsAdmin = pointTestFindService.findPointsAdmin(isAll, withdrawalStatus,page,searchKeyword);
         return ResponseEntity.ok(pointsAdmin);
     }
 

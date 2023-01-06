@@ -10,8 +10,6 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FranchiseeApplicantDto {
 

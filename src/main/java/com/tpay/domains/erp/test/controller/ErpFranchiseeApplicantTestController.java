@@ -1,10 +1,13 @@
 package com.tpay.domains.erp.test.controller;
 
+import com.tpay.domains.erp.test.service.FranchiseeApplicantTestFindService;
 import com.tpay.domains.franchisee_applicant.application.*;
 import com.tpay.domains.franchisee_applicant.application.dto.*;
 import com.tpay.domains.franchisee_upload.application.FranchiseeUploadService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,7 +19,7 @@ public class ErpFranchiseeApplicantTestController{
     private final FranchiseeApplicantAcceptService franchiseeApplicantAcceptService;
     private final FranchiseeApplicantDetailService franchiseeApplicantDetailService;
     private final FranchiseeApplicantSetNumberService franchiseeApplicantSetNumberService;
-    private final FranchiseeApplicantFindService franchiseeApplicantFindService;
+    private final FranchiseeApplicantTestFindService franchiseeApplicantTestFindService;
     private final FranchiseeApplicantReadService franchiseeApplicantReadService;
     private final FranchiseeApplicantRejectService franchiseeApplicantRejectService;
     private final FranchiseeApplicantSetBalancePerService franchiseeApplicantSetBalancePerService;
@@ -52,11 +55,11 @@ public class ErpFranchiseeApplicantTestController{
      * 가맹점  정보
      */
     @GetMapping("")
-    public ResponseEntity<FranchiseeApplicantFindResponse> findAll(
-            @RequestParam int page,
-            @RequestParam String searchKeyword
+    public ResponseEntity<Page<FranchiseeApplicantDto.Response>> findAll(
+            Pageable pageable,
+            @RequestParam(defaultValue = "") String searchKeyword
     ){
-        FranchiseeApplicantFindResponse responseList = franchiseeApplicantFindService.findAll(page,searchKeyword);
+        Page<FranchiseeApplicantDto.Response> responseList = franchiseeApplicantTestFindService.findAll(pageable,searchKeyword);
         return ResponseEntity.ok(responseList);
     }
 
@@ -87,12 +90,12 @@ public class ErpFranchiseeApplicantTestController{
      */
     @GetMapping("/{filterSelector}/{value}")
     @ApiOperation(value = "가맹점 신청 내역조회", notes = "가맹점 현황 필터링")
-    public ResponseEntity<FranchiseeApplicantFindResponse> filter(
+    public ResponseEntity<Page<FranchiseeApplicantDto.Response>> filter(
+            Pageable pageable,
             @PathVariable FilterSelector filterSelector,
             @PathVariable String value,
-            int page,
             @RequestParam(defaultValue = "") String searchKeyword){
-        FranchiseeApplicantFindResponse result = franchiseeApplicantFindService.applicantFilter(filterSelector, value, page, searchKeyword);
+        Page<FranchiseeApplicantDto.Response> result = franchiseeApplicantTestFindService.applicantFilterTest(pageable, filterSelector, value, searchKeyword);
         return ResponseEntity.ok(result);
     }
 

@@ -77,4 +77,11 @@ public class CustomerEntity extends BaseTimeEntity {
     public void updateRegister() {
         this.isRegister = true;
     }
+
+    public void updateCustomerPaymentInfo(CustomerPaymentType customerPaymentType, String customerCreditNumber, String customerBankName, String customerAccountNumber){
+        this.customerPaymentType =customerPaymentType;
+        this.customerCreditNumber = customerCreditNumber;
+        this.customerBankName = customerBankName;
+        this.customerAccountNumber = customerAccountNumber;
+    }
 }

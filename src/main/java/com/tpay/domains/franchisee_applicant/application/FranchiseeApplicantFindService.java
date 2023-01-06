@@ -104,13 +104,13 @@ public class FranchiseeApplicantFindService {
         // TODO: 2022/11/11 가맹점 신청상태, 알림상태, 둘 다
 
         if (filterSelector.equals(IS_READ)) {
-            response = franchiseeApplicantRepository.findBusinessNumber(pageRequest,searchKeyword,false,isBusinessNumber);
+            response = franchiseeApplicantRepository.findFranchiseeAllFilter(pageRequest,searchKeyword,false,isBusinessNumber);
         } else if (filterSelector.equals(BOTH)) {
             franchiseeStatus = FranchiseeStatus.valueOf(value);
-            response = franchiseeApplicantRepository.findBusinessNumber(pageRequest, searchKeyword, franchiseeStatus,false,isBusinessNumber);
+            response = franchiseeApplicantRepository.findFranchiseeAllFilter(pageRequest, searchKeyword, franchiseeStatus,false,isBusinessNumber);
         } else {
             franchiseeStatus = FranchiseeStatus.valueOf(value);
-            response = franchiseeApplicantRepository.findBusinessNumber(pageRequest, searchKeyword, franchiseeStatus,true,isBusinessNumber);
+            response = franchiseeApplicantRepository.findFranchiseeAllFilter(pageRequest, searchKeyword, franchiseeStatus,true,isBusinessNumber);
         }
 
         List<FranchiseeApplicantInfo> franchiseeApplicantInfoList =
@@ -120,12 +120,9 @@ public class FranchiseeApplicantFindService {
         if (totalPage != 0) {
             totalPage = totalPage - 1;
         }
-
-        FranchiseeApplicantFindResponse franchiseeApplicantFindResponse = FranchiseeApplicantFindResponse.builder()
+        return FranchiseeApplicantFindResponse.builder()
                 .totalPage(totalPage)
                 .franchiseeApplicantInfoList(franchiseeApplicantInfoList)
                 .build();
-
-        return franchiseeApplicantFindResponse;
     }
 }

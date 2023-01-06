@@ -16,7 +16,7 @@ public class RefundPaymentDto {
 
     @Getter
     public static class Request{
-        private RefundPaymentInfoDto.Response detailPaymentInfo;
+        private RefundPaymentInfoDto.Request detailPaymentInfo;
         private PaymentStatus paymentStatus;
     }
 }

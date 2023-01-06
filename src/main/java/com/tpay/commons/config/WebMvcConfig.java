@@ -32,7 +32,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 "/categories",
                 "/certifications/**",
                 "/franchisee/password/exists/**",
-                "/franchisee/password/selfCertification",
+                "/franchisee/password/selfCertification/**",
                 "/franchisee/password/out/**",
                 "/admin/**",
                 "/validate/**",
@@ -52,7 +52,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 "/tourcash/refund/approval",
                 "/franchisee/admin/cms/downloads",
                 "/franchisee/admin/vat/downloads",
-                "/franchisee/admin/hometax/downloads",
+                "/franchisee/admin/hometax/immediate/downloads",
+                "/franchisee/admin/hometax/after/downloads",
                 "/franchisee/admin/vat/quarterly/downloads", // 분기별 다운 - 관리자 버전
                 "/customer/**",
                 "/api/**",          // KTP-API

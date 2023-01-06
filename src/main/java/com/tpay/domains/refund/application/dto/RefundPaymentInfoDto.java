@@ -19,4 +19,10 @@ public class RefundPaymentInfoDto {
            this.paymentInfo = paymentInfo;
        }
     }
+
+    @Getter
+    public static class Request{
+        private CustomerPaymentType customerPaymentType;
+        private String paymentInfo;
+    }
 }

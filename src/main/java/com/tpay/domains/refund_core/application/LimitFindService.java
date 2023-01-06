@@ -50,6 +50,7 @@ public class LimitFindService {
 
         // 한도조회 스켄 or 수기 확인
         log.trace(" @@ request.getMethod = {}", request.getMethod());
+        log.trace(" @@ request.getFranchiseeIndex = {}", request.getFranchiseeIndex());
 
         // 한도 조회 요청 후, 성공되면 고객 정보 등록
         if ((List.of("0000", "4008").contains(refundResponse.getResponseCode()))) {

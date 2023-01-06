@@ -6,7 +6,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeApplicantDto;
 import com.tpay.domains.franchisee_applicant.application.dto.QFranchiseeApplicantDto_Response;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 
 import javax.persistence.EntityManager;
@@ -22,8 +22,9 @@ public class FranchiseeApplicantRepositoryImpl implements FranchiseeApplicantRep
     public FranchiseeApplicantRepositoryImpl(EntityManager em) {
         this.queryFactory = new JPAQueryFactory(em);
     }
+
     @Override
-    public Page<FranchiseeApplicantDto.Response> findBusinessNumber(PageRequest pageRequest, String searchKeyword
+    public Page<FranchiseeApplicantDto.Response> findFranchiseeAllFilter(Pageable pageable, String searchKeyword
             , FranchiseeStatus franchiseeStatus, boolean isRead, boolean isBusinessNumber) {
         List<FranchiseeApplicantDto.Response> content = queryFactory
                 .select(new QFranchiseeApplicantDto_Response(
@@ -39,26 +40,26 @@ public class FranchiseeApplicantRepositoryImpl implements FranchiseeApplicantRep
                 ))
                 .from(franchiseeApplicantEntity)
                 .leftJoin(franchiseeEntity).on(franchiseeApplicantEntity.id.eq(franchiseeEntity.id))
-                .where((isKeyword(isBusinessNumber,searchKeyword))
-                        .and(isFranchiseeCondition(franchiseeStatus,isRead)))
-                .offset(pageRequest.getOffset())
-                .limit(pageRequest.getPageSize())
+                .where((isKeyword(isBusinessNumber, searchKeyword))
+                        .and(isFranchiseeCondition(franchiseeStatus, isRead)))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .orderBy(franchiseeEntity.id.desc())
                 .fetch();
 
         JPAQuery<Long> countQuery = queryFactory.select(franchiseeApplicantEntity.count())
                 .from(franchiseeApplicantEntity)
                 .leftJoin(franchiseeEntity).on(franchiseeApplicantEntity.id.eq(franchiseeEntity.id))
-                .where((isKeyword(isBusinessNumber,searchKeyword))
-                        .and(isFranchiseeCondition(franchiseeStatus,isRead)))
+                .where((isKeyword(isBusinessNumber, searchKeyword))
+                        .and(isFranchiseeCondition(franchiseeStatus, isRead)))
                 .orderBy(franchiseeEntity.id.desc());
 
 
-        return PageableExecutionUtils.getPage(content, pageRequest, countQuery::fetchOne);
+        return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }
 
     @Override
-    public Page<FranchiseeApplicantDto.Response> findBusinessNumber(PageRequest pageRequest, String searchKeyword, boolean isRead, boolean isBusinessNumber) {
+    public Page<FranchiseeApplicantDto.Response> findFranchiseeAllFilter(Pageable pageable, String searchKeyword, boolean isRead, boolean isBusinessNumber) {
         List<FranchiseeApplicantDto.Response> content = queryFactory
                 .select(new QFranchiseeApplicantDto_Response(
                         franchiseeApplicantEntity.id,
@@ -73,21 +74,52 @@ public class FranchiseeApplicantRepositoryImpl implements FranchiseeApplicantRep
                 ))
                 .from(franchiseeApplicantEntity)
                 .leftJoin(franchiseeEntity).on(franchiseeApplicantEntity.id.eq(franchiseeEntity.id))
-                .where((isKeyword(isBusinessNumber,searchKeyword))
+                .where((isKeyword(isBusinessNumber, searchKeyword))
                         .and(franchiseeApplicantEntity.isRead.eq(isRead)))
-                .offset(pageRequest.getOffset())
-                .limit(pageRequest.getPageSize())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .orderBy(franchiseeEntity.id.desc())
                 .fetch();
 
         JPAQuery<Long> countQuery = queryFactory.select(franchiseeApplicantEntity.count())
                 .from(franchiseeApplicantEntity)
                 .leftJoin(franchiseeEntity).on(franchiseeApplicantEntity.id.eq(franchiseeEntity.id))
-                .where((isKeyword(isBusinessNumber,searchKeyword))
+                .where((isKeyword(isBusinessNumber, searchKeyword))
                         .and(franchiseeApplicantEntity.isRead.eq(isRead)))
                 .orderBy(franchiseeEntity.id.desc());
 
-        return PageableExecutionUtils.getPage(content, pageRequest, countQuery::fetchOne);
+        return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
+    }
+
+    @Override
+    public Page<FranchiseeApplicantDto.Response> findFranchiseeAll(Pageable pageable, String searchKeyword, boolean isBusinessNumber) {
+        List<FranchiseeApplicantDto.Response> content = queryFactory
+                .select(new QFranchiseeApplicantDto_Response(
+                        franchiseeApplicantEntity.id,
+                        franchiseeApplicantEntity.franchiseeStatus,
+                        franchiseeEntity.businessNumber,
+                        franchiseeEntity.storeName,
+                        franchiseeEntity.sellerName,
+                        franchiseeEntity.createdDate,
+                        franchiseeEntity.isRefundOnce,
+                        franchiseeApplicantEntity.isRead,
+                        franchiseeEntity.refundStep
+                ))
+                .from(franchiseeApplicantEntity)
+                .leftJoin(franchiseeEntity).on(franchiseeApplicantEntity.id.eq(franchiseeEntity.id))
+                .where((isKeyword(isBusinessNumber, searchKeyword)))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(franchiseeEntity.id.desc())
+                .fetch();
+
+        JPAQuery<Long> countQuery = queryFactory.select(franchiseeApplicantEntity.count())
+                .from(franchiseeApplicantEntity)
+                .leftJoin(franchiseeEntity).on(franchiseeApplicantEntity.id.eq(franchiseeEntity.id))
+                .where((isKeyword(isBusinessNumber, searchKeyword)))
+                .orderBy(franchiseeEntity.id.desc());
+
+        return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }
 
     private BooleanExpression isKeyword(Boolean businessNumber, String keyword) {

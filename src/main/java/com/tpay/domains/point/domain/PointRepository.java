@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface PointRepository extends JpaRepository<PointEntity, Long> {
+public interface PointRepository extends JpaRepository<PointEntity, Long>, PointRepositoryCustom {
 
     void deleteByFranchiseeEntityId(Long franchiseeIndex);
     @EntityGraph(attributePaths = {"orderEntity", "franchiseeEntity"})

@@ -46,11 +46,17 @@ public class AdminCmsVatController {
     }
 
     // 2022/12/22 관리자가 한번에 hometax 파일 생성
-    @GetMapping("/hometax/downloads")
-    public ResponseEntity<String> homeTaxFile(
+    @GetMapping("/hometax/immediate/downloads")
+    public ResponseEntity<String> immediateHomeTaxFile(
             @RequestParam String requestDate) throws IOException {
-        homeTaxService.homeTaxAdminDownloads(requestDate);
+        homeTaxService.immediateHomeTaxAdminDownloads(requestDate);
         return ResponseEntity.ok("Admin homeTaxFile");
     }
 
+    @GetMapping("/hometax/after/downloads")
+    public ResponseEntity<String> afterHomeTaxFile(
+            @RequestParam String requestDate) throws IOException {
+        homeTaxService.AfterHomeTaxAdminDownloads(requestDate);
+        return ResponseEntity.ok("Admin homeTaxFile");
+    }
 }
