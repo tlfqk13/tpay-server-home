@@ -28,7 +28,7 @@ public class ErpPointTestController {
             @PathVariable Boolean isAll,
             @PathVariable WithdrawalStatus withdrawalStatus,
             Pageable pageable,
-            @RequestParam(defaultValue = "") String searchKeyword) {
+            @RequestParam String searchKeyword) {
         Page<AdminPointInfo> pointsAdmin = pointTestFindService.findPointsAdmin(pageable, isAll, withdrawalStatus, searchKeyword);
         return ResponseEntity.ok(pointsAdmin);
     }

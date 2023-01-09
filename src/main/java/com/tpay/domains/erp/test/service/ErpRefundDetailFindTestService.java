@@ -38,7 +38,7 @@ public class ErpRefundDetailFindTestService {
 
         String paymentInfo;
         if (CustomerPaymentType.CASH.equals(detailPaymentDto.getCustomerPaymentType())) {
-            paymentInfo = detailPaymentDto.getCustomerAccountNumber();
+            paymentInfo = detailPaymentDto.getCustomerAccountNumber() + '|' + detailPaymentDto.getCustomerBankName();
         } else {
             paymentInfo = detailPaymentDto.getCustomerCreditNumber();
         }

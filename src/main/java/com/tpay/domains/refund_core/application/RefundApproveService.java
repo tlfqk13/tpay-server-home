@@ -30,6 +30,7 @@ import com.tpay.domains.point_scheduled.application.PointScheduledChangeService;
 import com.tpay.domains.push.application.NonBatchPushService;
 import com.tpay.domains.refund.application.RefundService;
 import com.tpay.domains.refund.application.dto.RefundSaveRequest;
+import com.tpay.domains.refund.domain.PaymentStatus;
 import com.tpay.domains.refund.domain.RefundAfterEntity;
 import com.tpay.domains.refund.domain.RefundAfterMethod;
 import com.tpay.domains.refund.domain.RefundEntity;
@@ -171,6 +172,7 @@ public class RefundApproveService {
                     .kioskCode(refundAfterInfo.getKioskCode())
                     .cityRefundCenterCode(refundApproveRequest.getCityRefundCenterCode())
                     .refundAfterMethod(refundAfterInfo.getRefundAfterMethod())
+                    .paymentStatus(PaymentStatus.PAYMENT_WAIT)
                     .build();
 
             log.trace(" @@ refundAfterEntity.getId() = {}", refundAfterEntity.getId());

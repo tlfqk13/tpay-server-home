@@ -87,30 +87,30 @@ public class PointFindService {
         return pointRepository.findPointsTotal(franchiseeIndex, disappearDate);
     }
 
-    public AdminPointResponse findPointsAdmin(Boolean isAll, WithdrawalStatus withdrawalStatus, int page, String searchKeyword) {
+    public AdminPointResponse findPointsAdmin(Boolean isAll, WithdrawalStatus withdrawalStatus, int page,String searchKeyword) {
         Page<PointEntity> result;
         List<Boolean> booleanList = new ArrayList<>(List.of(false));
-        Pageable pageRequest = PageRequest.of(page, 15);
+        Pageable pageRequest = PageRequest.of(page,15);
         boolean isBusinessNumber = searchKeyword.chars().allMatch(Character::isDigit);
 
         if (isAll) {
             booleanList.add(true);
         }
 
-        if (searchKeyword.isEmpty()) {
-            result = pointRepository.findByPointStatusInAndIsReadInOrderByIdDesc(withdrawalStatus.getPointStatusList(), booleanList, pageRequest);
-        } else {
-            if (isBusinessNumber) {
-                result = pointRepository.findByPointStatusInAndIsReadInAndFranchiseeEntityBusinessNumberContainingOrderByIdDesc(withdrawalStatus.getPointStatusList(), booleanList, pageRequest, searchKeyword);
-            } else {
-                result = pointRepository.findByPointStatusInAndIsReadInAndFranchiseeEntityStoreNameContainingOrderByIdDesc(withdrawalStatus.getPointStatusList(), booleanList, pageRequest, searchKeyword);
+        if(searchKeyword.isEmpty()){
+            result = pointRepository.findByPointStatusInAndIsReadInOrderByIdDesc(withdrawalStatus.getPointStatusList(), booleanList,pageRequest);
+        }else{
+            if(isBusinessNumber){
+                result = pointRepository.findByPointStatusInAndIsReadInAndFranchiseeEntityBusinessNumberContainingOrderByIdDesc(withdrawalStatus.getPointStatusList(),booleanList,pageRequest,searchKeyword);
+            }else{
+                result = pointRepository.findByPointStatusInAndIsReadInAndFranchiseeEntityStoreNameContainingOrderByIdDesc(withdrawalStatus.getPointStatusList(),booleanList,pageRequest,searchKeyword);
             }
         }
 
         List<AdminPointInfo> adminPointInfoList = result.stream().map(AdminPointInfo::new).collect(Collectors.toList());
         int totalPage = result.getTotalPages();
-        if (totalPage != 0) {
-            totalPage = totalPage - 1;
+        if(totalPage != 0){
+            totalPage = totalPage -1;
         }
         AdminPointResponse adminPointResponse = AdminPointResponse.builder()
                 .adminPointInfoList(adminPointInfoList)

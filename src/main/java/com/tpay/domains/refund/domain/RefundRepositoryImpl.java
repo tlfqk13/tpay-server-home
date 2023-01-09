@@ -125,6 +125,7 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
                 .where(franchiseeEntity.id.eq(franchiseeIndex)
                         .and(refundEntity.createdDate
                                 .between(startLocalDate.atStartOfDay(), LocalDateTime.of(endLocalDate, LocalTime.MAX))))
+                .orderBy(refundEntity.createdDate.desc())
                 .fetch();
 
         return content;
