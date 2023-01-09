@@ -5,6 +5,7 @@ import com.tpay.domains.point.application.PointUpdateService;
 import com.tpay.domains.point.application.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,11 +25,11 @@ public class ErpPointTestController {
      */
     @GetMapping("/{isAll}/{withdrawalStatus}")
     public ResponseEntity<Page<AdminPointInfo>> findPointsAdmin(
-        @PathVariable Boolean isAll,
-        @PathVariable WithdrawalStatus withdrawalStatus,
-        @RequestParam int page,
-        @RequestParam(defaultValue = "") String searchKeyword) {
-        Page<AdminPointInfo> pointsAdmin = pointTestFindService.findPointsAdmin(isAll, withdrawalStatus,page,searchKeyword);
+            @PathVariable Boolean isAll,
+            @PathVariable WithdrawalStatus withdrawalStatus,
+            Pageable pageable,
+            @RequestParam(defaultValue = "") String searchKeyword) {
+        Page<AdminPointInfo> pointsAdmin = pointTestFindService.findPointsAdmin(pageable, isAll, withdrawalStatus, searchKeyword);
         return ResponseEntity.ok(pointsAdmin);
     }
 
@@ -46,8 +47,8 @@ public class ErpPointTestController {
      */
     @PatchMapping("/{pointsIndex}")
     public ResponseEntity<String> updateStatus(
-        @PathVariable Long pointsIndex,
-        @RequestBody PointUpdateRequest pointUpdateRequest) {
+            @PathVariable Long pointsIndex,
+            @RequestBody PointUpdateRequest pointUpdateRequest) {
         String result = pointUpdateService.updateStatus(pointsIndex, pointUpdateRequest);
         return ResponseEntity.ok(result);
     }

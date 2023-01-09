@@ -43,9 +43,9 @@ public class EmployeeSignInService {
         FranchiseeApplicantEntity franchiseeApplicantEntity = franchiseeApplicantFindService.findByFranchiseeEntity(employeeEntity.getFranchiseeEntity());
         AuthToken accessToken = authService.createAccessToken(employeeEntity);
         AuthToken refreshToken = authService.createRefreshToken(employeeEntity);
-        authService.updateOrSave(employeeEntity, refreshToken.getValue());
+        authService.updateOrSaveRefreshToken(employeeEntity, refreshToken.getValue());
         log.trace(" @@ employeeEntity.getId updateOrSaveAccessToken_start = {}", employeeEntity.getId());
-        authService.updateOrSaveAccessToken(employeeEntity,accessToken.getValue());
+        authService.updateOrSaveAccessToken(employeeEntity, accessToken.getValue());
         log.trace(" @@ employeeEntity.getId updateOrSaveAccessToken_end = {}", employeeEntity.getId());
 
         //직원 로그인시 푸쉬
@@ -57,18 +57,18 @@ public class EmployeeSignInService {
         log.trace("==========================로그인===========================");
 
         return SignInTokenInfo.builder()
-            .employeeIndex(employeeEntity.getId())
-            .userId(employeeEntity.getUserId())
-            .name(employeeEntity.getName())
-            .accessToken(accessToken.getValue())
-            .refreshToken(refreshToken.getValue())
-            .registeredDate(employeeEntity.getCreatedDate())
-            .franchiseeIndex(employeeEntity.getFranchiseeEntity().getId())
-            .franchiseeStatus(franchiseeApplicantEntity.getFranchiseeStatus())
-            .isActiveSound(employeeEntity.getIsActiveSound())
-            .isActiveVibration(employeeEntity.getIsActiveVibration())
-            .isConnectedPos(employeeEntity.getFranchiseeEntity().getIsConnectedPos())
-            .userSelector(UserSelector.EMPLOYEE)
-            .build();
+                .employeeIndex(employeeEntity.getId())
+                .userId(employeeEntity.getUserId())
+                .name(employeeEntity.getName())
+                .accessToken(accessToken.getValue())
+                .refreshToken(refreshToken.getValue())
+                .registeredDate(employeeEntity.getCreatedDate())
+                .franchiseeIndex(employeeEntity.getFranchiseeEntity().getId())
+                .franchiseeStatus(franchiseeApplicantEntity.getFranchiseeStatus())
+                .isActiveSound(employeeEntity.getIsActiveSound())
+                .isActiveVibration(employeeEntity.getIsActiveVibration())
+                .isConnectedPos(employeeEntity.getFranchiseeEntity().getIsConnectedPos())
+                .userSelector(UserSelector.EMPLOYEE)
+                .build();
     }
 }

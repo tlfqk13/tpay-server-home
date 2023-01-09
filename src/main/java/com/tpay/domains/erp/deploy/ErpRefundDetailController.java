@@ -4,11 +4,13 @@ import com.tpay.domains.customer.application.dto.DepartureStatus;
 import com.tpay.domains.erp.test.dto.RefundType;
 import com.tpay.domains.refund.application.RefundDetailFindService;
 import com.tpay.domains.refund.application.dto.RefundDetailTotalDto;
-import com.tpay.domains.refund.application.dto.RefundPagingFindResponse;
+import com.tpay.domains.refund.application.dto.RefundFindAllDto;
 import com.tpay.domains.refund.application.dto.RefundPaymentDto;
 import com.tpay.domains.refund.domain.PaymentStatus;
 import com.tpay.domains.refund.domain.RefundStatus;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,8 +21,8 @@ public class ErpRefundDetailController {
     private final RefundDetailFindService refundDetailFindService;
 
     @GetMapping
-    public ResponseEntity<RefundPagingFindResponse> findAll(
-            @RequestParam int page,
+    public ResponseEntity< Page<RefundFindAllDto.Response>> findAll(
+            Pageable pageable,
             @RequestParam String startDate,
             @RequestParam String endDate,
             @RequestParam String searchKeyword,
@@ -29,7 +31,7 @@ public class ErpRefundDetailController {
             @RequestParam DepartureStatus departureStatus,
             @RequestParam PaymentStatus paymentStatus
     ) {
-        RefundPagingFindResponse response = refundDetailFindService.findAll(page, startDate, endDate, searchKeyword
+        Page<RefundFindAllDto.Response> response = refundDetailFindService.findAll(pageable, startDate, endDate, searchKeyword
                 , refundType, refundStatus, departureStatus, paymentStatus);
         return ResponseEntity.ok(response);
     }

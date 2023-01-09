@@ -6,6 +6,8 @@ import com.tpay.domains.franchisee_upload.application.FranchiseeUploadService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -59,11 +61,11 @@ public class ErpFranchiseeApplicantController {
 
 
     @GetMapping("")
-    public ResponseEntity<FranchiseeApplicantFindResponse> findAll(
-            @RequestParam int page,
-            @RequestParam String searchKeyword
-    ){
-        FranchiseeApplicantFindResponse responseList = franchiseeApplicantFindService.findAll(page,searchKeyword);
+    public ResponseEntity<Page<FranchiseeApplicantDto.Response>> findAll(
+            Pageable pageable,
+            @RequestParam(defaultValue = "") String searchKeyword
+    ) {
+        Page<FranchiseeApplicantDto.Response> responseList = franchiseeApplicantFindService.findAll(pageable, searchKeyword);
         return ResponseEntity.ok(responseList);
     }
 
@@ -83,9 +85,9 @@ public class ErpFranchiseeApplicantController {
             @RequestParam String imageCategory,
             @RequestParam("detailFranchiseeInfo") String detailFranchiseeInfo,
             @RequestParam(required = false) MultipartFile uploadImage,
-            @RequestParam String isNewUploadedImg){
+            @RequestParam String isNewUploadedImg) {
         FranchiseeApplicantDetailUpdateResponse result =
-                franchiseeApplicantUpdateService.updateFranchiseeApplicantInfo(franchiseeApplicantIndex,imageCategory,detailFranchiseeInfo,uploadImage,isNewUploadedImg);
+                franchiseeApplicantUpdateService.updateFranchiseeApplicantInfo(franchiseeApplicantIndex, imageCategory, detailFranchiseeInfo, uploadImage, isNewUploadedImg);
         return ResponseEntity.ok(result);
     }
 
@@ -94,13 +96,12 @@ public class ErpFranchiseeApplicantController {
      */
     @GetMapping("/{filterSelector}/{value}")
     @ApiOperation(value = "가맹점 신청 내역조회", notes = "가맹점 현황 필터링")
-    public ResponseEntity<FranchiseeApplicantFindResponse> filter(
+    public ResponseEntity<Page<FranchiseeApplicantDto.Response>> filter(
+            Pageable pageable,
             @PathVariable FilterSelector filterSelector,
             @PathVariable String value,
-            @RequestParam int page,
-            @RequestParam String searchKeyword
-    ) {
-        FranchiseeApplicantFindResponse result = franchiseeApplicantFindService.applicantFilter(filterSelector, value, page, searchKeyword);
+            @RequestParam(defaultValue = "") String searchKeyword) {
+        Page<FranchiseeApplicantDto.Response> result = franchiseeApplicantFindService.applicantFilter(pageable, filterSelector, value, searchKeyword);
         return ResponseEntity.ok(result);
     }
 
@@ -131,7 +132,7 @@ public class ErpFranchiseeApplicantController {
     @ApiOperation(value = "가맹점 포인트 적립 비율 업데이트  ", notes = "가맹점 포인트 적립 비율 업데이트 ")
     public ResponseEntity<String> updateBalancePercentage(
             @PathVariable Long franchiseeApplicantIndex
-            ,@RequestBody FranchiseeApplicantUpdateDto.balancePercentageRequest request) {
+            , @RequestBody FranchiseeApplicantUpdateDto.balancePercentageRequest request) {
         String result = String.valueOf(franchiseeApplicantSetBalancePerService.updateBalancePercentage(franchiseeApplicantIndex, request));
         return ResponseEntity.ok(result);
     }

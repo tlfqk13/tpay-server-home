@@ -40,7 +40,7 @@ public class FranchiseeSignInService {
 
         AuthToken accessToken = authService.createAccessToken(franchiseeEntity);
         AuthToken refreshToken = authService.createRefreshToken(franchiseeEntity);
-        authService.updateOrSave(franchiseeEntity, refreshToken.getValue());
+        authService.updateOrSaveRefreshToken(franchiseeEntity, refreshToken.getValue());
         authService.updateOrSaveAccessToken(franchiseeEntity,accessToken.getValue());
 
         if(!(pushToken == null)) {

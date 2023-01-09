@@ -15,7 +15,7 @@ import com.tpay.domains.refund.domain.RefundStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -110,14 +110,13 @@ public class ErpRefundDetailFindTestService {
                 .build();
     }
 
-    public Page<RefundFindAllDto.Response> findAll(int page, String startDate, String endDate, String searchKeyword
+    public Page<RefundFindAllDto.Response> findAll(Pageable pageable, String startDate, String endDate, String searchKeyword
             , RefundType refundType, RefundStatus refundStatus, DepartureStatus departureStatus, PaymentStatus paymentStatus) {
 
-        PageRequest pageRequest = PageRequest.of(page, 10);
         boolean isBusinessNumber = searchKeyword.chars().allMatch(Character::isDigit);
 
         return refundRepository.findRefundAll(
-                pageRequest, getStartDate(startDate, DateTimeFormatter.ofPattern("yyyyMMdd")), getEndDate(endDate, DateTimeFormatter.ofPattern("yyyyMMdd"))
+                pageable, getStartDate(startDate, DateTimeFormatter.ofPattern("yyyyMMdd")), getEndDate(endDate, DateTimeFormatter.ofPattern("yyyyMMdd"))
                 , searchKeyword.isEmpty(), isBusinessNumber, searchKeyword, refundStatus
                 , refundType, departureStatus, paymentStatus);
     }

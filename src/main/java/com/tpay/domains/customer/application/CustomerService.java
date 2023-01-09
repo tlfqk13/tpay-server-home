@@ -64,8 +64,7 @@ public class CustomerService {
 
         CustomerEntity customerEntity = getCustomerEntity(customerInfo);
 
-        customerEntity.registerAfterRefundCustomer(customerEntity.getPassportNumber(),customerEntity.getCustomerName()
-                ,customerEntity.getNation(),customerInfo);
+        customerEntity.registerAfterRefundCustomer(customerEntity.getPassportNumber(), customerEntity.getNation(), customerInfo);
 
         customerEntity.updateRegister();
 
@@ -77,6 +76,7 @@ public class CustomerService {
         CustomerEntity customerEntity = getCustomerEntity(customerInfo);
         return customerEntity.getIsRegister();
     }
+    @Transactional
     public CustomerDto.Response getRegisterAfterRefundCustomer(CustomerDto.Request customerInfo) {
 
         CustomerEntity customerEntity = getCustomerEntity(customerInfo);

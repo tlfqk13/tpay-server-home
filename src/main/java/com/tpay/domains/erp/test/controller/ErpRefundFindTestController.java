@@ -11,6 +11,7 @@ import com.tpay.domains.refund.domain.RefundStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +25,7 @@ public class ErpRefundFindTestController {
     // 2022/10/26 환급 현황 All
     @GetMapping
     public ResponseEntity<Page<RefundFindAllDto.Response>> findAll(
-            @RequestParam int page,
+            Pageable pageable,
             @RequestParam String startDate,
             @RequestParam String endDate,
             @RequestParam String searchKeyword,
@@ -34,7 +35,7 @@ public class ErpRefundFindTestController {
             @RequestParam PaymentStatus paymentStatus
             ) {
 
-        Page<RefundFindAllDto.Response> response = refundTestDetailFindService.findAll(page, startDate, endDate, searchKeyword
+        Page<RefundFindAllDto.Response> response = refundTestDetailFindService.findAll(pageable, startDate, endDate, searchKeyword
                 , refundType, refundStatus, departureStatus, paymentStatus);
         return ResponseEntity.ok(response);
     }

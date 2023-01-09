@@ -58,10 +58,9 @@ public class CustomerEntity extends BaseTimeEntity {
         this.isRegister = false;
     }
 
-    public void registerAfterRefundCustomer(String passportNumber, String customerName, String nation,
-                                            CustomerDto.Request customerInfo) {
+    public void registerAfterRefundCustomer(String passportNumber,String nation, CustomerDto.Request customerInfo) {
         this.passportNumber = passportNumber;
-        this.customerName = customerName;
+        this.customerName = customerInfo.getName();
         this.nation = nation;
         this.customerEmail = customerInfo.getEmail();
         this.customerPaymentType = customerInfo.getCustomerPaymentType();
