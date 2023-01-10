@@ -1,12 +1,16 @@
 package com.tpay.domains.refund.application;
 
+import com.tpay.commons.exception.ExceptionState;
+import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.domains.customer.application.CustomerService;
+import com.tpay.domains.customer.application.dto.CustomerPaymentType;
 import com.tpay.domains.customer.application.dto.DepartureStatus;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.erp.test.dto.RefundType;
 import com.tpay.domains.order.application.dto.CmsDto;
 import com.tpay.domains.refund.application.dto.*;
 import com.tpay.domains.refund.domain.PaymentStatus;
+import com.tpay.domains.refund.domain.RefundEntity;
 import com.tpay.domains.refund.domain.RefundRepository;
 import com.tpay.domains.refund.domain.RefundStatus;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -34,17 +39,16 @@ public class RefundDetailFindService {
         return refundRepository.findAllByFranchiseeIndex(franchiseeIndex, startDate.atTime(0, 0), newEnd.atTime(0, 0));
     }
 
-    public RefundPagingFindResponse findAll(int page, RefundStatus refundStatus, String startDate, String endDate, String searchKeyword, boolean isRefundAfter) {
-        DateTimeFormatter yyyyMMdd = DateTimeFormatter.ofPattern("yyyyMMdd");
-        LocalDate startLocalDate = LocalDate.parse("20" + startDate, yyyyMMdd);
-        LocalDate endLocalDate = LocalDate.parse("20" + endDate, yyyyMMdd).plusDays(1);
+    public RefundPagingFindResponse findAll(int page, String startDate, String endDate, String searchKeyword
+            , RefundType refundType, RefundStatus refundStatus, DepartureStatus departureStatus, PaymentStatus paymentStatus) {
+
         PageRequest pageRequest = PageRequest.of(page, 10);
         boolean isBusinessNumber = searchKeyword.chars().allMatch(Character::isDigit);
 
         Page<RefundFindAllDto.Response> response = refundRepository.findRefundAll(
-                pageRequest, startLocalDate, endLocalDate, searchKeyword.isEmpty()
-                ,isBusinessNumber, searchKeyword, refundStatus, RefundType.IMMEDIATE
-                , DepartureStatus.ALL, PaymentStatus.ALL);
+                pageRequest, getStartDate(startDate, DateTimeFormatter.ofPattern("yyyyMMdd")), getEndDate(endDate, DateTimeFormatter.ofPattern("yyyyMMdd"))
+                , searchKeyword.isEmpty(), isBusinessNumber, searchKeyword, refundStatus
+                , refundType, departureStatus, paymentStatus);
 
         int totalPage = response.getTotalPages();
         if(totalPage != 0){
@@ -58,12 +62,9 @@ public class RefundDetailFindService {
     }
 
     public RefundDetailTotalDto.Response findRefundDetail(Long franchiseeIndex, String startDate, String endDate) {
-        DateTimeFormatter yyyyMMdd = DateTimeFormatter.ofPattern("yyyyMMdd");
-        LocalDate startLocalDate = LocalDate.parse("20" + startDate, yyyyMMdd);
-        LocalDate endLocalDate = LocalDate.parse("20" + endDate, yyyyMMdd).plusDays(1);
 
-        List<RefundFindDto.Response> findAFranchiseeList = refundRepository.findRefundDetail(franchiseeIndex,startLocalDate,endLocalDate);
-        RefundFindResponseInterface refundDetailList = refundRepository.findRefundDetailSaleTotalQuery(franchiseeIndex, startLocalDate, endLocalDate);
+        List<RefundFindDto.Response> findAFranchiseeList = refundRepository.findRefundDetail(franchiseeIndex, getStartDate(startDate, DateTimeFormatter.ofPattern("yyyyMMdd")), getEndDate(endDate, DateTimeFormatter.ofPattern("yyyyMMdd")));
+        RefundFindResponseInterface refundDetailList = refundRepository.findRefundDetailSaleTotalQuery(franchiseeIndex, getStartDate(startDate, DateTimeFormatter.ofPattern("yyyyMMdd")), getEndDate(endDate, DateTimeFormatter.ofPattern("yyyyMMdd")));
 
         RefundDetailTotalResponse refundDetail = RefundDetailTotalResponse.builder()
                 .totalActualAmount(refundDetailList.getActualAmount())
@@ -134,8 +135,6 @@ public class RefundDetailFindService {
         return refundByCustomerDateResponseList;
     }
 
-
-
     public List<List<String>> findFranchiseeId(LocalDate startDate, LocalDate endDate) {
         List<CmsDto.Response> refundFindResponseInterfaceList = refundRepository.findFranchiseeIdCmsService(startDate,endDate);
         List<List<String>> result = new ArrayList<>();
@@ -145,6 +144,78 @@ public class RefundDetailFindService {
             result.add(baseList);
         }
         return result;
+    }
+
+    // 사후
+    public List<List<String>> findFranchiseeIdAfter(LocalDate startDate, LocalDate endDate) {
+        List<CmsDto.Response> refundFindResponseInterfaceList = refundRepository.findFranchiseeIdAfter(startDate,endDate);
+        List<List<String>> result = new ArrayList<>();
+        for(CmsDto.Response refundFindResponseInterface : refundFindResponseInterfaceList ){
+            List<String> baseList = new ArrayList<>();
+            baseList.add(String.valueOf(refundFindResponseInterface.getFranchiseeIndex()));
+            result.add(baseList);
+        }
+        return result;
+    }
+
+    public RefundPaymentDto.Response findPaymentDetail(Long refundIndex) {
+
+        RefundDetailDto.Response detailRefundInfo = refundRepository.findRefundDetail(refundIndex);
+        RefundPaymentDetailDto.Response detailPaymentDto = refundRepository.findRefundPaymentDetail(refundIndex);
+
+        String paymentInfo;
+        if (CustomerPaymentType.CASH.equals(detailPaymentDto.getCustomerPaymentType())) {
+            paymentInfo = detailPaymentDto.getCustomerAccountNumber();
+        } else {
+            paymentInfo = detailPaymentDto.getCustomerCreditNumber();
+        }
+
+        RefundPaymentInfoDto.Response detailPaymentInfo =
+                RefundPaymentInfoDto.Response.builder()
+                        .customerPaymentType(detailPaymentDto.getCustomerPaymentType())
+                        .paymentInfo(paymentInfo)
+                        .build();
+
+
+        RefundPaymentDto.Response response =
+                RefundPaymentDto.Response.builder()
+                        .detailRefundInfo(detailRefundInfo)
+                        .detailPaymentInfo(detailPaymentInfo)
+                        .paymentStatus(detailRefundInfo.getPaymentStatus())
+                        .build();
+
+        return response;
+    }
+
+    @Transactional
+    public void updatePaymentDetail(Long refundIndex, RefundPaymentDto.Request request) {
+
+        RefundEntity refundEntity = refundRepository.findById(refundIndex)
+                .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid RefundIndex"));
+        refundEntity.getRefundAfterEntity().updatePaymentStatus(request.getPaymentStatus());
+
+        CustomerEntity customerEntity = customerService.findByIndex(refundEntity.getOrderEntity().getCustomerEntity().getId());
+
+        CustomerPaymentType customerPaymentType = request.getDetailPaymentInfo().getCustomerPaymentType();
+
+        String paymentInfo = request.getDetailPaymentInfo().getPaymentInfo();
+
+        if(CustomerPaymentType.CASH.equals(customerPaymentType)){
+            String customerBankName = paymentInfo.substring(paymentInfo.indexOf('|') + 1);
+            String customerAccountNumber = paymentInfo.substring(0,paymentInfo.indexOf('|')-1);
+            customerEntity.updateCustomerPaymentInfo(customerPaymentType, null,
+                    customerBankName,customerAccountNumber);
+        }else{
+            customerEntity.updateCustomerPaymentInfo(customerPaymentType, paymentInfo,
+                    null,null);
+        }
+    }
+
+    @Transactional
+    public void registerPaymentDetail(Long refundIndex, RefundPaymentDto.Request request) {
+
+        updatePaymentDetail(refundIndex, request);
+
     }
 
     private static class ResponseCompAsc implements Comparator<RefundByCustomerResponse> {
@@ -162,27 +233,12 @@ public class RefundDetailFindService {
             return o2.getCreatedDate().compareTo(o1.getCreatedDate());
         }
     }
-
-    private boolean includeZeroInPassportNumber(String passportNumber) {
-        String secondCharInPassport = passportNumber.substring(1, 2);
-        return secondCharInPassport.equals("0") ||
-                secondCharInPassport.equals("O");
+    private LocalDate getEndDate(String endDate, DateTimeFormatter yyyyMMdd) {
+        return LocalDate.parse("20" + endDate, yyyyMMdd).plusDays(1);
     }
 
-    private List<String> getAvailPassportNumberList(String passportNumber) {
-        List<String> passportNumList = new ArrayList<>();
-        passportNumList.add(passportNumber);
-
-        StringBuilder stringBuilder = new StringBuilder(passportNumber);
-        char secondChar = stringBuilder.charAt(1);
-        if (secondChar == '0') {
-            stringBuilder.setCharAt(1, 'O');
-        } else {
-            stringBuilder.setCharAt(1, '0');
-        }
-
-        passportNumList.add(stringBuilder.toString());
-        return passportNumList;
+    private LocalDate getStartDate(String startDate, DateTimeFormatter yyyyMMdd) {
+        return LocalDate.parse("20" + startDate, yyyyMMdd);
     }
 
 }

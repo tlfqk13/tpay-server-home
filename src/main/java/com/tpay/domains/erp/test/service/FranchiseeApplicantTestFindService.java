@@ -5,7 +5,10 @@ import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
 import com.tpay.commons.exception.detail.UnknownException;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
-import com.tpay.domains.franchisee_applicant.application.dto.*;
+import com.tpay.domains.franchisee_applicant.application.dto.DetailFranchiseeInfo;
+import com.tpay.domains.franchisee_applicant.application.dto.FilterSelector;
+import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeApplicantDetailUpdateResponse;
+import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeApplicantDto;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantRepository;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeStatus;
@@ -17,13 +20,10 @@ import com.tpay.domains.franchisee_upload.domain.FranchiseeUploadEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.tpay.domains.franchisee_applicant.application.dto.FilterSelector.BOTH;
 import static com.tpay.domains.franchisee_applicant.application.dto.FilterSelector.IS_READ;
@@ -54,83 +54,30 @@ public class FranchiseeApplicantTestFindService {
         return franchiseeApplicantEntity;
     }
 
-    public FranchiseeApplicantFindResponse findAll(int page, String searchKeyword) {
-        PageRequest pageRequest = PageRequest.of(page, 10);
-        Page<FranchiseeApplicantEntity> franchiseeApplicantEntityPage;
-
-        if (!searchKeyword.isEmpty()) {
-            boolean isBusinessNumber = searchKeyword.chars().allMatch(Character::isDigit);
-            if (isBusinessNumber) {
-                franchiseeApplicantEntityPage = franchiseeApplicantRepository.findByFranchiseeEntityBusinessNumberContaining(pageRequest, searchKeyword);
-            } else {
-                franchiseeApplicantEntityPage = franchiseeApplicantRepository.findByFranchiseeEntityStoreNameContaining(pageRequest, searchKeyword);
-            }
-        } else {
-            franchiseeApplicantEntityPage = franchiseeApplicantRepository.findAllByOrderByIdDesc(pageRequest);
-        }
-
-        List<FranchiseeApplicantInfo> franchiseeApplicantInfoList = franchiseeApplicantEntityPage.stream().map(FranchiseeApplicantInfo::toResponse).collect(Collectors.toList());
-        int totalPage = franchiseeApplicantEntityPage.getTotalPages();
-        if (totalPage != 0) {
-            totalPage = totalPage - 1;
-        }
-        FranchiseeApplicantFindResponse franchiseeApplicantFindResponse = FranchiseeApplicantFindResponse.builder()
-                .totalPage(totalPage)
-                .franchiseeApplicantInfoList(franchiseeApplicantInfoList)
-                .build();
-
-        return franchiseeApplicantFindResponse;
+    public Page<FranchiseeApplicantDto.Response> findAll(Pageable pageable, String searchKeyword) {
+        Page<FranchiseeApplicantDto.Response> response;
+        boolean isBusinessNumber = searchKeyword.chars().allMatch(Character::isDigit);
+        response = franchiseeApplicantRepository.findFranchiseeAll(pageable, searchKeyword, isBusinessNumber);
+        return response;
     }
 
-
-    public FranchiseeApplicantEntity findByBusinessNumber(String businessNumber) {
-        businessNumber = businessNumber.replaceAll("-", "");
-
-        FranchiseeApplicantEntity franchiseeApplicantEntity =
-                franchiseeApplicantRepository
-                        .findByFranchiseeEntityBusinessNumber(businessNumber)
-                        .orElseThrow(
-                                () ->
-                                        new InvalidParameterException(
-                                                ExceptionState.INVALID_PARAMETER, "가입 내역이 존재하지 않습니다. 다시 입력해주세요."));
-
-        return franchiseeApplicantEntity;
-    }
-
-    // TODO: 2022/04/26 조회하려는 컬럼 분리
-    public FranchiseeApplicantFindResponse applicantFilterTest(FilterSelector filterSelector, String value, int page, String searchKeyword) {
-        PageRequest pageRequest = PageRequest.of(page, 10);
+    public Page<FranchiseeApplicantDto.Response> applicantFilterTest(Pageable pageable, FilterSelector filterSelector, String value, String searchKeyword) {
         boolean isBusinessNumber = searchKeyword.chars().allMatch(Character::isDigit);
 
         FranchiseeStatus franchiseeStatus;
         Page<FranchiseeApplicantDto.Response> response;
 
-        // TODO: 2022/11/11 가맹점 신청상태, 알림상태, 둘 다
-
         if (filterSelector.equals(IS_READ)) {
-            response = franchiseeApplicantRepository.findBusinessNumber(pageRequest,searchKeyword,false,isBusinessNumber);
+            response = franchiseeApplicantRepository.findFranchiseeAllFilter(pageable, searchKeyword, false, isBusinessNumber);
         } else if (filterSelector.equals(BOTH)) {
             franchiseeStatus = FranchiseeStatus.valueOf(value);
-            response = franchiseeApplicantRepository.findBusinessNumber(pageRequest, searchKeyword, franchiseeStatus,false,isBusinessNumber);
+            response = franchiseeApplicantRepository.findFranchiseeAllFilter(pageable, searchKeyword, franchiseeStatus, false, isBusinessNumber);
         } else {
             franchiseeStatus = FranchiseeStatus.valueOf(value);
-            response = franchiseeApplicantRepository.findBusinessNumber(pageRequest, searchKeyword, franchiseeStatus,true,isBusinessNumber);
+            response = franchiseeApplicantRepository.findFranchiseeAllFilter(pageable, searchKeyword, franchiseeStatus, true, isBusinessNumber);
         }
 
-        List<FranchiseeApplicantInfo> franchiseeApplicantInfoList =
-                response.stream().map(FranchiseeApplicantInfo::toResponse).collect(Collectors.toList());
-
-        int totalPage = response.getTotalPages();
-        if (totalPage != 0) {
-            totalPage = totalPage - 1;
-        }
-
-        FranchiseeApplicantFindResponse franchiseeApplicantFindResponse = FranchiseeApplicantFindResponse.builder()
-                .totalPage(totalPage)
-                .franchiseeApplicantInfoList(franchiseeApplicantInfoList)
-                .build();
-
-        return franchiseeApplicantFindResponse;
+        return response;
     }
 
     @Transactional
@@ -159,9 +106,9 @@ public class FranchiseeApplicantTestFindService {
             }
             if (REFUND_STEP_ONE.equals(request.getRefundStep())) {
                 franchiseeEntity.updateRefundStep(REFUND_STEP_ONE);
-            } else if(REFUND_STEP_TWO.equals(request.getRefundStep())) {
+            } else if (REFUND_STEP_TWO.equals(request.getRefundStep())) {
                 franchiseeEntity.updateRefundStep(REFUND_STEP_TWO);
-            }else {
+            } else {
                 franchiseeEntity.updateRefundStep(REFUND_STEP_THREE);
             }
         } catch (InvalidParameterException e) {
@@ -170,7 +117,6 @@ public class FranchiseeApplicantTestFindService {
             throw new UnknownException(ExceptionState.UNKNOWN, "detailFranchiseeInfo data parsing error");
         }
 
-        log.trace("Franchisee Update : {} ", franchiseeEntityUpdate.getStoreName());
         return new FranchiseeApplicantDetailUpdateResponse(franchiseeEntityUpdate, franchiseeBankEntity, taxFreeStoreNumberUpdate);
     }
 }

@@ -76,9 +76,9 @@ public class VatDownloadService {
             boolean isMonthly = false;
             List<String> personalInfoResult = this.findPersonalInfo(franchiseeIndex, startLocalDate, endLocalDate, isMonthly);
             //2. 물품판매 총합계
-            List<String> totalResult = orderService.findCmsVatTotal(franchiseeIndex, startLocalDate, endLocalDate, RefundType.ALL);
+            List<String> totalResult = orderService.findCmsVatTotal(franchiseeIndex, startLocalDate, endLocalDate, RefundType.ALL, false);
             //3. 물품판매 명세 (반기)
-            List<List<String>> detailResult = orderService.findCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate, isPaging, RefundType.ALL);
+            List<List<String>> detailResult = orderService.findCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate, isPaging, RefundType.ALL, false);
 
             // 최상단 (년 기(월))
             topSection(xssfWorkbook, sheet, startLocalDate, isMonthly);
@@ -116,12 +116,24 @@ public class VatDownloadService {
 
         List<List<String>> totalResult = refundDetailFindService.findFranchiseeId(startLocalDate, endLocalDate);
         for (List<String> strings : totalResult) {
-            this.vatMonthlySendMailFile(Long.valueOf(strings.get(0)), requestYearMonthly, refundType);
+            this.vatMonthlySendMailFile(Long.valueOf(strings.get(0)), requestYearMonthly, refundType,true);
+        }
+    }
+
+    public void vatAdminDownloadsQuarterly(String requestDate, RefundType refundType) {
+
+        List<Object> localDates = this.setUpQuarterly(requestDate);
+        LocalDate startLocalDate = (LocalDate) localDates.get(0);
+        LocalDate endLocalDate = (LocalDate) localDates.get(1);
+
+        List<List<String>> totalResult = refundDetailFindService.findFranchiseeId(startLocalDate, endLocalDate);
+        for (List<String> strings : totalResult) {
+            this.vatMonthlySendMailFile(Long.valueOf(strings.get(0)), requestDate, refundType, false);
         }
     }
 
     // ex 6월의 매출내역 메일을 7월 15일 새벽에 생성
-    public void vatMonthlySendMailFile(Long franchiseeIndex, String requestMonth, RefundType refundType) {
+    public void vatMonthlySendMailFile(Long franchiseeIndex, String requestMonth, RefundType refundType,boolean isMonthly) {
         try {
             ClassPathResource resource = new ClassPathResource("KTP_REFUND_Form.xlsx");
             if (RefundType.AFTER.equals(refundType)) {
@@ -140,13 +152,21 @@ public class VatDownloadService {
             LocalDate startLocalDate = date.get(0);
             LocalDate endLocalDate = date.get(1);
 
+            if("222".equals(requestMonth) || "221".equals(requestMonth)){
+                List<Object> localDates = this.setUpQuarterly(requestMonth);
+                startLocalDate = (LocalDate) localDates.get(0);
+                endLocalDate = (LocalDate) localDates.get(1);
+
+                log.trace(" @@ setUpQuarterly_ startLocalDate = {}", startLocalDate);
+                log.trace(" @@ setUpQuarterly_ endLocalDate = {}", endLocalDate);
+            }
+
             //1. 제출자 인적사항
-            boolean isMonthly = true;
             List<String> personalInfoResult = this.findPersonalInfo(franchiseeIndex, startLocalDate, endLocalDate, isMonthly);
             //2. 물품판매 총합계
-            List<String> totalResult = orderService.findCmsVatTotal(franchiseeIndex, startLocalDate, endLocalDate, refundType);
+            List<String> totalResult = orderService.findCmsVatTotal(franchiseeIndex, startLocalDate, endLocalDate, refundType, false);
             //3. 물품판매 명세 (월)
-            List<List<String>> detailMonthlyResult = orderService.findCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate, true, refundType);
+            List<List<String>> detailMonthlyResult = orderService.findCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate, true, refundType, false);
 
             // 최상단 (년 기(월))
             topSection(xssfWorkbook, sheet, startLocalDate, isMonthly);
@@ -167,10 +187,20 @@ public class VatDownloadService {
 
             StringBuilder fileName = new StringBuilder();
             String typeName = "즉시 환급";
+            String dateName = startLocalDate.getMonthValue() + "월_";
             if(RefundType.AFTER.equals(refundType)){
                 typeName = "사후 환급";
             }
-            fileName.append(personalInfoResult.get(2)).append("_").append(startLocalDate.getMonthValue()).append("월_").append(typeName).append("_실적명세서");
+
+            if(!isMonthly){
+                if(startLocalDate.getMonthValue() == 7){
+                    dateName = "2 분기_";
+                }else {
+                    dateName = "1 분기_";
+                }
+            }
+
+            fileName.append(personalInfoResult.get(2)).append("_").append(dateName).append(typeName).append("_실적명세서");
             String result = s3FileUploader.uploadXlsx(franchiseeIndex, xssfWorkbook, fileName, String.valueOf(startLocalDate.getMonthValue()), false);
 
         } catch (IOException e) {
@@ -419,8 +449,8 @@ public class VatDownloadService {
         List<LocalDate> dateList = new ArrayList<>();
         endDate = endDate.minusDays(1);
 
-        log.trace(" @@ startDate = {}", startDate);
-        log.trace(" @@ endDate = {}", endDate);
+        log.trace(" @@ setUpDate_ startDate = {}", startDate);
+        log.trace(" @@ setUpDate_ endDate = {}", endDate);
 
         dateList.add(startDate);
         dateList.add(endDate);

@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
+import static com.tpay.domains.barcode.domain.QBarcodeEntity.barcodeEntity;
 import static com.tpay.domains.customer.domain.QCustomerEntity.customerEntity;
 import static com.tpay.domains.franchisee.domain.QFranchiseeEntity.franchiseeEntity;
 import static com.tpay.domains.franchisee_upload.domain.QFranchiseeUploadEntity.franchiseeUploadEntity;
@@ -41,6 +42,7 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
     public List<RefundReceiptDto.Response> findRefundReceipt(String encryptPassportNumber, boolean refundAfter) {
         List<RefundReceiptDto.Response> content = queryFactory
                 .select(new QRefundReceiptDto_Response(
+                        orderEntity.barcodeEntity.s3Path,
                         orderEntity.orderNumber,
                         isRefundAfterEntity(),
                         franchiseeUploadEntity.taxFreeStoreNumber,
@@ -58,6 +60,7 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
                 ))
                 .from(orderEntity)
                 .leftJoin(orderEntity.refundEntity, refundEntity)
+                .leftJoin(orderEntity.barcodeEntity, barcodeEntity)
                 .leftJoin(pointScheduledEntity).on(pointScheduledEntity.orderEntity.id.eq(orderEntity.id))
                 .leftJoin(orderEntity.franchiseeEntity, franchiseeEntity)
                 .leftJoin(orderEntity.customerEntity, customerEntity)
@@ -73,6 +76,7 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
     public List<RefundReceiptDto.Response> downloadsRefundReceipt(String encryptPassportNumber, boolean refundAfter) {
         List<RefundReceiptDto.Response> content = queryFactory
                 .select(new QRefundReceiptDto_Response(
+                        orderEntity.barcodeEntity.s3Path,
                         orderEntity.orderNumber,
                         isRefundAfterEntity(),
                         franchiseeUploadEntity.taxFreeStoreNumber,
@@ -90,6 +94,7 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
                 ))
                 .from(orderEntity)
                 .leftJoin(orderEntity.refundEntity, refundEntity)
+                .leftJoin(orderEntity.barcodeEntity, barcodeEntity)
                 .leftJoin(pointScheduledEntity).on(pointScheduledEntity.orderEntity.id.eq(orderEntity.id))
                 .leftJoin(orderEntity.franchiseeEntity, franchiseeEntity)
                 .leftJoin(orderEntity.customerEntity, customerEntity)
@@ -187,7 +192,7 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
                 return isImmediate();
             }
         } else if (refundType.equals(RefundType.AFTER)) { // 사후
-            return departurePaymentStatus(paymentStatus,departureStatus)
+            return departurePaymentStatus(paymentStatus, departureStatus)
                     .and(isRefundAfterEntity())
                     .and(isAfter());
         } else { // 전체
@@ -236,8 +241,12 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
     }
 
     private BooleanExpression isDeparturePaymentStatus(PaymentStatus paymentStatus, DepartureStatus departureStatus) {
-        return customerEntity.departureStatus.in(departureStatus)
-                .and(refundEntity.refundAfterEntity.paymentStatus.in(paymentStatus));
+        if (DepartureStatus.ALL.equals(departureStatus)) {
+            return refundEntity.refundAfterEntity.paymentStatus.in(paymentStatus);
+        } else {
+            return customerEntity.departureStatus.in(departureStatus)
+                    .and(refundEntity.refundAfterEntity.paymentStatus.in(paymentStatus));
+        }
     }
 
     private BooleanExpression isRefundAfterEntity() {
@@ -246,12 +255,13 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
 
     @NotNull
     private BooleanExpression isAfter() {
-        return refundEntity.totalRefund.castToNum(Integer.class).goe(80000);
+        return refundEntity.takeOutNumber.contains("A");
     }
 
     @NotNull
     private BooleanExpression isImmediate() {
-        return refundEntity.totalRefund.castToNum(Integer.class).loe(74000);
+        return refundEntity.totalRefund.castToNum(Integer.class).loe(74000)
+                .and(refundEntity.takeOutNumber.contains("B"));
     }
 
     @Override
@@ -273,6 +283,27 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
     }
 
     @Override
+    public List<CmsDto.Response> findFranchiseeIdAfter(LocalDate startDate, LocalDate endDate) {
+        List<CmsDto.Response> content = queryFactory
+                .select(new QCmsDto_Response(
+                        franchiseeEntity.id
+                ))
+                .from(refundEntity)
+                .innerJoin(refundEntity.orderEntity, orderEntity)
+                .leftJoin(orderEntity.franchiseeEntity, franchiseeEntity)
+                .leftJoin(refundEntity.refundAfterEntity, refundAfterEntity)
+                .where(orderEntity.createdDate.between(startDate.atStartOfDay(), LocalDateTime.of(endDate, LocalTime.MAX))
+                        .and(refundEntity.refundStatus.eq(RefundStatus.APPROVAL)
+                                .and(franchiseeEntity.id.ne(152L)))
+                        .and(refundEntity.refundAfterEntity.isNotNull()))
+                .groupBy(franchiseeEntity.id)
+                .fetch();
+
+        return content;
+    }
+
+
+    @Override
     public RefundDetailDto.Response findRefundDetail(Long refundIndex) {
         RefundDetailDto.Response content = queryFactory
                 .select(new QRefundDetailDto_Response(
@@ -289,7 +320,7 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
                 .leftJoin(orderEntity.refundEntity, refundEntity)
                 .leftJoin(orderEntity.customerEntity, customerEntity)
                 .leftJoin(orderEntity.franchiseeEntity, franchiseeEntity)
-                .leftJoin(refundEntity.refundAfterEntity,refundAfterEntity)
+                .leftJoin(refundEntity.refundAfterEntity, refundAfterEntity)
                 .where(refundEntity.id.eq(refundIndex))
                 .fetchOne();
 
@@ -306,7 +337,7 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
                         customerEntity.customerCreditNumber
                 ))
                 .from(orderEntity)
-                .leftJoin(orderEntity.customerEntity,customerEntity)
+                .leftJoin(orderEntity.customerEntity, customerEntity)
                 .leftJoin(orderEntity.refundEntity, refundEntity)
                 .where(refundEntity.id.eq(refundIndex))
                 .fetchOne();
@@ -344,14 +375,6 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
             return isRefundAfterEntity().and(isAfter());
         } else {
             return isImmediate().and(refundEntity.refundAfterEntity.isNull());
-        }
-    }
-
-    private BooleanExpression paymentType(Boolean refundAfter) {
-        if (refundAfter) {
-            return isRefundAfterEntity().and(isAfter());
-        } else {
-            return isImmediate();
         }
     }
 }

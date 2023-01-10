@@ -21,7 +21,7 @@ public interface OrderRepositoryCustom {
 
     HometaxTailDto findRefundAfterOrdersTotalBetweenDates(Long franchiseeIndex, LocalDate startDate, LocalDate endDate);
 
-    VatTotalDto.Response findMonthlyTotal(Long franchiseeIndex, LocalDate startLocalDate, LocalDate endLocalDate);
+    VatTotalDto.Response findMonthlyTotal(Long franchiseeIndex, LocalDate startLocalDate, LocalDate endLocalDate, boolean isCms);
 
-    List<VatDetailDto.Response> findMonthlyCmsVatDetail(Long franchiseeIndex, LocalDate startLocalDate, LocalDate endLocalDate, int pageData);
+    List<VatDetailDto.Response> findMonthlyCmsVatDetail(Long franchiseeIndex, LocalDate startLocalDate, LocalDate endLocalDate, int pageData, boolean isCms);
 }

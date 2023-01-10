@@ -1,8 +1,13 @@
-package com.tpay.domains.pos.application;
+package com.tpay.domains.barcode.application;
 
 import com.tpay.commons.aws.S3FileUploader;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidPassportInfoException;
+import com.tpay.commons.exception.detail.OrderNotFoundException;
+import com.tpay.domains.barcode.domain.BarcodeEntity;
+import com.tpay.domains.barcode.domain.BarcodeRepository;
+import com.tpay.domains.order.domain.OrderEntity;
+import com.tpay.domains.order.domain.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.sourceforge.barbecue.Barcode;
@@ -25,6 +30,8 @@ import java.io.InputStream;
 public class BarcodeService {
 
     private final S3FileUploader s3FileUploader;
+    private final BarcodeRepository barcodeRepository;
+    private final OrderRepository orderRepository;
 
     public String createBarcode(Long id, String deduction) {
 
@@ -65,7 +72,7 @@ public class BarcodeService {
         return after.toString();
     }
 
-    // 구매일련번호 바코드 생성
+    // 구매일련번호 바코드 생성 - ktaxpay 영수증용
     public String createBarcode(String orderNumber,Long orderId) {
         String uri = "";
 
@@ -82,10 +89,24 @@ public class BarcodeService {
 
             //S3 업로드
             uri = s3FileUploader.uploadBarcode(orderId, is);
+
+            saveBarcode(orderId, uri);
+
         } catch (OutputException | BarcodeException | IOException e) {
             e.printStackTrace();
             log.error("Barcode Create Error : {}", e.getMessage());
         }
         return uri;
+    }
+
+    private void saveBarcode(Long orderId, String uri) {
+
+        OrderEntity orderEntity = orderRepository.findById(orderId)
+                .orElseThrow(
+                        () -> new OrderNotFoundException(ExceptionState.ORDER_NOT_FOUND)
+                );
+        BarcodeEntity barcodeEntity = barcodeRepository.save(BarcodeEntity.builder().s3Path(uri).build());
+
+        orderEntity.addBarcode(barcodeEntity);
     }
 }

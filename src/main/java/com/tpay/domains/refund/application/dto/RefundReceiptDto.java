@@ -9,6 +9,8 @@ import java.time.LocalDateTime;
 public class RefundReceiptDto {
     @Getter
     public static class Response{
+
+        private final String barcodeS3Path; // 바코드 경로
         private final String purchaseSn; // 구매 일련번호
         private final boolean refundAfter; // 즉시, 사후환급 전표 구분
         private final String taxFreeStoreNumber;//사후면세판매자 지정번호
@@ -30,12 +32,13 @@ public class RefundReceiptDto {
         private final String expireDate;// 반출유효기간
 
         @QueryProjection
-        public Response(String purchaseSn,boolean refundAfter
+        public Response(String barcodeS3Path,String purchaseSn,boolean refundAfter
                 ,String texFreeStoreNumber,String saleDate,String sellerName
                 ,String franchiseeName,String businessNumber,String storeAddress
                 ,String storeTelNumber,String totalAmount,String totalVat
                 ,String totalRefund, String administrativeCharge, LocalDateTime expireDate){
 
+            this.barcodeS3Path = barcodeS3Path;
             this.purchaseSn = purchaseSn;
             this.refundAfter = refundAfter;
             this.taxFreeStoreNumber = texFreeStoreNumber;

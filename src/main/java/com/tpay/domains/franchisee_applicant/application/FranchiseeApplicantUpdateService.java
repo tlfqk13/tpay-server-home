@@ -7,7 +7,6 @@ import com.tpay.domains.franchisee.application.FranchiseeFindService;
 import com.tpay.domains.franchisee.domain.FranchiseeEntity;
 import com.tpay.domains.franchisee_applicant.application.dto.DetailFranchiseeInfo;
 import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeApplicantDetailUpdateResponse;
-import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeApplicantUpdateDto;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
 import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantRepository;
 import com.tpay.domains.franchisee_upload.application.FranchiseeBankFindService;
@@ -75,7 +74,6 @@ public class FranchiseeApplicantUpdateService {
             e.printStackTrace();
         }
 
-        log.trace("Franchisee Update : {} ", franchiseeEntityUpdate.getStoreName());
         return new FranchiseeApplicantDetailUpdateResponse(franchiseeEntityUpdate, franchiseeBankEntity, taxFreeStoreNumberUpdate);
     }
 
@@ -86,11 +84,5 @@ public class FranchiseeApplicantUpdateService {
                         .orElseThrow(() -> new IllegalArgumentException("Invalid Franchisee Applicant Index"));
 
         return franchiseeApplicantEntity;
-    }
-
-    @javax.transaction.Transactional
-    public double updateBalancePercentage(Long franchiseeApplicantIndex, FranchiseeApplicantUpdateDto.balancePercentageRequest request) {
-        FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeApplicantIndex);
-        return franchiseeEntity.updateBalancePercentage(request.getBalancePercentage());
     }
 }

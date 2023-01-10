@@ -137,4 +137,5 @@ public class CustomerService {
         return customerRepository.findByPassportNumber(encryptPassportNumber)
                 .orElseThrow(()->new InvalidPassportInfoException(ExceptionState.INVALID_PASSPORT_INFO, "여권 조회 실패"));
     }
+
 }

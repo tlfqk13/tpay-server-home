@@ -21,7 +21,7 @@ import static com.tpay.domains.order.domain.QOrderEntity.orderEntity;
 import static com.tpay.domains.refund.domain.QRefundAfterEntity.refundAfterEntity;
 import static com.tpay.domains.refund.domain.QRefundEntity.refundEntity;
 
-public class OrderRepositoryImpl implements OrderRepositoryCustom{
+public class OrderRepositoryImpl implements OrderRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
 
@@ -41,13 +41,13 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom{
                         orderEntity.totalVat,
                         customerEntity.customerName,
                         customerEntity.nation,
-                        refundEntity.refundAfterEntity.approvalFinishDate.substring(0,10),
-                        refundEntity.refundAfterEntity.modifiedDate.stringValue().substring(0,10)
+                        refundEntity.refundAfterEntity.approvalFinishDate.substring(0, 10),
+                        refundEntity.refundAfterEntity.modifiedDate.stringValue().substring(0, 10)
                 ))
                 .from(refundEntity)
                 .innerJoin(refundEntity.orderEntity, orderEntity)
                 .leftJoin(orderEntity.customerEntity, customerEntity)
-                .leftJoin(refundEntity.refundAfterEntity,refundAfterEntity)
+                .leftJoin(refundEntity.refundAfterEntity, refundAfterEntity)
                 .where(orderEntity.franchiseeEntity.id.eq(franchiseeIndex)
                         .and(refundEntity.refundStatus.eq(RefundStatus.APPROVAL))
                         .and(refundEntity.createdDate.between(startLocalDate.atStartOfDay(), LocalDateTime.of(endLocalDate, LocalTime.MAX)))
@@ -73,9 +73,9 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom{
                                 .subtract(orderEntity.totalVat.castToNum(Integer.class))).sum().stringValue() // 공급가 = 판매금액 - 부가가치세
                 ))
                 .from(refundEntity)
-                .innerJoin(refundEntity.orderEntity,orderEntity)
-                .leftJoin(orderEntity.customerEntity,customerEntity)
-                .leftJoin(refundEntity.refundAfterEntity,refundAfterEntity)
+                .innerJoin(refundEntity.orderEntity, orderEntity)
+                .leftJoin(orderEntity.customerEntity, customerEntity)
+                .leftJoin(refundEntity.refundAfterEntity, refundAfterEntity)
                 .where(orderEntity.franchiseeEntity.id.eq(franchiseeIndex)
                         .and(refundEntity.refundStatus.eq(RefundStatus.APPROVAL))
                         .and(refundEntity.createdDate.between(startLocalDate.atStartOfDay(), LocalDateTime.of(endLocalDate, LocalTime.MAX)))
@@ -86,18 +86,17 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom{
         return content;
     }
 
-    private Predicate refundFilter(RefundType refundType){
-        if(RefundType.IMMEDIATE.equals(refundType)){
+    private Predicate refundFilter(RefundType refundType) {
+        if (RefundType.IMMEDIATE.equals(refundType)) {
             return orderEntity.totalAmount.castToNum(Integer.class).lt(500000)
                     .and(refundEntity.refundAfterEntity.isNull());
-        }else if (RefundType.AFTER.equals(refundType)){
+        } else if (RefundType.AFTER.equals(refundType)) {
             return orderEntity.totalAmount.castToNum(Integer.class).goe(500000)
                     .or(refundEntity.refundAfterEntity.isNotNull());
-        }else {
+        } else {
             System.out.println("refund Fileter ALL");
             return null;
         }
-
     }
 
     @Override
@@ -154,7 +153,7 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom{
     }
 
     @Override
-    public VatTotalDto.Response findMonthlyTotal(Long franchiseeIndex, LocalDate startLocalDate, LocalDate endLocalDate) {
+    public VatTotalDto.Response findMonthlyTotal(Long franchiseeIndex, LocalDate startLocalDate, LocalDate endLocalDate, boolean isCms) {
         VatTotalDto.Response content = queryFactory
                 .select(new QVatTotalDto_Response(
                         orderEntity.orderNumber.count().stringValue(),
@@ -167,11 +166,12 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom{
                                 .subtract(orderEntity.totalVat.castToNum(Integer.class))).sum().stringValue() // 공급가 = 판매금액 - 부가가치세
                 ))
                 .from(refundEntity)
-                .innerJoin(refundEntity.orderEntity,orderEntity)
-                .leftJoin(orderEntity.customerEntity,customerEntity)
+                .innerJoin(refundEntity.orderEntity, orderEntity)
+                .leftJoin(orderEntity.customerEntity, customerEntity)
                 .where(orderEntity.franchiseeEntity.id.eq(franchiseeIndex)
                         .and(refundEntity.refundStatus.eq(RefundStatus.APPROVAL))
                         .and(refundEntity.createdDate.between(startLocalDate.atStartOfDay(), LocalDateTime.of(endLocalDate, LocalTime.MAX)))
+                        .and(cmsFilter(isCms))
                 )
                 .fetchOne();
 
@@ -179,7 +179,7 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom{
     }
 
     @Override
-    public List<VatDetailDto.Response> findMonthlyCmsVatDetail(Long franchiseeIndex, LocalDate startLocalDate, LocalDate endLocalDate, int pageData) {
+    public List<VatDetailDto.Response> findMonthlyCmsVatDetail(Long franchiseeIndex, LocalDate startLocalDate, LocalDate endLocalDate, int pageData, boolean isCms) {
         List<VatDetailDto.Response> content = queryFactory
                 .select(new QVatDetailDto_Response(
                         orderEntity.orderNumber,
@@ -198,11 +198,21 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom{
                 .leftJoin(orderEntity.customerEntity, customerEntity)
                 .where(orderEntity.franchiseeEntity.id.eq(franchiseeIndex)
                         .and(refundEntity.refundStatus.eq(RefundStatus.APPROVAL))
-                        .and(refundEntity.createdDate.between(startLocalDate.atStartOfDay(), LocalDateTime.of(endLocalDate, LocalTime.MAX)))
+                        .and(refundEntity.createdDate.between(startLocalDate.atStartOfDay(), LocalDateTime.of(endLocalDate, LocalTime.MAX))
+                        .and(cmsFilter(isCms)))
                 )
                 .limit(pageData)
                 .fetch();
 
         return content;
+    }
+
+    private Predicate cmsFilter(boolean isCms) {
+        if (isCms) {
+            return null;
+        } else {
+            return orderEntity.totalAmount.castToNum(Integer.class).lt(500000)
+                    .and(refundEntity.takeOutNumber.contains("B"));
+        }
     }
 }

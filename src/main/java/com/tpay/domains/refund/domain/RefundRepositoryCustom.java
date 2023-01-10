@@ -18,6 +18,7 @@ public interface RefundRepositoryCustom {
             , boolean isKeywordEmpty, boolean businessNumber, String searchKeyword, RefundStatus  refundStatus
             , RefundType refundType, DepartureStatus departureStatus, PaymentStatus paymentStatus);
     List<CmsDto.Response> findFranchiseeIdCmsService(LocalDate start,LocalDate end);
+    List<CmsDto.Response> findFranchiseeIdAfter(LocalDate start,LocalDate end);
     RefundDetailDto.Response findRefundDetail(Long refundIndex);
     RefundPaymentDetailDto.Response findRefundPaymentDetail(Long refundIndex);
 }

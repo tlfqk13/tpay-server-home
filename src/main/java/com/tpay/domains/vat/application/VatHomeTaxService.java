@@ -19,7 +19,6 @@ import com.tpay.domains.vat.constant.HomeTaxConstant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.io.*;
 import java.time.LocalDate;
@@ -56,7 +55,7 @@ public class VatHomeTaxService {
     private static final String REFUND_CORP_NUM = "2390401226";
 
 
-    public void homeTaxAdminDownloads(String requestDate) throws IOException {
+    public void immediateHomeTaxAdminDownloads(String requestDate) throws IOException {
         List<LocalDate> localDates = setUpDate(requestDate);
         LocalDate startDate = localDates.get(0);
         LocalDate endDate = localDates.get(1);
@@ -64,6 +63,18 @@ public class VatHomeTaxService {
         List<List<String>> totalResult = refundDetailFindService.findFranchiseeId(startDate, endDate);
         for (List<String> strings : totalResult) {
             this.createHomeTaxUploadFile(Long.valueOf(strings.get(0)), requestDate);
+        }
+    }
+
+    public void AfterHomeTaxAdminDownloads(String requestDate) throws IOException {
+        List<LocalDate> localDates = setUpDate(requestDate);
+        LocalDate startDate = localDates.get(0);
+        LocalDate endDate = localDates.get(1);
+
+        List<List<String>> totalResult = refundDetailFindService.findFranchiseeIdAfter(startDate, endDate);
+        for (List<String> strings : totalResult) {
+            log.trace(" @@ strings.get(0) @@@@@@@@@@@ = {}", strings.get(0));
+            this.afterCreateHomeTaxUploadFile(Long.valueOf(strings.get(0)), requestDate);
         }
     }
 
@@ -76,6 +87,15 @@ public class VatHomeTaxService {
         LocalDate startDate = localDates.get(0);
         LocalDate endDate = localDates.get(1);
         createHomeTaxRecords(franchiseeIndex, startDate, endDate);
+
+        return new VatHomeTaxDto.Response(false);
+    }
+
+    public VatHomeTaxDto.Response afterCreateHomeTaxUploadFile(Long franchiseeIndex, String requestDate) throws IOException {
+        List<LocalDate> localDates = setUpDate(requestDate);
+        LocalDate startDate = localDates.get(0);
+        LocalDate endDate = localDates.get(1);
+        createHomeTaxRecordsGeneral(franchiseeIndex, startDate, endDate);
 
         return new VatHomeTaxDto.Response(false);
     }
@@ -114,20 +134,31 @@ public class VatHomeTaxService {
 
         log.debug("홈택스 레코드 생성 시작 franchisee Index = {}", franchiseeIndex);
         String immediateHometaxFile = createImmediateHometaxFile(franchiseeEntity, startDate, endDate);
+        log.debug("홈택스 레코드 생성 완료 franchisee Index = {}", franchiseeIndex);
+
+        // I(전자신고용 변환파일임을 나타냄) + 사업자등록번호 + V178(서식코드)
+        log.trace(" @@  즉시 환급 파일 생성 _Start ");
+        String immediateHometaxFileName = "I" + franchiseeEntity.getBusinessNumber() + ".V178";
+        uploadHometaxFile(endDate, franchiseeEntity.getStoreName(), immediateHometaxFile, immediateHometaxFileName);
+
+        //        zipFileDown(1, fileName, storeName, endDate);
+    }
+
+    private void createHomeTaxRecordsGeneral(Long franchiseeIndex, LocalDate startDate, LocalDate endDate) throws IOException {
+        FranchiseeEntity franchiseeEntity = franchiseeFindService.findByIndex(franchiseeIndex);
+
+        if (!franchiseeEntity.getIsRefundOnce()) {
+            log.error("환급이 발생되지 않은 고객입니다");
+            throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "환급을 받은 기록이 없는 사용자입니다");
+        }
+
+        log.debug("홈택스 레코드 생성 시작 franchisee Index = {}", franchiseeIndex);
         String generalHometaxFile = createGeneralHometaxFile(franchiseeEntity, startDate, endDate);
         log.debug("홈택스 레코드 생성 완료 franchisee Index = {}", franchiseeIndex);
 
-        if (!StringUtils.hasText(immediateHometaxFile)) {
-            // I(전자신고용 변환파일임을 나타냄) + 사업자등록번호 + V178(서식코드)
-            String immediateHometaxFileName = "I" + franchiseeEntity.getBusinessNumber() + ".V178";
-            uploadHometaxFile(endDate, franchiseeEntity.getStoreName(), immediateHometaxFile, immediateHometaxFileName);
-        }
-
-        if (!StringUtils.hasText(generalHometaxFile)) {
-            // F(일반환급 전자신고용)
-            String generalHometaxFileName = "F" + franchiseeEntity.getBusinessNumber() + ".V178";
-            uploadHometaxFile(endDate, franchiseeEntity.getStoreName(), generalHometaxFile, generalHometaxFileName);
-        }
+        // F(일반환급 전자신고용)
+        String generalHometaxFileName = "F" + franchiseeEntity.getBusinessNumber() + ".V178";
+        uploadHometaxFile(endDate, franchiseeEntity.getStoreName(), generalHometaxFile, generalHometaxFileName);
         //        zipFileDown(1, fileName, storeName, endDate);
     }
 
@@ -166,7 +197,9 @@ public class VatHomeTaxService {
     }
 
     private void uploadHometaxFile(LocalDate endDate, String storeName, String hometaxFile, String fileName) throws IOException {
+        log.trace(" @@@@@@@@@@@@@@@@ uploadHometaxFile @@@@@@@@@@@@@@");
         File file = new File("/home/ec2-user/hometax_temp/" + fileName);
+        //File file = new File("/home/success/hometax_temp/" + fileName);
         try (FileOutputStream outStream = new FileOutputStream(file)) {
             outStream.write(convertByteArrayUsingCharset(hometaxFile));
             log.trace("Home tax upload file save success = {} ", fileName);

@@ -6,10 +6,7 @@ import com.tpay.domains.vat.application.VatDownloadService;
 import com.tpay.domains.vat.application.VatHomeTaxService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
@@ -31,6 +28,14 @@ public class AdminCmsVatController {
         return ResponseEntity.ok("Admin VatDownloads");
     }
 
+    @GetMapping("/vat/quarterly/downloads")
+    public ResponseEntity<String> vatAdminDownloadsQuarterly(
+            @RequestParam String requestDate,
+            @RequestParam RefundType refundType) {
+        vatDownloadService.vatAdminDownloadsQuarterly(requestDate,refundType);
+        return ResponseEntity.ok("Admin vatAdminDownloads Quarterly ");
+    }
+
     // 2022/07/29 관리자가 한번에 cms 청구서 뽑는 기능
     @GetMapping("cms/downloads")
     public ResponseEntity<String> adminCmsDownloads(
@@ -41,11 +46,17 @@ public class AdminCmsVatController {
     }
 
     // 2022/12/22 관리자가 한번에 hometax 파일 생성
-    @GetMapping("/hometax/downloads")
-    public ResponseEntity<String> homeTaxFile(
+    @GetMapping("/hometax/immediate/downloads")
+    public ResponseEntity<String> immediateHomeTaxFile(
             @RequestParam String requestDate) throws IOException {
-        homeTaxService.homeTaxAdminDownloads(requestDate);
+        homeTaxService.immediateHomeTaxAdminDownloads(requestDate);
         return ResponseEntity.ok("Admin homeTaxFile");
     }
 
+    @GetMapping("/hometax/after/downloads")
+    public ResponseEntity<String> afterHomeTaxFile(
+            @RequestParam String requestDate) throws IOException {
+        homeTaxService.AfterHomeTaxAdminDownloads(requestDate);
+        return ResponseEntity.ok("Admin homeTaxFile");
+    }
 }

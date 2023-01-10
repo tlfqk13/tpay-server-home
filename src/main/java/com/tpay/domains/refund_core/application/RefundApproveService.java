@@ -11,6 +11,7 @@ import com.tpay.domains.auth.domain.EmployeeAccessTokenEntity;
 import com.tpay.domains.auth.domain.EmployeeAccessTokenRepository;
 import com.tpay.domains.auth.domain.FranchiseeAccessTokenEntity;
 import com.tpay.domains.auth.domain.FranchiseeAccessTokenRepository;
+import com.tpay.domains.barcode.application.BarcodeService;
 import com.tpay.domains.customer.application.CustomerService;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.employee.application.EmployeeFindService;
@@ -61,27 +62,16 @@ public class RefundApproveService {
     private final FranchiseeAccessTokenRepository franchiseeAccessTokenRepository;
     private final EmployeeAccessTokenRepository employeeAccessTokenRepository;
     private final CustomerService customerService;
+    private final BarcodeService barcodeService;
 
     @Transactional
     public RefundResponse approve(RefundSaveRequest request, IndexInfo indexInfo) {
 
-        // 가격 조회 - 30,000 미만일 경우 알기 위해서
-        int checkMinPrice = Integer.parseInt(request.getPrice());
-        if (checkMinPrice < 30000) {
-            log.debug(" @@ Item Price = {}", request.getPrice());
-            throw new InvalidParameterException(ExceptionState.CHECK_ITEM_PRICE);
-        }
-
-        CustomerEntity customerEntity = customerService.findByIndex(request.getCustomerIndex());
-        if("KOR".equals(customerEntity.getNation())){
-            log.trace(" @@ customerEntity.getNation() = {}", customerEntity.getNation());
-            throw new InvalidParameterException(ExceptionState.KOR_CUSTOMER);
-        }
+        checkMinPrice(request);
+        checkKorCustomer(request);
 
         Long franchiseeIndex = getFranchiseeIndex(indexInfo);
         OrderEntity orderEntity = orderSaveService.save(request, franchiseeIndex);
-        log.debug("Order saved Id = {} ", orderEntity.getId());
-        log.trace(" @@ orderEntity = {}", orderEntity.getTotalRefund());
 
         updateUserDeviceInfo(request, orderEntity, indexInfo);
 
@@ -102,16 +92,14 @@ public class RefundApproveService {
 
             log.debug("Refund approve entity id = {} ", refundEntity.getId());
 
-            //2022/03/25 여권 스캔을 바코드모드로하고, 앱으로 승인진행할 때 이 플로우 탐
-            Optional<ExternalRefundEntity> optionalExternalRefundEntity = externalRepository.findByRefundEntity(refundEntity);
-            optionalExternalRefundEntity.ifPresent(externalRefundEntity -> externalRefundEntity.changeStatus(ExternalRefundStatus.APPROVE));
-
-            pointScheduledChangeService.change(refundEntity, SignType.POSITIVE, franchiseeEntity.getBalancePercentage());
+            externalRefund(refundEntity);
+            createPoint(refundEntity, franchiseeEntity);
 
             if (!franchiseeEntity.getIsRefundOnce()) {
                 nonBatchPushService.nonBatchPushNSave(PushCategoryType.CASE_FIVE, franchiseeEntity.getId());
                 franchiseeEntity.isRefundOnce();
             }
+
             return refundResponse;
 
         } catch (WebfluxGeneralException e) {
@@ -119,6 +107,28 @@ public class RefundApproveService {
             orderService.deleteByIndex(orderEntity.getId());
             log.debug("WEBFLUX_GENERAL_ERROR");
             throw new WebfluxGeneralException(ExceptionState.WEBFLUX_GENERAL, e.getMessage());
+        }
+    }
+
+    private void externalRefund(RefundEntity refundEntity) {
+        //여권 스캔을 바코드모드로하고, 앱으로 승인진행할 때 이 플로우 탐
+        Optional<ExternalRefundEntity> optionalExternalRefundEntity = externalRepository.findByRefundEntity(refundEntity);
+        optionalExternalRefundEntity.ifPresent(externalRefundEntity -> externalRefundEntity.changeStatus(ExternalRefundStatus.APPROVE));
+    }
+
+    private void checkKorCustomer(RefundSaveRequest request) {
+        CustomerEntity customerEntity = customerService.findByIndex(request.getCustomerIndex());
+        if("KOR".equals(customerEntity.getNation())){
+            log.trace(" @@ customerEntity.getNation() = {}", customerEntity.getNation());
+            throw new InvalidParameterException(ExceptionState.KOR_CUSTOMER);
+        }
+    }
+
+    private void checkMinPrice(RefundSaveRequest request) {
+        int checkMinPrice = Integer.parseInt(request.getPrice());
+        if (checkMinPrice < 30000) {
+            log.debug(" @@ Item Price = {}", request.getPrice());
+            throw new InvalidParameterException(ExceptionState.CHECK_ITEM_PRICE);
         }
     }
 
@@ -132,7 +142,6 @@ public class RefundApproveService {
     @Transactional
     public RefundResponse approveAfter(RefundAfterDto.Request refundAfterDto, PaymentEntity payment) {
         OrderEntity orderEntity = orderService.findOrderByPurchaseSn(refundAfterDto.getRefundItem().getDocId());
-        FranchiseeEntity franchiseeEntity = orderEntity.getFranchiseeEntity();
         RefundApproveRequest refundApproveRequest = RefundApproveRequest.of(orderEntity, refundAfterDto);
 
         RefundResponse refundResponse;
@@ -164,11 +173,12 @@ public class RefundApproveService {
                     .refundAfterMethod(refundAfterInfo.getRefundAfterMethod())
                     .build();
 
-            // 사후 환급 포인트 적립
             log.trace(" @@ refundAfterEntity.getId() = {}", refundAfterEntity.getId());
             log.trace(" @@ refundEntity.getId() = {}", refundEntity.getId());
-            pointScheduledChangeService.change(refundEntity, SignType.POSITIVE, orderEntity.getFranchiseeEntity().getBalancePercentage());
             refundEntity.addRefundAfterEntity(refundAfterEntity);
+
+            createPoint(refundEntity, orderEntity.getFranchiseeEntity());
+            createBarcode(refundEntity);
         }
 
         // VAN 으로 사전 생성된 엔티티들은 이미 환급을 위한 데이터 일부를 사전에 생성
@@ -177,6 +187,14 @@ public class RefundApproveService {
         }
 
         return refundResponse;
+    }
+
+    private void createPoint(RefundEntity refundEntity, FranchiseeEntity orderEntity) {
+        pointScheduledChangeService.change(refundEntity, SignType.POSITIVE, orderEntity.getBalancePercentage());
+    }
+
+    private void createBarcode(RefundEntity refundEntity) {
+        barcodeService.createBarcode(refundEntity.getOrderEntity().getOrderNumber(), refundEntity.getOrderEntity().getId());
     }
 
     /**

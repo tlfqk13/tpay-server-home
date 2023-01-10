@@ -11,6 +11,5 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class RefundTestPagingFindResponse {
-    int totalPage;
     private List<RefundFindAllDto.Response> refundFindResponseInterfaceList;
 }

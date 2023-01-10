@@ -60,9 +60,8 @@ public class VatService {
         //1. 제출자 인적사항
         List<String> personalInfoResult = this.findPersonalInfo(franchiseeIndex, saleTerm);
         //2. 물품판매 총합계
-        List<String> totalResult = orderService.findCmsVatTotal(franchiseeIndex, startLocalDate, startEndDate, RefundType.ALL);
+        List<String> totalResult = orderService.findCmsVatTotal(franchiseeIndex, startLocalDate, startEndDate, RefundType.ALL, false);
         //3. 물품판매 명세
-        // TODO: 2022/11/03 vatDetailApp - > 고객이름, 국적 빼고 보내줘야함
         List<List<String>> detailResult = this.findCmsVatDetailFromApp(franchiseeIndex, startLocalDate, startEndDate);
 
         return VatDetailResponse.builder()
