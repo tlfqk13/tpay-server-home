@@ -315,7 +315,8 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
                         orderEntity.totalAmount,
                         refundEntity.totalRefund,
                         customerEntity.departureStatus,
-                        refundEntity.refundAfterEntity.paymentStatus
+                        refundEntity.refundAfterEntity.paymentStatus,
+                        customerEntity.customerEmail
                 ))
                 .from(orderEntity)
                 .leftJoin(orderEntity.refundEntity, refundEntity)
