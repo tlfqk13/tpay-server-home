@@ -9,4 +9,5 @@ import lombok.*;
 @AllArgsConstructor
 public class FranchiseeApplicantStatusInfo {
     private FranchiseeStatus franchiseeStatus;
+    private Long count;
 }

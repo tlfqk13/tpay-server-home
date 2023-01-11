@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
 /**
  * 직원 관련 CRUD, 세팅변경
  */
@@ -29,9 +28,8 @@ public class EmployeeController {
     /**
      * 가맹점별 직원 목록 조회 - 가맹점주가 설정
      */
-    @GetMapping("/{franchiseeIndex}")
-    public ResponseEntity<List<EmployeeFindResponse>> findAllByFranchiseeId(@PathVariable Long franchiseeIndex,
-                                                                            @KtpIndexInfo IndexInfo indexInfo) {
+    @GetMapping
+    public ResponseEntity<List<EmployeeFindResponse>> findAllByFranchiseeId(@KtpIndexInfo IndexInfo indexInfo) {
         List<EmployeeFindResponse> result = employeeFindService.findAllByFranchiseeId(indexInfo.getIndex());
         return ResponseEntity.ok(result);
     }
@@ -39,9 +37,8 @@ public class EmployeeController {
     /**
      * 직원 등록 - 가맹점주가 설정
      */
-    @PostMapping("/{franchiseeIndex}")
+    @PostMapping
     public ResponseEntity<EmployeeEntity> registration(
-            @PathVariable Long franchiseeIndex,
             @RequestBody EmployeeRegistrationRequest employeeRegistrationRequest,
             @KtpIndexInfo IndexInfo indexInfo
     ) {
@@ -61,10 +58,9 @@ public class EmployeeController {
     /**
      * 직원 정보 수정 - 가맹점주가 설정
      */
-    @PatchMapping("/{franchiseeIndex}")
+    @PatchMapping
     public ResponseEntity<Boolean> update(
-        @PathVariable Long franchiseeIndex,
-        @RequestBody EmployeeUpdateRequest employeeUpdateRequest) {
+            @RequestBody EmployeeUpdateRequest employeeUpdateRequest) {
         boolean result = employeeUpdateService.update(employeeUpdateRequest);
         return ResponseEntity.ok(result);
     }
@@ -72,9 +68,8 @@ public class EmployeeController {
     /**
      * 직원 세팅 변경 - 직원 설정
      */
-    @PatchMapping("/{employeeIndex}/settings")
+    @PatchMapping("/settings")
     public ResponseEntity<EmployeeSettingDto.Response> changeSoundOrVibration(
-            @PathVariable Long employeeIndex,
             @RequestBody EmployeeSettingDto.Request request,
             @KtpIndexInfo IndexInfo indexInfo
     ) {

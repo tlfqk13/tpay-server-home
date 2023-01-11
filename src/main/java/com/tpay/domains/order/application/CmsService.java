@@ -95,10 +95,20 @@ public class CmsService {
         customerInfoList.add(cmsTotalResponse.getWithdrawalDate() + "일");
         customerInfoList.add(NumberFormatConverter.addCommaToNumber(vatTotalResponse.getTotalCommission()));
 
-        return CmsDetailResponse.builder().commissionInfoList(commissionInfoList).customerInfoList(customerInfoList).build();
+        String downloadLink = buildCmsFile(franchiseeIndex, requestDate, RefundType.ALL, vatTotalResponse);
+
+        return CmsDetailResponse.builder()
+                .commissionInfoList(commissionInfoList)
+                .customerInfoList(customerInfoList)
+                .downloadLink(downloadLink)
+                .build();
     }
 
-    public String cmsDownloads(Long franchiseeIndex, String requestDate, RefundType refundType) {
+    private String buildCmsFile(Long franchiseeIndex, String requestDate, RefundType refundType) {
+        return buildCmsFile(franchiseeIndex, requestDate, refundType, null);
+    }
+
+    private String buildCmsFile(Long franchiseeIndex, String requestDate, RefundType refundType, VatTotalDto.Response vatTotalResponse) {
         try {
             ClassPathResource resource = new ClassPathResource("KTP_CMS_Form.xlsx");
             File file1;
@@ -110,8 +120,8 @@ public class CmsService {
             XSSFWorkbook xssfWorkbook = new XSSFWorkbook(fileInputStream);
             XSSFSheet sheet = xssfWorkbook.getSheetAt(0);
             XSSFSheet sheet1 = xssfWorkbook.getSheetAt(1);
-            // TODO: 2022/02/03 엑셀파일 일부 write 후 저장까지 테스트 완료 포멧에 맞게 입력하는 로직 정해지면 구현할 것
-            // TODO: 2022/07/14 CMS 청구내역 엑셀파일 양식 새롭게 받음.
+            // 2022/02/03 엑셀파일 일부 write 후 저장까지 테스트 완료 포멧에 맞게 입력하는 로직 정해지면 구현할 것
+            // 2022/07/14 CMS 청구내역 엑셀파일 양식 새롭게 받음.
 
             List<LocalDate> date = setUpDate(requestDate);
             LocalDate startLocalDate = date.get(0);
@@ -122,7 +132,12 @@ public class CmsService {
             boolean isCms = true; // cms 는 사후,즉시 구분이 없기때문에
             List<List<String>> detailMonthlyResult = orderService.findCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate, isPaging, refundType, isCms);
             // 2. 물품판매 총합계
-            List<String> totalResult = orderService.findCmsVatTotal(franchiseeIndex, startLocalDate, endLocalDate, refundType,isCms);
+            List<String> totalResult;
+            if (null == vatTotalResponse) {
+                totalResult = orderService.findCmsVatTotal(franchiseeIndex, startLocalDate, endLocalDate, refundType, isCms);
+            } else {
+                totalResult = vatTotalResponseToStringList(vatTotalResponse);
+            }
             // TopSection
             List<String> topSectionInfo = this.topSectionInfo(franchiseeIndex, startLocalDate, endLocalDate);
 
@@ -136,14 +151,10 @@ public class CmsService {
             log.trace("detailMonthlyResult.size() : {} ", detailMonthlyResult.size());
             log.trace("franchiseeIndex : {} ", franchiseeIndex);
 
-            if (detailMonthlyResult.size() == 15) {
+            detailResultRow(xssfWorkbook, sheet, detailMonthlyResult, totalResult, false);
+            if (detailMonthlyResult.size() >= 15) {
                 // 물품상세 내역
-                detailResultRow(xssfWorkbook, sheet, detailMonthlyResult, totalResult, false);
-                detailMonthlyResult = orderService.findCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate, isPaging, refundType, isCms);
                 detailResultRow(xssfWorkbook, sheet1, detailMonthlyResult, totalResult, isPaging);
-            } else {
-                detailMonthlyResult = orderService.findCmsVatDetail(franchiseeIndex, startLocalDate, endLocalDate, true, refundType, isCms);
-                detailResultRow(xssfWorkbook, sheet, detailMonthlyResult, totalResult, false);
             }
 
             StringBuilder fileName = new StringBuilder();
@@ -155,8 +166,17 @@ public class CmsService {
         }
     }
 
-    public void cmsAdminDownloads(String requestDate, RefundType refundType) {
+    private List<String> vatTotalResponseToStringList(VatTotalDto.Response response) {
+        return Arrays.asList(
+                NumberFormatConverter.addCommaToNumber(response.getTotalCount())
+                , NumberFormatConverter.addCommaToNumber(response.getTotalAmount())
+                , NumberFormatConverter.addCommaToNumber(response.getTotalVat())
+                , NumberFormatConverter.addCommaToNumber(response.getTotalRefund())
+                , NumberFormatConverter.addCommaToNumber(response.getTotalCommission())
+        );
+    }
 
+    public void cmsAdminDownloads(String requestDate, RefundType refundType) {
         List<LocalDate> date = setUpDate(requestDate);
         LocalDate startLocalDate = date.get(0);
         LocalDate endLocalDate = date.get(1);
@@ -167,7 +187,7 @@ public class CmsService {
 
         List<List<String>> totalResult = refundDetailFindService.findFranchiseeId(startLocalDate, endLocalDate);
         for (List<String> strings : totalResult) {
-            this.cmsDownloads(Long.valueOf(strings.get(0)), requestYearMonthly, refundType);
+            this.buildCmsFile(Long.valueOf(strings.get(0)), requestYearMonthly, refundType);
         }
 
     }
@@ -212,7 +232,7 @@ public class CmsService {
         CellStyle detailResultRowCellStyle = cellStyleCustom(xssfWorkbook);
         if (isPaging) {
             for (int i = 0; i < detailMonthlyResult.size(); i++) {
-                // TODO: 2022/07/15 엑셀양식 15개 max 라서 건수 많으면 추가로 그릴 시트 요청 필요.
+                // 2022/07/15 엑셀양식 15개 max 라서 건수 많으면 추가로 그릴 시트 요청 필요.
                 XSSFRow detailResultRow = sheet.getRow(i + CmsCustomValue.DETAILRESULT_ROW_PAGING);
                 detailResultRow.createCell(0, STRING).setCellStyle(detailResultRowCellStyle);
                 detailResultRow.getCell(0).setCellValue(i + 1);
@@ -234,7 +254,7 @@ public class CmsService {
             }
         } else {
             for (int i = 0; i < detailMonthlyResult.size(); i++) {
-                // TODO: 2022/07/15 엑셀양식 15개 max 라서 건수 많으면 추가로 그릴 시트 요청 필요.
+                // 2022/07/15 엑셀양식 15개 max 라서 건수 많으면 추가로 그릴 시트 요청 필요.
                 XSSFRow detailResultRow = sheet.getRow(i + CmsCustomValue.DETAILRESULT_ROW);
                 detailResultRow.createCell(0, STRING).setCellStyle(detailResultRowCellStyle);
                 detailResultRow.getCell(0).setCellValue(i + 1);
@@ -328,7 +348,7 @@ public class CmsService {
         return cellStyle;
     }
 
-    private CellStyle secondSectionCellStyle(XSSFWorkbook xssfWorkbook){
+    private CellStyle secondSectionCellStyle(XSSFWorkbook xssfWorkbook) {
         CellStyle cellStyle = xssfWorkbook.createCellStyle();
         cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
         cellStyle.setAlignment(HorizontalAlignment.CENTER);

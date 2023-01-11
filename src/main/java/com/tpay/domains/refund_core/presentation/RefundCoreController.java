@@ -1,7 +1,6 @@
 package com.tpay.domains.refund_core.presentation;
 
 import com.tpay.commons.util.IndexInfo;
-import com.tpay.commons.util.UserSelector;
 import com.tpay.commons.util.resolver.KtpIndexInfo;
 import com.tpay.domains.order.application.dto.OrderDto;
 import com.tpay.domains.refund.application.dto.RefundSaveRequest;
@@ -34,13 +33,10 @@ public class RefundCoreController {
 
     /**
      * 환급 승인 요청
-     * URL에 있는 userSelector와 index는 jwt 추가검증 때문에 삽입. 서비스단에 사용되진 않음
      */
-    @PostMapping("/approval/{userSelector}/{index}")
+    @PostMapping("/approval")
     public ResponseEntity<RefundResponse> refundApproval(
             @RequestBody RefundSaveRequest request,
-            @PathVariable UserSelector userSelector,
-            @PathVariable Long index,
             @KtpIndexInfo IndexInfo indexInfo) {
         log.debug("Refund Approval Start = {}", request);
         RefundResponse response = refundApproveService.approve(request, indexInfo);
@@ -50,13 +46,11 @@ public class RefundCoreController {
 
     /**
      * 환급 취소 요청
-     * URL에 있는 userSelector와 index는 jwt 추가검증 때문에 삽입. 서비스단에 사용되진 않음
      */
-    @PatchMapping("/cancel/{userSelector}/{index}")
+    @PatchMapping("/cancel")
     public ResponseEntity<RefundResponse> refundCancel(
-            @RequestParam Long customerIndex, @RequestParam Long refundIndex,
-            @PathVariable UserSelector userSelector,
-            @PathVariable Long index
+            @RequestParam Long customerIndex,
+            @RequestParam Long refundIndex
     ) {
         log.debug("Refund Cancel Start = {}", customerIndex);
         RefundResponse response = refundCancelService.cancel(customerIndex, refundIndex);
@@ -65,11 +59,10 @@ public class RefundCoreController {
     }
 
     // 관리자가 직접 가맹점 환급 취소시 사용
-    @PatchMapping("/admin-cancel/{userSelector}/{index}")
+    @PatchMapping("/admin-cancel")
     public ResponseEntity<RefundResponse> refundCancelFromAdmin(
-            @RequestParam Long customerIndex, @RequestParam Long refundIndex,
-            @PathVariable UserSelector userSelector,
-            @PathVariable Long index
+            @RequestParam Long customerIndex,
+            @RequestParam Long refundIndex
     ) {
         RefundResponse response = refundCancelService.cancel(customerIndex, refundIndex);
         return ResponseEntity.ok(response);

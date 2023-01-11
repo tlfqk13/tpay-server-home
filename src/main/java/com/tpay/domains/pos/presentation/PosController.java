@@ -22,19 +22,17 @@ public class PosController {
     private final PosService posService;
     private final PosBarcodeService posBarcodeService;
 
-    @PatchMapping("/{franchiseeIndex}")
+    @PatchMapping
     public ResponseEntity<Boolean> updatePosType(
-        @PathVariable Long franchiseeIndex,
-        @RequestBody UpdatePosTypeDto.Request updatePosTypeDto,
-        @KtpIndexInfo IndexInfo indexInfo){
+            @RequestBody UpdatePosTypeDto.Request updatePosTypeDto,
+            @KtpIndexInfo IndexInfo indexInfo) {
 
-        Boolean result = posService.updatePosType(indexInfo.getIndex(),updatePosTypeDto);
+        Boolean result = posService.updatePosType(indexInfo.getIndex(), updatePosTypeDto);
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/refund/limit/{franchiseeIndex}")
+    @PostMapping("/refund/limit")
     public ResponseEntity<PosBarcodeResponse> createBarcode(
-            @PathVariable Long franchiseeIndex,
             @RequestBody RefundLimitRequest refundLimitRequest,
             @KtpIndexInfo IndexInfo indexInfo) {
         PosBarcodeResponse posBarcodeResponse = posBarcodeService.saveAndCreateBarcode(indexInfo.getIndex(), refundLimitRequest);

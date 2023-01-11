@@ -40,7 +40,7 @@ public class PointFindService {
     private final FranchiseeApplicantFindService franchiseeApplicantFindService;
 
     public PointFindResponse findPoints(
-        Long franchiseeIndex, Integer week, Integer month, Integer page, Integer size) {
+            Long franchiseeIndex, Integer week, Integer month, Integer page, Integer size) {
 
         //common
         LocalDate endDate = LocalDate.now().plusDays(1);
@@ -57,20 +57,28 @@ public class PointFindService {
         List<PointEntity> pointEntityList =
                 pointRepository
                         .findAllByPointStatusInAndFranchiseeEntityIdAndCreatedDateBetween(
-                                new ArrayList<>(List.of(PointStatus.WITHDRAW, PointStatus.COMPLETE,PointStatus.SAVE))
-                                ,franchiseeIndex
-                                ,startDate.atStartOfDay()
-                                ,endDate.atStartOfDay()
-                                ,pageRequest);
+                                new ArrayList<>(List.of(PointStatus.WITHDRAW, PointStatus.COMPLETE, PointStatus.SAVE))
+                                , franchiseeIndex
+                                , startDate.atStartOfDay()
+                                , endDate.atStartOfDay()
+                                , pageRequest);
         List<PointInfo> pointInfoList = pointEntityList.stream().map(PointInfo::new).collect(Collectors.toList());
         //merge - sort - return
 //        pointInfoList.addAll(pointInfoList1);
 //        pointInfoList.sort(new PointComparator());
+
+        Long totalPoints = pointRepository.findTotalPoints(franchiseeIndex);
+        Long scheduledPoints = pointRepository.findScheduledPoints(franchiseeIndex);
+        Long disappearPoints = pointRepository.findDisappearPoints(franchiseeIndex, DisappearDate.getDisappearDate());
+
         return PointFindResponse.builder()
-            .startDate(startDate.format(DateTimeFormatter.ofPattern("yyyy. MM. dd")))
-            .endDate(endDate.minusDays(1).format(DateTimeFormatter.ofPattern("yyyy. MM. dd")))
-            .pointInfoList(pointInfoList)
-            .build();
+                .startDate(startDate.format(DateTimeFormatter.ofPattern("yyyy. MM. dd")))
+                .endDate(endDate.minusDays(1).format(DateTimeFormatter.ofPattern("yyyy. MM. dd")))
+                .pointInfoList(pointInfoList)
+                .totalPoints(totalPoints)
+                .scheduledPoints(scheduledPoints)
+                .disappearPoints(disappearPoints)
+                .build();
     }
 
     // 전체 포인트 / 적립예정포인트 / 소멸예정포인트 한방 Native Query. 순수 Jpa로 Group By 구현이 어렵고 성능이슈에 따라 Native로 남겨둠
@@ -79,30 +87,30 @@ public class PointFindService {
         return pointRepository.findPointsTotal(franchiseeIndex, disappearDate);
     }
 
-    public AdminPointResponse findPointsAdmin(Boolean isAll, WithdrawalStatus withdrawalStatus, int page,String searchKeyword) {
+    public AdminPointResponse findPointsAdmin(Boolean isAll, WithdrawalStatus withdrawalStatus, int page, String searchKeyword) {
         Page<PointEntity> result;
         List<Boolean> booleanList = new ArrayList<>(List.of(false));
-        Pageable pageRequest = PageRequest.of(page,15);
+        Pageable pageRequest = PageRequest.of(page, 15);
         boolean isBusinessNumber = searchKeyword.chars().allMatch(Character::isDigit);
 
         if (isAll) {
             booleanList.add(true);
         }
 
-        if(searchKeyword.isEmpty()){
-            result = pointRepository.findByPointStatusInAndIsReadInOrderByIdDesc(withdrawalStatus.getPointStatusList(), booleanList,pageRequest);
-        }else{
-            if(isBusinessNumber){
-                result = pointRepository.findByPointStatusInAndIsReadInAndFranchiseeEntityBusinessNumberContainingOrderByIdDesc(withdrawalStatus.getPointStatusList(),booleanList,pageRequest,searchKeyword);
-            }else{
-                result = pointRepository.findByPointStatusInAndIsReadInAndFranchiseeEntityStoreNameContainingOrderByIdDesc(withdrawalStatus.getPointStatusList(),booleanList,pageRequest,searchKeyword);
+        if (searchKeyword.isEmpty()) {
+            result = pointRepository.findByPointStatusInAndIsReadInOrderByIdDesc(withdrawalStatus.getPointStatusList(), booleanList, pageRequest);
+        } else {
+            if (isBusinessNumber) {
+                result = pointRepository.findByPointStatusInAndIsReadInAndFranchiseeEntityBusinessNumberContainingOrderByIdDesc(withdrawalStatus.getPointStatusList(), booleanList, pageRequest, searchKeyword);
+            } else {
+                result = pointRepository.findByPointStatusInAndIsReadInAndFranchiseeEntityStoreNameContainingOrderByIdDesc(withdrawalStatus.getPointStatusList(), booleanList, pageRequest, searchKeyword);
             }
         }
 
         List<AdminPointInfo> adminPointInfoList = result.stream().map(AdminPointInfo::new).collect(Collectors.toList());
         int totalPage = result.getTotalPages();
-        if(totalPage != 0){
-            totalPage = totalPage -1;
+        if (totalPage != 0) {
+            totalPage = totalPage - 1;
         }
         AdminPointResponse adminPointResponse = AdminPointResponse.builder()
                 .adminPointInfoList(adminPointInfoList)
@@ -119,31 +127,31 @@ public class PointFindService {
         FranchiseeBankEntity franchiseeBankEntity = franchiseeBankFindService.findByFranchiseeEntity(franchiseeEntity);
 
         return PointFindDetailResponse.builder()
-            .storeName(franchiseeEntity.getStoreName())
-            .sellerName(franchiseeEntity.getSellerName())
-            .businessNumber(franchiseeEntity.getBusinessNumber())
-            .storeTel(franchiseeEntity.getStoreTel())
-            .email(franchiseeEntity.getEmail())
-            .isTaxRefundShop(franchiseeEntity.getIsTaxRefundShop())
-            .franchiseeStatus(franchiseeApplicantEntity.getFranchiseeStatus())
-            .signboard(franchiseeEntity.getSignboard())
-            .productCategory(franchiseeEntity.getProductCategory())
-            .storeNumber(franchiseeEntity.getStoreNumber())
-            .storeAddressBasic(franchiseeEntity.getStoreAddressBasic())
-            .storeAddressDetail(franchiseeEntity.getStoreAddressDetail())
-            .createdDate(franchiseeEntity.getCreatedDate())
-            .isRead(franchiseeApplicantEntity.getIsRead())
+                .storeName(franchiseeEntity.getStoreName())
+                .sellerName(franchiseeEntity.getSellerName())
+                .businessNumber(franchiseeEntity.getBusinessNumber())
+                .storeTel(franchiseeEntity.getStoreTel())
+                .email(franchiseeEntity.getEmail())
+                .isTaxRefundShop(franchiseeEntity.getIsTaxRefundShop())
+                .franchiseeStatus(franchiseeApplicantEntity.getFranchiseeStatus())
+                .signboard(franchiseeEntity.getSignboard())
+                .productCategory(franchiseeEntity.getProductCategory())
+                .storeNumber(franchiseeEntity.getStoreNumber())
+                .storeAddressBasic(franchiseeEntity.getStoreAddressBasic())
+                .storeAddressDetail(franchiseeEntity.getStoreAddressDetail())
+                .createdDate(franchiseeEntity.getCreatedDate())
+                .isRead(franchiseeApplicantEntity.getIsRead())
 
-            .requestedDate(pointEntity.getCreatedDate())
-            .pointStatus(pointEntity.getPointStatus())
-            .currentPoint(pointEntity.getBalance() + pointEntity.getChange())
-            .amount(pointEntity.getChange())
-            .afterPayment(pointEntity.getBalance())
-            .isReadTPoint(pointEntity.getIsRead())
+                .requestedDate(pointEntity.getCreatedDate())
+                .pointStatus(pointEntity.getPointStatus())
+                .currentPoint(pointEntity.getBalance() + pointEntity.getChange())
+                .amount(pointEntity.getChange())
+                .afterPayment(pointEntity.getBalance())
+                .isReadTPoint(pointEntity.getIsRead())
 
-            .bankName(franchiseeBankEntity.getBankName())
-            .accountNumber(franchiseeBankEntity.getAccountNumber())
-            .build();
+                .bankName(franchiseeBankEntity.getBankName())
+                .accountNumber(franchiseeBankEntity.getAccountNumber())
+                .build();
 
     }
 
