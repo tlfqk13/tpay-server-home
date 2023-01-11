@@ -55,7 +55,7 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
                         orderEntity.totalAmount,
                         orderEntity.totalVat,
                         refundEntity.totalRefund,
-                        refundEntity.totalRefund.castToNum(Integer.class).subtract(pointScheduledEntity.value).stringValue(),
+                        franchiseeEntity.productCategory,
                         refundEntity.createdDate
                 ))
                 .from(orderEntity)

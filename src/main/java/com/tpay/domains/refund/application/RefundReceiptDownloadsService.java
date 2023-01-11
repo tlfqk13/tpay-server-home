@@ -94,7 +94,7 @@ public class RefundReceiptDownloadsService {
             refundAfterSection.getCell(COLUMN_INDEX).setCellValue(NumberFormatConverter.addCommaToNumber(response.getTotalRefund())); // 세엑계
 
             refundAfterSection = sheet.getRow(28);
-            refundAfterSection.getCell(COLUMN_INDEX).setCellValue(NumberFormatConverter.addCommaToNumber(response.getAdministrativeCharge())); //제비용
+            refundAfterSection.getCell(COLUMN_INDEX).setCellValue(NumberFormatConverter.addCommaToNumber(response.getCategory())); //제비용
 
             refundAfterSection = sheet.getRow(29);
             refundAfterSection.getCell(COLUMN_INDEX).setCellValue(NumberFormatConverter.addCommaToNumber(response.getTotalRefund())); // 환급액

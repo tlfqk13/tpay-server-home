@@ -172,13 +172,13 @@ public class RefundApproveService {
                     .kioskCode(refundAfterInfo.getKioskCode())
                     .cityRefundCenterCode(refundApproveRequest.getCityRefundCenterCode())
                     .refundAfterMethod(refundAfterInfo.getRefundAfterMethod())
-                    .paymentStatus(PaymentStatus.PAYMENT_WAIT)
                     .build();
 
             log.trace(" @@ refundAfterEntity.getId() = {}", refundAfterEntity.getId());
             log.trace(" @@ refundEntity.getId() = {}", refundEntity.getId());
             refundEntity.addRefundAfterEntity(refundAfterEntity);
 
+            updatePaymentStatus(refundEntity, refundAfterEntity);
             createPoint(refundEntity, orderEntity.getFranchiseeEntity());
             createBarcode(refundEntity);
         }
@@ -189,6 +189,12 @@ public class RefundApproveService {
         }
 
         return refundResponse;
+    }
+
+    private void updatePaymentStatus(RefundEntity refundEntity, RefundAfterEntity refundAfterEntity) {
+        if(refundEntity.getTakeOutNumber().contains("acpt")){
+            refundAfterEntity.updatePaymentStatus(PaymentStatus.PAYMENT_WAIT);
+        }
     }
 
     private void createPoint(RefundEntity refundEntity, FranchiseeEntity orderEntity) {
