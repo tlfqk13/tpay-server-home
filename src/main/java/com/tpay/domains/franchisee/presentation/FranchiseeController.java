@@ -26,15 +26,13 @@ public class FranchiseeController {
     private final MyPageFindService myPageFindService;
 
 
-
     /**
      * 세팅 변경
      */
-    @PatchMapping("/{franchiseeIndex}/settings")
+    @PatchMapping("/settings")
     public ResponseEntity<FranchiseeSettingDto.Response> changeSoundOrVibration(
-        @PathVariable Long franchiseeIndex,
-        @RequestBody FranchiseeSettingDto.Request request,
-        @KtpIndexInfo IndexInfo indexInfo
+            @RequestBody FranchiseeSettingDto.Request request,
+            @KtpIndexInfo IndexInfo indexInfo
     ) {
         FranchiseeSettingDto.Response response = franchiseeSettingService.changeSoundOrVibration(indexInfo.getIndex(), request);
         return ResponseEntity.ok(response);
@@ -43,9 +41,8 @@ public class FranchiseeController {
     /**
      * 팝업 설정 변경
      */
-    @PatchMapping("/{franchiseeIndex}/popUp")
-    public ResponseEntity<Boolean> updatePopUp(@PathVariable Long franchiseeIndex,
-                                               @KtpIndexInfo IndexInfo indexInfo) {
+    @PatchMapping("/popUp")
+    public ResponseEntity<Boolean> updatePopUp(@KtpIndexInfo IndexInfo indexInfo) {
         boolean result = franchiseeUpdateService.updatePopUp(indexInfo.getIndex());
         return ResponseEntity.ok(result);
     }
@@ -53,9 +50,8 @@ public class FranchiseeController {
     /**
      * 마이페이지 조회
      */
-    @GetMapping("/{franchiseeIndex}")
+    @GetMapping
     public ResponseEntity<MyPageResponse> findMyPageInfo(
-            @PathVariable Long franchiseeIndex,
             @KtpIndexInfo IndexInfo indexInfo) {
         MyPageResponse response = myPageFindService.findByFranchiseeIndex(indexInfo.getIndex());
         return ResponseEntity.ok(response);
@@ -64,12 +60,11 @@ public class FranchiseeController {
     /**
      * 가맹점 상세 정보 수정
      */
-    @PatchMapping("/{franchiseeIndex}")
+    @PatchMapping
     public ResponseEntity<FranchiseeUpdateDtoResponse> updateFranchisee(
-        @PathVariable Long franchiseeIndex,
-        @RequestBody FranchiseeUpdateDtoRequest franchiseeUpdateDtoRequest,
-        @KtpIndexInfo IndexInfo indexInfo
-    )  {
+            @RequestBody FranchiseeUpdateDtoRequest franchiseeUpdateDtoRequest,
+            @KtpIndexInfo IndexInfo indexInfo
+    ) {
         FranchiseeUpdateDtoResponse result = franchiseeUpdateService.updateFranchisee(indexInfo.getIndex(), franchiseeUpdateDtoRequest);
         return ResponseEntity.ok(result);
     }

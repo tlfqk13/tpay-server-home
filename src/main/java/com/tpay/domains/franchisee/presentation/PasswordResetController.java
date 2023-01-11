@@ -32,9 +32,9 @@ public class PasswordResetController {
      */
     @GetMapping("/selfCertification/{businessNumber}")
     public ResponseEntity<Boolean> selfCertification(
-        @PathVariable String businessNumber,
-        @RequestParam String name,
-        @RequestParam String phoneNumber
+            @PathVariable String businessNumber,
+            @RequestParam String name,
+            @RequestParam String phoneNumber
     ) {
         boolean result = passwordResetService.selfCertification(businessNumber, name, phoneNumber);
         return ResponseEntity.ok(result);
@@ -45,8 +45,8 @@ public class PasswordResetController {
      */
     @PatchMapping("/out/{businessNumber}")
     public ResponseEntity<Boolean> resetOutPassword(
-        @PathVariable String businessNumber,
-        @RequestBody PasswordChangeRequest passwordChangeRequest
+            @PathVariable String businessNumber,
+            @RequestBody PasswordChangeRequest passwordChangeRequest
     ) {
         boolean result = passwordResetService.reset(businessNumber, passwordChangeRequest);
         return ResponseEntity.ok(result);
@@ -55,12 +55,11 @@ public class PasswordResetController {
     /**
      * 로그인 후 비밀번호 재설정 검증 단계
      */
-    @GetMapping("/equals/{franchiseeIndex}")
+    @GetMapping("/equals")
     public ResponseEntity<Boolean> correctPassword(
-            @PathVariable Long franchiseeIndex,
             @RequestParam String password,
             @KtpIndexInfo IndexInfo indexInfo
-            ) {
+    ) {
         boolean result = passwordResetService.correctPassword(indexInfo.getIndex(), password);
         return ResponseEntity.ok(result);
     }
@@ -68,11 +67,10 @@ public class PasswordResetController {
     /**
      * 로그인 후 비밀번호 재설정
      */
-    @PatchMapping("/in/{franchiseeIndex}")
+    @PatchMapping("/in")
     public ResponseEntity<Boolean> resetPassword(
-        @PathVariable Long franchiseeIndex,
-        @RequestBody PasswordChangeRequest passwordChangeRequest,
-        @KtpIndexInfo IndexInfo indexInfo) {
+            @RequestBody PasswordChangeRequest passwordChangeRequest,
+            @KtpIndexInfo IndexInfo indexInfo) {
         boolean result = passwordResetService.change(indexInfo.getIndex(), passwordChangeRequest);
         return ResponseEntity.ok(result);
     }

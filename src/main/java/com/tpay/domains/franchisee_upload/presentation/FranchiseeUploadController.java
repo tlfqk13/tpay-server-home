@@ -1,6 +1,5 @@
 package com.tpay.domains.franchisee_upload.presentation;
 
-
 import com.tpay.commons.util.IndexInfo;
 import com.tpay.commons.util.resolver.KtpIndexInfo;
 import com.tpay.domains.franchisee_upload.application.FranchiseeUploadService;
@@ -24,9 +23,8 @@ public class FranchiseeUploadController {
     /**
      * 사후면세지정증 이미지 업로드
      */
-    @PostMapping("/{franchiseeIndex}")
+    @PostMapping
     public ResponseEntity<String> uploadImageAndBankInfo(
-            @PathVariable Long franchiseeIndex,
             @RequestParam String imageCategory,
             @RequestParam(required = false, value = "franchiseeBankInfo") String franchiseeBankInfoString,
             @RequestParam MultipartFile uploadImage,
@@ -38,13 +36,12 @@ public class FranchiseeUploadController {
     /**
      * 사후면세지정증 이미지 수정
      */
-    @PatchMapping("/{franchiseeIndex}")
+    @PatchMapping
     public ResponseEntity<String> uploadUpdateImageAndBankInfo(
-        @PathVariable Long franchiseeIndex,
-        @RequestParam(required = false) String imageCategory,
-        @RequestParam("franchiseeBankInfo") String franchiseeBankInfoString,
-        @RequestParam(required = false) MultipartFile uploadImage,
-        @KtpIndexInfo IndexInfo indexInfo) {
+            @RequestParam(required = false) String imageCategory,
+            @RequestParam("franchiseeBankInfo") String franchiseeBankInfoString,
+            @RequestParam(required = false) MultipartFile uploadImage,
+            @KtpIndexInfo IndexInfo indexInfo) {
 
         String s3Path = franchiseeUploadService.uploadUpdateImageAndBankInfo(indexInfo.getIndex(), franchiseeBankInfoString, imageCategory, uploadImage);
         return ResponseEntity.ok(s3Path);
