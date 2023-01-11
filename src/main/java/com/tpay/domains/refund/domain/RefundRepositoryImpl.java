@@ -37,7 +37,6 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
-    // 2022-12-28 바코드 주소를 넣어야합니다?
     @Override
     public List<RefundReceiptDto.Response> findRefundReceipt(String encryptPassportNumber, boolean refundAfter) {
         List<RefundReceiptDto.Response> content = queryFactory

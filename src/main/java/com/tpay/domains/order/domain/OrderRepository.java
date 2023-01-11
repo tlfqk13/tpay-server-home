@@ -95,7 +95,10 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long>, Order
     List<OrderEntity> findByOrderNumbers(List<String> docIds);
 
     @Query(value = "select o from OrderEntity o  join fetch o.customerEntity " +
-            "where o.customerEntity.id = :customerId and o.orderNumber is not null")
+            "where o.customerEntity.id = :customerId and o.orderNumber is not null and o.customerEntity.id is not null")
     List<OrderEntity> findOrders(@Param("customerId")Long customerId);
 
+    @Query(value = "select o from OrderEntity o " +
+            "where o.orderNumber = :barcode and o.orderNumber is not null and o.customerEntity.id is null")
+    List<OrderEntity> findOrdersPassportMapping(String barcode);
 }

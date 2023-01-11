@@ -116,15 +116,6 @@ public class CustomerService {
             totalRefundCompleted = response.size();
         }
 
-        if(customerEntity.getIsRegister()){
-            if(null == customerEntity.getCustomerCreditNumber()
-                    && !customerEntity.getCustomerBankName().isEmpty()
-                    && !customerEntity.getCustomerAccountNumber().isEmpty()){
-                   refundInformation = CustomerCustomValue.CARD;
-            }else{
-                refundInformation = CustomerCustomValue.CREDIT_CARD;
-            }
-        }
         return CustomerMyPageDto.Response.builder()
                 .totalRefundCompleted(totalRefundCompleted)
                 .refundInformation(refundInformation)
