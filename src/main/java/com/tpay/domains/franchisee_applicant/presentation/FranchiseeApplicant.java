@@ -2,11 +2,13 @@ package com.tpay.domains.franchisee_applicant.presentation;
 
 import com.tpay.commons.util.IndexInfo;
 import com.tpay.commons.util.resolver.KtpIndexInfo;
+import com.tpay.domains.franchisee_applicant.application.FranchiseeApplicantFindService;
 import com.tpay.domains.franchisee_applicant.application.FranchiseeReApplyService;
-import com.tpay.domains.franchisee_applicant.application.FranchiseeStatusFindService;
 import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeApplicantInfo;
 import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeApplicantReapplyResponse;
 import com.tpay.domains.franchisee_applicant.application.dto.FranchiseeApplicantStatusInfo;
+import com.tpay.domains.franchisee_applicant.domain.FranchiseeApplicantEntity;
+import com.tpay.domains.push.domain.PushHistoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +25,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/franchisee-applicants")
 public class FranchiseeApplicant {
 
-    private final FranchiseeStatusFindService franchiseeStatusFindService;
+    private final FranchiseeApplicantFindService franchiseeApplicantFindService;
+    private final PushHistoryRepository pushHistoryRepository;
     private final FranchiseeReApplyService franchiseeReApplyService;
 
     /**
@@ -32,7 +35,14 @@ public class FranchiseeApplicant {
     @GetMapping("/{franchiseeApplicantIndex}")
     public ResponseEntity<FranchiseeApplicantStatusInfo> findByIndex(
             @PathVariable Long franchiseeApplicantIndex) {
-        FranchiseeApplicantStatusInfo response = franchiseeStatusFindService.findByIndex(franchiseeApplicantIndex);
+        FranchiseeApplicantEntity franchiseeApplicant
+                = franchiseeApplicantFindService.findByIndex(franchiseeApplicantIndex);
+        long count = pushHistoryRepository.countByUserIdAndIsRead(franchiseeApplicant.getFranchiseeEntity().getId(), false);
+
+        FranchiseeApplicantStatusInfo response = FranchiseeApplicantStatusInfo.builder()
+                .franchiseeStatus(franchiseeApplicant.getFranchiseeStatus())
+                .count(count)
+                .build();
         return ResponseEntity.ok(response);
     }
 

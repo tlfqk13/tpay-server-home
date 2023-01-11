@@ -40,13 +40,4 @@ public class CmsController {
         CmsDetailResponse result = cmsService.cmsDetail(indexInfo.getIndex(), requestDate);
         return ResponseEntity.ok(result);
     }
-
-    @GetMapping("/cms/downloads")
-    public ResponseEntity<String> cmsDownloads(
-            @RequestParam String requestDate,
-            @KtpIndexInfo IndexInfo indexInfo
-    ) {
-//        String downloadLink = cmsService.buildCmsFile(indexInfo.getIndex(), requestDate);
-        return ResponseEntity.ok("");
-    }
 }
