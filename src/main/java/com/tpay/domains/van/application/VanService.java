@@ -50,7 +50,6 @@ public class VanService {
         } else {
             orders = orderRepository.findOrdersPassportMapping(refundAfterBaseDto.getBarcode());
         }
-
         for (OrderEntity order : orders) {
             if (null != order.getRefundEntity()) {
                 continue;
@@ -63,6 +62,10 @@ public class VanService {
                             "",
                             "",
                             order);
+
+            if(null == order.getCustomerEntity()){
+                order.updateCustomer(customerEntity);
+            }
 
             RefundAfterBaseDto refundAfterInfo = refundAfterDto.getRefundAfterInfo();
             RefundAfterEntity refundAfterEntity = RefundAfterEntity.builder()
@@ -77,10 +80,16 @@ public class VanService {
         }
     }
 
-    public VanOrdersDto.Response findVanOrder(String encryptedPassportNumber) {
+    public VanOrdersDto.Response findVanOrder(String encryptedPassportNumber, boolean isPassportMapping, String barcode) {
 
         String encryptNumber = encryptService.encrypt(encryptedPassportNumber);
-        List<OrdersDtoInterface> ordersDtoInterfaceList = orderRepository.findVanOrdersDetail(encryptNumber);
+        List<OrdersDtoInterface> ordersDtoInterfaceList;
+        if(isPassportMapping){
+            ordersDtoInterfaceList = orderRepository.findVanOrdersDetail(encryptNumber,barcode);
+        }else{
+            ordersDtoInterfaceList = orderRepository.findVanOrdersDetail(encryptNumber);
+        }
+
 
         List<VanOrderDetail> baseList = new ArrayList<>();
         for (OrdersDtoInterface orderDto : ordersDtoInterfaceList) {

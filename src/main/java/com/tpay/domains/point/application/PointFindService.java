@@ -12,7 +12,6 @@ import com.tpay.domains.point.application.dto.*;
 import com.tpay.domains.point.domain.PointEntity;
 import com.tpay.domains.point.domain.PointRepository;
 import com.tpay.domains.point.domain.PointStatus;
-import com.tpay.domains.point_scheduled.domain.PointScheduledRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -35,12 +34,11 @@ import java.util.stream.Collectors;
 public class PointFindService {
 
     private final PointRepository pointRepository;
-    private final PointScheduledRepository pointScheduledRepository;
     private final FranchiseeBankFindService franchiseeBankFindService;
     private final FranchiseeApplicantFindService franchiseeApplicantFindService;
 
     public PointFindResponse findPoints(
-            Long franchiseeIndex, Integer week, Integer month, Integer page, Integer size) {
+        Long franchiseeIndex, Integer week, Integer month, Integer page, Integer size) {
 
         //common
         LocalDate endDate = LocalDate.now().plusDays(1);
@@ -87,37 +85,11 @@ public class PointFindService {
         return pointRepository.findPointsTotal(franchiseeIndex, disappearDate);
     }
 
-    public AdminPointResponse findPointsAdmin(Boolean isAll, WithdrawalStatus withdrawalStatus, int page,String searchKeyword) {
-        Page<PointEntity> result;
-        List<Boolean> booleanList = new ArrayList<>(List.of(false));
-        Pageable pageRequest = PageRequest.of(page,15);
+    public Page<AdminPointInfo>  findPointsAdmin(Pageable pageable, Boolean isAll, WithdrawalStatus withdrawalStatus, String searchKeyword) {
+
         boolean isBusinessNumber = searchKeyword.chars().allMatch(Character::isDigit);
 
-        if (isAll) {
-            booleanList.add(true);
-        }
-
-        if(searchKeyword.isEmpty()){
-            result = pointRepository.findByPointStatusInAndIsReadInOrderByIdDesc(withdrawalStatus.getPointStatusList(), booleanList,pageRequest);
-        }else{
-            if(isBusinessNumber){
-                result = pointRepository.findByPointStatusInAndIsReadInAndFranchiseeEntityBusinessNumberContainingOrderByIdDesc(withdrawalStatus.getPointStatusList(),booleanList,pageRequest,searchKeyword);
-            }else{
-                result = pointRepository.findByPointStatusInAndIsReadInAndFranchiseeEntityStoreNameContainingOrderByIdDesc(withdrawalStatus.getPointStatusList(),booleanList,pageRequest,searchKeyword);
-            }
-        }
-
-        List<AdminPointInfo> adminPointInfoList = result.stream().map(AdminPointInfo::new).collect(Collectors.toList());
-        int totalPage = result.getTotalPages();
-        if(totalPage != 0){
-            totalPage = totalPage -1;
-        }
-        AdminPointResponse adminPointResponse = AdminPointResponse.builder()
-                .adminPointInfoList(adminPointInfoList)
-                .totalPage(totalPage)
-                .build();
-
-        return adminPointResponse;
+        return pointRepository.findPointsAdmin(pageable, withdrawalStatus, searchKeyword, isBusinessNumber, isAll);
     }
 
     public PointFindDetailResponse findDetailByIndex(Long pointsIndex) {
@@ -127,31 +99,31 @@ public class PointFindService {
         FranchiseeBankEntity franchiseeBankEntity = franchiseeBankFindService.findByFranchiseeEntity(franchiseeEntity);
 
         return PointFindDetailResponse.builder()
-                .storeName(franchiseeEntity.getStoreName())
-                .sellerName(franchiseeEntity.getSellerName())
-                .businessNumber(franchiseeEntity.getBusinessNumber())
-                .storeTel(franchiseeEntity.getStoreTel())
-                .email(franchiseeEntity.getEmail())
-                .isTaxRefundShop(franchiseeEntity.getIsTaxRefundShop())
-                .franchiseeStatus(franchiseeApplicantEntity.getFranchiseeStatus())
-                .signboard(franchiseeEntity.getSignboard())
-                .productCategory(franchiseeEntity.getProductCategory())
-                .storeNumber(franchiseeEntity.getStoreNumber())
-                .storeAddressBasic(franchiseeEntity.getStoreAddressBasic())
-                .storeAddressDetail(franchiseeEntity.getStoreAddressDetail())
-                .createdDate(franchiseeEntity.getCreatedDate())
-                .isRead(franchiseeApplicantEntity.getIsRead())
+            .storeName(franchiseeEntity.getStoreName())
+            .sellerName(franchiseeEntity.getSellerName())
+            .businessNumber(franchiseeEntity.getBusinessNumber())
+            .storeTel(franchiseeEntity.getStoreTel())
+            .email(franchiseeEntity.getEmail())
+            .isTaxRefundShop(franchiseeEntity.getIsTaxRefundShop())
+            .franchiseeStatus(franchiseeApplicantEntity.getFranchiseeStatus())
+            .signboard(franchiseeEntity.getSignboard())
+            .productCategory(franchiseeEntity.getProductCategory())
+            .storeNumber(franchiseeEntity.getStoreNumber())
+            .storeAddressBasic(franchiseeEntity.getStoreAddressBasic())
+            .storeAddressDetail(franchiseeEntity.getStoreAddressDetail())
+            .createdDate(franchiseeEntity.getCreatedDate())
+            .isRead(franchiseeApplicantEntity.getIsRead())
 
-                .requestedDate(pointEntity.getCreatedDate())
-                .pointStatus(pointEntity.getPointStatus())
-                .currentPoint(pointEntity.getBalance() + pointEntity.getChange())
-                .amount(pointEntity.getChange())
-                .afterPayment(pointEntity.getBalance())
-                .isReadTPoint(pointEntity.getIsRead())
+            .requestedDate(pointEntity.getCreatedDate())
+            .pointStatus(pointEntity.getPointStatus())
+            .currentPoint(pointEntity.getBalance() + pointEntity.getChange())
+            .amount(pointEntity.getChange())
+            .afterPayment(pointEntity.getBalance())
+            .isReadTPoint(pointEntity.getIsRead())
 
-                .bankName(franchiseeBankEntity.getBankName())
-                .accountNumber(franchiseeBankEntity.getAccountNumber())
-                .build();
+            .bankName(franchiseeBankEntity.getBankName())
+            .accountNumber(franchiseeBankEntity.getAccountNumber())
+            .build();
 
     }
 
