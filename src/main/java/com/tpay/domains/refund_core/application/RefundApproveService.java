@@ -30,10 +30,7 @@ import com.tpay.domains.point_scheduled.application.PointScheduledChangeService;
 import com.tpay.domains.push.application.NonBatchPushService;
 import com.tpay.domains.refund.application.RefundService;
 import com.tpay.domains.refund.application.dto.RefundSaveRequest;
-import com.tpay.domains.refund.domain.PaymentStatus;
-import com.tpay.domains.refund.domain.RefundAfterEntity;
-import com.tpay.domains.refund.domain.RefundAfterMethod;
-import com.tpay.domains.refund.domain.RefundEntity;
+import com.tpay.domains.refund.domain.*;
 import com.tpay.domains.refund_core.application.dto.*;
 import com.tpay.domains.van.domain.PaymentEntity;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static com.tpay.commons.util.UserSelector.EMPLOYEE;
@@ -145,6 +143,9 @@ public class RefundApproveService {
         OrderEntity orderEntity = orderService.findOrderByPurchaseSn(refundAfterDto.getRefundItem().getDocId());
         RefundApproveRequest refundApproveRequest = RefundApproveRequest.of(orderEntity, refundAfterDto);
 
+        checkRefundStatus(orderEntity);
+        checkOrderValidateDate(orderEntity);
+
         RefundResponse refundResponse;
         String uri = CustomValue.REFUND_SERVER + "/refund/after/approval";
         refundResponse = webRequestUtil.post(uri, refundApproveRequest);
@@ -191,6 +192,21 @@ public class RefundApproveService {
         return refundResponse;
     }
 
+    private void checkOrderValidateDate(OrderEntity orderEntity) {
+        // 반출 유효기간 3개월 초과
+        if(orderEntity.getCreatedDate().isBefore(LocalDateTime.now().minusMonths(3))){
+            throw new WebfluxGeneralException(ExceptionState.WEBFLUX_GENERAL,"MONTH");
+        }
+    }
+
+    private void checkRefundStatus(OrderEntity orderEntity) {
+        if(RefundStatus.CANCEL.equals(orderEntity.getRefundEntity().getRefundStatus())){
+            throw new WebfluxGeneralException(ExceptionState.WEBFLUX_GENERAL,"CANCEL");
+        } else if(RefundStatus.APPROVAL.equals(orderEntity.getRefundEntity().getRefundStatus())){
+            throw new WebfluxGeneralException(ExceptionState.WEBFLUX_GENERAL,"APPROVAL");
+        }
+    }
+
     private void updatePaymentStatus(RefundEntity refundEntity, RefundAfterEntity refundAfterEntity) {
         if(refundEntity.getTakeOutNumber().contains("acpt")){
             refundAfterEntity.updatePaymentStatus(PaymentStatus.PAYMENT_WAIT);
@@ -221,7 +237,7 @@ public class RefundApproveService {
         }
     }
 
-    /**
+    /**ㄹ
      * KTP에서 주문과 환급을 동시에 처리할 때 사용
      */
     @Transactional

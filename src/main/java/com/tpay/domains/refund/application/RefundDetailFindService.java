@@ -2,10 +2,13 @@ package com.tpay.domains.refund.application;
 
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
+import com.tpay.commons.util.IndexInfo;
 import com.tpay.domains.customer.application.CustomerService;
 import com.tpay.domains.customer.application.dto.CustomerPaymentType;
 import com.tpay.domains.customer.application.dto.DepartureStatus;
 import com.tpay.domains.customer.domain.CustomerEntity;
+import com.tpay.domains.employee.application.EmployeeFindService;
+import com.tpay.domains.employee.domain.EmployeeEntity;
 import com.tpay.domains.erp.test.dto.RefundType;
 import com.tpay.domains.order.application.dto.CmsDto;
 import com.tpay.domains.refund.application.dto.*;
@@ -25,6 +28,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.tpay.commons.util.UserSelector.EMPLOYEE;
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -32,6 +37,7 @@ public class RefundDetailFindService {
 
     private final RefundRepository refundRepository;
     private final CustomerService customerService;
+    private final EmployeeFindService employeeFindService;
 
     public List<RefundFindResponseInterface> findList(Long franchiseeIndex, LocalDate startDate, LocalDate endDate) {
 
@@ -70,7 +76,7 @@ public class RefundDetailFindService {
                 .build();
     }
 
-    public List<RefundByCustomerDateResponse> findRefundsByCustomerInfo(Long franchiseeIndex, RefundCustomerRequest refundCustomerRequest) {
+    public List<RefundByCustomerDateResponse> findRefundsByCustomerInfo(IndexInfo indexInfo, RefundCustomerRequest refundCustomerRequest) {
         RefundCustomerInfoRequest refundCustomerInfoRequest = refundCustomerRequest.getRefundCustomerInfoRequest();
         RefundCustomerDateRequest refundCustomerDateRequest = refundCustomerRequest.getRefundCustomerDateRequest();
 
@@ -81,6 +87,8 @@ public class RefundDetailFindService {
         String nation = refundCustomerInfoRequest.getNationality();
         String passportNumber = refundCustomerInfoRequest.getPassportNumber();
         Optional<CustomerEntity> customerEntityOptional = customerService.findCustomerByNationAndPassportNumber(passportNumber, nation);
+
+        Long franchiseeIndex = getFranchiseeIndex(indexInfo);
 
         if(customerEntityOptional.isEmpty()) {
             return Collections.emptyList();
@@ -229,6 +237,16 @@ public class RefundDetailFindService {
 
     private LocalDate getStartDate(String startDate, DateTimeFormatter yyyyMMdd) {
         return LocalDate.parse("20" + startDate, yyyyMMdd);
+    }
+
+    private Long getFranchiseeIndex(IndexInfo indexInfo) {
+        if (EMPLOYEE == indexInfo.getUserSelector()) {
+            EmployeeEntity employeeEntity = employeeFindService.findById(indexInfo.getIndex())
+                    .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Employee not exists"));
+            return employeeEntity.getFranchiseeEntity().getId();
+        }
+
+        return indexInfo.getIndex();
     }
 
 }

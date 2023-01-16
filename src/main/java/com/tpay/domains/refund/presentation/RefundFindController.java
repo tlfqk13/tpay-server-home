@@ -38,7 +38,7 @@ public class RefundFindController {
             @KtpIndexInfo IndexInfo indexInfo
     ) {
         List<RefundByCustomerDateResponse> result
-                = refundDetailFindService.findRefundsByCustomerInfo(indexInfo.getIndex(), refundCustomerRequest);
+                = refundDetailFindService.findRefundsByCustomerInfo(indexInfo, refundCustomerRequest);
         return ResponseEntity.ok(result);
     }
 

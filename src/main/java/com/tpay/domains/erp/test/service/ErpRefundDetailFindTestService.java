@@ -38,7 +38,7 @@ public class ErpRefundDetailFindTestService {
 
         String paymentInfo;
         if (CustomerPaymentType.CASH.equals(detailPaymentDto.getCustomerPaymentType())) {
-            paymentInfo = detailPaymentDto.getCustomerAccountNumber() + '|' + detailPaymentDto.getCustomerBankName();
+            paymentInfo = detailPaymentDto.getCustomerAccountNumber() + '/' + detailPaymentDto.getCustomerBankName();
         } else {
             paymentInfo = detailPaymentDto.getCustomerCreditNumber();
         }
@@ -74,8 +74,8 @@ public class ErpRefundDetailFindTestService {
         String paymentInfo = request.getDetailPaymentInfo().getPaymentInfo();
 
         if(CustomerPaymentType.CASH.equals(customerPaymentType)){
-            String customerBankName = paymentInfo.substring(paymentInfo.indexOf('|') + 1);
-            String customerAccountNumber = paymentInfo.substring(0,paymentInfo.indexOf('|')-1);
+            String customerBankName = paymentInfo.substring(paymentInfo.indexOf('/') + 1);
+            String customerAccountNumber = paymentInfo.substring(0,paymentInfo.indexOf('/')-1);
             customerEntity.updateCustomerPaymentInfo(customerPaymentType, null,
                     customerBankName,customerAccountNumber);
         }else{
