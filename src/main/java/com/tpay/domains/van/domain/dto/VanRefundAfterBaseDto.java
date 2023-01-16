@@ -11,4 +11,5 @@ public class VanRefundAfterBaseDto {
     String kioskBsnmCode;
     String kioskCode;
     String refundAfterMethod;
+    String barcode;
 }

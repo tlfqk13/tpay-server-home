@@ -64,8 +64,7 @@ public class CustomerService {
 
         CustomerEntity customerEntity = getCustomerEntity(customerInfo);
 
-        customerEntity.registerAfterRefundCustomer(customerEntity.getPassportNumber(),customerEntity.getCustomerName()
-                ,customerEntity.getNation(),customerInfo);
+        customerEntity.registerAfterRefundCustomer(customerEntity.getPassportNumber(), customerEntity.getNation(), customerInfo);
 
         customerEntity.updateRegister();
 
@@ -77,6 +76,7 @@ public class CustomerService {
         CustomerEntity customerEntity = getCustomerEntity(customerInfo);
         return customerEntity.getIsRegister();
     }
+    @Transactional
     public CustomerDto.Response getRegisterAfterRefundCustomer(CustomerDto.Request customerInfo) {
 
         CustomerEntity customerEntity = getCustomerEntity(customerInfo);
@@ -116,15 +116,6 @@ public class CustomerService {
             totalRefundCompleted = response.size();
         }
 
-        if(customerEntity.getIsRegister()){
-            if(null == customerEntity.getCustomerCreditNumber()
-                    && !customerEntity.getCustomerBankName().isEmpty()
-                    && !customerEntity.getCustomerAccountNumber().isEmpty()){
-                   refundInformation = CustomerCustomValue.CARD;
-            }else{
-                refundInformation = CustomerCustomValue.CREDIT_CARD;
-            }
-        }
         return CustomerMyPageDto.Response.builder()
                 .totalRefundCompleted(totalRefundCompleted)
                 .refundInformation(refundInformation)

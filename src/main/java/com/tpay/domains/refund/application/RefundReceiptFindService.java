@@ -35,6 +35,7 @@ public class RefundReceiptFindService {
     public List<RefundReceiptDto.Response> findRefundReceiptDetail(RefundReceiptDto.Request request){
 
         String encryptPassportNumber = encryptService.encrypt(request.getPassportNumber());
+        log.trace(" @@ encryptPassportNumber = {}", encryptPassportNumber);
 
         CustomerEntity customerEntity = customerRepository.findByPassportNumber(encryptPassportNumber)
                 .orElseThrow(()->new InvalidPassportInfoException(ExceptionState.INVALID_PASSPORT_INFO, "여권 조회 실패"));

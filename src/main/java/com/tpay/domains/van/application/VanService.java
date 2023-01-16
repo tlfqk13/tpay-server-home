@@ -37,16 +37,21 @@ public class VanService {
     private final PassportNumberEncryptService encryptService;
 
     @Transactional
-    public void createRefundAfter(String encryptPassportNumber, VanRefundAfterBaseDto refundAfterBaseDto) {
+    public void createRefundAfter(String encryptPassportNumber, VanRefundAfterBaseDto refundAfterBaseDto, boolean isPassportMapping) {
 
         String encryptNumber = encryptService.encrypt(encryptPassportNumber);
 
         CustomerEntity customerEntity = customerRepository.findByPassportNumber(encryptNumber)
-                .orElseThrow(()->new CustomerNotFoundException(ExceptionState.CUSTOMER_NOT_FOUND));
+                .orElseThrow(() -> new CustomerNotFoundException(ExceptionState.CUSTOMER_NOT_FOUND));
+        List<OrderEntity> orders;
 
-        List<OrderEntity> orders = orderRepository.findOrders(customerEntity.getId());
+        if (!isPassportMapping) {
+            orders = orderRepository.findOrders(customerEntity.getId());
+        } else {
+            orders = orderRepository.findOrdersPassportMapping(refundAfterBaseDto.getBarcode());
+        }
         for (OrderEntity order : orders) {
-            if(null != order.getRefundEntity()) {
+            if (null != order.getRefundEntity()) {
                 continue;
             }
 
@@ -57,6 +62,10 @@ public class VanService {
                             "",
                             "",
                             order);
+
+            if(null == order.getCustomerEntity()){
+                order.updateCustomer(customerEntity);
+            }
 
             RefundAfterBaseDto refundAfterInfo = refundAfterDto.getRefundAfterInfo();
             RefundAfterEntity refundAfterEntity = RefundAfterEntity.builder()
@@ -71,19 +80,25 @@ public class VanService {
         }
     }
 
-    public VanOrdersDto.Response findVanOrder(String encryptedPassportNumber) {
+    public VanOrdersDto.Response findVanOrder(String encryptedPassportNumber, boolean isPassportMapping, String barcode) {
 
         String encryptNumber = encryptService.encrypt(encryptedPassportNumber);
-        List<OrdersDtoInterface> ordersDtoInterfaceList = orderRepository.findVanOrdersDetail(encryptNumber);
+        List<OrdersDtoInterface> ordersDtoInterfaceList;
+        if(isPassportMapping){
+            ordersDtoInterfaceList = orderRepository.findVanOrdersDetail(encryptNumber,barcode);
+        }else{
+            ordersDtoInterfaceList = orderRepository.findVanOrdersDetail(encryptNumber);
+        }
+
 
         List<VanOrderDetail> baseList = new ArrayList<>();
         for (OrdersDtoInterface orderDto : ordersDtoInterfaceList) {
             int shopTypeCcd = 0;
-            if(orderDto.getShopTypeCcd().equals("호텔")){
+            if (orderDto.getShopTypeCcd().equals("호텔")) {
                 shopTypeCcd = 2;
-            }else if(orderDto.getShopTypeCcd().equals("의료")){
+            } else if (orderDto.getShopTypeCcd().equals("의료")) {
                 shopTypeCcd = 3;
-            }else{
+            } else {
                 shopTypeCcd = 1;
             }
             baseList.add(VanOrderDetail.builder()

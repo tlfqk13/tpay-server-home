@@ -17,8 +17,11 @@ public class RefundLimitRequest {
     // TODO: 2022/11/11 한도조회 스켄 or 수기 
     private String method;
 
-    public RefundLimitRequest nationUpdate(String nationality){
+    public void updateNation(String nationality){
         this.nationality = nationality;
-        return this;
+    }
+
+    public void updatePassport(String passportNumber) {
+        this.passportNumber = passportNumber;
     }
 }

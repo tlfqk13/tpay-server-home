@@ -43,17 +43,12 @@ public class AccessTokenService {
     }
 
     @Transactional
-    public void deleteByEmployeeEntityId (Long employeeIndex){
-        employeeAccessTokenRepository.deleteByEmployeeEntityId(employeeIndex);
-    }
-
-    @Transactional
     public void deleteById(IndexInfo indexInfo) {
         Long index = indexInfo.getIndex();
         if (FRANCHISEE == indexInfo.getUserSelector()) {
             franchiseeAccessTokenRepository.deleteByFranchiseeEntityId(index);
         }
-        employeeAccessTokenRepository.findByEmployeeEntityId(index);
+        employeeAccessTokenRepository.deleteByEmployeeEntityId(index);
     }
 }
 

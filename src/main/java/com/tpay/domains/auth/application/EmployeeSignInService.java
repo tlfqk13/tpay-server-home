@@ -33,22 +33,18 @@ public class EmployeeSignInService {
     @Transactional
     public SignInTokenInfo signIn(String userId, String password) {
         EmployeeEntity employeeEntity = employeeFindService.findByUserId(userId);
-        if (!passwordEncoder.matches(password, employeeEntity.getPassword())) {
-            throw new IllegalArgumentException("Invalid Password");
-        }
-        if (employeeEntity.getIsDelete()) {
-            throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "가입 내역이 존재하지 않습니다. 다시 입력해주세요.");
-        }
+
+        checkPassword(password, employeeEntity);
+        checkDeleteEmployee(employeeEntity);
 
         FranchiseeApplicantEntity franchiseeApplicantEntity = franchiseeApplicantFindService.findByFranchiseeEntity(employeeEntity.getFranchiseeEntity());
         AuthToken accessToken = authService.createAccessToken(employeeEntity);
         AuthToken refreshToken = authService.createRefreshToken(employeeEntity);
-        authService.updateOrSave(employeeEntity, refreshToken.getValue());
+        authService.updateOrSaveRefreshToken(employeeEntity, refreshToken.getValue());
         log.trace(" @@ employeeEntity.getId updateOrSaveAccessToken_start = {}", employeeEntity.getId());
-        authService.updateOrSaveAccessToken(employeeEntity,accessToken.getValue());
+        authService.updateOrSaveAccessToken(employeeEntity, accessToken.getValue());
         log.trace(" @@ employeeEntity.getId updateOrSaveAccessToken_end = {}", employeeEntity.getId());
 
-        //직원 로그인시 푸쉬
         nonBatchPushService.nonBatchPushNSave(PushCategoryType.CASE_FOURTEEN, franchiseeApplicantEntity.getFranchiseeEntity().getId(), employeeEntity.getName());
 
         log.trace("==========================로그인===========================");
@@ -57,18 +53,30 @@ public class EmployeeSignInService {
         log.trace("==========================로그인===========================");
 
         return SignInTokenInfo.builder()
-            .employeeIndex(employeeEntity.getId())
-            .userId(employeeEntity.getUserId())
-            .name(employeeEntity.getName())
-            .accessToken(accessToken.getValue())
-            .refreshToken(refreshToken.getValue())
-            .registeredDate(employeeEntity.getCreatedDate())
-            .franchiseeIndex(employeeEntity.getFranchiseeEntity().getId())
-            .franchiseeStatus(franchiseeApplicantEntity.getFranchiseeStatus())
-            .isActiveSound(employeeEntity.getIsActiveSound())
-            .isActiveVibration(employeeEntity.getIsActiveVibration())
-            .isConnectedPos(employeeEntity.getFranchiseeEntity().getIsConnectedPos())
-            .userSelector(UserSelector.EMPLOYEE)
-            .build();
+                .employeeIndex(employeeEntity.getId())
+                .userId(employeeEntity.getUserId())
+                .name(employeeEntity.getName())
+                .accessToken(accessToken.getValue())
+                .refreshToken(refreshToken.getValue())
+                .registeredDate(employeeEntity.getCreatedDate())
+                .franchiseeIndex(employeeEntity.getFranchiseeEntity().getId())
+                .franchiseeStatus(franchiseeApplicantEntity.getFranchiseeStatus())
+                .isActiveSound(employeeEntity.getIsActiveSound())
+                .isActiveVibration(employeeEntity.getIsActiveVibration())
+                .isConnectedPos(employeeEntity.getFranchiseeEntity().getIsConnectedPos())
+                .userSelector(UserSelector.EMPLOYEE)
+                .build();
+    }
+
+    private void checkDeleteEmployee(EmployeeEntity employeeEntity) {
+        if (employeeEntity.getIsDelete()) {
+            throw new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "가입 내역이 존재하지 않습니다. 다시 입력해주세요.");
+        }
+    }
+
+    private void checkPassword(String password, EmployeeEntity employeeEntity) {
+        if (!passwordEncoder.matches(password, employeeEntity.getPassword())) {
+            throw new IllegalArgumentException("Invalid Password");
+        }
     }
 }

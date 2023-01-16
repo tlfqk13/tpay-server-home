@@ -22,7 +22,7 @@ public class EmployeeTokenEntity extends BaseTimeEntity {
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "employee_id")
+    @JoinColumn(name = "employee_id", unique = true)
     private EmployeeEntity employeeEntity;
 
     private String refreshToken;

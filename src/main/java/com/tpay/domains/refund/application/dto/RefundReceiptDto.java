@@ -27,7 +27,7 @@ public class RefundReceiptDto {
         private final String totalVat;//부가가치세 (VAT)
         private final String totalRefund;//즉시환급상당액
         // 결제금액 = 금액
-        private final String administrativeCharge;// 제비용 = (즉시환급상당액 - 포인트) = 우리가 벌어가는거
+        private final String category;//상품명
         // 세액계 = totalVat
         private final String expireDate;// 반출유효기간
 
@@ -36,7 +36,7 @@ public class RefundReceiptDto {
                 ,String texFreeStoreNumber,String saleDate,String sellerName
                 ,String franchiseeName,String businessNumber,String storeAddress
                 ,String storeTelNumber,String totalAmount,String totalVat
-                ,String totalRefund, String administrativeCharge, LocalDateTime expireDate){
+                ,String totalRefund, String category, LocalDateTime expireDate){
 
             this.barcodeS3Path = barcodeS3Path;
             this.purchaseSn = purchaseSn;
@@ -51,7 +51,7 @@ public class RefundReceiptDto {
             this.totalAmount = totalAmount;
             this.totalVat = totalVat;
             this.totalRefund = totalRefund;
-            this.administrativeCharge = administrativeCharge;
+            this.category = category;
             this.expireDate = expireDate.plusMonths(3).toString().substring(0,10);
         }
     }

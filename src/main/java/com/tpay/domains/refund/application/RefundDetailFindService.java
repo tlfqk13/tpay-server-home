@@ -2,10 +2,13 @@ package com.tpay.domains.refund.application;
 
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.InvalidParameterException;
+import com.tpay.commons.util.IndexInfo;
 import com.tpay.domains.customer.application.CustomerService;
 import com.tpay.domains.customer.application.dto.CustomerPaymentType;
 import com.tpay.domains.customer.application.dto.DepartureStatus;
 import com.tpay.domains.customer.domain.CustomerEntity;
+import com.tpay.domains.employee.application.EmployeeFindService;
+import com.tpay.domains.employee.domain.EmployeeEntity;
 import com.tpay.domains.erp.test.dto.RefundType;
 import com.tpay.domains.order.application.dto.CmsDto;
 import com.tpay.domains.refund.application.dto.*;
@@ -16,7 +19,7 @@ import com.tpay.domains.refund.domain.RefundStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +28,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.tpay.commons.util.UserSelector.EMPLOYEE;
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -32,6 +37,7 @@ public class RefundDetailFindService {
 
     private final RefundRepository refundRepository;
     private final CustomerService customerService;
+    private final EmployeeFindService employeeFindService;
 
     public List<RefundFindResponseInterface> findList(Long franchiseeIndex, LocalDate startDate, LocalDate endDate) {
 
@@ -39,26 +45,16 @@ public class RefundDetailFindService {
         return refundRepository.findAllByFranchiseeIndex(franchiseeIndex, startDate.atTime(0, 0), newEnd.atTime(0, 0));
     }
 
-    public RefundPagingFindResponse findAll(int page, String startDate, String endDate, String searchKeyword
+    public Page<RefundFindAllDto.Response>  findAll(Pageable pageable, String startDate, String endDate, String searchKeyword
             , RefundType refundType, RefundStatus refundStatus, DepartureStatus departureStatus, PaymentStatus paymentStatus) {
 
-        PageRequest pageRequest = PageRequest.of(page, 10);
+
         boolean isBusinessNumber = searchKeyword.chars().allMatch(Character::isDigit);
 
-        Page<RefundFindAllDto.Response> response = refundRepository.findRefundAll(
-                pageRequest, getStartDate(startDate, DateTimeFormatter.ofPattern("yyyyMMdd")), getEndDate(endDate, DateTimeFormatter.ofPattern("yyyyMMdd"))
+        return refundRepository.findRefundAll(
+                pageable, getStartDate(startDate, DateTimeFormatter.ofPattern("yyyyMMdd")), getEndDate(endDate, DateTimeFormatter.ofPattern("yyyyMMdd"))
                 , searchKeyword.isEmpty(), isBusinessNumber, searchKeyword, refundStatus
                 , refundType, departureStatus, paymentStatus);
-
-        int totalPage = response.getTotalPages();
-        if(totalPage != 0){
-            totalPage = totalPage -1;
-        }
-
-        return RefundPagingFindResponse.builder()
-                .totalPage(totalPage)
-                .refundFindResponseInterfaceList(response.getContent())
-                .build();
     }
 
     public RefundDetailTotalDto.Response findRefundDetail(Long franchiseeIndex, String startDate, String endDate) {
@@ -80,7 +76,7 @@ public class RefundDetailFindService {
                 .build();
     }
 
-    public List<RefundByCustomerDateResponse> findRefundsByCustomerInfo(Long franchiseeIndex, RefundCustomerRequest refundCustomerRequest) {
+    public List<RefundByCustomerDateResponse> findRefundsByCustomerInfo(IndexInfo indexInfo, RefundCustomerRequest refundCustomerRequest) {
         RefundCustomerInfoRequest refundCustomerInfoRequest = refundCustomerRequest.getRefundCustomerInfoRequest();
         RefundCustomerDateRequest refundCustomerDateRequest = refundCustomerRequest.getRefundCustomerDateRequest();
 
@@ -91,6 +87,8 @@ public class RefundDetailFindService {
         String nation = refundCustomerInfoRequest.getNationality();
         String passportNumber = refundCustomerInfoRequest.getPassportNumber();
         Optional<CustomerEntity> customerEntityOptional = customerService.findCustomerByNationAndPassportNumber(passportNumber, nation);
+
+        Long franchiseeIndex = getFranchiseeIndex(indexInfo);
 
         if(customerEntityOptional.isEmpty()) {
             return Collections.emptyList();
@@ -239,6 +237,16 @@ public class RefundDetailFindService {
 
     private LocalDate getStartDate(String startDate, DateTimeFormatter yyyyMMdd) {
         return LocalDate.parse("20" + startDate, yyyyMMdd);
+    }
+
+    private Long getFranchiseeIndex(IndexInfo indexInfo) {
+        if (EMPLOYEE == indexInfo.getUserSelector()) {
+            EmployeeEntity employeeEntity = employeeFindService.findById(indexInfo.getIndex())
+                    .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Employee not exists"));
+            return employeeEntity.getFranchiseeEntity().getId();
+        }
+
+        return indexInfo.getIndex();
     }
 
 }

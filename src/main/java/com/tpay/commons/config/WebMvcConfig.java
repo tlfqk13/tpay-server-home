@@ -36,7 +36,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 "/franchisee/password/out/**",
                 "/admin/**",
                 "/validate/**",
-                "/refund/limit",
+                //"/refund/limit",
                 "/refund/receipt",
                 "/refund/admin-cancel/**",
                 "/notice/**",
@@ -49,7 +49,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 "/push/**",         // FCM, ADMIN 과 연동
                 "/external/**",     // 그로잉세일즈
                 "/van/**",          // NICE VAN
-                "/tourcash/refund/approval",
+                "/tourcash/**",
                 "/franchisee/admin/cms/downloads",
                 "/franchisee/admin/vat/downloads",
                 "/franchisee/admin/hometax/immediate/downloads",
