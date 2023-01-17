@@ -23,7 +23,7 @@ public class FranchiseeAccessTokenEntity extends BaseTimeEntity {
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "franchisee_id")
+    @JoinColumn(name = "franchisee_id", unique = true)
     private FranchiseeEntity franchiseeEntity;
 
     private String accessToken;

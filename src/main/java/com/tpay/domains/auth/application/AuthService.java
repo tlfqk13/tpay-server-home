@@ -32,7 +32,7 @@ public class AuthService {
     private final EmployeeAccessTokenRepository employeeAccessTokenRepository;
 
     @Transactional
-    public void updateOrSave(FranchiseeEntity franchiseeEntity, String refreshToken) {
+    public void updateOrSaveRefreshToken(FranchiseeEntity franchiseeEntity, String refreshToken) {
         FranchiseeTokenEntity franchiseeTokenEntity =
                 franchiseeTokenRepository.existsByFranchiseeEntityId(franchiseeEntity.getId())
                         ? franchiseeTokenRepository
@@ -47,7 +47,7 @@ public class AuthService {
     }
 
     @Transactional
-    public void updateOrSave(EmployeeEntity employeeEntity, String refreshToken) {
+    public void updateOrSaveRefreshToken(EmployeeEntity employeeEntity, String refreshToken) {
         EmployeeTokenEntity employeeTokenEntity =
                 employeeTokenRepository.existsByEmployeeEntity(employeeEntity)
                         ? employeeTokenRepository.findByEmployeeEntity(employeeEntity)
@@ -75,7 +75,6 @@ public class AuthService {
                                 .build());
     }
 
-    // TODO: 2023/01/04 샘플라스 문제
     @Transactional
     public void updateOrSaveAccessToken(EmployeeEntity employeeEntity, String accessToken) {
         EmployeeAccessTokenEntity employeeAccessTokenEntity =

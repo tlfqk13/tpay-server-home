@@ -37,7 +37,6 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
-    // 2022-12-28 바코드 주소를 넣어야합니다?
     @Override
     public List<RefundReceiptDto.Response> findRefundReceipt(String encryptPassportNumber, boolean refundAfter) {
         List<RefundReceiptDto.Response> content = queryFactory
@@ -55,7 +54,7 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
                         orderEntity.totalAmount,
                         orderEntity.totalVat,
                         refundEntity.totalRefund,
-                        refundEntity.totalRefund.castToNum(Integer.class).subtract(pointScheduledEntity.value).stringValue(),
+                        franchiseeEntity.productCategory,
                         refundEntity.createdDate
                 ))
                 .from(orderEntity)
@@ -125,6 +124,7 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
                 .where(franchiseeEntity.id.eq(franchiseeIndex)
                         .and(refundEntity.createdDate
                                 .between(startLocalDate.atStartOfDay(), LocalDateTime.of(endLocalDate, LocalTime.MAX))))
+                .orderBy(refundEntity.createdDate.desc())
                 .fetch();
 
         return content;
@@ -314,7 +314,8 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
                         orderEntity.totalAmount,
                         refundEntity.totalRefund,
                         customerEntity.departureStatus,
-                        refundEntity.refundAfterEntity.paymentStatus
+                        refundEntity.refundAfterEntity.paymentStatus,
+                        customerEntity.customerEmail
                 ))
                 .from(orderEntity)
                 .leftJoin(orderEntity.refundEntity, refundEntity)

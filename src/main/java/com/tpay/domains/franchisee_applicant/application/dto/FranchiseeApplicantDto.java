@@ -23,21 +23,21 @@ public class FranchiseeApplicantDto {
         private String storeName;
         private String sellerName;
         private LocalDateTime createdDate;
-        private boolean isRefundOnce;
+        private boolean refundOnce;
         private boolean isRead;
         private String refundStep;
 
         @QueryProjection
-        public Response(Long franchiseeApplicantIndex, FranchiseeStatus franchiseeStatus,String businessNumber
-                , String storeName, String sellerName,LocalDateTime createdDate
-                ,boolean isRefundOnce, boolean isRead, String refundStep){
+        public Response(Long franchiseeApplicantIndex, FranchiseeStatus franchiseeStatus, String businessNumber
+                , String storeName, String sellerName, LocalDateTime createdDate
+                , boolean refundOnce, boolean isRead, String refundStep){
             this.franchiseeApplicantIndex = franchiseeApplicantIndex;
             this.franchiseeStatus = franchiseeStatus;
             this.businessNumber = businessNumber;
             this.storeName = storeName;
             this.sellerName = sellerName;
             this.createdDate = createdDate;
-            this.isRefundOnce = isRefundOnce;
+            this.refundOnce = refundOnce;
             this.isRead = isRead;
             this.refundStep = refundStep;
         }

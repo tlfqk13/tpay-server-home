@@ -32,6 +32,7 @@ public enum ExceptionState {
     ALREADY_CANCELLED(409, HttpStatus.BAD_REQUEST, "G0002", "Already Cancelled Index"),
     INVALID_NATION(400,HttpStatus.BAD_REQUEST, "G0004","Invalid Passport Nation"),
     CUSTOMER_NOT_FOUND(400,HttpStatus.BAD_REQUEST,"C0001","Customer not Found"),
+    OVERLAP_REQUEST(400,HttpStatus.BAD_REQUEST,"OR0001","OverLap Request"),
     WEBFLUX_GENERAL(400,HttpStatus.BAD_REQUEST, "G0003","Webflux General Exception"),
     ;
 

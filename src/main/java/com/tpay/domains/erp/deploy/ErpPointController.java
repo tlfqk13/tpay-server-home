@@ -2,11 +2,10 @@ package com.tpay.domains.erp.deploy;
 
 import com.tpay.domains.point.application.PointFindService;
 import com.tpay.domains.point.application.PointUpdateService;
-import com.tpay.domains.point.application.dto.AdminPointResponse;
-import com.tpay.domains.point.application.dto.PointFindDetailResponse;
-import com.tpay.domains.point.application.dto.PointUpdateRequest;
-import com.tpay.domains.point.application.dto.WithdrawalStatus;
+import com.tpay.domains.point.application.dto.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,12 +24,12 @@ public class ErpPointController {
      * 기본 조회
      */
     @GetMapping("/{isAll}/{withdrawalStatus}")
-    public ResponseEntity<AdminPointResponse> findPointsAdmin(
+    public ResponseEntity<Page<AdminPointInfo>> findPointsAdmin(
             @PathVariable Boolean isAll,
             @PathVariable WithdrawalStatus withdrawalStatus,
-            @RequestParam int page,
+            Pageable pageable,
             @RequestParam String searchKeyword) {
-        AdminPointResponse pointsAdmin = pointFindService.findPointsAdmin(isAll, withdrawalStatus,page,searchKeyword);
+        Page<AdminPointInfo>  pointsAdmin = pointFindService.findPointsAdmin(pageable, isAll, withdrawalStatus, searchKeyword);
         return ResponseEntity.ok(pointsAdmin);
     }
 

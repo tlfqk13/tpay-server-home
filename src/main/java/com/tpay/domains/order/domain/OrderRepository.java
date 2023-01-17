@@ -95,7 +95,31 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long>, Order
     List<OrderEntity> findByOrderNumbers(List<String> docIds);
 
     @Query(value = "select o from OrderEntity o  join fetch o.customerEntity " +
-            "where o.customerEntity.id = :customerId and o.orderNumber is not null")
+            "where o.customerEntity.id = :customerId and o.orderNumber is not null and o.customerEntity.id is not null")
     List<OrderEntity> findOrders(@Param("customerId")Long customerId);
 
+    @Query(value = "select o from OrderEntity o " +
+            "where o.orderNumber = :barcode")
+    List<OrderEntity> findOrdersPassportMapping(String barcode);
+
+    @Query(value =  "select\n " +
+            "  o.purchs_sn as docId\n" +
+            " ,f.store_nm as shopNm\n" +
+            " ,f.prd_nm as shopTypeCcd\n" +
+            " ,o.sale_datm as purchsDate\n" +
+            " ,o.tot_amt as totPurchsAmt\n" +
+            " ,o.tot_vat as vat\n" +
+            " ,r.tot_refund as totalRefund\n" +
+            " ,r.refund_status as customsCleanceYn" +
+            " ,rf.refund_after_method as earlyRfndYn" +
+            " from orders o inner join franchisee f on o.franchisee_id = f.id\n" +
+            "               left join customer c on c.id = o.customer_id\n" +
+            "               left join refund r on o.id = r.order_id" +
+            "               left join refund_after rf on r.refund_after_id = rf.refund_after_id\n" +
+            " where c.cus_pass_no = :passportNumber\n" +
+            " and r.refund_after_id is not null and r.tk_out_conf_no = ''\n" +
+            " and rf.payment_id is null and o.purchs_sn = :barcode\n" +
+            " order by r.id desc ",nativeQuery = true
+    )
+    List<OrdersDtoInterface> findVanOrdersDetail(String passportNumber, String barcode);
 }

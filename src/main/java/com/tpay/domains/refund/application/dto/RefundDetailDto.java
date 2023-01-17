@@ -21,10 +21,12 @@ public class RefundDetailDto {
         private String totalRefund;
         private DepartureStatus departureStatus;
         private PaymentStatus paymentStatus;
+        private String customerEmail;
 
         @QueryProjection
         public Response(LocalDateTime createdDate, String storeName, String customerName, String customerNational,
-                        String totalAmount, String totalRefund, DepartureStatus departureStatus,PaymentStatus paymentStatus){
+                        String totalAmount, String totalRefund, DepartureStatus departureStatus,PaymentStatus paymentStatus,
+                        String customerEmail){
             this.createdDate = createdDate;
             this.storeName = storeName;
             this.customerName = customerName;
@@ -33,6 +35,7 @@ public class RefundDetailDto {
             this.totalRefund = totalRefund;
             this.departureStatus = departureStatus;
             this.paymentStatus = paymentStatus;
+            this.customerEmail = customerEmail;
         }
 
     }

@@ -36,8 +36,9 @@ public class LimitFindService {
 
         // 독일 여권일 경우, D -> DEU
         if (checkNation(request)) {
-            nationUpdate(request);
+            updateNation(request);
         }
+
         // 한도 조회 요청
         RefundResponse refundResponse = webRequestUtil.post(uri, request);
         log.debug("request.passportNumber = {} , refundResponse.getPassportNumber() = {}"
@@ -97,7 +98,7 @@ public class LimitFindService {
         }
     }
 
-    private void nationUpdate(RefundLimitRequest request) {
-        request.nationUpdate(RefundCustomValue.NATION_GERMANY_DEU);
+    private void updateNation(RefundLimitRequest request) {
+        request.updateNation(RefundCustomValue.NATION_GERMANY_DEU);
     }
 }

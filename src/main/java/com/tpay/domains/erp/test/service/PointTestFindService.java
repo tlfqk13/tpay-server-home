@@ -68,14 +68,11 @@ public class PointTestFindService {
                 .build();
     }
 
-    public Page<AdminPointInfo> findPointsAdmin(Boolean isAll, WithdrawalStatus withdrawalStatus, int page, String searchKeyword) {
-        Page<AdminPointInfo> response;
-        Pageable pageRequest = PageRequest.of(page, 15);
+    public Page<AdminPointInfo> findPointsAdmin(Pageable pageable, Boolean isAll, WithdrawalStatus withdrawalStatus, String searchKeyword) {
+
         boolean isBusinessNumber = searchKeyword.chars().allMatch(Character::isDigit);
 
-        response = pointRepository.findPointsAdmin(pageRequest, withdrawalStatus, searchKeyword, isBusinessNumber, isAll);
-
-        return response;
+        return pointRepository.findPointsAdmin(pageable, withdrawalStatus, searchKeyword, isBusinessNumber, isAll);
     }
 
     public PointFindDetailResponse findDetailByIndex(Long pointsIndex) {

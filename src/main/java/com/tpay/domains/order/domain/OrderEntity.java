@@ -148,4 +148,6 @@ public class OrderEntity extends BaseTimeEntity {
     }
 
     public void addBarcode(BarcodeEntity barcode){this.barcodeEntity = barcode;}
+
+    public void updateCustomer(CustomerEntity customerEntity){this.customerEntity = customerEntity;}
 }
