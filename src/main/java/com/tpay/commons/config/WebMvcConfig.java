@@ -36,7 +36,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 "/franchisee/password/out/**",
                 "/admin/**",
                 "/validate/**",
-                //"/refund/limit",
                 "/refund/receipt",
                 "/refund/admin-cancel/**",
                 "/notice/**",

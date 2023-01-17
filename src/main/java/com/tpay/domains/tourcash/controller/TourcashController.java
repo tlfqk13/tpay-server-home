@@ -1,9 +1,11 @@
 package com.tpay.domains.tourcash.controller;
 
+import com.tpay.commons.exception.ExceptionState;
+import com.tpay.commons.exception.detail.FranchiseeAuthenticationException;
 import com.tpay.commons.util.IndexInfo;
 import com.tpay.commons.util.UserSelector;
+import com.tpay.domains.refund_core.application.RefundApproveService;
 import com.tpay.domains.refund_core.application.dto.RefundResponse;
-import com.tpay.domains.tourcash.application.TourcashRefundService;
 import com.tpay.domains.tourcash.dto.TourcashRefundApproveDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,16 +21,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class TourcashController {
 
-    private final TourcashRefundService tourcashRefundService;
+    private final RefundApproveService refundApproveService;
 
     @PostMapping("/refund/approval")
     public ResponseEntity<RefundResponse> approve(@RequestBody TourcashRefundApproveDto dto) {
-     /*   if (dto.getFranchiseeIndex() != 95L) {
+        if (dto.getFranchiseeIndex() != 95L) {
             throw new FranchiseeAuthenticationException(
                     ExceptionState.AUTHENTICATION_FAILED, "Token not exists");
-        }*/
+        }
 
-        RefundResponse response = tourcashRefundService.approve(dto.convertTo()
+        RefundResponse response = refundApproveService.approve(dto.convertTo()
                 , new IndexInfo(UserSelector.FRANCHISEE, dto.getFranchiseeIndex()));
 
         return ResponseEntity.ok(response);

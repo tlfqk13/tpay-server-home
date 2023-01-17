@@ -76,7 +76,6 @@ public class CustomerService {
         CustomerEntity customerEntity = getCustomerEntity(customerInfo);
         return customerEntity.getIsRegister();
     }
-    @Transactional
     public CustomerDto.Response getRegisterAfterRefundCustomer(CustomerDto.Request customerInfo) {
 
         CustomerEntity customerEntity = getCustomerEntity(customerInfo);
