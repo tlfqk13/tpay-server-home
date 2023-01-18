@@ -1,6 +1,9 @@
 buildscript {
     ext {
         queryDslVersion = "5.0.0"
+        major_version = '1'
+        minor_version = '1'
+        build_version = '0'
     }
 }
 
@@ -12,7 +15,7 @@ plugins {
 }
 
 group = 'com.tpay'
-version = '0.0.1-SNAPSHOT'
+version = "$major_version.$minor_version.$build_version"
 sourceCompatibility = '11'
 
 configurations {
