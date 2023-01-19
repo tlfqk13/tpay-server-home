@@ -97,6 +97,8 @@ public class RefundDetailFindService {
         // TODO: 2022/11/01 환급 취소 리스트 조회 -> dsl 로 바꿔야함
         List<RefundFindResponseInterface> refundsByCustomerInfo = refundRepository.findRefundsByCustomerInfo(franchiseeIndex, startDate, endDate, customerIndex);
 
+
+
         if (refundsByCustomerInfo.isEmpty()) {
             return Collections.emptyList();
         }

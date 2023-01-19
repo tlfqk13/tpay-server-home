@@ -88,9 +88,6 @@ public class FranchiseeEntity extends BaseTimeEntity {
 
     @Column(length = 2)
     private String refundStep;
-
-    private Boolean isAfterRefund;
-
     @Column(name = "popUp", length = 1)
     private boolean popUp;
 
@@ -112,21 +109,21 @@ public class FranchiseeEntity extends BaseTimeEntity {
 
     @Builder
     public FranchiseeEntity(
-        String businessNumber,
-        String storeName,
-        String storeAddressNumber,
-        String storeAddressBasic,
-        String storeAddressDetail,
-        String sellerName,
-        String storeTel,
-        String productCategory,
-        String password,
+            String businessNumber,
+            String storeName,
+            String storeAddressNumber,
+            String storeAddressBasic,
+            String storeAddressDetail,
+            String sellerName,
+            String storeTel,
+            String productCategory,
+            String password,
 
-        String signboard,
-        String storeNumber,
-        String email,
-        String isTaxRefundShop,
-        double balancePercentage
+            String signboard,
+            String storeNumber,
+            String email,
+            String isTaxRefundShop,
+            double balancePercentage
     ) {
         this.memberName = "";
         this.memberNumber = "";
@@ -198,24 +195,27 @@ public class FranchiseeEntity extends BaseTimeEntity {
         this.popUp = false;
     }
 
-    public void updateSound(Boolean isActiveSound){
+    public void updateSound(Boolean isActiveSound) {
         this.isActiveSound = isActiveSound;
     }
-    public void updateVibration(Boolean isActiveVibration){
+
+    public void updateVibration(Boolean isActiveVibration) {
         this.isActiveVibration = isActiveVibration;
     }
-    public void updatePosInfo(Boolean isConnectedPos, PosType posType){
+
+    public void updatePosInfo(Boolean isConnectedPos, PosType posType) {
         this.isConnectedPos = isConnectedPos;
         this.posType = posType;
     }
-    public FranchiseeEntity updateFranchisee(FranchiseeUpdateDtoRequest franchiseeUpdateDtoRequest){
+
+    public FranchiseeEntity updateFranchisee(FranchiseeUpdateDtoRequest franchiseeUpdateDtoRequest) {
         this.storeNumber = franchiseeUpdateDtoRequest.getStoreNumber();
         this.email = franchiseeUpdateDtoRequest.getEmail();
         return this;
     }
 
     // 2022/08/19 어드민 상세보기 > 수정하기
-    public FranchiseeEntity updateFranchisee(DetailFranchiseeInfo request){
+    public FranchiseeEntity updateFranchisee(DetailFranchiseeInfo request) {
         this.storeName = request.getStoreName();
         this.sellerName = request.getSellerName();
         this.businessNumber = request.getBusinessNumber().replaceAll("-", "");

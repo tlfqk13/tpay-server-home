@@ -213,8 +213,8 @@ public class RefundApproveService {
         }
     }
 
-    private void createPoint(RefundEntity refundEntity, FranchiseeEntity orderEntity) {
-        pointScheduledChangeService.change(refundEntity, SignType.POSITIVE, orderEntity.getBalancePercentage());
+    private void createPoint(RefundEntity refundEntity, FranchiseeEntity franchiseeEntity) {
+        pointScheduledChangeService.change(refundEntity, SignType.POSITIVE, franchiseeEntity.getBalancePercentage());
     }
 
     private void createBarcode(RefundEntity refundEntity) {

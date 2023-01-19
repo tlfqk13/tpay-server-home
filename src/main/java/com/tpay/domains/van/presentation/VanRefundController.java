@@ -58,14 +58,15 @@ public class VanRefundController {
 
     @PostMapping("/approval/final")
     public ResponseEntity<String> vanRefundFinal(@RequestBody VanRefundFinalDto.Request vanFinalDto) {
-
+        String responseCode = "0000";
         // 전표일련번호로 구매내역 확인
         List<RefundItemDto.Request> refundItems = vanFinalDto.getRefundItems();
         for (RefundItemDto.Request refundItem : refundItems) {
             RefundAfterDto.Request refundAfterDto = RefundAfterDto.Request.of(vanFinalDto, refundItem);
-            refundService.approveAfter(refundAfterDto);
+            RefundResponse refundResponse = refundService.approveAfter(refundAfterDto);
+            responseCode = refundResponse.getResponseCode();
         }
 
-        return ResponseEntity.ok("0000");
+        return ResponseEntity.ok(responseCode);
     }
 }
