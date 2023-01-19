@@ -43,6 +43,7 @@ public class VanService {
 
         CustomerEntity customerEntity = customerRepository.findByPassportNumber(encryptNumber)
                 .orElseThrow(() -> new CustomerNotFoundException(ExceptionState.CUSTOMER_NOT_FOUND));
+
         List<OrderEntity> orders;
 
         if (!isPassportMapping) {

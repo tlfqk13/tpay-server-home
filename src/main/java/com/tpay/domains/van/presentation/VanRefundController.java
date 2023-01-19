@@ -62,11 +62,38 @@ public class VanRefundController {
         // 전표일련번호로 구매내역 확인
         List<RefundItemDto.Request> refundItems = vanFinalDto.getRefundItems();
         for (RefundItemDto.Request refundItem : refundItems) {
-            RefundAfterDto.Request refundAfterDto = RefundAfterDto.Request.of(vanFinalDto, refundItem);
-            RefundResponse refundResponse = refundService.approveAfter(refundAfterDto);
-            responseCode = refundResponse.getResponseCode();
+            try {
+                RefundAfterDto.Request refundAfterDto = RefundAfterDto.Request.of(vanFinalDto, refundItem);
+                RefundResponse refundResponse = refundService.approveAfter(refundAfterDto);
+                responseCode = refundResponse.getResponseCode();
+            } catch (WebfluxGeneralException e) {
+                // VAN 의 예외처리는 throw 가 아닌 에러코드와 함께 결과를 반환시킴
+                String message = e.getMessage();
+                String[] split = message.split(":");
+                log.debug("split[0] = {}", split[0]);
+                responseCode = split[0];
+            }
         }
 
+        log.trace(" @@ vanRefundFinal.responseCode = {}", responseCode);
+        return ResponseEntity.ok(responseCode);
+    }
+
+    @PostMapping("/approval/cancel")
+    public ResponseEntity<String> vanRefundCancel(@RequestBody VanRefundAfterDto vanRefundDto) {
+        log.debug("vanRefundDto = {}", vanRefundDto);
+        PaymentEntity payment = PaymentEntity.builder()
+                .paymentMethod(vanRefundDto.getPaymentMethod())
+                .paymentBrand(vanRefundDto.getPaymentBrand())
+                .paymentInfo(vanRefundDto.getPaymentInfo())
+                .build();
+        String responseCode = "0000";
+        // 전표일련번호로 구매내역 확인
+        List<RefundItemDto.Request> refundItems = vanRefundDto.getRefundItems();
+        for (RefundItemDto.Request refundItem : refundItems) {
+            RefundAfterDto.Request refundAfterDto = RefundAfterDto.Request.of(vanRefundDto.getRefundAfterBaseInfo(), refundItem);
+            responseCode = refundService.approveCancel(refundAfterDto);
+        }
         return ResponseEntity.ok(responseCode);
     }
 }
