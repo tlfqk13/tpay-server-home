@@ -5,7 +5,8 @@ spring:
   servlet:
     multipart:
       max-file-size: 2MB
-
+  pid:
+    file: server.pid
 jasypt:
   encryptor:
     iv-generator-classname: org.jasypt.iv.NoIvGenerator
