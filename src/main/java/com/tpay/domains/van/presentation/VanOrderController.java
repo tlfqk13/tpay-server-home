@@ -27,8 +27,8 @@ public class VanOrderController {
         VanRefundAfterBaseDto refundAfterBaseDto = request.getRefundAfterBaseDto();
         // VAN 의 경우 환급 정보 생성 후 조회
         vanService.createRefundAfter(request.getEncryptPassportNumber(), refundAfterBaseDto, false);
-        //조회
         VanOrdersDto.Response response = vanService.findVanOrder(request.getEncryptPassportNumber(), false, "");
+        //조회
         return ResponseEntity.ok(response);
     }
 
@@ -41,7 +41,7 @@ public class VanOrderController {
         // VAN 의 경우 환급 정보 생성 후 조회
         vanService.createRefundAfter(request.getEncryptPassportNumber(), refundAfterBaseDto, isPassportMapping);
         //조회
-        VanOrdersDto.Response response = vanService.findVanOrder(request.getEncryptPassportNumber(), isPassportMapping,request.getRefundAfterBaseDto().getBarcode());
+        VanOrdersDto.Response response = vanService.findVanOrder(request.getEncryptPassportNumber(), isPassportMapping, request.getRefundAfterBaseDto().getBarcode());
         return ResponseEntity.ok(response);
     }
 }

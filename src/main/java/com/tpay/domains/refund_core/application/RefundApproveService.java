@@ -62,6 +62,7 @@ public class RefundApproveService {
     private final EmployeeAccessTokenRepository employeeAccessTokenRepository;
     private final CustomerService customerService;
     private final BarcodeService barcodeService;
+    private final RefundCancelService cancelService;
 
     @Transactional
     public RefundResponse approve(RefundSaveRequest request, IndexInfo indexInfo) {
@@ -117,7 +118,7 @@ public class RefundApproveService {
 
     private void checkKorCustomer(RefundSaveRequest request) {
         CustomerEntity customerEntity = customerService.findByIndex(request.getCustomerIndex());
-        if("KOR".equals(customerEntity.getNation())){
+        if ("KOR".equals(customerEntity.getNation())) {
             log.trace(" @@ customerEntity.getNation() = {}", customerEntity.getNation());
             throw new InvalidParameterException(ExceptionState.KOR_CUSTOMER);
         }
@@ -143,7 +144,12 @@ public class RefundApproveService {
         OrderEntity orderEntity = orderService.findOrderByPurchaseSn(refundAfterDto.getRefundItem().getDocId());
         RefundApproveRequest refundApproveRequest = RefundApproveRequest.of(orderEntity, refundAfterDto);
 
-        checkRefundStatus(orderEntity);
+        RefundAfterBaseDto refundAfterInfo = refundAfterDto.getRefundAfterInfo();
+        if (refundAfterInfo.isRetry()) {
+            checkRefundStatus(orderEntity);
+        } else if (null != payment) {
+            checkRefundStatus(orderEntity);
+        }
         checkOrderValidateDate(orderEntity);
 
         RefundResponse refundResponse;
@@ -151,7 +157,6 @@ public class RefundApproveService {
         refundResponse = webRequestUtil.post(uri, refundApproveRequest);
 
         // 기존 PRE_APPROVAL 환급 상태에서 재전송을 통해 반출번호와 상태 변경
-        RefundAfterBaseDto refundAfterInfo = refundAfterDto.getRefundAfterInfo();
         if (refundAfterInfo.isRetry()) {
             RefundEntity existRefundEntity = orderEntity.getRefundEntity();
             existRefundEntity.updateTakeOutInfo(refundResponse.getTakeoutNumber(), refundAfterInfo.getRefundFinishDate());
@@ -187,6 +192,7 @@ public class RefundApproveService {
         // VAN 으로 사전 생성된 엔티티들은 이미 환급을 위한 데이터 일부를 사전에 생성
         if (null != payment) {
             orderEntity.getRefundEntity().getRefundAfterEntity().addPayment(payment);
+            createPoint(orderEntity.getRefundEntity(), orderEntity.getFranchiseeEntity());
         }
 
         return refundResponse;
@@ -194,27 +200,27 @@ public class RefundApproveService {
 
     private void checkOrderValidateDate(OrderEntity orderEntity) {
         // 반출 유효기간 3개월 초과
-        if(orderEntity.getCreatedDate().isBefore(LocalDateTime.now().minusMonths(3))){
-            throw new WebfluxGeneralException(ExceptionState.WEBFLUX_GENERAL,"MONTH");
+        if (orderEntity.getCreatedDate().isBefore(LocalDateTime.now().minusMonths(3))) {
+            throw new WebfluxGeneralException(ExceptionState.WEBFLUX_GENERAL, "MONTH");
         }
     }
 
     private void checkRefundStatus(OrderEntity orderEntity) {
-        if(RefundStatus.CANCEL.equals(orderEntity.getRefundEntity().getRefundStatus())){
-            throw new WebfluxGeneralException(ExceptionState.WEBFLUX_GENERAL,"CANCEL");
-        } else if(RefundStatus.APPROVAL.equals(orderEntity.getRefundEntity().getRefundStatus())){
-            throw new WebfluxGeneralException(ExceptionState.WEBFLUX_GENERAL,"APPROVAL");
+        if (RefundStatus.CANCEL.equals(orderEntity.getRefundEntity().getRefundStatus())) {
+            throw new WebfluxGeneralException(ExceptionState.WEBFLUX_GENERAL, "CANCEL");
+        } else if (RefundStatus.APPROVAL.equals(orderEntity.getRefundEntity().getRefundStatus())) {
+            throw new WebfluxGeneralException(ExceptionState.WEBFLUX_GENERAL, "APPROVAL");
         }
     }
 
     private void updatePaymentStatus(RefundEntity refundEntity, RefundAfterEntity refundAfterEntity) {
-        if(refundEntity.getTakeOutNumber().contains("acpt")){
+        if (refundEntity.getTakeOutNumber().contains("acpt")) {
             refundAfterEntity.updatePaymentStatus(PaymentStatus.PAYMENT_WAIT);
         }
     }
 
-    private void createPoint(RefundEntity refundEntity, FranchiseeEntity orderEntity) {
-        pointScheduledChangeService.change(refundEntity, SignType.POSITIVE, orderEntity.getBalancePercentage());
+    private void createPoint(RefundEntity refundEntity, FranchiseeEntity franchiseeEntity) {
+        pointScheduledChangeService.change(refundEntity, SignType.POSITIVE, franchiseeEntity.getBalancePercentage());
     }
 
     private void createBarcode(RefundEntity refundEntity) {
@@ -237,7 +243,8 @@ public class RefundApproveService {
         }
     }
 
-    /**ㄹ
+    /**
+     * ㄹ
      * KTP에서 주문과 환급을 동시에 처리할 때 사용
      */
     @Transactional
@@ -330,4 +337,16 @@ public class RefundApproveService {
     }
 
 
+    @Transactional
+    public String approveCancel(RefundAfterDto.Request refundAfterDto) {
+        OrderEntity orderEntity = orderService.findOrderByPurchaseSn(refundAfterDto.getRefundItem().getDocId());
+        checkOrderValidateDate(orderEntity);
+        if (RefundStatus.CANCEL.equals(orderEntity.getRefundEntity().getRefundStatus())) {
+            return "CANCEL";
+        } else {
+            RefundEntity existRefundEntity = orderEntity.getRefundEntity();
+            cancelService.cancelRefundAfter(existRefundEntity.getId());
+            return "0000";
+        }
+    }
 }

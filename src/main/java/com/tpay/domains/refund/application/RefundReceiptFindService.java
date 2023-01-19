@@ -44,6 +44,10 @@ public class RefundReceiptFindService {
         // 최신순, 과거순
         response = refundRepository.findRefundReceipt(customerEntity.getPassportNumber(),request.isRefundAfter());
 
+        if(!"KOR".equals(customerEntity.getNation())){
+            response = response.stream().filter(r -> Integer.parseInt(r.getTotalRefund()) >= 75000).collect(Collectors.toList());
+        }
+
         if(request.isLatest()){
             response = response.stream().sorted(Comparator.comparing(RefundReceiptDto.Response::getSaleDate).reversed()).collect(Collectors.toList());
         }
