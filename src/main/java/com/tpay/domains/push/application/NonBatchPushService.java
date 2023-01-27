@@ -32,7 +32,7 @@ public class NonBatchPushService {
     @Transactional
     public void nonBatchPush(PushCategoryType pushCategoryType, Long franchiseeIndex) {
         Optional<UserPushTokenEntity> optionalUserPushTokenEntity = getPushTokenEntity(franchiseeIndex);
-        if(optionalUserPushTokenEntity.isEmpty())
+        if (optionalUserPushTokenEntity.isEmpty())
             return;
 
         NotificationDto.Request request = createNotificationRequest(pushCategoryType, optionalUserPushTokenEntity.get());
@@ -43,9 +43,16 @@ public class NonBatchPushService {
     @Transactional
     public void nonBatchPushNSave(PushCategoryType pushCategoryType, Long franchiseeIndex) {
         Optional<UserPushTokenEntity> optionalUserPushTokenEntity = getPushTokenEntity(franchiseeIndex);
-        if(optionalUserPushTokenEntity.isEmpty())
+
+        if (optionalUserPushTokenEntity.isEmpty())
             return;
 
+        double balancePercentage = optionalUserPushTokenEntity.get().getFranchiseeEntity().getBalancePercentage();
+        log.trace(" @@ balancePercentage = {}", balancePercentage);
+
+        if (balancePercentage == 0.0) {
+            return;
+        }
         NotificationDto.Request request = createNotificationRequest(pushCategoryType, optionalUserPushTokenEntity.get());
         pushNotificationService.sendMessageByToken(request);
     }
@@ -54,7 +61,7 @@ public class NonBatchPushService {
     @Transactional
     public void nonBatchPushNSave(PushCategoryType pushCategoryType, Long franchiseeIndex, String message) {
         Optional<UserPushTokenEntity> optionalUserPushTokenEntity = getPushTokenEntity(franchiseeIndex);
-        if(optionalUserPushTokenEntity.isEmpty())
+        if (optionalUserPushTokenEntity.isEmpty())
             return;
 
         NotificationDto.Request request = createNotificationRequest(pushCategoryType, optionalUserPushTokenEntity.get());

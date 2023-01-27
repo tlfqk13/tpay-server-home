@@ -68,6 +68,7 @@ public class FranchiseeSignInService {
             .signUpDate(franchiseeEntity.getCreatedDate())
             .isActiveSound(franchiseeEntity.getIsActiveSound())
             .isActiveVibration(franchiseeEntity.getIsActiveVibration())
+            .balancePercentage(franchiseeEntity.getBalancePercentage())
             .storeName(franchiseeEntity.getStoreName())
             .isConnectedPos(franchiseeEntity.getIsConnectedPos())
             .posType(franchiseeEntity.getPosType().getPosName())

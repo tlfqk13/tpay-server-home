@@ -90,8 +90,6 @@ public class RefundApproveService {
                             refundResponse.getTakeoutNumber(),
                             orderEntity);
 
-            log.debug("Refund approve entity id = {} ", refundEntity.getId());
-
             externalRefund(refundEntity);
             createPoint(refundEntity, franchiseeEntity);
 
@@ -145,9 +143,7 @@ public class RefundApproveService {
         RefundApproveRequest refundApproveRequest = RefundApproveRequest.of(orderEntity, refundAfterDto);
 
         RefundAfterBaseDto refundAfterInfo = refundAfterDto.getRefundAfterInfo();
-        if (refundAfterInfo.isRetry()) {
-            checkRefundStatus(orderEntity);
-        } else if (null != payment) {
+        if (refundAfterInfo.isRetry() || null != payment) {
             checkRefundStatus(orderEntity);
         }
         checkOrderValidateDate(orderEntity);
@@ -155,11 +151,11 @@ public class RefundApproveService {
         RefundResponse refundResponse;
         String uri = CustomValue.REFUND_SERVER + "/refund/after/approval";
         refundResponse = webRequestUtil.post(uri, refundApproveRequest);
-
         // 기존 PRE_APPROVAL 환급 상태에서 재전송을 통해 반출번호와 상태 변경
         if (refundAfterInfo.isRetry()) {
             RefundEntity existRefundEntity = orderEntity.getRefundEntity();
             existRefundEntity.updateTakeOutInfo(refundResponse.getTakeoutNumber(), refundAfterInfo.getRefundFinishDate());
+            createPoint(existRefundEntity, orderEntity.getFranchiseeEntity()); // 3단계는 사후 환급 확정 시 - 포인트 적립
             return refundResponse;
         }
 
@@ -180,12 +176,11 @@ public class RefundApproveService {
                     .refundAfterMethod(refundAfterInfo.getRefundAfterMethod())
                     .build();
 
-            log.trace(" @@ refundAfterEntity.getId() = {}", refundAfterEntity.getId());
             log.trace(" @@ refundEntity.getId() = {}", refundEntity.getId());
             refundEntity.addRefundAfterEntity(refundAfterEntity);
 
             updatePaymentStatus(refundEntity, refundAfterEntity);
-            createPoint(refundEntity, orderEntity.getFranchiseeEntity());
+            createPoint(orderEntity, refundResponse, refundEntity);
             createBarcode(refundEntity);
         }
 
@@ -194,8 +189,13 @@ public class RefundApproveService {
             orderEntity.getRefundEntity().getRefundAfterEntity().addPayment(payment);
             createPoint(orderEntity.getRefundEntity(), orderEntity.getFranchiseeEntity());
         }
-
         return refundResponse;
+    }
+
+    private void createPoint(OrderEntity orderEntity, RefundResponse refundResponse, RefundEntity refundEntity) {
+        if (!refundResponse.getTakeoutNumber().contains("acpt")) {
+            createPoint(refundEntity, orderEntity.getFranchiseeEntity());
+        }
     }
 
     private void checkOrderValidateDate(OrderEntity orderEntity) {
@@ -220,6 +220,7 @@ public class RefundApproveService {
     }
 
     private void createPoint(RefundEntity refundEntity, FranchiseeEntity franchiseeEntity) {
+        log.trace(" createPoint ");
         pointScheduledChangeService.change(refundEntity, SignType.POSITIVE, franchiseeEntity.getBalancePercentage());
     }
 
@@ -244,7 +245,6 @@ public class RefundApproveService {
     }
 
     /**
-     * ㄹ
      * KTP에서 주문과 환급을 동시에 처리할 때 사용
      */
     @Transactional
