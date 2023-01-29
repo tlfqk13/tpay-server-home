@@ -18,6 +18,7 @@ import com.tpay.domains.push.application.UserPushTokenService;
 import com.tpay.domains.push.domain.PushTokenEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +36,8 @@ public class SignUpService {
     private final UserPushTokenService userPushTokenService;
     private final PushTokenService pushTokenService;
     private final AlimTalkService alimTalkService;
+    @Value("${spring.config.activate.on-profile}")
+    private String profileName;
 
     @Transactional
     public Long signUp(FranchiseeSignUpRequest request, boolean isApi) {
@@ -102,10 +105,16 @@ public class SignUpService {
         }
 
         // 알림톡 메시지 전달
+        if(profileName.equals("deploy")){
+            sendAlimTalkMessage(request);
+        }
+        return franchiseeEntity.getId();
+    }
+
+    private void sendAlimTalkMessage(FranchiseeSignUpRequest request) {
         AlimTalkApiDto.Request message
                 = alimTalkService.createAlimtalkMessage(request.getStoreName(), request.getStoreNumber());
         alimTalkService.sendAlimTalkApiMessage(message);
-        return franchiseeEntity.getId();
     }
 
     private String joinStrings(String... strings) {

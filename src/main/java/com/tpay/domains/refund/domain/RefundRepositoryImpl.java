@@ -65,10 +65,20 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
                 .leftJoin(orderEntity.customerEntity, customerEntity)
                 .leftJoin(franchiseeUploadEntity).on(franchiseeEntity.id.eq(franchiseeUploadEntity.franchiseeIndex))
                 .where(customerEntity.passportNumber.eq(encryptPassportNumber)
-                        .and(isRefundAfter(refundAfter)))
+                        .and(isRefundReceipt(refundAfter))
+                        .and(refundEntity.refundStatus.in(RefundStatus.APPROVAL,RefundStatus.PRE_APPROVAL)))
                 .fetch();
 
         return content;
+    }
+
+    private Predicate isRefundReceipt(boolean refundAfter) {
+        if (refundAfter) {
+            return isRefundAfterEntity()
+                    .and(refundEntity.takeOutNumber.contains("A").or(refundEntity.takeOutNumber.contains("a")));
+        } else {
+            return isImmediate().and(refundEntity.refundAfterEntity.isNull());
+        }
     }
 
     @Override
@@ -99,7 +109,8 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
                 .leftJoin(orderEntity.customerEntity, customerEntity)
                 .leftJoin(franchiseeUploadEntity).on(franchiseeEntity.id.eq(franchiseeUploadEntity.franchiseeIndex))
                 .where(customerEntity.passportNumber.eq(encryptPassportNumber)
-                        .and(isRefundAfter(refundAfter)))
+                        .and(isRefundReceipt(refundAfter))
+                        .and(refundEntity.refundStatus.in(RefundStatus.APPROVAL,RefundStatus.PRE_APPROVAL)))
                 .fetch();
 
         return content;

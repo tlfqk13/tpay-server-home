@@ -41,20 +41,13 @@ public class LimitFindService {
 
         // 한도 조회 요청
         RefundResponse refundResponse = webRequestUtil.post(uri, request);
-        log.debug("request.passportNumber = {} , refundResponse.getPassportNumber() = {}"
-                , request.getPassportNumber()
-                , refundResponse.getPassportNumber());
+        printLog(request, refundResponse);
 
-        log.debug("request.nation = {} , refundResponse.getNation() = {}"
-                , request.getNationality()
-                , refundResponse.getNationality());
-
-        // 한도조회 스켄 or 수기 확인
-        log.trace(" @@ request.getMethod = {}", request.getMethod());
-        log.trace(" @@ request.getFranchiseeIndex = {}", request.getFranchiseeIndex());
+        // KOR 국적 + 4001 = 4009번 에러코드 발생자 ( 2년이내 한국 입국 기록 있는자)
+        boolean isKOR = refundResponse.getResponseCode().equals("4001") && "KOR".equals(request.getNationality());
 
         // 한도 조회 요청 후, 성공되면 고객 정보 등록
-        if ((List.of("0000", "4008").contains(refundResponse.getResponseCode()))) {
+        if ((List.of("0000", "4008").contains(refundResponse.getResponseCode()) || isKOR)) {
             Long customerEntityId;
             Optional<CustomerEntity> customerEntityOptional = customerService.findCustomerByNationAndPassportNumber(refundResponse.getPassportNumber(), refundResponse.getNationality());
             CustomerEntity customerEntity;
@@ -87,6 +80,20 @@ public class LimitFindService {
         } else {
             throw new InvalidPassportInfoException(ExceptionState.INVALID_PASSPORT_INFO, "한도조회 실패");
         }
+    }
+
+    private void printLog(RefundLimitRequest request, RefundResponse refundResponse) {
+        log.debug("request.passportNumber = {} , refundResponse.getPassportNumber() = {}"
+                , request.getPassportNumber()
+                , refundResponse.getPassportNumber());
+
+        log.debug("request.nation = {} , refundResponse.getNation() = {}"
+                , request.getNationality()
+                , refundResponse.getNationality());
+
+        // 한도조회 스켄 or 수기 확인
+        log.trace(" @@ request.getMethod = {}", request.getMethod());
+        log.trace(" @@ request.getFranchiseeIndex = {}", request.getFranchiseeIndex());
     }
 
     private boolean checkNation(RefundLimitRequest request) {
