@@ -84,6 +84,7 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long>, Order
             " where c.cus_pass_no = :passportNumber\n" +
             " and r.refund_after_id is not null and r.tk_out_conf_no = ''\n" +
             " and rf.payment_id is null\n" +
+            " and r.refund_status in (1, 4)\n" +
             " order by r.id desc ",nativeQuery = true
     )
     List<OrdersDtoInterface> findVanOrdersDetail(@Param("passportNumber") String passportNumber);
@@ -118,6 +119,7 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long>, Order
             "               left join refund_after rf on r.refund_after_id = rf.refund_after_id\n" +
             " where c.cus_pass_no = :passportNumber\n" +
             " and r.refund_after_id is not null and r.tk_out_conf_no = ''\n" +
+            " and r.refund_status in (1, 4) \n" +
             " and rf.payment_id is null and o.purchs_sn = :barcode\n" +
             " order by r.id desc ",nativeQuery = true
     )

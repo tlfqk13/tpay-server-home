@@ -50,6 +50,7 @@ public class CustomerEntity extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private DepartureStatus departureStatus;
 
+    private String departureDate;
     @Builder
     public CustomerEntity(String passportNumber, String customerName, String nation) {
         this.passportNumber = passportNumber;
@@ -82,5 +83,9 @@ public class CustomerEntity extends BaseTimeEntity {
         this.customerCreditNumber = customerCreditNumber;
         this.customerBankName = customerBankName;
         this.customerAccountNumber = customerAccountNumber;
+    }
+
+    public void updateDepartureDate(String departureDate) {
+        this.departureDate = departureDate;
     }
 }

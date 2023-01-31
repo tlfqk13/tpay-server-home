@@ -34,11 +34,7 @@ public class RefundReceiptFindService {
 
     public List<RefundReceiptDto.Response> findRefundReceiptDetail(RefundReceiptDto.Request request){
 
-        String encryptPassportNumber = encryptService.encrypt(request.getPassportNumber());
-        log.trace(" @@ encryptPassportNumber = {}", encryptPassportNumber);
-
-        CustomerEntity customerEntity = customerRepository.findByPassportNumber(encryptPassportNumber)
-                .orElseThrow(()->new InvalidPassportInfoException(ExceptionState.INVALID_PASSPORT_INFO, "여권 조회 실패"));
+        CustomerEntity customerEntity = getCustomerEntity(request);
 
         List<RefundReceiptDto.Response> response;
         // 최신순, 과거순
@@ -56,10 +52,7 @@ public class RefundReceiptFindService {
 
     public List<RefundReceiptDto.Response> downloadsRefundReceiptDetail(RefundReceiptDto.Request request){
 
-        String encryptPassportNumber = encryptService.encrypt(request.getPassportNumber());
-
-        CustomerEntity customerEntity = customerRepository.findByPassportNumber(encryptPassportNumber)
-                .orElseThrow(()->new InvalidPassportInfoException(ExceptionState.INVALID_PASSPORT_INFO, "여권 조회 실패"));
+        CustomerEntity customerEntity = getCustomerEntity(request);
 
         List<RefundReceiptDto.Response> response;
         // 최신순, 과거순
@@ -69,5 +62,33 @@ public class RefundReceiptFindService {
             response = response.stream().sorted(Comparator.comparing(RefundReceiptDto.Response::getSaleDate).reversed()).collect(Collectors.toList());
         }
         return response;
+    }
+
+    public RefundReceiptDto.ResponseCustomer findCustomer(RefundReceiptDto.Request request) {
+
+        CustomerEntity customerEntity = getCustomerEntity(request);
+
+        return RefundReceiptDto.ResponseCustomer.builder()
+                .passportNumber(customerEntity.getPassportNumber())
+                .departureDate(customerEntity.getDepartureDate()!= null ? customerEntity.getDepartureDate() : null)
+                .register(customerEntity.getIsRegister())
+                .build();
+    }
+    public RefundReceiptDto.ResponseCustomer updateDepartureDate(RefundReceiptDto.Request request) {
+        CustomerEntity customerEntity = getCustomerEntity(request);
+        customerEntity.updateDepartureDate(request.getDepartureDate());
+        return RefundReceiptDto.ResponseCustomer.builder()
+                .passportNumber(customerEntity.getPassportNumber())
+                .departureDate(customerEntity.getDepartureDate())
+                .departureDate(customerEntity.getDepartureDate()!= null ? customerEntity.getDepartureDate() : null)
+                .register(customerEntity.getIsRegister())
+                .build();
+
+    }
+    private CustomerEntity getCustomerEntity(RefundReceiptDto.Request request) {
+        String encryptPassportNumber = encryptService.encrypt(request.getPassportNumber());
+        log.trace(" @@ encryptPassportNumber = {}", encryptPassportNumber);
+        return customerRepository.findByPassportNumber(encryptPassportNumber)
+                .orElseThrow(()->new InvalidPassportInfoException(ExceptionState.INVALID_PASSPORT_INFO, "여권 조회 실패"));
     }
 }

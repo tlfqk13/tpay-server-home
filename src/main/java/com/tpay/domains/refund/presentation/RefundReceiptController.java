@@ -19,6 +19,22 @@ public class RefundReceiptController {
     private final RefundReceiptDownloadsService refundReceiptDownloadsService;
     private final RefundBarcodeService refundBarcodeService;
 
+    @PostMapping("/passport-validate") // 여권번호를 입력해주세요
+    public ResponseEntity<RefundReceiptDto.ResponseCustomer> findCustomer(
+            @RequestBody RefundReceiptDto.Request request
+    ){
+        RefundReceiptDto.ResponseCustomer responseCustomer = refundReceiptFindService.findCustomer(request);
+        return ResponseEntity.ok(responseCustomer);
+    }
+
+    @PatchMapping//출국 예정일을 입력해주세요
+    public ResponseEntity<RefundReceiptDto.ResponseCustomer> updateDepartureDate(
+            @RequestBody RefundReceiptDto.Request request
+    ){
+        RefundReceiptDto.ResponseCustomer responseCustomer = refundReceiptFindService.updateDepartureDate(request);
+        return ResponseEntity.ok(responseCustomer);
+    }
+
     @PostMapping
     public ResponseEntity<List<RefundReceiptDto.Response>> findRefundReceipt(
             @RequestBody RefundReceiptDto.Request request

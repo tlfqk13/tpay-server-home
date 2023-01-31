@@ -79,8 +79,8 @@ public class RefundCancelService {
 
     public void cancelRefundAfter(Long refundIndex) {
         RefundEntity refund = refundFindService.getRefundByRefundId(refundIndex);
-        double balancePercentage = refund.getOrderEntity().getFranchiseeEntity().getBalancePercentage();
-        pointScheduledChangeService.change(refund, SignType.NEGATIVE, balancePercentage);
+        //double balancePercentage = refund.getOrderEntity().getFranchiseeEntity().getBalancePercentage();
+        //pointScheduledChangeService.change(refund, SignType.NEGATIVE, balancePercentage);
         refund.updateCancel();
     }
 }
