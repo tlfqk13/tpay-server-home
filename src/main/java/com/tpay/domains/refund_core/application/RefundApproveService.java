@@ -152,6 +152,15 @@ public class RefundApproveService {
         }
         checkOrderValidateDate(orderEntity);
 
+        // VAN 으로 사전 생성된 엔티티들은 이미 환급을 위한 데이터 일부를 사전에 생성
+        if (null != payment) {
+            orderEntity.getRefundEntity().getRefundAfterEntity().addPayment(payment);
+            createPoint(orderEntity.getRefundEntity(), orderEntity.getFranchiseeEntity());
+            return RefundResponse.builder()
+                    .responseCode("0000")
+                    .build();
+        }
+
         RefundResponse refundResponse;
         String uri = CustomValue.REFUND_SERVER + "/refund/after/approval";
         refundResponse = webRequestUtil.post(uri, refundApproveRequest);
@@ -189,12 +198,8 @@ public class RefundApproveService {
             createBarcode(refundEntity);
         }
 
-        // VAN 으로 사전 생성된 엔티티들은 이미 환급을 위한 데이터 일부를 사전에 생성
-        if (null != payment) {
-            orderEntity.getRefundEntity().getRefundAfterEntity().addPayment(payment);
-            createPoint(orderEntity.getRefundEntity(), orderEntity.getFranchiseeEntity());
-        }
-
+        RefundEntity existRefundEntity = orderEntity.getRefundEntity();
+        existRefundEntity.updateTakeOutInfo(refundResponse.getTakeoutNumber(), refundAfterInfo.getRefundFinishDate());
         return refundResponse;
     }
 
@@ -344,8 +349,7 @@ public class RefundApproveService {
         if (RefundStatus.CANCEL.equals(orderEntity.getRefundEntity().getRefundStatus())) {
             return "CANCEL";
         } else {
-            RefundEntity existRefundEntity = orderEntity.getRefundEntity();
-            cancelService.cancelRefundAfter(existRefundEntity.getId());
+            log.trace(" @@ orderEntity = {}", orderEntity);
             return "0000";
         }
     }
