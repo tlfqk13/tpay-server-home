@@ -1,6 +1,7 @@
 package com.tpay.domains.refund.application.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -57,8 +58,17 @@ public class RefundReceiptDto {
     }
 
     @Getter
+    @Builder
+    public static class ResponseCustomer{
+        private String departureDate;
+        private boolean register;
+        // 2022/10/21 사후 환급 전표만 출력.
+    }
+
+    @Getter
     public static class Request{
         private String passportNumber;
+        private String departureDate;
         // 2022/10/21 사후 환급 전표만 출력.
         private boolean refundAfter;
         private boolean latest;

@@ -56,6 +56,24 @@ Configuration:
           ThresholdFilter:
             level: error
             onMismatch: deny
+      - name: Fluentd_Collect
+        fileName: ${log-path}/fluentd-collect.log
+        filePattern: "${log-path}/archive/fluentd-collect.log_%d{yyyy-MM-dd}.gz"
+        PatternLayout:
+          pattern: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%-22t] %-30c{1} - %msg%n"
+        Policies:
+          TimeBasedTriggeringPolicy:
+            Interval: 1
+            modulate: true
+        DefaultRollOverStrategy:
+          Delete:
+            basePath: "${log-path}/archive"
+            maxDepth: "1"
+            IfAccumulatedFileCount:
+              exceeds: 31
+        Filters:
+          ThresholdFilter:
+            level: trace
   Loggers:
     Root:
       level: info
@@ -69,6 +87,7 @@ Configuration:
           - ref: RollingFile_Appender
           - ref: Console_Appender
           - ref: RollingFile_Appender_Error
+          - ref: Fluentd_Collect
       - name: com.tpay.commons
         additivity: false
         level: trace
@@ -76,6 +95,7 @@ Configuration:
           - ref: RollingFile_Appender
           - ref: Console_Appender
           - ref: RollingFile_Appender_Error
+          - ref: Fluentd_Collect
       - name: org.hibernate.SQL
         additivity: false
         level: debug

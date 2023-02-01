@@ -3,6 +3,7 @@ package com.tpay.domains.van.application;
 import com.tpay.commons.aria.PassportNumberEncryptService;
 import com.tpay.commons.exception.ExceptionState;
 import com.tpay.commons.exception.detail.CustomerNotFoundException;
+import com.tpay.commons.exception.detail.WebfluxGeneralException;
 import com.tpay.domains.customer.domain.CustomerEntity;
 import com.tpay.domains.customer.domain.CustomerRepository;
 import com.tpay.domains.order.application.dto.OrdersDtoInterface;
@@ -11,6 +12,7 @@ import com.tpay.domains.order.domain.OrderRepository;
 import com.tpay.domains.refund.application.RefundService;
 import com.tpay.domains.refund.domain.RefundAfterEntity;
 import com.tpay.domains.refund.domain.RefundEntity;
+import com.tpay.domains.refund.domain.RefundStatus;
 import com.tpay.domains.refund_core.application.dto.RefundAfterBaseDto;
 import com.tpay.domains.refund_core.application.dto.RefundAfterDto;
 import com.tpay.domains.van.domain.dto.VanOrderDetail;
@@ -21,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,7 +55,20 @@ public class VanService {
             orders = orderRepository.findOrdersPassportMapping(refundAfterBaseDto.getBarcode());
         }
         for (OrderEntity order : orders) {
+            log.trace(" @@ order = {}", order.getId());
+
             if (null != order.getRefundEntity()) {
+                if (isPassportMapping) {
+                    if (RefundStatus.CANCEL.equals(order.getRefundEntity().getRefundStatus())) {
+                        throw new WebfluxGeneralException(ExceptionState.WEBFLUX_GENERAL, "CANCEL");
+                    } else if (RefundStatus.APPROVAL.equals(order.getRefundEntity().getRefundStatus())) {
+                        throw new WebfluxGeneralException(ExceptionState.WEBFLUX_GENERAL, "APPROVAL");
+                    }
+                    if (order.getCreatedDate().isBefore(LocalDateTime.now().minusMonths(3))) {
+                        throw new WebfluxGeneralException(ExceptionState.WEBFLUX_GENERAL, "MONTH");
+                    }
+                }
+
                 continue;
             }
 
@@ -64,7 +80,7 @@ public class VanService {
                             "",
                             order);
 
-            if(null == order.getCustomerEntity()){
+            if (null == order.getCustomerEntity()) {
                 order.updateCustomer(customerEntity);
             }
 
@@ -85,9 +101,9 @@ public class VanService {
 
         String encryptNumber = encryptService.encrypt(encryptedPassportNumber);
         List<OrdersDtoInterface> ordersDtoInterfaceList;
-        if(isPassportMapping){
-            ordersDtoInterfaceList = orderRepository.findVanOrdersDetail(encryptNumber,barcode);
-        }else{
+        if (isPassportMapping) {
+            ordersDtoInterfaceList = orderRepository.findVanOrdersDetail(encryptNumber, barcode);
+        } else {
             ordersDtoInterfaceList = orderRepository.findVanOrdersDetail(encryptNumber);
         }
 
@@ -113,7 +129,7 @@ public class VanService {
 //                    .rfndAvailableYn(orderDto.getRfndAvailableYn())
                     .rfndAvailableYn("Y")
                     .earlyRfndYn(checkCityRefund(orderDto.getEarlyRfndYn()))
-                    .customsCleanceYn(checkRefundStatus(orderDto.getCustomsCleanceYn()))
+                    .customsCleanceYn(checkRefundStatus(orderDto.getCustomsCleanceYn(),orderDto.getTotalRefund()))
                     .build());
         }
         return VanOrdersDto.Response.builder().vanOrderDetails(baseList).build();
@@ -134,13 +150,16 @@ public class VanService {
     // 2022/12/23 반출 , 미반출 , 반출거절
     //  해당 사항에 대해 반출거절 코드(* 반출거절 : C) 로 내려주시면 유인창구에서 수기 반출 확인 이후 환급 진행합니다.
 
-    private String checkRefundStatus(String customCleanceYn) {
+    private String checkRefundStatus(String customCleanceYn, String totalRefund) {
         switch (customCleanceYn) {
             case "0":   // APPROVAL
                 return "Y";
             case "1":  // REJECT
                 return "N";
             case "4":  // PRE_APPROVAL
+                if(Integer.parseInt(totalRefund) > 85000){
+                    return "Y";
+                }
                 return "C";
         }
         return "N";
