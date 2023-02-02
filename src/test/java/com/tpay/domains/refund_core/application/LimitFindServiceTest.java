@@ -15,12 +15,10 @@ import org.springframework.test.context.ActiveProfiles;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 
 @SpringBootTest
 @Transactional
-@ActiveProfiles(profiles = {"operation"})
+@ActiveProfiles(profiles = {"test"})
 public class LimitFindServiceTest {
 
   @Autowired
