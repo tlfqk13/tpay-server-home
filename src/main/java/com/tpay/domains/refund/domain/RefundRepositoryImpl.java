@@ -71,6 +71,7 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
                 .where(customerEntity.passportNumber.eq(encryptPassportNumber)
                         .and(isRefundReceipt(refundAfter))
                         .and(refundEntity.refundStatus.in(RefundStatus.APPROVAL,RefundStatus.PRE_APPROVAL)))
+                .orderBy(refundEntity.id.asc())
                 .fetch();
 
         return content;
@@ -78,8 +79,11 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
 
     private Predicate isRefundReceipt(boolean refundAfter) {
         if (refundAfter) {
+            System.out.println("##########################");
+            System.out.println(refundEntity.takeOutNumber);
             return isRefundAfterEntity()
-                    .and(refundEntity.takeOutNumber.contains("A").or(refundEntity.takeOutNumber.contains("a")));
+                    .and(refundEntity.takeOutNumber.contains("A"))
+                    .or((refundEntity.takeOutNumber.length().eq(20)));
         } else {
             return isImmediate().and(refundEntity.refundAfterEntity.isNull());
         }

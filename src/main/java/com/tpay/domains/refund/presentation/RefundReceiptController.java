@@ -22,7 +22,7 @@ public class RefundReceiptController {
     private final RefundReceiptUploadService refundReceiptUploadService;
     private final RefundBarcodeService refundBarcodeService;
 
-    @PostMapping("/home") // 여권번호를 입력해주세요
+    @PostMapping("/home")
     public ResponseEntity<RefundReceiptDto.ResponseCustomer> receiptHome(
             @RequestBody RefundReceiptDto.Request request
     ){

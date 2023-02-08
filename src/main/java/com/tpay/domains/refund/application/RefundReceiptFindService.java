@@ -47,7 +47,7 @@ public class RefundReceiptFindService {
         }
 
         if (request.isLatest()) {
-            response = response.stream().sorted(Comparator.comparing(RefundReceiptDto.Response::getSaleDate).reversed()).collect(Collectors.toList());
+            response = response.stream().sorted(Comparator.comparing(RefundReceiptDto.Response::getRefundIndex).reversed()).collect(Collectors.toList());
         }
 
         customerEntity.updateIsRead();
@@ -62,7 +62,6 @@ public class RefundReceiptFindService {
         List<RefundReceiptDto.Response> response;
         // 최신순, 과거순
         response = refundRepository.downloadsRefundReceipt(customerEntity.getPassportNumber(), request.isRefundAfter());
-
         if (request.isLatest()) {
             response = response.stream().sorted(Comparator.comparing(RefundReceiptDto.Response::getSaleDate).reversed()).collect(Collectors.toList());
         }

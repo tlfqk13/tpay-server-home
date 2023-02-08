@@ -100,7 +100,6 @@ public class RefundReceiptDto {
         String refund;//즉시환급상당액
         String refundS3Path;
 
-
         public RefundReceiptUploadListDto(RefundReceiptDto.Response response) {
             this.refundIndex = response.getRefundIndex();
             this.franchiseeName = response.getFranchiseeName();
