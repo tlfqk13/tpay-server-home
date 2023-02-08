@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,66 +30,69 @@ public class RefundReceiptFindService {
     public RefundEntity findById(Long refundIndex) {
 
         return refundRepository.findById(refundIndex)
-            .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid RefundIndex"));
+                .orElseThrow(() -> new InvalidParameterException(ExceptionState.INVALID_PARAMETER, "Invalid RefundIndex"));
     }
 
-    public List<RefundReceiptDto.Response> findRefundReceiptDetail(RefundReceiptDto.Request request){
+    @Transactional
+    public List<RefundReceiptDto.Response> findRefundReceiptDetail(RefundReceiptDto.Request request) {
 
         CustomerEntity customerEntity = getCustomerEntity(request);
 
         List<RefundReceiptDto.Response> response;
         // 최신순, 과거순
-        response = refundRepository.findRefundReceipt(customerEntity.getPassportNumber(),request.isRefundAfter());
+        response = refundRepository.findRefundReceipt(customerEntity.getPassportNumber(), request.isRefundAfter());
 
-        if(!"KOR".equals(customerEntity.getNation())){
+        if (!"KOR".equals(customerEntity.getNation())) {
             response = response.stream().filter(r -> Integer.parseInt(r.getTotalRefund()) >= 75000).collect(Collectors.toList());
         }
 
-        if(request.isLatest()){
+        if (request.isLatest()) {
             response = response.stream().sorted(Comparator.comparing(RefundReceiptDto.Response::getSaleDate).reversed()).collect(Collectors.toList());
         }
+
+        customerEntity.updateIsRead();
+
         return response;
     }
 
-    public List<RefundReceiptDto.Response> downloadsRefundReceiptDetail(RefundReceiptDto.Request request){
+    public List<RefundReceiptDto.Response> downloadsRefundReceiptDetail(RefundReceiptDto.Request request) {
 
         CustomerEntity customerEntity = getCustomerEntity(request);
 
         List<RefundReceiptDto.Response> response;
         // 최신순, 과거순
-        response = refundRepository.downloadsRefundReceipt(customerEntity.getPassportNumber(),request.isRefundAfter());
+        response = refundRepository.downloadsRefundReceipt(customerEntity.getPassportNumber(), request.isRefundAfter());
 
-        if(request.isLatest()){
+        if (request.isLatest()) {
             response = response.stream().sorted(Comparator.comparing(RefundReceiptDto.Response::getSaleDate).reversed()).collect(Collectors.toList());
         }
         return response;
     }
 
     public RefundReceiptDto.ResponseCustomer findCustomer(RefundReceiptDto.Request request) {
-
         CustomerEntity customerEntity = getCustomerEntity(request);
-
-        return RefundReceiptDto.ResponseCustomer.builder()
-                .passportNumber(customerEntity.getPassportNumber())
-                .departureDate(customerEntity.getDepartureDate()!= null ? customerEntity.getDepartureDate() : null)
-                .register(customerEntity.getIsRegister())
-                .build();
+        return RefundReceiptDto.ResponseCustomer.of(customerEntity);
     }
+
+    @Transactional
     public RefundReceiptDto.ResponseCustomer updateDepartureDate(RefundReceiptDto.Request request) {
         CustomerEntity customerEntity = getCustomerEntity(request);
         customerEntity.updateDepartureDate(request.getDepartureDate());
-        return RefundReceiptDto.ResponseCustomer.builder()
-                .passportNumber(customerEntity.getPassportNumber())
-                .departureDate(customerEntity.getDepartureDate())
-                .departureDate(customerEntity.getDepartureDate()!= null ? customerEntity.getDepartureDate() : null)
-                .register(customerEntity.getIsRegister())
-                .build();
-
+        return RefundReceiptDto.ResponseCustomer.of(customerEntity);
     }
+
     private CustomerEntity getCustomerEntity(RefundReceiptDto.Request request) {
         String encryptPassportNumber = encryptService.encrypt(request.getPassportNumber());
         log.trace(" @@ encryptPassportNumber = {}", encryptPassportNumber);
         return customerRepository.findByPassportNumber(encryptPassportNumber)
-                .orElseThrow(()->new InvalidPassportInfoException(ExceptionState.INVALID_PASSPORT_INFO, "여권 조회 실패"));
+                .orElseThrow(() -> new InvalidPassportInfoException(ExceptionState.INVALID_PASSPORT_INFO, "여권 조회 실패"));
+    }
+
+    public List<RefundReceiptDto.RefundReceiptUploadListDto> findRefundReceiptUploadList(RefundReceiptDto.Request request) {
+        List<RefundReceiptDto.Response> refundReceiptDetail = findRefundReceiptDetail(request);
+        return refundReceiptDetail.stream()
+                .map(RefundReceiptDto.RefundReceiptUploadListDto::new)
+                .distinct()
+                .collect(Collectors.toList());
     }
 }

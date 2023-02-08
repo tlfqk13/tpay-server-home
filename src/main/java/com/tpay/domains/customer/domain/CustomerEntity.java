@@ -51,12 +51,16 @@ public class CustomerEntity extends BaseTimeEntity {
     private DepartureStatus departureStatus;
 
     private String departureDate;
+    private Boolean isRead;
+    private Boolean isReceiptUpload;
     @Builder
     public CustomerEntity(String passportNumber, String customerName, String nation) {
         this.passportNumber = passportNumber;
         this.customerName = customerName;
         this.nation = nation;
         this.isRegister = false;
+        this.isRead = false;
+        this.isReceiptUpload = false;
     }
 
     public void registerAfterRefundCustomer(String passportNumber,String nation, CustomerDto.Request customerInfo) {
@@ -87,5 +91,11 @@ public class CustomerEntity extends BaseTimeEntity {
 
     public void updateDepartureDate(String departureDate) {
         this.departureDate = departureDate;
+    }
+    public void updateIsRead() {
+        this.isRead = true;
+    }
+    public void updateIsReceiptUpload(boolean isReceiptUpload) {
+        this.isReceiptUpload = isReceiptUpload;
     }
 }

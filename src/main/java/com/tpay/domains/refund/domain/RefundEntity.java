@@ -2,6 +2,7 @@ package com.tpay.domains.refund.domain;
 
 import com.tpay.domains.BaseTimeEntity;
 import com.tpay.domains.order.domain.OrderEntity;
+import com.tpay.domains.refund_upload.domain.RefundUploadEntity;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -38,6 +39,11 @@ public class RefundEntity extends BaseTimeEntity {
     @OneToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinColumn(name = "refund_after_id")
     private RefundAfterEntity refundAfterEntity;
+
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "refund_upload_id")
+    private RefundUploadEntity receiptUpload;
 
     @Builder
     public RefundEntity(String responseCode, String orderNumber, String takeOutNumber, OrderEntity orderEntity) {
@@ -115,5 +121,9 @@ public class RefundEntity extends BaseTimeEntity {
 
     public void updateTakeOutInfo(String takeOutNumber) {
         updateTakeOutInfo(takeOutNumber, LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
+    }
+
+    public void addReceiptUpload(RefundUploadEntity refundUploadEntity){
+        this.receiptUpload = refundUploadEntity;
     }
 }

@@ -28,6 +28,7 @@ import static com.tpay.domains.order.domain.QOrderEntity.orderEntity;
 import static com.tpay.domains.point_scheduled.domain.QPointScheduledEntity.pointScheduledEntity;
 import static com.tpay.domains.refund.domain.QRefundAfterEntity.refundAfterEntity;
 import static com.tpay.domains.refund.domain.QRefundEntity.refundEntity;
+import static com.tpay.domains.refund_upload.domain.QRefundUploadEntity.refundUploadEntity;
 
 public class RefundRepositoryImpl implements RefundRepositoryCustom {
 
@@ -41,6 +42,7 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
     public List<RefundReceiptDto.Response> findRefundReceipt(String encryptPassportNumber, boolean refundAfter) {
         List<RefundReceiptDto.Response> content = queryFactory
                 .select(new QRefundReceiptDto_Response(
+                        refundEntity.id,
                         orderEntity.barcodeEntity.s3Path,
                         orderEntity.orderNumber,
                         isRefundAfterEntity(),
@@ -55,7 +57,8 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
                         orderEntity.totalVat,
                         refundEntity.totalRefund,
                         franchiseeEntity.productCategory,
-                        refundEntity.createdDate
+                        refundEntity.createdDate,
+                        refundUploadEntity.refundS3Path
                 ))
                 .from(orderEntity)
                 .leftJoin(orderEntity.refundEntity, refundEntity)
@@ -63,6 +66,7 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
                 .leftJoin(pointScheduledEntity).on(pointScheduledEntity.orderEntity.id.eq(orderEntity.id))
                 .leftJoin(orderEntity.franchiseeEntity, franchiseeEntity)
                 .leftJoin(orderEntity.customerEntity, customerEntity)
+                .leftJoin(refundUploadEntity).on(refundEntity.receiptUpload.id.eq(refundUploadEntity.id))
                 .leftJoin(franchiseeUploadEntity).on(franchiseeEntity.id.eq(franchiseeUploadEntity.franchiseeIndex))
                 .where(customerEntity.passportNumber.eq(encryptPassportNumber)
                         .and(isRefundReceipt(refundAfter))
@@ -85,6 +89,7 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
     public List<RefundReceiptDto.Response> downloadsRefundReceipt(String encryptPassportNumber, boolean refundAfter) {
         List<RefundReceiptDto.Response> content = queryFactory
                 .select(new QRefundReceiptDto_Response(
+                        refundEntity.id,
                         orderEntity.barcodeEntity.s3Path,
                         orderEntity.orderNumber,
                         isRefundAfterEntity(),
@@ -99,7 +104,8 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
                         orderEntity.totalVat,
                         refundEntity.totalRefund,
                         refundEntity.totalRefund.castToNum(Integer.class).subtract(pointScheduledEntity.value).stringValue(),
-                        refundEntity.createdDate
+                        refundEntity.createdDate,
+                        refundUploadEntity.refundS3Path
                 ))
                 .from(orderEntity)
                 .leftJoin(orderEntity.refundEntity, refundEntity)
@@ -108,6 +114,7 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
                 .leftJoin(orderEntity.franchiseeEntity, franchiseeEntity)
                 .leftJoin(orderEntity.customerEntity, customerEntity)
                 .leftJoin(franchiseeUploadEntity).on(franchiseeEntity.id.eq(franchiseeUploadEntity.franchiseeIndex))
+                .leftJoin(refundUploadEntity).on(refundEntity.receiptUpload.id.eq(refundUploadEntity.id))
                 .where(customerEntity.passportNumber.eq(encryptPassportNumber)
                         .and(isRefundReceipt(refundAfter))
                         .and(refundEntity.refundStatus.in(RefundStatus.APPROVAL,RefundStatus.PRE_APPROVAL)))
@@ -325,6 +332,8 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
                         orderEntity.totalAmount,
                         refundEntity.totalRefund,
                         customerEntity.departureStatus,
+                        customerEntity.departureDate,
+                        refundEntity.receiptUpload.refundS3Path,
                         refundEntity.refundAfterEntity.paymentStatus,
                         customerEntity.customerEmail
                 ))
@@ -333,6 +342,7 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
                 .leftJoin(orderEntity.customerEntity, customerEntity)
                 .leftJoin(orderEntity.franchiseeEntity, franchiseeEntity)
                 .leftJoin(refundEntity.refundAfterEntity, refundAfterEntity)
+                .leftJoin(refundEntity.receiptUpload, refundUploadEntity)
                 .where(refundEntity.id.eq(refundIndex))
                 .fetchOne();
 
