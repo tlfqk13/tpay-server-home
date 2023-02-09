@@ -94,7 +94,7 @@ server:
 spring:
   config:
     activate:
-      on-profile: test
+      on-profile: operation
   datasource:
     url: ENC(m+tIJT88xq9Qm4pH+hYNVlTu6QltKfPj4ALvpicZmgcJdcsrNxe6xOGTXUyZEqRWb/UAoyPb8G/IXqcr5Aa/Nrs8MiXroluIbtaznn1aiT2KxP219+HGpYwEFOK0oeFVOwQ7j3RaPhvz6fbLAhbHu3KOjzFYovTr91tmVrtNtAxHB9+0BCm3kv56Dp0jMS0y)
 #    url: ENC(Jo9TE80vtpkY/I4wKW4fII+5DWTbh/vpfnBvdMyafCfquQ3H/Jj1p8rBqARA0DAFvCtUr/4MDtT1cVAw9gkaYZXdMHwPbi+JvaBJiZavLX+wJK4qYEDM9HYaGVIccVxV+UyF8sWzI04LPiXnOLRzVg1gXg2LV1ryjayIYyitqjCYhO0RA1Przg==) # brett test instance

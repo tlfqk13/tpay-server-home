@@ -91,7 +91,7 @@ public class RefundReceiptUploadService {
 
         List<RefundReceiptDto.Response> response = getRefundReceipt(customerEntity);
 
-        refundReceiptUploadRepository.deleteById(refundEntity.getReceiptUpload().getId());
+        refundEntity.getReceiptUpload().updateRefundS3Path("");
         log.trace(" @@ refundEntity.getReceiptUpload().getId() = {}", refundEntity.getReceiptUpload().getId());
 
         updateIsReceiptUpload(customerEntity, response);

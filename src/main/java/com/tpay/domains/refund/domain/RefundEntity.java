@@ -29,7 +29,7 @@ public class RefundEntity extends BaseTimeEntity {
     @Column(name = "totRefund", length = 10)
     private String totalRefund;
 
-    //  @Enumerated(EnumType.STRING)
+    //@Enumerated(EnumType.STRING)
     private RefundStatus refundStatus;
 
     @OneToOne
@@ -39,7 +39,6 @@ public class RefundEntity extends BaseTimeEntity {
     @OneToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinColumn(name = "refund_after_id")
     private RefundAfterEntity refundAfterEntity;
-
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "refund_upload_id")
