@@ -79,8 +79,6 @@ public class RefundRepositoryImpl implements RefundRepositoryCustom {
 
     private Predicate isRefundReceipt(boolean refundAfter) {
         if (refundAfter) {
-            System.out.println("##########################");
-            System.out.println(refundEntity.takeOutNumber);
             return isRefundAfterEntity()
                     .and(refundEntity.takeOutNumber.contains("A"))
                     .or((refundEntity.takeOutNumber.length().eq(20)));
