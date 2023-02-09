@@ -74,6 +74,20 @@ public class S3FileUploader {
     }
 
     /**
+     * 사후면세 지정증 업로드
+     */
+    public String uploadJpg(Long refundIndex, MultipartFile file) throws IOException {
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        objectMetadata.setContentType(MediaType.ALL_VALUE);
+        objectMetadata.setContentLength(file.getSize());
+        objectMetadata.setContentDisposition("attachment; filename=\"" + refundIndex + ".jpg\"");
+        String key = "refundReceipt/" + refundIndex;
+        s3Client.putObject(new PutObjectRequest(bucket, key, file.getInputStream(), objectMetadata)
+                .withCannedAcl(CannedAccessControlList.PublicRead));
+        return s3Client.getUrl(bucket, key).toString();
+    }
+
+    /**
      * 공지사항 파일업로드
      */
     public String uploadNotice(Long noticeIndex, MultipartFile file, String fileName) throws IOException {
@@ -143,7 +157,7 @@ public class S3FileUploader {
      * 엑셀파일 업로드
      */
     public String uploadXlsx(Long franchiseeIndex, XSSFWorkbook xssfWorkbook
-                            ,StringBuilder fileName,boolean isCms) throws IOException {
+            , StringBuilder fileName, boolean isCms) throws IOException {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         xssfWorkbook.write(byteArrayOutputStream);
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
@@ -153,9 +167,9 @@ public class S3FileUploader {
         byteArrayOutputStream.close();
         objectMetaData.setContentDisposition("attachment; filename=\"" + franchiseeIndex + ".xlsx\"");
         StringBuilder key = new StringBuilder();
-        if(isCms){
+        if (isCms) {
             key.append("CmsDownloads/").append(fileName);
-        }else{
+        } else {
             key.append("VatDownloads/").append(fileName);
         }
         try {
@@ -168,7 +182,7 @@ public class S3FileUploader {
     }
 
     public String uploadXlsx(Long franchiseeIndex, XSSFWorkbook xssfWorkbook
-            , StringBuilder fileName, String month,boolean isCms) throws IOException {
+            , StringBuilder fileName, String month, boolean isCms) throws IOException {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         xssfWorkbook.write(byteArrayOutputStream);
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
@@ -177,9 +191,9 @@ public class S3FileUploader {
         objectMetaData.setContentLength((long) byteArrayOutputStream.toByteArray().length);
         byteArrayOutputStream.close();
         StringBuilder key = new StringBuilder();
-        if(isCms){
+        if (isCms) {
             key.append("CmsMonthlyReport/").append(month).append("/").append(fileName);
-        }else{
+        } else {
             key.append("VatMonthlyReport/").append(month).append("/").append(fileName);
         }
         try {

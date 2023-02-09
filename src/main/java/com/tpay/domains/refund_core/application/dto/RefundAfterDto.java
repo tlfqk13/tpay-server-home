@@ -4,7 +4,9 @@ import com.tpay.domains.refund.domain.RefundAfterMethod;
 import com.tpay.domains.van.domain.dto.VanRefundAfterBaseDto;
 import com.tpay.domains.van.domain.dto.VanRefundFinalDto;
 import lombok.Value;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class RefundAfterDto {
 
     @Value
@@ -41,10 +43,9 @@ public class RefundAfterDto {
                     .locaCode(vanBaseDto.getLocaCode())
                     .kioskCode(vanBaseDto.getKioskCode())
                     .kioskBsnmCode(vanBaseDto.getKioskBsnmCode())
-                    .retry(retryToBoolean(vanRefundFinalDto.getRetryYn()))
+                    .retry(false)
                     .refundFinishDate(vanRefundFinalDto.getRefundFinishDate())
                     .build();
-
             return new RefundAfterDto.Request(baseDto, refundItem);
         }
 
